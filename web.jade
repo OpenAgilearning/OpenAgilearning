@@ -31,6 +31,10 @@ template(name="navBar")
 
           //- li.nav.navbar-nav
           //-   +voteForMeLinks
+          
+          li.nav.navbar-nav
+            a(href="{{pathFor 'dockers'}}") Dockers
+          
 
           li.nav.navbar-nav
             a(href="{{pathFor 'wishFeatures'}}") Wish Features
@@ -39,7 +43,7 @@ template(name="navBar")
 
         ul.nav.navbar-nav.navbar-right
           li.nav.navbar-nav
-            img.img-circle(src="{{user.profile.photo.thumb_link}}",style="margin-right:10px")
+            img.user-img.img-circle(src="{{user.profile.photo.thumb_link}}")
           li
             +loginButtons
 

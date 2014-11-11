@@ -211,6 +211,12 @@ Meteor.startup ->
     @route "pleaseLogin",
       path: "pleaseLogin/"
       template: "pleaseLogin"
+      waitOn: -> 
+        userId = Meteor.userId()
+        console.log "userId = "
+        console.log userId
+        if userId 
+          Router.go "index"
 
 
 

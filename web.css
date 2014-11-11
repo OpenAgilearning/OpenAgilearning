@@ -2,8 +2,12 @@ body {
   padding-top: 80px;
 }
 
+img.user-img {
+	margin:5px;	
+	height: 45px;
+}
+
 .login-display-name {
 	color: #777;
 	display: none !important;
-	
 }
