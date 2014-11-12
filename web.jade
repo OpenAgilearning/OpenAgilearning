@@ -179,25 +179,55 @@ template(name="wishFeatures")
 
 
 
-template(name="dockers")
+template(name="dockerSuggestion")
   .container
     .row.clearfix
       .col-md-12.column
+        h2 Docker Image Suggestion:
         table.table.table-hover
           thead
             th DockerHubImage
-            th Creator's Name
+            th Reason
+            th User's Name
             th Create / Delete
           tbody
-            if isAdmin
-              tr
-                td
-                  input.dockerImage
-                td
-                  p {{user.profile.name}}    
-                td
-                  input.createBt.btn.btn-default(value="Create")
+            tr
+              td
+                input.dockerImage
+              td
+                input.dockerImageReason
+              td
+                p {{user.profile.name}}    
+              td
+                input.suggestBt.btn.btn-default(value="Suggest")
 
+  
+template(name="dockerLists")
+  .container
+    .row.clearfix
+      .col-md-12.column
+        h2 Docker Images:
+        table.table.table-hover
+          thead
+            th DockerHubImage
+            th Suggester's Name
+            th OK / Proccessing
+          tbody
+            tr
+              td
+                input.dockerImage
+              td
+                p {{user.profile.name}}    
+              td
+                input.suggestBt.btn.btn-default(value="Suggest")
+
+template(name="dockers")
+  hr
+  +dockerLists
+  hr
+  +dockerSuggestion
+  hr
+  
             
 
 
@@ -218,7 +248,7 @@ template(name="course")
 
         hr
         h2 Reference: 
-        iframe#slides(src="{{course.slides}}", width="100%", height="550px", scrolling="auto")
+        iframe#slides(src="{{course.slides}}", width="100%", height="750px", scrolling="auto")
       
       .col-md-2.column
         +chatroom
