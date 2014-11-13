@@ -304,7 +304,7 @@ if Meteor.isServer
 
 
   @basePort = 8000
-  @allowImages = ["c3h3/oblas-py278-shogun-ipynb", "c3h3/learning-shogun", "rocker/rstudio", "c3h3/dsc2014tutorial","c3h3/livehouse20141105"]
+  @allowImages = ["c3h3/oblas-py278-shogun-ipynb", "c3h3/learning-shogun", "rocker/rstudio", "c3h3/dsc2014tutorial","c3h3/livehouse20141105", "c3h3/ml-for-hackers"]
   
 
   Meteor.publish "dockers", ->
@@ -393,6 +393,8 @@ if Meteor.isServer
         imageTag = "dsc2014tutorial"
       else if baseImage is "c3h3/livehouse20141105"
         imageTag = "livehouse20141105"
+      else if baseImage is "c3h3/ml-for-hackers"
+        imageTag = "ml-for-hackers"
 
       dockerData = 
         userId: user._id
@@ -416,7 +418,7 @@ if Meteor.isServer
           if imageTag in ["ipynb","shogun","livehouse20141105"]
             portBind = 
               "8888/tcp": [{"HostPort": fport}] 
-          else if imageTag in ["rstudio", "dsc2014tutorial"]
+          else if imageTag in ["rstudio", "dsc2014tutorial", "ml-for-hackers"]
             portBind = 
               "8787/tcp": [{"HostPort": fport}] 
           
@@ -459,6 +461,8 @@ if Meteor.isServer
         imageTag = "dsc2014tutorial"
       else if baseImage is "c3h3/livehouse20141105"
         imageTag = "livehouse20141105"
+      else if baseImage is "c3h3/ml-for-hackers"
+        imageTag = "ml-for-hackers"
 
 
       dockerData = 
@@ -483,7 +487,7 @@ if Meteor.isServer
           if imageTag in ["ipynb","shogun", "livehouse20141105"]
             portBind = 
               "8888/tcp": [{"HostPort": fport}] 
-          else if imageTag in ["rstudio", "dsc2014tutorial"]
+          else if imageTag in ["rstudio", "dsc2014tutorial", "ml-for-hackers"]
             portBind = 
               "8787/tcp": [{"HostPort": fport}] 
           
