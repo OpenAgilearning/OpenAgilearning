@@ -1,0 +1,1 @@
+@Roles = new Meteor.Collection "roles"

@@ -1,15 +1,6 @@
 
 @rootURL = "0.0.0.0"
 
-@Courses = new Meteor.Collection "courses"
-
-@Dockers = new Meteor.Collection "dockers"
-@DockerImages = new Meteor.Collection "dockerImages"
-@Roles = new Meteor.Collection "roles"
-@Chat = new Meteor.Collection "chat"
-@TryDockers = new Meteor.Collection "tryDockers"
-
-
 
 @courseCreator = ["W8ry5vcMNY2GhukHA","JESWJnrYeBvB35brZ"]
 
@@ -287,8 +278,6 @@ if Meteor.isClient
 
 if Meteor.isServer
 
-  if Roles.find().count() is 0
-    Roles.insert {userId:uid, role:"admin"} for uid in courseCreator
 
   if Chat.find({courseId:"ipynbBasic"}).count() is 0
     Chat.insert {userId:"systemTest",userName:"systemTest",courseId:"ipynbBasic", msg:"Hello, ipynbBasic", createAt:new Date}
