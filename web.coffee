@@ -7,6 +7,8 @@
 @DockerImages = new Meteor.Collection "dockerImages"
 @Roles = new Meteor.Collection "roles"
 @Chat = new Meteor.Collection "chat"
+@TryDockers = new Meteor.Collection "tryDockers"
+
 
 
 @courseCreator = ["W8ry5vcMNY2GhukHA","JESWJnrYeBvB35brZ"]
@@ -370,6 +372,57 @@ if Meteor.isServer
     #       console.log c
     #       Dockers.update {name:c.Names[0].replace("/","")}, {$set:{containerId:c.Id}} 
 
+    "createContainer": -> 
+      user = Meteor.user()
+      if not user
+        throw new Meteor.Error(401, "You need to login")
+
+      Docker = Meteor.npmRequire "dockerode"
+      docker = new Docker {socketPath: '/var/run/docker.sock'}
+      fport = "8080"
+
+      containerData = 
+        Cpuset: "0,1"
+        CpuShares: 512
+        Memory:512000000
+        MemorySwap:-1
+        Image: "c3h3/ml-for-hackers"
+        name: "tryml"
+        Env:["USER=c3h3","PASSWORD=c3h33211"]
+        HostConfig:
+          PortBindings:
+            "8787/tcp":[{"HostPort": fport}] 
+
+      
+      Future = Npm.require 'fibers/future'
+      createFuture = new Future
+
+      docker.createContainer containerData, (err, container) -> 
+        console.log "[inside] container = "
+        console.log container
+        createFuture.return container
+
+      container = createFuture.wait()
+      console.log "[outside] contaner = "
+      console.log container
+
+      dockerData = 
+        userId: user._id
+        baseImage: containerData.Image
+        containerInfo: containerData
+        containerId: container.id
+
+      console.log "[outside] dockerData = "
+      console.log dockerData
+
+      TryDockers.insert dockerData
+
+      cont = docker.getContainer container.id
+      cont.start {}, (err, data) -> 
+        console.log "data = ",
+        console.log data
+      
+
 
     "getDockers": (baseImage) -> 
       user = Meteor.user()
@@ -412,9 +465,17 @@ if Meteor.isServer
       if Dockers.find(dockerQuery).count() is 0
         console.log "create new docker instance"
 
-        Dockers.insert dockerData
+        # Dockers.insert dockerData
+
+        Future = Npm.require 'fibers/future'
+        F1 = new Future
 
         docker.createContainer {Image: dockerData.baseImage, name:dockerData.name}, (err, container) ->
+
+          console.log "[inside] container = "
+          console.log container
+                    
+
           if imageTag in ["ipynb","shogun","livehouse20141105"]
             portBind = 
               "8888/tcp": [{"HostPort": fport}] 
@@ -422,11 +483,27 @@ if Meteor.isServer
             portBind = 
               "8787/tcp": [{"HostPort": fport}] 
           
-            
-          container.start {"PortBindings": portBind}, (err, data) -> 
+          F2 = new Future
+
+          container.start {"PortBindings": portBind}, (err, data) => 
             console.log "data = "
             console.log data
+            console.log "this = "
+            console.log @
+            F2.return {}
 
+          F2.wait()
+          F1.return container
+
+        container = F1.wait()
+        console.log "[outside] container = "
+        console.log container
+          
+        dockerData.cid = container.id
+        console.log "[outside] dockerData = "
+        console.log dockerData
+
+        # Dockers.insert dockerData
 
       else
         console.log "docker is created"
@@ -481,9 +558,23 @@ if Meteor.isServer
       if Dockers.find(dockerQuery).count() is 0
         console.log "create new docker instance"
 
-        Dockers.insert dockerData
+        # Dockers.insert dockerData
+
+        # Future = Npm.require 'fibers/future'
+        # myFuture = new Future
 
         docker.createContainer {Image: dockerData.baseImage, name:dockerData.name}, (err, container) ->
+          
+          console.log "[inside] container = "
+          console.log container
+          dockerData.cid = container.id
+
+          console.log "[inside] dockerData = "
+          console.log dockerData
+
+          Dockers.insert dockerData
+
+
           if imageTag in ["ipynb","shogun", "livehouse20141105"]
             portBind = 
               "8888/tcp": [{"HostPort": fport}] 
@@ -493,8 +584,18 @@ if Meteor.isServer
           
             
           container.start {"PortBindings": portBind}, (err, data) -> 
+            console.log "this = "
+            console.log @
+
             console.log "data = "
             console.log data
+
+
+        #   myFuture.return container
+
+        # container = myFuture.wait()
+        # console.log "[outside]container = "
+        # console.log container
 
 
       else
