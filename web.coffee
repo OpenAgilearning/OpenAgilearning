@@ -66,23 +66,22 @@ Meteor.startup ->
         user: ->
           Meteor.user()
 
-        isAdmin: ->
-          Session.get("isAdmin")
-
         dockerImages: ->
           DockerImages.find()
         
+        dockerInstances: ->
+          DockerInstances.find()
+        
+
         dockerTypes: ->
           DockerTypes.find()
 
       waitOn: ->
         Meteor.subscribe "allDockerImages"
         Meteor.subscribe "allDockerTypes"
+        Meteor.subscribe "userDockerInstances"
 
-        Meteor.call "checkIsAdmin", (err, data)->
-          if not err
-            Session.set "isAdmin", data
-
+        
     @route "dockerSetConfig",
       path: "dockerSetConfig/:dockerType"
       template: "dockerSetConfig"
@@ -252,6 +251,38 @@ if Meteor.isClient
 
           Router.go "dockers"
 
+  Template.dockerInstancesList.rendered = () ->
+    $(".iframeBlock").hide()
+
+  Template.dockerInstancesList.events
+    "click a.showInstance": (e, t)->
+      e.stopPropagation()
+      servicePort = $(e.target).attr "servicePort"
+      $(".iframeBlock").show()
+      iframeURL = "http://"+rootURL+":"+servicePort
+      Session.set "iframeURL",iframeURL
+      $("iframe#docker").attr "src", iframeURL
+    
+    "click a.hideInstance": (e, t)->
+      e.stopPropagation()
+      $(".iframeBlock").hide()
+
+    "click a.reconnectInstance": (e, t)->
+      servicePort = $(e.target).attr "servicePort"
+      iframeURL = Session.get "iframeURL"
+      $("iframe#docker").attr "src", iframeURL
+    
+
+  Template.dockerImagesList.events
+    "click a.runInstance": (e, t)->
+      e.stopPropagation()
+      imageId = $(e.target).attr "imageId"
+
+      Meteor.call "runDocker", imageId, (err, res)->
+        if not err
+          console.log "res = "
+          console.log res
+    
         
 
   Template.course.events
@@ -318,20 +349,13 @@ if Meteor.isClient
 
 if Meteor.isServer
 
-
   @basePort = 8000
   @topPort = 9000
 
   @getFreePort = ->
     ports = [basePort..topPort].map String
-    # console.log "ports = "
-    # console.log ports
     filterPorts = DockerInstances.find().fetch().map (x)-> x.servicePort
-    # console.log "filterPorts = "
-    # console.log filterPorts
     filteredPorts = ports.filter (x) -> x not in filterPorts
-    # console.log "filteredPorts = "
-    # console.log filteredPorts
     filteredPorts[0]
     # FIXME: if there is no port !
     # if filteredPosts.length > 0
@@ -339,9 +363,6 @@ if Meteor.isServer
     # else
     #   throw new Meteor.Error(1101, "No Remainder Ports")
     
-  # console.log "try getFreePort() = "
-  # console.log getFreePort()
-
   @allowImages = ["c3h3/oblas-py278-shogun-ipynb", "c3h3/learning-shogun", "rocker/rstudio", "c3h3/dsc2014tutorial","c3h3/livehouse20141105", "c3h3/ml-for-hackers"]
   
 
@@ -352,6 +373,8 @@ if Meteor.isServer
       throw new Meteor.Error(401, "You need to login")
     
     Dockers.findOnd userId:userId 
+
+
 
   Meteor.publish "allDockerImages", ->
     # TODO: different roles can access different images ...
@@ -370,6 +393,13 @@ if Meteor.isServer
       throw new Meteor.Error(401, "You need to login")
     
     Dockers.find userId:userId 
+  
+
+  Meteor.publish "userDockerInstances", ->
+    userId = @userId
+
+    if userId
+      DockerInstances.find {userId:userId}
   
     
   Meteor.publish "allCourses", ->
@@ -390,7 +420,7 @@ if Meteor.isServer
 
       # TODO: different roles can access different images ...
 
-      if DockerInstances.find({userId:user._id,imageId:imageId, runningStatus: "running"}).count() is 0
+      if DockerInstances.find({userId:user._id,imageId:imageId}).count() is 0
         
         dockerLimit = DockerLimits.findOne _id:"defaultLimit"
         
@@ -451,7 +481,8 @@ if Meteor.isServer
           containerInfo: containerData
           containerId: container.id
           servicePort: fport
-          runningStatus: "running"
+          imageType:imageType
+          
 
         console.log "[outside] dockerData = "
         console.log dockerData

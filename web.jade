@@ -216,11 +216,52 @@ template(name="dockerImagesList")
             each dockerImages
               tr
                 td
-                  a.runService.btn.btn-default(href="#") Run Service
+                  a.runInstance.btn.btn-default(href="#",imageId="{{_id}}") Run Instance
                 td
                   p {{_id}}
                 td
                   p {{type}}    
+
+
+template(name="dockerInstancesList")
+  .container
+    .row.clearfix
+      .col-md-12.column
+        .iframeBlock
+          a.hideInstance.btn.btn-default(href="#") Hide Instance
+          a.reconnectInstance.btn.btn-default(href="#") Reconnect Instance
+          iframe#docker(src="", width="100%", height="550px", scrolling="yes")
+        .instancesBlock
+          h2 Docker Instances:
+          table.table.table-hover
+            thead
+              th
+              th DockerImage
+              th Type
+              th Service Port
+            tbody
+              each dockerInstances
+                tr
+                  td
+                    a.stopInstance.btn.btn-default(href="#") Stop Instance
+                  td
+                    p {{imageId}}
+                  td
+                    p {{imageType}}    
+                  td
+                    a.showInstance.btn.btn-default(href="#",servicePort="{{servicePort}}") Show Instance
+
+
+
+template(name="dockers")
+  hr
+  +dockerInstancesList
+  hr
+  +dockerRunningConfig
+  hr
+  +dockerImagesList
+  hr
+
 
 
 template(name="dockerRunningConfig")
@@ -262,20 +303,10 @@ template(name="dockerSetConfig")
                 td
                   input.envVar(var="{{var}}")
 
-        input.submitENV.btn.btn-default(value="Submit Setting")        
+        input.submitENV.btn.btn-default(value="Submit")        
 
 
               
-template(name="dockers")
-  hr
-  +dockerRunningConfig
-  hr
-  +dockerImagesList
-  hr
-  //- +dockerLists
-  //- hr
-  //- +dockerSuggestion
-  //- hr
 
 template(name="course")
   .container
