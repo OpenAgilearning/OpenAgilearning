@@ -13,7 +13,7 @@ if Meteor.isClient
       $("#docker").attr 'src', ""
 
       docker = Session.get "docker"
-      url = "http://"+rootURL+":"+docker.port
+      url = "http://"+rootURL+":"+docker.servicePort
       
       $("#docker").attr 'src', url
 
