@@ -269,7 +269,7 @@ if Meteor.isServer
         startFuture = new Future
 
         startOpt = {}
-        startOpt.PortBindings = containerData.HostConfig.PortBindings
+        # startOpt.PortBindings = containerData.HostConfig.PortBindings
         
         cont = docker.getContainer container.id
         cont.start startOpt, (err, data) -> 
@@ -372,7 +372,6 @@ if Meteor.isServer
         Cpuset: "0,1"
         CpuShares: 512
         Memory:512000000
-        MemorySwap:-1
         Image: "c3h3/ml-for-hackers"
         name: "tryml"
         Env:["USER=c3h3","PASSWORD=c3h33211"]

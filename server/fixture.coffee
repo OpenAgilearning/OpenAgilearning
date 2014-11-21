@@ -22,7 +22,6 @@ if DockerLimits.find().count() is 0
       Cpuset: "0,1"
       CpuShares: 512
       Memory:512000000
-      MemorySwap:-1
       
   DockerLimits.insert dockerDefaultLimit
 
