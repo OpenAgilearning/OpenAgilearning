@@ -74,12 +74,25 @@ Meteor.startup ->
         
 
         dockerTypes: ->
-          DockerTypes.find()
+          user = Meteor.user()
+          if Meteor.user() and DockerTypeConfig.find({userId:user._id}).count() > 0
+
+            res = []
+            for t in DockerTypes.find().fetch()
+              if DockerTypeConfig.find({userId:user._id,typeId:t._id}).count() > 0
+                t.currentSettings = DockerTypeConfig.findOne({userId:user._id,typeId:t._id}).env
+              res.push t
+
+            res 
+
+          else
+            DockerTypes.find()
 
       waitOn: ->
         Meteor.subscribe "allDockerImages"
         Meteor.subscribe "allDockerTypes"
         Meteor.subscribe "userDockerInstances"
+        Meteor.subscribe "userDockerTypeConfig"
 
         
     @route "dockerSetConfig",
@@ -95,6 +108,7 @@ Meteor.startup ->
         dockerType = @params.dockerType
         Session.set "dockerType", dockerType
         Meteor.subscribe "oneDockerTypes", dockerType
+        Meteor.subscribe "userDockerTypeConfig"
 
 
     @route "courses",
@@ -272,6 +286,12 @@ if Meteor.isClient
       iframeURL = Session.get "iframeURL"
       $("iframe#docker").attr "src", iframeURL
     
+    "click a.stopInstance": (e, t)->
+      containerId = $(e.target).attr "containerId"
+      Meteor.call "removeDocker", containerId, (err, res)->
+        if not err
+          console.log "res = "
+          console.log res
 
   Template.dockerImagesList.events
     "click a.runInstance": (e, t)->
@@ -400,7 +420,13 @@ if Meteor.isServer
 
     if userId
       DockerInstances.find {userId:userId}
-  
+
+  Meteor.publish "userDockerTypeConfig", ->
+    userId = @userId
+
+    if userId
+      DockerTypeConfig.find {userId:userId}
+
     
   Meteor.publish "allCourses", ->
     Courses.find()
@@ -410,7 +436,56 @@ if Meteor.isServer
 
 
   Meteor.methods
+    "removeDocker": (containerId)-> 
+      user = Meteor.user()
+      if not user
+        throw new Meteor.Error(401, "You need to login")
+
+      if DockerInstances.find({userId:user._id,containerId:containerId}).count() is 0
+        throw new Meteor.Error(1101, "User is not the instance owner!")
+      else
+        Docker = Meteor.npmRequire "dockerode"
+        docker = new Docker {socketPath: '/var/run/docker.sock'}
+        
+        Future = Npm.require 'fibers/future'
+        
+        stopFuture = new Future
+        container = docker.getContainer containerId
+
+        container.stop {}, (err,data)->
+          console.log "[inside container.stop] data = "
+          console.log data
+          stopFuture.return data
+
+        data = stopFuture.wait()
+        console.log "[outside container.stop] data = "
+        console.log data
+
+        removeFuture = new Future
+        container = docker.getContainer containerId
+
+        container.remove {}, (err,data)->
+          console.log "[inside container.stop] data = "
+          console.log data
+          removeFuture.return data
+
+        data = removeFuture.wait()
+        console.log "[outside container.stop] data = "
+        console.log data
+
+
+        Alldata = DockerInstances.find({userId:user._id,containerId:containerId}).fetch()
+        DockerInstances.remove {userId:user._id,containerId:containerId}
+
+        for x in Alldata
+          x.remoteAt = new Date
+          DockerInstancesLog.insert x
+
+        
+
+
     "runDocker": (imageId)-> 
+
       user = Meteor.user()
       if not user
         throw new Meteor.Error(401, "You need to login")
@@ -475,6 +550,16 @@ if Meteor.isServer
         console.log "[outside] contaner = "
         console.log container
 
+        startFuture = new Future
+
+        cont = docker.getContainer container.id
+        cont.start {}, (err, data) -> 
+          console.log "data = ",
+          console.log data
+          startFuture.return data
+
+        data = startFuture.wait()
+
         dockerData = 
           userId: user._id
           imageId: containerData.Image
@@ -482,17 +567,14 @@ if Meteor.isServer
           containerId: container.id
           servicePort: fport
           imageType:imageType
-          
+          createAt: new Date
 
         console.log "[outside] dockerData = "
         console.log dockerData
 
         DockerInstances.insert dockerData
 
-        cont = docker.getContainer container.id
-        cont.start {}, (err, data) -> 
-          console.log "data = ",
-          console.log data
+
 
 
     "setENV": (typeId, envData) ->

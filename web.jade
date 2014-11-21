@@ -228,8 +228,8 @@ template(name="dockerInstancesList")
     .row.clearfix
       .col-md-12.column
         .iframeBlock
-          a.hideInstance.btn.btn-default(href="#") Hide Instance
-          a.reconnectInstance.btn.btn-default(href="#") Reconnect Instance
+          a.hideInstance.btn.btn-default Hide Instance
+          a.reconnectInstance.btn.btn-default Reconnect Instance
           iframe#docker(src="", width="100%", height="550px", scrolling="yes")
         .instancesBlock
           h2 Docker Instances:
@@ -238,30 +238,23 @@ template(name="dockerInstancesList")
               th
               th DockerImage
               th Type
-              th Service Port
+              th ENV
+              th Show Instance
             tbody
               each dockerInstances
                 tr
                   td
-                    a.stopInstance.btn.btn-default(href="#") Stop Instance
+                    a.stopInstance.btn.btn-default(containerId="{{containerId}}") Stop Instance
                   td
                     p {{imageId}}
                   td
                     p {{imageType}}    
                   td
-                    a.showInstance.btn.btn-default(href="#",servicePort="{{servicePort}}") Show Instance
-
-
-
-template(name="dockers")
-  hr
-  +dockerInstancesList
-  hr
-  +dockerRunningConfig
-  hr
-  +dockerImagesList
-  hr
-
+                    ul 
+                      each containerInfo.Env
+                        li {{this}}
+                  td
+                    a.showInstance.btn.btn-default(servicePort="{{servicePort}}") Show Instance
 
 
 template(name="dockerRunningConfig")
@@ -274,6 +267,7 @@ template(name="dockerRunningConfig")
             th
             th Type
             th ENV
+            th Current Settings
           tbody
             each dockerTypes
               tr
@@ -283,7 +277,23 @@ template(name="dockerRunningConfig")
                   p {{_id}}
                 td
                   p {{env}} 
+                td
+                  if currentSettings
+                    ul 
+                      each currentSettings
+                        li {{this}}
+                  else  
+                    p Please Setting ENV
 
+
+template(name="dockers")
+  hr
+  +dockerInstancesList
+  hr
+  +dockerRunningConfig
+  hr
+  +dockerImagesList
+  hr
 
 
 template(name="dockerSetConfig")
@@ -295,6 +305,8 @@ template(name="dockerSetConfig")
           thead
             th ENV
             th VALUE
+            //- TODO: display current value
+            //- th Current Value
           tbody
             each env
               tr
@@ -302,6 +314,9 @@ template(name="dockerSetConfig")
                   p {{var}}
                 td
                   input.envVar(var="{{var}}")
+                //- TODO: display current value
+                //- td
+
 
         input.submitENV.btn.btn-default(value="Submit")        
 

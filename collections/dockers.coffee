@@ -13,3 +13,4 @@
 
 @DockerTypeConfig = new Meteor.Collection "dockerTypeConfig"
 @DockerInstances = new Meteor.Collection "dockerInstances"
+@DockerInstancesLog = new Meteor.Collection "dockerInstancesLog"
