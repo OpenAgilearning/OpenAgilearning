@@ -318,8 +318,13 @@ if Meteor.isClient
 
 if Meteor.isServer
 
-
   @basePort = 8000
+  @topPort = 9000
+
+  @getFreePort = ->
+    ports = [basePort..topPort]
+    String(8080)
+
   @allowImages = ["c3h3/oblas-py278-shogun-ipynb", "c3h3/learning-shogun", "rocker/rstudio", "c3h3/dsc2014tutorial","c3h3/livehouse20141105", "c3h3/ml-for-hackers"]
   
 
@@ -357,6 +362,87 @@ if Meteor.isServer
 
 
   Meteor.methods
+    "runDocker": (imageId)-> 
+      user = Meteor.user()
+      if not user
+        throw new Meteor.Error(401, "You need to login")
+
+      if DockerImages.find({_id:imageId}).count() is 0
+        throw new Meteor.Error(1001, "Docker Image ID Error!")
+
+      if DockerInstances.find({userId:user._id,imageId:imageId, runningStatus: "running"}).count() is 0
+        
+        dockerLimit = DockerLimits.findOne _id:"defaultLimit"
+        
+        console.log "[in createContainer] dockerLimit = "
+        console.log dockerLimit
+
+        Docker = Meteor.npmRequire "dockerode"
+        docker = new Docker {socketPath: '/var/run/docker.sock'}
+        fport = getFreePort()
+
+        imageType = DockerImages.findOne({_id:imageId}).type 
+
+        containerData = dockerLimit.limit
+        containerData.Image = imageId
+
+        if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() > 0
+          config = DockerTypeConfig.findOne({userId:user._id,typeId:imageType})
+          containerData.Env = config.env
+
+        servicePort = DockerTypes.findOne({_id:imageType}).servicePort
+
+        # console.log "[before1] containerData = "
+        # console.log containerData
+        # console.log typeof containerData
+        
+        # outPort = [{"HostPort": fport}]        
+
+        # console.log "[before1] outPort = "
+        # console.log outPort
+        
+        # console.log "[before1] servicePort = "
+        # console.log servicePort
+        # console.log typeof servicePort
+        
+        containerData.HostConfig = {}
+        containerData.HostConfig.PortBindings = {}
+        containerData.HostConfig.PortBindings[servicePort] = [{"HostPort": fport}] 
+
+
+        console.log "[before2] containerData = "
+        console.log containerData
+          
+        Future = Npm.require 'fibers/future'
+        createFuture = new Future
+
+        docker.createContainer containerData, (err, container) -> 
+          console.log "[inside] container = "
+          console.log container
+          createFuture.return container
+
+        container = createFuture.wait()
+        console.log "[outside] contaner = "
+        console.log container
+
+        dockerData = 
+          userId: user._id
+          imageId: containerData.Image
+          containerInfo: containerData
+          containerId: container.id
+          runningStatus: "running"
+
+        console.log "[outside] dockerData = "
+        console.log dockerData
+
+        DockerInstances.insert dockerData
+
+        cont = docker.getContainer container.id
+        cont.start {}, (err, data) -> 
+          console.log "data = ",
+          console.log data
+
+
     "setENV": (typeId, envData) ->
       user = Meteor.user()
       if not user

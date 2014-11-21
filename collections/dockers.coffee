@@ -12,3 +12,4 @@
 @DockerServices = new Meteor.Collection "dockerServices"
 
 @DockerTypeConfig = new Meteor.Collection "dockerTypeConfig"
+@DockerInstances = new Meteor.Collection "dockerInstances"
