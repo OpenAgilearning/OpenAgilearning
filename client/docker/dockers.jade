@@ -1,0 +1,145 @@
+
+
+template(name="dockerSuggestion")
+  .container
+    .row.clearfix
+      .col-md-12.column
+        h2 Docker Image Suggestion:
+        table.table.table-hover
+          thead
+            th DockerHubImage
+            th Reason
+            th User's Name
+            th Create / Delete
+          tbody
+            tr
+              td
+                input.dockerImage
+              td
+                input.dockerImageReason
+              td
+                p {{user.profile.name}}    
+              td
+                input.suggestBt.btn.btn-default(value="Suggest")
+
+  
+template(name="dockerImagesList")
+  .container
+    .row.clearfix
+      .col-md-12.column
+        h2 Docker Images:
+        table.table.table-hover
+          thead
+            th
+            th DockerHubImage
+            th Type
+          tbody
+            each dockerImages
+              tr
+                td
+                  a.runInstance.btn.btn-default(href="#",imageId="{{_id}}") Run Instance
+                td
+                  p {{_id}}
+                td
+                  p {{type}}    
+
+
+template(name="dockerInstancesList")
+  .container
+    .row.clearfix
+      .col-md-12.column
+        .iframeBlock
+          a.hideInstance.btn.btn-default Hide Instance
+          a.reconnectInstance.btn.btn-default Reconnect Instance
+          iframe#docker(src="", width="100%", height="550px", scrolling="yes")
+        .instancesBlock
+          h2 Docker Instances:
+          table.table.table-hover
+            thead
+              th
+              th DockerImage
+              th Type
+              th ENV
+              th Show Instance
+            tbody
+              each dockerInstances
+                tr
+                  td
+                    a.stopInstance.btn.btn-default(containerId="{{containerId}}") Stop Instance
+                  td
+                    p {{imageId}}
+                  td
+                    p {{imageType}}    
+                  td
+                    ul 
+                      each containerInfo.Env
+                        li {{this}}
+                  td
+                    a.showInstance.btn.btn-default(servicePort="{{servicePort}}") Show Instance
+
+
+template(name="dockerRunningConfig")
+  .container
+    .row.clearfix
+      .col-md-12.column
+        h2 Docker Running Configures:
+        table.table.table-hover
+          thead
+            th
+            th Type
+            th ENV
+            th Current Settings
+          tbody
+            each dockerTypes
+              tr
+                td
+                  a.setConfing.btn.btn-default(href="{{pathFor 'dockerSetConfig' dockerType=_id}}") Set Configurations
+                td
+                  p {{_id}}
+                td
+                  p {{env}} 
+                td
+                  if currentSettings
+                    ul 
+                      each currentSettings
+                        li {{this}}
+                  else  
+                    p Please Setting ENV
+
+
+template(name="dockers")
+  hr
+  +dockerInstancesList
+  hr
+  +dockerRunningConfig
+  hr
+  +dockerImagesList
+  hr
+
+
+template(name="dockerSetConfig")
+  .container
+    .row.clearfix
+      .col-md-12.column
+        h2 Docker Set Configures:
+        table.table.table-hover
+          thead
+            th ENV
+            th VALUE
+            //- TODO: display current value
+            //- th Current Value
+          tbody
+            each env
+              tr
+                td
+                  p {{var}}
+                td
+                  input.envVar(var="{{var}}")
+                //- TODO: display current value
+                //- td
+
+
+        input.submitENV.btn.btn-default(value="Submit")        
+
+
+              
