@@ -202,37 +202,80 @@ template(name="dockerSuggestion")
                 input.suggestBt.btn.btn-default(value="Suggest")
 
   
-template(name="dockerLists")
+template(name="dockerImagesList")
   .container
     .row.clearfix
       .col-md-12.column
         h2 Docker Images:
         table.table.table-hover
           thead
+            th
             th DockerHubImage
-            th Suggester's Name
-            th OK / Proccessing
+            th Type
           tbody
-            tr
-              td
-                input.dockerImage
-              td
-                p {{user.profile.name}}    
-              td
-                input.suggestBt.btn.btn-default(value="Suggest")
+            each dockerImages
+              tr
+                td
+                  a.runService.btn.btn-default(href="#") Run Service
+                td
+                  p {{_id}}
+                td
+                  p {{type}}    
 
+
+template(name="dockerRunningConfig")
+  .container
+    .row.clearfix
+      .col-md-12.column
+        h2 Docker Running Configures:
+        table.table.table-hover
+          thead
+            th
+            th Type
+            th ENV
+          tbody
+            each dockerTypes
+              tr
+                td
+                  a.setConfing.btn.btn-default(href="{{pathFor 'dockerSetConfig' dockerType=_id}}") Set Configurations
+                td
+                  p {{_id}}
+                td
+                  p {{env}} 
+
+
+
+template(name="dockerSetConfig")
+  .container
+    .row.clearfix
+      .col-md-12.column
+        h2 Docker Set Configures:
+        table.table.table-hover
+          thead
+            th ENV
+            th VALUE
+          tbody
+            each env
+              tr
+                td
+                  p {{var}}
+                td
+                  input.envVar(var="{{var}}")
+
+        input.submitENV.btn.btn-default(value="Submit Setting")        
+
+
+              
 template(name="dockers")
   hr
-  +dockerLists
+  +dockerRunningConfig
   hr
-  +dockerSuggestion
+  +dockerImagesList
   hr
-  
-            
-
-
-
-
+  //- +dockerLists
+  //- hr
+  //- +dockerSuggestion
+  //- hr
 
 template(name="course")
   .container

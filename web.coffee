@@ -1,7 +1,6 @@
 
 @rootURL = "0.0.0.0"
 
-
 @courseCreator = ["W8ry5vcMNY2GhukHA","JESWJnrYeBvB35brZ"]
 
 Router.configure
@@ -69,11 +68,34 @@ Meteor.startup ->
 
         isAdmin: ->
           Session.get("isAdmin")
-      
+
+        dockerImages: ->
+          DockerImages.find()
+        
+        dockerTypes: ->
+          DockerTypes.find()
+
       waitOn: ->
+        Meteor.subscribe "allDockerImages"
+        Meteor.subscribe "allDockerTypes"
+
         Meteor.call "checkIsAdmin", (err, data)->
           if not err
             Session.set "isAdmin", data
+
+    @route "dockerSetConfig",
+      path: "dockerSetConfig/:dockerType"
+      template: "dockerSetConfig"
+      data:
+        dockerTypes: ->
+          DockerTypes.find()
+        env: ->
+          DockerTypes.findOne().env.map (x) -> {var:x}
+
+      waitOn: ->
+        dockerType = @params.dockerType
+        Session.set "dockerType", dockerType
+        Meteor.subscribe "oneDockerTypes", dockerType
 
 
     @route "courses",
@@ -214,6 +236,24 @@ Meteor.startup ->
 
 
 if Meteor.isClient
+  Template.dockerSetConfig.events
+    "click .submitENV": (e, t)->
+      envData = {}
+
+      $(".envVar").map ->
+        envData[$(@).attr("var")]=$(@).val()
+
+      console.log envData
+      dockerType = Session.get "dockerType"
+      Meteor.call "setENV", dockerType, envData, (err, data)->
+        if not err
+          console.log "data = "
+          console.log data
+
+          Router.go "dockers"
+
+        
+
   Template.course.events
     "click .connectBt": (e, t)->
       e.stopPropagation()
@@ -279,21 +319,6 @@ if Meteor.isClient
 if Meteor.isServer
 
 
-  if Chat.find({courseId:"ipynbBasic"}).count() is 0
-    Chat.insert {userId:"systemTest",userName:"systemTest",courseId:"ipynbBasic", msg:"Hello, ipynbBasic", createAt:new Date}
-
-  if Chat.find({courseId:"rstudioBasic"}).count() is 0
-    Chat.insert {userId:"systemTest",userName:"systemTest",courseId:"rstudioBasic", msg:"Hello, rstudioBasic", createAt:new Date}
-
-  if Chat.find({courseId:"wishFeatures"}).count() is 0
-    Chat.insert {userId:"systemTest",userName:"systemTest",courseId:"wishFeatures", msg:"Hello, wishFeatures", createAt:new Date}
-
-
-  for oneCourse in Courses.find({}, {_id:1}).fetch()
-    if Chat.find({courseId:oneCourse._id}).count() is 0
-      Chat.insert {userId:"systemTest",userName:"systemTest",courseId:oneCourse._id, msg:"Hello!", createAt:new Date}
-
-
   @basePort = 8000
   @allowImages = ["c3h3/oblas-py278-shogun-ipynb", "c3h3/learning-shogun", "rocker/rstudio", "c3h3/dsc2014tutorial","c3h3/livehouse20141105", "c3h3/ml-for-hackers"]
   
@@ -305,6 +330,24 @@ if Meteor.isServer
       throw new Meteor.Error(401, "You need to login")
     
     Dockers.findOnd userId:userId 
+
+  Meteor.publish "allDockerImages", ->
+    DockerImages.find()
+  
+  Meteor.publish "allDockerTypes", ->
+    DockerTypes.find()
+
+  Meteor.publish "oneDockerTypes", (typeId) ->
+    DockerTypes.find _id:typeId
+
+  Meteor.publish "userDockers", ->
+    userId = @userId()
+
+    if not userId
+      throw new Meteor.Error(401, "You need to login")
+    
+    Dockers.find userId:userId 
+  
     
   Meteor.publish "allCourses", ->
     Courses.find()
@@ -312,7 +355,19 @@ if Meteor.isServer
   Meteor.publish "Chat", (courseId) -> 
     Chat.find({courseId:courseId}, {sort: {createAt:-1}, limit:20})
 
+
   Meteor.methods
+    "setENV": (typeId, envData) ->
+      user = Meteor.user()
+      if not user
+        throw new Meteor.Error(401, "You need to login")
+      
+      dockerType = DockerTypes.findOne _id:typeId
+      typeFilter = dockerType.env
+      filteredEnvData = Object.keys(envData).filter((x) -> x in typeFilter).filter((x) -> envData[x] isnt "").map((x)-> x+"="+envData[x])
+
+      DockerTypeConfig.upsert {userId:user._id,typeId:typeId}, {$set:{env:filteredEnvData}}
+
     "postChat": (courseId, msg) ->
       user = Meteor.user()
       if not user
@@ -365,6 +420,10 @@ if Meteor.isServer
       user = Meteor.user()
       if not user
         throw new Meteor.Error(401, "You need to login")
+
+      dockerLimit = DockerLimits.findOne _id:"defaultLimit"
+      console.log "[in createContainer] dockerLimit = "
+      console.log dockerLimit
 
       Docker = Meteor.npmRequire "dockerode"
       docker = new Docker {socketPath: '/var/run/docker.sock'}

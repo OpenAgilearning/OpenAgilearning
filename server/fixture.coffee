@@ -1,3 +1,19 @@
+
+if Chat.find({courseId:"ipynbBasic"}).count() is 0
+  Chat.insert {userId:"systemTest",userName:"systemTest",courseId:"ipynbBasic", msg:"Hello, ipynbBasic", createAt:new Date}
+
+if Chat.find({courseId:"rstudioBasic"}).count() is 0
+  Chat.insert {userId:"systemTest",userName:"systemTest",courseId:"rstudioBasic", msg:"Hello, rstudioBasic", createAt:new Date}
+
+if Chat.find({courseId:"wishFeatures"}).count() is 0
+  Chat.insert {userId:"systemTest",userName:"systemTest",courseId:"wishFeatures", msg:"Hello, wishFeatures", createAt:new Date}
+
+
+for oneCourse in Courses.find({}, {_id:1}).fetch()
+  if Chat.find({courseId:oneCourse._id}).count() is 0
+    Chat.insert {userId:"systemTest",userName:"systemTest",courseId:oneCourse._id, msg:"Hello!", createAt:new Date}
+
+
 if DockerLimits.find().count() is 0
    
   dockerDefaultLimit = 
@@ -10,11 +26,11 @@ if DockerLimits.find().count() is 0
       
   DockerLimits.insert dockerDefaultLimit
 
-if DockerType.find({_id:"ipynb"}).count() is 0
-  DockerType.insert {_id:"ipynb", servicePort:"8888/tcp", env:["PASSWORD"]}
+if DockerTypes.find({_id:"ipynb"}).count() is 0
+  DockerTypes.insert {_id:"ipynb", servicePort:"8888/tcp", env:["PASSWORD"]}
 
-if DockerType.find({_id:"rstudio"}).count() is 0
-  DockerType.insert {_id:"rstudio", servicePort:"8787/tcp", env:["PASSWORD", "USER"]}
+if DockerTypes.find({_id:"rstudio"}).count() is 0
+  DockerTypes.insert {_id:"rstudio", servicePort:"8787/tcp", env:["USER", "PASSWORD"]}
 
 
 if Roles.find().count() is 0
@@ -22,12 +38,12 @@ if Roles.find().count() is 0
 
 if DockerImages.find().count() is 0
   dockerDefaultImages = [
-    {tag:"c3h3/oblas-py278-shogun-ipynb", type:"ipynb"},
-    {tag:"c3h3/learning-shogun", type:"ipynb"},
-    {tag:"rocker/rstudio", type:"rstudio"},
-    {tag:"c3h3/ml-for-hackers", type:"rstudio"},
-    {tag:"c3h3/dsc2014tutorial", type:"rstudio"},
-    {tag:"c3h3/livehouse20141105", type:"ipynb"},
+    {_id:"c3h3/oblas-py278-shogun-ipynb", type:"ipynb"},
+    {_id:"c3h3/learning-shogun", type:"ipynb"},
+    {_id:"rocker/rstudio", type:"rstudio"},
+    {_id:"c3h3/ml-for-hackers", type:"rstudio"},
+    {_id:"c3h3/dsc2014tutorial", type:"rstudio"},
+    {_id:"c3h3/livehouse20141105", type:"ipynb"},
   ]
   
   DockerImages.insert image for image in dockerDefaultImages

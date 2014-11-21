@@ -7,5 +7,8 @@
 @TryDockers = new Meteor.Collection "tryDockers"
 @DockerImagesInComputer = new Meteor.Collection "dockerImagesInComputer"
 @DockerImages = new Meteor.Collection "dockerImages"
-@DockerType = new Meteor.Collection "dockerType"
+@DockerTypes = new Meteor.Collection "dockerTypes"
 @DockerLimits = new Meteor.Collection "dockerLimits"
+@DockerServices = new Meteor.Collection "dockerServices"
+
+@DockerTypeConfig = new Meteor.Collection "dockerTypeConfig"
