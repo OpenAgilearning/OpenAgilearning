@@ -67,7 +67,8 @@ Meteor.startup ->
           Meteor.user()
 
         dockerImages: ->
-          DockerImages.find()
+          runningImages = DockerInstances.find().fetch().map (x)-> x.imageId
+          DockerImages.find({_id:{$nin:runningImages}})
         
         dockerInstances: ->
           DockerInstances.find()
