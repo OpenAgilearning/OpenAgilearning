@@ -4,30 +4,6 @@
 @courseCreator = ["W8ry5vcMNY2GhukHA","JESWJnrYeBvB35brZ"]
 
 
-if Meteor.isClient
-    
-  Template.chatroom.events
-    "change .postChatMsg": (e, t)->
-      e.stopPropagation()
-
-      courseId = Session.get "courseId"
-      msg = $(".postChatMsg").val()
-
-      $(".postChatMsg").val("")
-
-      Meteor.call "postChat", courseId, msg, (err, data) ->
-        if not err
-          console.log "data = "
-          console.log data
-
-          
-  # Template.shogunIndex.rendered = ->
-  #   ipynb = Session.get "ipynb"
-  #   console.log "ipynb = "
-  #   console.log ipynb 
-  #   console.log @data.ipynb()
-
-
 
 if Meteor.isServer
 

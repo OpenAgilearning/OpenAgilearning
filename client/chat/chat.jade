@@ -1,0 +1,13 @@
+
+template(name="chatroom")
+  .chatroom
+    h2 Discuss:
+    hr
+    input.postChatMsg(placeholder="Chat Message")
+    hr
+    each chats
+      p {{userName}}:
+      p {{msg}}
+      p(style="font-size:8px") {{createAt}}
+      hr
+        
