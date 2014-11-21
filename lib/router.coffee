@@ -139,7 +139,9 @@ Meteor.startup ->
           Courses.findOne _id: cid
 
         docker: ->
-          Session.get "docker"
+          courseId = Session.get "courseId"
+          course = Courses.findOne _id:courseId
+          DockerInstances.findOne({imageId:course.dockerImage})
 
         chats: ->
           Chat.find {}, {sort: {createAt:-1}}
@@ -158,9 +160,11 @@ Meteor.startup ->
 
         Meteor.call "getCourseDocker", @params.cid, (err, data)->
           if not err
-            Session.set "docker", data
+            console.log "data = "
+            console.log data
 
         Meteor.subscribe "Chat", @params.cid
+        Meteor.subscribe "userDockerInstances"
 
         
 
@@ -176,7 +180,10 @@ Meteor.startup ->
           Meteor.user()
 
         docker: ->
-          Session.get "docker"
+          courseId = Session.get "courseId"
+          course = Courses.findOne _id:courseId
+          Session.set "docker", DockerInstances.findOne({imageId:"c3h3/oblas-py278-shogun-ipynb"})
+          DockerInstances.findOne({imageId:"c3h3/oblas-py278-shogun-ipynb"})
 
         chats: ->
           Chat.find {}, {sort: {createAt:-1}}
@@ -189,13 +196,18 @@ Meteor.startup ->
         if not userId 
           Router.go "pleaseLogin"
 
-        Meteor.call "getDockers", "c3h3/oblas-py278-shogun-ipynb", (err, data)->
+        # Meteor.call "getDockers", "c3h3/oblas-py278-shogun-ipynb", (err, data)->
+        #   if not err
+        #     Session.set "docker", data
+        Meteor.call "runDocker", "c3h3/oblas-py278-shogun-ipynb", (err, data)->
           if not err
-            Session.set "docker", data
-
-        Meteor.subscribe "Chat", "ipynbBasic"
+            console.log "data = "
+            console.log data
 
         Session.set "courseId", "ipynbBasic"
+        
+        Meteor.subscribe "Chat", "ipynbBasic"
+        Meteor.subscribe "userDockerInstances"
 
 
 
@@ -210,8 +222,11 @@ Meteor.startup ->
           Meteor.user()
 
         docker: ->
-          Session.get "docker"
-
+          courseId = Session.get "courseId"
+          course = Courses.findOne _id:courseId
+          Session.set "docker", DockerInstances.findOne({imageId:"rocker/rstudio"})
+          DockerInstances.findOne({imageId:"rocker/rstudio"})
+          
         chats: ->
           Chat.find {}, {sort: {createAt:-1}}
 
@@ -223,14 +238,17 @@ Meteor.startup ->
         if not userId 
           Router.go "pleaseLogin"
 
-        Meteor.call "getDockers", "rocker/rstudio", (err, data)->
+        # Meteor.call "getDockers", "rocker/rstudio", (err, data)->
+        #   if not err
+        #     Session.set "docker", data
+        Meteor.call "runDocker", "rocker/rstudio", (err, data)->
           if not err
-            Session.set "docker", data
-
-        Meteor.subscribe "Chat", "rstudioBasic"
+            console.log "data = "
+            console.log data
 
         Session.set "courseId", "rstudioBasic"
-        # Meteor.call "updateDockers"
+        Meteor.subscribe "Chat", "rstudioBasic"
+        Meteor.subscribe "userDockerInstances"
 
     @route "pleaseLogin",
       path: "pleaseLogin/"
