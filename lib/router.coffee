@@ -141,6 +141,7 @@ Meteor.startup ->
         docker: ->
           courseId = Session.get "courseId"
           course = Courses.findOne _id:courseId
+          Session.set "docker", DockerInstances.findOne({imageId:course.dockerImage})
           DockerInstances.findOne({imageId:course.dockerImage})
 
         chats: ->
