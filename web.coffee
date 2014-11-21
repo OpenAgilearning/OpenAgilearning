@@ -318,12 +318,29 @@ if Meteor.isClient
 
 if Meteor.isServer
 
+
   @basePort = 8000
   @topPort = 9000
 
   @getFreePort = ->
-    ports = [basePort..topPort]
-    String(8080)
+    ports = [basePort..topPort].map String
+    # console.log "ports = "
+    # console.log ports
+    filterPorts = DockerInstances.find().fetch().map (x)-> x.servicePort
+    # console.log "filterPorts = "
+    # console.log filterPorts
+    filteredPorts = ports.filter (x) -> x not in filterPorts
+    # console.log "filteredPorts = "
+    # console.log filteredPorts
+    filteredPorts[0]
+    # FIXME: if there is no port !
+    # if filteredPosts.length > 0
+    #   filteredPosts[0]
+    # else
+    #   throw new Meteor.Error(1101, "No Remainder Ports")
+    
+  # console.log "try getFreePort() = "
+  # console.log getFreePort()
 
   @allowImages = ["c3h3/oblas-py278-shogun-ipynb", "c3h3/learning-shogun", "rocker/rstudio", "c3h3/dsc2014tutorial","c3h3/livehouse20141105", "c3h3/ml-for-hackers"]
   
@@ -337,6 +354,7 @@ if Meteor.isServer
     Dockers.findOnd userId:userId 
 
   Meteor.publish "allDockerImages", ->
+    # TODO: different roles can access different images ...
     DockerImages.find()
   
   Meteor.publish "allDockerTypes", ->
@@ -369,6 +387,8 @@ if Meteor.isServer
 
       if DockerImages.find({_id:imageId}).count() is 0
         throw new Meteor.Error(1001, "Docker Image ID Error!")
+
+      # TODO: different roles can access different images ...
 
       if DockerInstances.find({userId:user._id,imageId:imageId, runningStatus: "running"}).count() is 0
         
@@ -430,6 +450,7 @@ if Meteor.isServer
           imageId: containerData.Image
           containerInfo: containerData
           containerId: container.id
+          servicePort: fport
           runningStatus: "running"
 
         console.log "[outside] dockerData = "
