@@ -268,8 +268,11 @@ if Meteor.isServer
 
         startFuture = new Future
 
+        startOpt = {}
+        startOpt.PortBindings = containerData.HostConfig.PortBindings
+        
         cont = docker.getContainer container.id
-        cont.start {}, (err, data) -> 
+        cont.start startOpt, (err, data) -> 
           console.log "data = ",
           console.log data
           startFuture.return data
