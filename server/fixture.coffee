@@ -26,7 +26,7 @@ if DockerLimits.find().count() is 0
   DockerLimits.insert dockerDefaultLimit
 
 if DockerTypes.find({_id:"ipynb"}).count() is 0
-  DockerTypes.insert {_id:"ipynb", servicePort:"8888/tcp", env:["PASSWORD"]}
+  DockerTypes.insert {_id:"ipynb", servicePort:"8888/tcp", env:["PASSWORD","IPYNB_PROFILE"]}
 
 if DockerTypes.find({_id:"rstudio"}).count() is 0
   DockerTypes.insert {_id:"rstudio", servicePort:"8787/tcp", env:["USER", "PASSWORD"]}
@@ -43,6 +43,7 @@ if DockerImages.find().count() is 0
     {_id:"c3h3/ml-for-hackers", type:"rstudio"},
     {_id:"c3h3/dsc2014tutorial", type:"rstudio"},
     {_id:"c3h3/livehouse20141105", type:"ipynb"},
+    {_id:"c3h3/rladies-hello-kaggle", type:"rstudio"},
   ]
   
   DockerImages.insert image for image in dockerDefaultImages
