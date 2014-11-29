@@ -58,14 +58,7 @@ Meteor.startup ->
           Chat.find {}, {sort: {createAt:-1}}
 
       waitOn: ->
-        userId = Meteor.userId()
-        console.log "userId = "
-        console.log userId
-        if not userId 
-          Router.go "pleaseLogin"
-
         Meteor.subscribe "Chat", "wishFeatures"
-
         Session.set "courseId", "wishFeatures"
 
       
@@ -108,6 +101,12 @@ Meteor.startup ->
             DockerTypes.find()
 
       waitOn: ->
+        userId = Meteor.userId()
+        console.log "userId = "
+        console.log userId
+        if not userId 
+          Router.go "pleaseLogin"
+
         Meteor.subscribe "allDockerImages"
         Meteor.subscribe "allDockerTypes"
         Meteor.subscribe "userDockerInstances"
@@ -124,6 +123,13 @@ Meteor.startup ->
           DockerTypes.findOne().env
 
       waitOn: ->
+        userId = Meteor.userId()
+        console.log "userId = "
+        console.log userId
+        if not userId 
+          Router.go "pleaseLogin"
+
+
         dockerType = @params.dockerType
         Session.set "dockerType", dockerType
         Meteor.subscribe "oneDockerTypes", dockerType
