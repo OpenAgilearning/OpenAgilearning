@@ -26,8 +26,14 @@ Meteor.methods
       throw new Meteor.Error(1201, "Course doesn't exist")
     
     course = Courses.findOne _id:courseId
+    
+    imageType = course.dockerImage
 
-    Meteor.call "runDocker", course.dockerImage
+    if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
+      #FIXME: write a checking function for env vars
+      throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
+
+    Meteor.call "runDocker", imageType
 
 
   "removeDocker": (containerId)-> 
@@ -89,6 +95,12 @@ Meteor.methods
 
     # TODO: different roles can access different images ...
 
+    imageType = DockerImages.findOne({_id:imageId}).type 
+    if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
+      #FIXME: write a checking function for env vars
+      throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
+
+
     if DockerInstances.find({userId:user._id,imageId:imageId}).count() is 0
       
       dockerLimit = DockerLimits.findOne _id:"defaultLimit"
@@ -108,7 +120,7 @@ Meteor.methods
       if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() > 0
         config = DockerTypeConfig.findOne({userId:user._id,typeId:imageType})
         containerData.Env = config.env
-
+        
       servicePort = DockerTypes.findOne({_id:imageType}).servicePort
 
       # console.log "[before1] containerData = "

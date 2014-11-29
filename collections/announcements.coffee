@@ -1,0 +1,1 @@
+@Announcements = new Meteor.Collection "announcements"

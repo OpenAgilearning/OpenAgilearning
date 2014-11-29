@@ -73,6 +73,13 @@ Meteor.startup ->
       path: "dockers/"
       template: "dockers"
       data:
+        alertMessage: ->
+          user = Meteor.user()
+          if DockerTypes.find().count() > DockerTypeConfig.find({userId:user._id}).count()
+            "please setting Docker Running Configures"
+          else
+            false
+
         rootURL:rootURL
         user: ->
           Meteor.user()
@@ -179,6 +186,10 @@ Meteor.startup ->
           if not err
             console.log "data = "
             console.log data
+          else
+            console.log "err = "
+            console.log err
+            Router.go "dockers"
 
         Meteor.subscribe "Chat", @params.cid
         Meteor.subscribe "userDockerInstances"

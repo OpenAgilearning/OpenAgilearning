@@ -47,7 +47,10 @@ template(name="navBar")
           li
             +loginButtons
 
-
+  if alertMessage
+    .container
+      .alert.alert-danger(role="alert") {{alertMessage}}
+  
 template(name="about")
   .container
     .row.clearfix

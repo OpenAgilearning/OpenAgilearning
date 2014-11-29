@@ -56,5 +56,10 @@ Template.dockerImagesList.events
       if not err
         console.log "res = "
         console.log res
+      else
+        console.log "err = "
+        console.log err
+        Router.go "dockers"
+
   
       
