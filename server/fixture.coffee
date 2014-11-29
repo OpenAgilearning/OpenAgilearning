@@ -40,11 +40,18 @@ if DockerTypes.find({_id:"rstudio"}).count() is 0
 
 
 if Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).count() > 0
-  defaultAdminUidArray = Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).fetch().map (xx) -> xx._id
-  filterArray = Roles.find({role:"admin"}).fetch().map (xx) -> xx._id  
-  filteredArray = defaultAdminUidArray.filter (xx) -> xx in filterArray
-  console.log "filteredArray = "
-  console.log filteredArray
+  defaultAdminUidArray = Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).fetch().map (xx)-> xx._id
+  # console.log "defaultAdminUidArray = "
+  # console.log defaultAdminUidArray
+
+  filterArray = Roles.find({role:"admin"}).fetch().map (xx) -> xx.userId  
+  # console.log "filterArray = "
+  # console.log filterArray
+
+  filteredArray = defaultAdminUidArray.filter (xx) -> xx not in filterArray
+  # console.log "filteredArray = "
+  # console.log filteredArray
+
   Roles.insert {userId:uid, role:"admin"} for uid in filteredArray
 
 if DockerImages.find().count() is 0
