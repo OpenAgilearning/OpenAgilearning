@@ -180,7 +180,7 @@ Meteor.methods
       throw new Meteor.Error(401, "You need to login")
     
     dockerType = DockerTypes.findOne _id:typeId
-    typeFilter = dockerType.env
+    typeFilter = dockerType.env.map (xx) -> xx.name
     filteredEnvData = Object.keys(envData).filter((x) -> x in typeFilter).filter((x) -> envData[x] isnt "").map((x)-> x+"="+envData[x])
 
     DockerTypeConfig.upsert {userId:user._id,typeId:typeId}, {$set:{env:filteredEnvData}}

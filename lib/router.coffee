@@ -114,7 +114,7 @@ Meteor.startup ->
         dockerTypes: ->
           DockerTypes.find()
         env: ->
-          DockerTypes.findOne().env.map (x) -> {var:x}
+          DockerTypes.findOne().env
 
       waitOn: ->
         dockerType = @params.dockerType

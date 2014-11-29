@@ -33,10 +33,10 @@ if DockerLimits.find().count() is 0
   DockerLimits.insert dockerDefaultLimit
 
 if DockerTypes.find({_id:"ipynb"}).count() is 0
-  DockerTypes.insert {_id:"ipynb", servicePort:"8888/tcp", env:["PASSWORD","IPYNB_PROFILE"]}
+  DockerTypes.insert {_id:"ipynb", servicePort:"8888/tcp", env:[{name:"PASSWORD"},{name:"IPYNB_PROFILE",limitValues:["","default","c3h3-dark"]}]}
 
 if DockerTypes.find({_id:"rstudio"}).count() is 0
-  DockerTypes.insert {_id:"rstudio", servicePort:"8787/tcp", env:["USER", "PASSWORD"]}
+  DockerTypes.insert {_id:"rstudio", servicePort:"8787/tcp", env:[{name:"USER"}, {name:"PASSWORD"}]}
 
 
 if Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).count() > 0

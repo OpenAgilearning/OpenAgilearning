@@ -97,7 +97,10 @@ template(name="dockerRunningConfig")
                 td
                   p {{_id}}
                 td
-                  p {{env}} 
+                  ul
+                    each env
+                      li {{name}}
+
                 td
                   if currentSettings
                     ul 
@@ -132,9 +135,15 @@ template(name="dockerSetConfig")
             each env
               tr
                 td
-                  p {{var}}
+                  p {{name}}
                 td
-                  input.envVar(var="{{var}}")
+                  if limitValues
+                    select.envVar(var="{{name}}")
+                      each limitValues
+                        option(value='{{this}}') {{this}}
+                    
+                  else
+                    input.envVar(var="{{name}}")
                 //- TODO: display current value
                 //- td
 

@@ -2,9 +2,14 @@ Template.dockerSetConfig.events
   "click .submitENV": (e, t)->
     envData = {}
 
-    $(".envVar").map ->
+    $("input.envVar").map ->
       envData[$(@).attr("var")]=$(@).val()
 
+    $("select.envVar").map ->
+      variable = $(@).attr "var"
+      envData[variable]=$(@).select("option:selected").val()
+
+    console.log "envData = "
     console.log envData
     dockerType = Session.get "dockerType"
     Meteor.call "setENV", dockerType, envData, (err, data)->
