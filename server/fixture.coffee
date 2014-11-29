@@ -1,4 +1,11 @@
 
+adminMeetupIds = [59393362]
+
+@courseCreator = Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).fetch().map (xx) -> xx._id
+
+console.log "courseCreator = "
+console.log courseCreator
+
 if Chat.find({courseId:"ipynbBasic"}).count() is 0
   Chat.insert {userId:"systemTest",userName:"systemTest",courseId:"ipynbBasic", msg:"Hello, ipynbBasic", createAt:new Date}
 
@@ -32,8 +39,11 @@ if DockerTypes.find({_id:"rstudio"}).count() is 0
   DockerTypes.insert {_id:"rstudio", servicePort:"8787/tcp", env:["USER", "PASSWORD"]}
 
 
-if Roles.find().count() is 0
-  Roles.insert {userId:uid, role:"admin"} for uid in courseCreator
+if Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).count() > 0
+  defaultAdminUidArray = Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).fetch().map (xx) -> xx._id
+  filterArray = Roles.find({role:"admin"}).fetch().map (xx) -> xx._id
+  filteredArray = defaultAdminUidArray.filter (xx) -> xx not in filterArray
+  Roles.insert {userId:uid, role:"admin"} for uid in filteredArray
 
 if DockerImages.find().count() is 0
   dockerDefaultImages = [

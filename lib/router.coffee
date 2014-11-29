@@ -13,6 +13,22 @@ Meteor.startup ->
         user: ->
           Meteor.user()
 
+    @route "userStatus",
+      path: "/userStatus/"
+      template: "userStatus"
+      data:
+        rootURL:rootURL
+        user: ->
+          Meteor.user()
+      waitOn: ->
+        Meteor.call "checkIsAdmin", (err, res) ->
+          if err
+            Router.go "pleaseLogin"
+          else
+            if not res
+              Router.go "index"
+
+
     @route "about",
       path: "about/"
       template: "about"
