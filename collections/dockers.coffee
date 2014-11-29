@@ -27,13 +27,19 @@ Meteor.methods
     
     course = Courses.findOne _id:courseId
     
-    imageType = course.dockerImage
+    imageId = course.dockerImage
+    # console.log "imageId = "
+    # console.log imageId
 
+    imageType = DockerImages.findOne({_id:imageId}).type 
+    # console.log "imageType = "
+    # console.log imageType
+    
     if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
       #FIXME: write a checking function for env vars
       throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
 
-    Meteor.call "runDocker", imageType
+    Meteor.call "runDocker", imageId
 
 
   "removeDocker": (containerId)-> 
