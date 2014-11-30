@@ -62,8 +62,10 @@ if DockerImages.find().count() is 0
     {_id:"c3h3/ml-for-hackers", type:"rstudio"},
     {_id:"c3h3/dsc2014tutorial", type:"rstudio"},
     {_id:"c3h3/livehouse20141105", type:"ipynb"},
-    {_id:"c3h3/rladies-hello-kaggle", type:"rstudio"},
-    {_id:"c3h3/nccu-crawler-courses-201411",type:"ipynb"}
+    {_id:"c3h3/rladies-hello-kaggle", type:"rstudio"},    
   ]
   
   DockerImages.insert image for image in dockerDefaultImages
+
+if DockerImages.find({_id:"c3h3/nccu-crawler-courses-201411",type:"ipynb"}).count() is 0
+  DockerImages.insert {_id:"c3h3/nccu-crawler-courses-201411",type:"ipynb"}
