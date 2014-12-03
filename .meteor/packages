@@ -10,7 +10,6 @@ iron:router
 
 
 npm-container
-waitingkuo:jade
 mizzao:bootstrap-3
 accounts-meetup
 accounts-ui
@@ -18,4 +17,5 @@ http
 mizzao:user-status
 mizzao:timesync
 mrt:moment
+mquandalle:jade
 
