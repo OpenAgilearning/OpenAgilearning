@@ -5,9 +5,11 @@ template(name="chatroom")
     hr
     input.postChatMsg(placeholder="Chat Message")
     hr
-    each chats
-      p {{userName}}:
-      p {{msg}}
-      p(style="font-size:8px") {{createAt}}
-      hr
+
+    .chats 
+      each chats
+        p {{userName}}:
+        p {{msg}}
+        p(style="font-size:8px") {{createAt}}
+        hr
         

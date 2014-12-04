@@ -26,8 +26,8 @@ if DockerLimits.find().count() is 0
   dockerDefaultLimit = 
     _id: "defaultLimit"
     limit:
-      Cpuset: "0,1"
-      CpuShares: 512
+      Cpuset: "0"
+      CpuShares: 256
       Memory:512000000
       
   DockerLimits.insert dockerDefaultLimit
