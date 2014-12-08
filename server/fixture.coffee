@@ -73,3 +73,5 @@ if DockerImages.find({_id:"c3h3/nccu-crawler-courses-201411",type:"ipynb"}).coun
 if DockerImages.find({_id:"c3h3/learning-shogun:u1404-ocv",type:"ipynb"}).count() is 0
   DockerImages.insert {_id:"c3h3/learning-shogun:u1404-ocv",type:"ipynb"}
 
+if DockerImages.find({_id:"dboyliao/docker-tossug",type:"ipynb"}).count() is 0
+  DockerImages.insert {_id:"dboyliao/docker-tossug",type:"ipynb"}
