@@ -1,10 +1,12 @@
-Meteor.publish "dockers", ->
-  userId = Meteor.userId()
 
-  if not userId
+Meteor.publish "myRoles", ->
+  Roles.find userId:@userId
+
+Meteor.publish "dockers", ->
+  if not @userId
     throw new Meteor.Error(401, "You need to login")
   
-  Dockers.findOnd userId:userId 
+  Dockers.findOnd userId:@userId
 
 
 
@@ -19,7 +21,7 @@ Meteor.publish "oneDockerTypes", (typeId) ->
   DockerTypes.find _id:typeId
 
 Meteor.publish "userDockers", ->
-  userId = @userId()
+  userId = @userId
 
   if not userId
     throw new Meteor.Error(401, "You need to login")

@@ -1,11 +1,6 @@
 
 adminMeetupIds = [59393362, 173080282]
 
-@courseCreator = Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).fetch().map (xx) -> xx._id
-
-console.log "courseCreator = "
-console.log courseCreator
-
 if Chat.find({courseId:"ipynbBasic"}).count() is 0
   Chat.insert {userId:"systemTest",userName:"systemTest",courseId:"ipynbBasic", msg:"Hello, ipynbBasic", createAt:new Date}
 

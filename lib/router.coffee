@@ -142,11 +142,12 @@ Meteor.startup ->
       data:
         user: ->
           Meteor.user()
-        isCreator: ->
+        isAdmin: ->
           uid = Meteor.userId()
-          uid in courseCreator
+          Roles.find({userId:uid,role:"admin"}).count()>0
         courses: ->
           Courses.find()
+
       waitOn: ->
         userId = Meteor.userId()
         console.log "userId = "
@@ -155,6 +156,7 @@ Meteor.startup ->
           Router.go "pleaseLogin"
         
         Meteor.subscribe "allCourses"
+        Meteor.subscribe "myRoles"
 
     @route "course",
       path: "course/:cid"
