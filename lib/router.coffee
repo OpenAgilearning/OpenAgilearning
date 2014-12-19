@@ -102,8 +102,6 @@ Meteor.startup ->
 
       waitOn: ->
         userId = Meteor.userId()
-        console.log "userId = "
-        console.log userId
         if not userId 
           Router.go "pleaseLogin"
 
@@ -124,8 +122,6 @@ Meteor.startup ->
 
       waitOn: ->
         userId = Meteor.userId()
-        console.log "userId = "
-        console.log userId
         if not userId 
           Router.go "pleaseLogin"
 
@@ -150,8 +146,6 @@ Meteor.startup ->
 
       waitOn: ->
         userId = Meteor.userId()
-        console.log "userId = "
-        console.log userId
         if not userId 
           Router.go "pleaseLogin"
         
@@ -181,8 +175,6 @@ Meteor.startup ->
 
       waitOn: -> 
         userId = Meteor.userId()
-        console.log "userId = "
-        console.log userId
         if not userId 
           Router.go "pleaseLogin"
 
@@ -227,8 +219,6 @@ Meteor.startup ->
 
       waitOn: -> 
         userId = Meteor.userId()
-        console.log "userId = "
-        console.log userId
         if not userId 
           Router.go "pleaseLogin"
 
@@ -269,14 +259,9 @@ Meteor.startup ->
 
       waitOn: -> 
         userId = Meteor.userId()
-        console.log "userId = "
-        console.log userId
         if not userId 
           Router.go "pleaseLogin"
 
-        # Meteor.call "getDockers", "rocker/rstudio", (err, data)->
-        #   if not err
-        #     Session.set "docker", data
         Meteor.call "runDocker", "rocker/rstudio", (err, data)->
           if not err
             console.log "data = "
@@ -291,8 +276,6 @@ Meteor.startup ->
       template: "pleaseLogin"
       waitOn: -> 
         userId = Meteor.userId()
-        console.log "userId = "
-        console.log userId
         if userId 
           Router.go "index"
 
