@@ -1,5 +1,5 @@
 
-adminMeetupIds = [59393362]
+adminMeetupIds = [59393362, 173080282]
 
 @courseCreator = Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).fetch().map (xx) -> xx._id
 
