@@ -4,7 +4,7 @@ Router.configure
 
 Meteor.startup ->
   Router.map -> 
-    
+
     @route "index",
       path: "/"
       template: "index"
@@ -12,6 +12,7 @@ Meteor.startup ->
         rootURL:rootURL
         user: ->
           Meteor.user()
+
 
     @route "userStatus",
       path: "/userStatus/"
@@ -45,6 +46,7 @@ Meteor.startup ->
         rootURL:rootURL
         user: ->
           Meteor.user()
+
 
     @route "wishFeatures",
       path: "wishFeatures/"
@@ -130,6 +132,9 @@ Meteor.startup ->
         if not userId 
           Router.go "pleaseLogin"
 
+        #Call by [docker.coffee] Template.dockerSetConfig.events "click .submitENV"
+        Session.set "dockerType", @params.dockerType
+
         Meteor.subscribe "oneDockerTypes", @params.dockerType
         Meteor.subscribe "userDockerTypeConfig"
 
@@ -153,6 +158,7 @@ Meteor.startup ->
         
         Meteor.subscribe "allCourses"
         Meteor.subscribe "myRoles"
+
 
     @route "course",
       path: "course/:cid"
@@ -196,7 +202,6 @@ Meteor.startup ->
         Meteor.subscribe "Chat", @params.cid
         Meteor.subscribe "userDockerInstances"
 
-        
 
     @route "ipynb",
       path: "ipynb/"
@@ -235,7 +240,6 @@ Meteor.startup ->
         Meteor.subscribe "userDockerInstances"
 
 
-
      @route "rstudio",
       path: "rstudio/"
       template: "analyzer"
@@ -269,6 +273,7 @@ Meteor.startup ->
         Session.set "courseId", "rstudioBasic"
         Meteor.subscribe "Chat", "rstudioBasic"
         Meteor.subscribe "userDockerInstances"
+
 
     @route "pleaseLogin",
       path: "pleaseLogin/"
