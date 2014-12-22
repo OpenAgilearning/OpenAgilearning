@@ -4,7 +4,7 @@ Router.configure
 
 Meteor.startup ->
   Router.map -> 
-    
+
     @route "index",
       path: "/"
       template: "index"
@@ -12,6 +12,7 @@ Meteor.startup ->
         rootURL:rootURL
         user: ->
           Meteor.user()
+
 
     @route "userStatus",
       path: "/userStatus/"
@@ -45,6 +46,7 @@ Meteor.startup ->
         rootURL:rootURL
         user: ->
           Meteor.user()
+
 
     @route "wishFeatures",
       path: "wishFeatures/"
@@ -102,8 +104,6 @@ Meteor.startup ->
 
       waitOn: ->
         userId = Meteor.userId()
-        console.log "userId = "
-        console.log userId
         if not userId 
           Router.go "pleaseLogin"
 
@@ -116,23 +116,26 @@ Meteor.startup ->
     @route "dockerSetConfig",
       path: "dockerSetConfig/:dockerType"
       template: "dockerSetConfig"
-      data:
-        dockerTypes: ->
-          DockerTypes.find()
-        env: ->
-          DockerTypes.findOne().env
+      data: ->
+        resData = 
+          dockerType: =>
+           @params.dockerType
+          dockerTypes: ->
+            DockerTypes.find()
+          env: ->
+            DockerTypes.findOne().env
+
+        resData
 
       waitOn: ->
         userId = Meteor.userId()
-        console.log "userId = "
-        console.log userId
         if not userId 
           Router.go "pleaseLogin"
 
+        #Call by [docker.coffee] Template.dockerSetConfig.events "click .submitENV"
+        Session.set "dockerType", @params.dockerType
 
-        dockerType = @params.dockerType
-        Session.set "dockerType", dockerType
-        Meteor.subscribe "oneDockerTypes", dockerType
+        Meteor.subscribe "oneDockerTypes", @params.dockerType
         Meteor.subscribe "userDockerTypeConfig"
 
 
@@ -142,45 +145,44 @@ Meteor.startup ->
       data:
         user: ->
           Meteor.user()
-        isCreator: ->
+        isAdmin: ->
           uid = Meteor.userId()
-          uid in courseCreator
+          Roles.find({userId:uid,role:"admin"}).count()>0
         courses: ->
           Courses.find()
+
       waitOn: ->
         userId = Meteor.userId()
-        console.log "userId = "
-        console.log userId
         if not userId 
           Router.go "pleaseLogin"
         
         Meteor.subscribe "allCourses"
+        Meteor.subscribe "myRoles"
+
 
     @route "course",
       path: "course/:cid"
       template: "course"
-      data:
-        rootURL:rootURL
-        user: ->
-          Meteor.user()
-        course: ->
-          cid = Session.get "cid"
-          Courses.findOne _id: cid
+      data: ->
+        resData =       
+          rootURL:rootURL
+          user: ->
+            Meteor.user()
+          course: =>
+            Courses.findOne _id: @params.cid
 
-        docker: ->
-          courseId = Session.get "courseId"
-          course = Courses.findOne _id:courseId
-          Session.set "docker", DockerInstances.findOne({imageId:course.dockerImage})
-          DockerInstances.findOne({imageId:course.dockerImage})
+          docker: =>
+            course = Courses.findOne _id:@params.cid
+            Session.set "docker", DockerInstances.findOne({imageId:course.dockerImage})
+            DockerInstances.findOne({imageId:course.dockerImage})
 
-        chats: ->
-          Chat.find {}, {sort: {createAt:-1}}
+          chats: ->
+            Chat.find {}, {sort: {createAt:-1}}
 
+        resData
 
       waitOn: -> 
         userId = Meteor.userId()
-        console.log "userId = "
-        console.log userId
         if not userId 
           Router.go "pleaseLogin"
 
@@ -200,7 +202,6 @@ Meteor.startup ->
         Meteor.subscribe "Chat", @params.cid
         Meteor.subscribe "userDockerInstances"
 
-        
 
     @route "ipynb",
       path: "ipynb/"
@@ -225,14 +226,9 @@ Meteor.startup ->
 
       waitOn: -> 
         userId = Meteor.userId()
-        console.log "userId = "
-        console.log userId
         if not userId 
           Router.go "pleaseLogin"
 
-        # Meteor.call "getDockers", "c3h3/oblas-py278-shogun-ipynb", (err, data)->
-        #   if not err
-        #     Session.set "docker", data
         Meteor.call "runDocker", "c3h3/oblas-py278-shogun-ipynb", (err, data)->
           if not err
             console.log "data = "
@@ -242,7 +238,6 @@ Meteor.startup ->
         
         Meteor.subscribe "Chat", "ipynbBasic"
         Meteor.subscribe "userDockerInstances"
-
 
 
      @route "rstudio",
@@ -267,14 +262,9 @@ Meteor.startup ->
 
       waitOn: -> 
         userId = Meteor.userId()
-        console.log "userId = "
-        console.log userId
         if not userId 
           Router.go "pleaseLogin"
 
-        # Meteor.call "getDockers", "rocker/rstudio", (err, data)->
-        #   if not err
-        #     Session.set "docker", data
         Meteor.call "runDocker", "rocker/rstudio", (err, data)->
           if not err
             console.log "data = "
@@ -284,13 +274,12 @@ Meteor.startup ->
         Meteor.subscribe "Chat", "rstudioBasic"
         Meteor.subscribe "userDockerInstances"
 
+
     @route "pleaseLogin",
       path: "pleaseLogin/"
       template: "pleaseLogin"
       waitOn: -> 
         userId = Meteor.userId()
-        console.log "userId = "
-        console.log userId
         if userId 
           Router.go "index"
 

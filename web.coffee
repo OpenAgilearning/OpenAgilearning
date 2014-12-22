@@ -1,7 +1,5 @@
 
 @rootURL = "0.0.0.0"
-@courseCreator = ["W8ry5vcMNY2GhukHA","JESWJnrYeBvB35brZ"]
-
 
 if Meteor.isClient
   @UserConnections = new Mongo.Collection("user_status_sessions")
