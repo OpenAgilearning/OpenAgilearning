@@ -1,4 +1,8 @@
 
+Template.courses.helpers
+  coursesSchema: -> coursesSchema
+  
+
 Template.courses.events
   "click input.createBt": (e,t) ->
     e.stopPropagation()

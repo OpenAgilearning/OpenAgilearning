@@ -6,7 +6,10 @@ template(name="course")
       //- .col-md-6.column
         
       .col-md-10.column
-        
+         
+        hr
+        h2 Video:
+        a(target="_blank",href="{{video}}") Video Link (will replace with player)
         hr
         h2 Docker:
         input.connectBt.btn.btn-default(value="Try Docker Instance:")        
@@ -27,30 +30,33 @@ template(name="courses")
     .row.clearfix
       .col-md-12.column
         //- +voteForMe
+        +quickForm id="demo" schema="coursesSchema" type="method" meteormethod="createCourse" template="bootstrap3-inline" label-class="sr-only" afFieldInput-placeholder="schemaLabel"
+
         h2 Study Materials:
         table.table.table-hover
           thead
             th Name
             th Docker
             th Ref. (Slide/Note/Site)
+            th Video
             th Description
             th Creator's Name
             th Create / Delete
           tbody
-            if isAdmin
-              tr
-                td 
-                  input.courseName
-                td
-                  input.dockerImage
-                td
-                  input.slides
-                td
-                  input.description
-                td
-                  p {{user.profile.name}}    
-                td
-                  input.createBt.btn.btn-default(value="Create")
+            //- if isAdmin
+            //-   tr
+            //-     td 
+            //-       input.courseName
+            //-     td
+            //-       input.dockerImage
+            //-     td
+            //-       input.slides
+            //-     td
+            //-       input.description
+            //-     td
+            //-       p {{user.profile.name}}    
+            //-     td
+            //-       input.createBt.btn.btn-default(value="Create")
 
 
             tr
@@ -84,6 +90,9 @@ template(name="courses")
                   a(target="_blank",href="https://registry.hub.docker.com/u/{{dockerImage}}") {{dockerImage}}
                 td 
                   a(target="_blank",href="{{slides}}") Link
+                td 
+                  if video 
+                    a(target="_blank",href="{{video}}") Video
                 td {{description}}
                 td {{creatorName}}
                 td unfeatured 
