@@ -6,22 +6,24 @@ template(name="course")
       //- .col-md-6.column
         
       .col-md-10.column
-         
-        hr
-        h2 Video:
-        a(target="_blank",href="{{video}}") Video Link (will replace with player)
+        if course.video
+          hr
+          h2 Video:
+          a(target="_blank",href="{{course.video}}") 
+            h4 (Open At New Tab)
+          video.video-js.vjs-default-skin(id="vid",src="",controls,width="100%",height="700px",data-setup='{ "techOrder": ["youtube"], "src": "{{course.video}}" }')
         hr
         h2 Docker:
         input.connectBt.btn.btn-default(value="Try Docker Instance:")        
         iframe#docker(src="http://{{rootURL}}:{{docker.servicePort}}", width="100%", height="550px", scrolling="yes")
 
         hr
-        h2 Reference: 
-        iframe#slides(src="{{course.slides}}", width="100%", height="700px", scrolling="auto")
+        if course.slides
+          h2 Reference: 
+          iframe#slides(src="{{course.slides}}", width="100%", height="700px", scrolling="auto")
       
       .col-md-2.column
         +chatroom
-
 
 
 
@@ -30,8 +32,12 @@ template(name="courses")
     .row.clearfix
       .col-md-12.column
         //- +voteForMe
+        hr
+        h2 Add New Course
+        
         +quickForm id="demo" schema="coursesSchema" type="method" meteormethod="createCourse" template="bootstrap3-inline" label-class="sr-only" afFieldInput-placeholder="schemaLabel"
-
+        
+        hr
         h2 Study Materials:
         table.table.table-hover
           thead

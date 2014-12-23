@@ -1,7 +1,7 @@
 
 Template.courses.helpers
   coursesSchema: -> coursesSchema
-  
+
 
 Template.courses.events
   "click input.createBt": (e,t) ->
@@ -13,6 +13,11 @@ Template.courses.events
       description: $("input.description").val()
     
     Meteor.call "createCourse", data
+
+
+Template.course.rendered = ->
+  $("video").map -> 
+    videojs @, JSON.parse($(@).attr("data-setup"))
 
 
 Template.course.events
