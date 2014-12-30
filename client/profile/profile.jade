@@ -13,6 +13,11 @@ template(name="public_profile")
   ul
     li country : {{user.profile.country}}
     li city : {{user.profile.city}}
+  dl
+    dt
+      h2 email(must be public)
+    dd
+      input.profile.email(type="email", value="{{user.profile.email}}")
 
   if user.profile.email
     +quickForm id="profileUpdate" doc=user_profile schema=SettingSchema.profile type="method" meteormethod="updateProfile"
