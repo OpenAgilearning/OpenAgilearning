@@ -18,3 +18,14 @@ template(name="public_profile")
     +quickForm id="profileUpdate" doc=user_profile schema=SettingSchema.profile type="method" meteormethod="updateProfile"
   else
     +quickForm id="profileCreate" schema=SettingSchema.profile type="method" meteormethod="createProfile"
+
+//- +accountSet
+//- template(name="accountSet")
+//-   +bound
+
+//- template(name="bound")
+//-   input.btn.connect.github(type="button", value="connect github")
+
+//-   input.btn.connect.twitter(type="button", value="connect twitter")
+//-   input.btn.connect.facebook(type="button", value="connect facebook")
+//-   input.btn.connect.meetup(type="button", value="connect meetup")

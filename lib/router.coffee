@@ -293,6 +293,7 @@ Meteor.startup ->
 
     @route "settings",
       path: "settings/profile"
+
       template: "settings"
       data:
         user: ->
