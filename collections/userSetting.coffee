@@ -1,10 +1,12 @@
 Meteor.methods
-  "update profile": (data)->
+  "create profile": (createData)->
     user = Meteor.user()
-    user.profile["email"] = data.email
-# insert update data will cause _id be override, error happen.
-# create a object to store _id. avoid Mod error, about minimongo error.
-    u={}
-    u._id = user._id
-    delete user._id
-    Meteor.users.update {_id:u._id}, {$set:user}
+    console.log "createData = "
+    console.log createData
+    Meteor.users.update {_id:user._id}, { $set:{"profile.email" : createData["email"]} }
+
+  "update profile": (updateData)->
+    user = Meteor.user()
+    console.log "updateData = "
+    console.log updateData
+    Meteor.users.update {_id:user._id}, { $set:{"profile.email" : updateData["email"]} }
