@@ -1,0 +1,21 @@
+template(name="settings")
+  +profile
+template(name="profile")
+  .container
+    .row.clearfix
+      .col-md-3.column
+      .col-md-6.column
+        +public_profile
+        //- +accountSet
+
+template(name="public_profile")
+  h2 {{user.profile.name}}
+  hr
+  ul
+    li country : {{user.profile.country}}
+    li city : {{user.profile.city}}
+
+  if user.profile.email
+    +quickForm id="profileUpdate" doc=user_profile schema=SettingSchema.profile type="method" meteormethod="updateProfile"
+  else
+    +quickForm id="profileCreate" schema=SettingSchema.profile type="method" meteormethod="createProfile"

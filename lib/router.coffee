@@ -283,4 +283,13 @@ Meteor.startup ->
         if userId 
           Router.go "index"
 
-
+    @route "settings",
+      path: "settings/profile"
+      template: "settings"
+      data:
+        user: ->
+          Meteor.user()
+      waitOn: ->
+        user = Meteor.user()
+        if not user
+          Router.go "pleaseLogin"
