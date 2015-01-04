@@ -1,13 +1,13 @@
-Template.chatroom.events
-  "change .postChatMsg": (e, t)->
-    e.stopPropagation()
+# Template.chatroom.events
+#   "change .postChatMsg": (e, t)->
+#     e.stopPropagation()
 
-    courseId = Session.get "courseId"
-    msg = $(".postChatMsg").val()
+#     courseId = Session.get "courseId"
+#     msg = $(".postChatMsg").val()
 
-    $(".postChatMsg").val("")
+#     $(".postChatMsg").val("")
 
-    Meteor.call "postChat", courseId, msg, (err, data) ->
-      if not err
-        console.log "data = "
-        console.log data
+#     Meteor.call "postChat", courseId, msg, (err, data) ->
+#       if not err
+#         console.log "data = "
+#         console.log data

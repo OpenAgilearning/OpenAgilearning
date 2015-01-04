@@ -1,22 +1,22 @@
 @Chat = new Meteor.Collection "chat"
 
+@ChatSchema = new SimpleSchema
+  msg:
+    type: String
+    label: "msg"
+    max: 200
+  courseId:
+    type: String
+
+
 Meteor.methods
-  "postChat": (courseId, msg) ->
+  # "postChat": (courseId, msg) ->
+  "postChat": (quickFormData) ->
     user = Meteor.user()
     if not user
       throw new Meteor.Error(401, "You need to login")
     
-    if not courseId
-      throw new Meteor.Error(501, "Need courseId")
-
-    if not msg
-      throw new Meteor.Error(501, "Need msg")
-
-    chatData = 
-      userId: user._id
-      userName: user.profile.name 
-      courseId: courseId 
-      msg: msg 
-      createAt: new Date
-
-    Chat.insert chatData
+    quickFormData.userId = user._id
+    quickFormData.userName = user.profile.name
+    quickFormData.createAt = new Date
+    Chat.insert quickFormData

@@ -3,13 +3,14 @@ template(name="chatroom")
   .chatroom
     h2 Discuss:
     hr
-    input.postChatMsg(placeholder="Chat Message")
+    +quickForm id="classChat" schema="ChatSchema" type="method" meteormethod="postChat" doc=quickFormData
+      //- +afFieldInput name='msg'
+      //- +afFieldInput name='courseId' value=cid
+    //- input.postChatMsg(placeholder="Chat Message")
     hr
-
     .chats 
       each chats
         p {{userName}}:
         p {{msg}}
         p(style="font-size:8px") {{createAt}}
         hr
-        
