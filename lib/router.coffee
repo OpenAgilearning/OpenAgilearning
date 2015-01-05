@@ -58,7 +58,10 @@ Meteor.startup ->
 
         chats: ->
           Chat.find {}, {sort: {createAt:-1}}
-
+        # courseId: ->
+        #   "wishFeatures"
+        quickFormData: =>
+          courseId:"wishFeatures"
       waitOn: ->
         Meteor.subscribe "Chat", "wishFeatures"
         Session.set "courseId", "wishFeatures"
@@ -178,7 +181,8 @@ Meteor.startup ->
 
           chats: ->
             Chat.find {}, {sort: {createAt:-1}}
-
+          quickFormData: ->
+            courseId:@params.cid
         resData
 
       waitOn: -> 
@@ -223,6 +227,8 @@ Meteor.startup ->
         chats: ->
           Chat.find {}, {sort: {createAt:-1}}
 
+        quickFormData: ->
+          courseId:"ipynbBasic"
 
       waitOn: -> 
         userId = Meteor.userId()
@@ -259,6 +265,8 @@ Meteor.startup ->
         chats: ->
           Chat.find {}, {sort: {createAt:-1}}
 
+        quickFormData: ->
+          courseId:"rstudioBasic"
 
       waitOn: -> 
         userId = Meteor.userId()
