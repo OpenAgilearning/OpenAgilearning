@@ -1,13 +1,14 @@
 # Template.registerHelper "SettingSchema", SettingSchema
 
 Template.profile.rendered = ->
-  $(".edit-profile").toggle()
+  $(".profile-editor").toggle()
 
 Template.profile.events
-  "click input.edit-email": (e,t)->
-    $(".edit-profile").toggle()
+  "click input.btn.btn-primary": (e,t)->
+    $(".profile-editor").toggle()
     $(".show-profile").toggle()
 
-  "click input.btn.btn-primary": (e,t)->
+AutoForm.hooks profileUpdate:
+  onSuccess: (updateProfile, result, template) ->
     $(".show-profile").toggle()
-    $(".edit-profile").toggle()
+    $(".profile-editor").toggle()

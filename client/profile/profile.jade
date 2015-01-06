@@ -13,33 +13,24 @@ template(name="public_profile")
   ul
     li country : {{user.profile.country}}
     li city : {{user.profile.city}}
-  dl
-    dt
-      h2 email(must be public)
-    dd
-      input.profile.email(type="email", value="{{user.profile.email}}")
-
+  hr
   .show-profile
     if user.profile.email
       h3 email: {{user.profile.email}}
-        input.edit-email(value="edit" type="button")
+        input.btn.btn-primary(value="edit" type="button")
     else
       h3 email: please set email
-          input.edit-email(value="edit" type="button")
+          input.btn.btn-primary(value="edit" type="button")
 
-  .edit-profile
-    if user.profile.email
-      +autoForm id="profileUpdate" schema="SettingSchema" type="method" meteormethod="updateProfile"
+  .profile-editor
+    +autoForm id="profileUpdate" schema="SettingSchema" type="method" meteormethod="updateProfile"
+      if afFieldIsInvalid name="email"
+        strong {{{afFieldMessage name="email"}}}
+      else
         p new email
-        +afFieldInput name="email"
-        br
-        input.btn.btn-primary(type="submit")
-    else
-      +autoForm id="profileCreate" schema="SettingSchema" type="method" meteormethod="createProfile"
-        +afFieldInput name="email"
-        br
-        input.btn.btn-primary(type="submit")
-
+      +afFieldInput name="email"
+      br
+      input.btn.btn-success(type="submit")
 //- +accountSet
 //- template(name="accountSet")
 //-   +bound
