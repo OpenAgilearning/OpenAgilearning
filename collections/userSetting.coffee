@@ -1,11 +1,19 @@
+@SettingSchema = new SimpleSchema
+  email: 
+    type: String,
+    regEx: SimpleSchema.RegEx.Email
+    autoform:
+      afFieldInput:
+        type: "email"
+
 Meteor.methods
-  "create profile": (createData)->
+  "createProfile": (createData)->
     user = Meteor.user()
     console.log "createData = "
     console.log createData
     Meteor.users.update {_id:user._id}, { $set:{"profile.email" : createData["email"]} }
 
-  "update profile": (updateData)->
+  "updateProfile": (updateData)->
     user = Meteor.user()
     console.log "updateData = "
     console.log updateData

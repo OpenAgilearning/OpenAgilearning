@@ -19,10 +19,26 @@ template(name="public_profile")
     dd
       input.profile.email(type="email", value="{{user.profile.email}}")
 
-  if user.profile.email
-    +quickForm id="profileUpdate" doc=user_profile schema=SettingSchema.profile type="method" meteormethod="updateProfile"
-  else
-    +quickForm id="profileCreate" schema=SettingSchema.profile type="method" meteormethod="createProfile"
+  .show-profile
+    if user.profile.email
+      h3 email: {{user.profile.email}}
+        input.edit-email(value="edit" type="button")
+    else
+      h3 email: please set email
+          input.edit-email(value="edit" type="button")
+
+  .edit-profile
+    if user.profile.email
+      +autoForm id="profileUpdate" schema="SettingSchema" type="method" meteormethod="updateProfile"
+        p new email
+        +afFieldInput name="email"
+        br
+        input.btn.btn-primary(type="submit")
+    else
+      +autoForm id="profileCreate" schema="SettingSchema" type="method" meteormethod="createProfile"
+        +afFieldInput name="email"
+        br
+        input.btn.btn-primary(type="submit")
 
 //- +accountSet
 //- template(name="accountSet")
