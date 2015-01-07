@@ -373,13 +373,49 @@ Meteor.startup ->
       path: "settings/profile"
       template: "settings"
       data:
+        alertMessage: ->
+          user = Meteor.user()
+          if DockerTypes.find().count() > DockerTypeConfig.find({userId:user._id}).count()
+            "please setting Docker Running Configures"
+          else
+            false
+
+        rootURL:rootURL
         user: ->
           Meteor.user()
         showAdminPage: ->
           userId = Meteor.userId()
           Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
+
+        dockerImages: ->
+          runningImages = DockerInstances.find().fetch().map (x)-> x.imageId
+          DockerImages.find({_id:{$nin:runningImages}})
+        
+        dockerInstances: ->
+          DockerInstances.find()
+        
+
+        dockerTypes: ->
+          user = Meteor.user()
+          if Meteor.user() and DockerTypeConfig.find({userId:user._id}).count() > 0
+
+            res = []
+            for t in DockerTypes.find().fetch()
+              if DockerTypeConfig.find({userId:user._id,typeId:t._id}).count() > 0
+                t.currentSettings = DockerTypeConfig.findOne({userId:user._id,typeId:t._id}).env
+              res.push t
+
+            res 
+
+          else
+            DockerTypes.find()
+            
       waitOn: ->
         user = Meteor.user()
         if not user
           Router.go "pleaseLogin"
+        Meteor.subscribe "allDockerImagesOld"
+        Meteor.subscribe "allDockerTypes"
+        Meteor.subscribe "userDockerInstances"
+        Meteor.subscribe "userDockerTypeConfig"
