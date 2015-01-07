@@ -1,10 +1,22 @@
 
+Meteor.publish "allDockerImages", ->
+  if Roles.userIsInRole @userId, "admin", "system"
+    DockerImages.find()
+  else
+    DockerImages.find _id: "permisionDeny"
+
+
+Meteor.publish "allDockerInstances", ->
+  if Roles.userIsInRole @userId, "admin", "system"
+    DockerInstances.find()
+  else
+    DockerInstances.find _id: "permisionDeny"
 
 Meteor.publish "allUsers", ->
-  if Roles.userIsInRole this.userId, "admin", "system"
+  if Roles.userIsInRole @userId, "admin", "system"
     Meteor.users.find()
   else
-    Meteor.users.find _id:"noUsers"
+    Meteor.users.find _id:"permisionDeny"
   
 
 # Meteor.publish "myRoles", ->

@@ -31,16 +31,13 @@ Meteor.startup ->
             Router.go "index"
 
 
-    @route "systemAdmin",
-      path: "systemAdmin/"
-      template: "systemAdminPage"
+    @route "admin",
+      path: "admin/"
+      template: "AdminPage"
       data:
         rootURL:rootURL
         user: ->
           Meteor.user()
-
-        allUsers: ->
-          Meteor.users.find()
 
       waitOn: ->
         userId = Meteor.userId()
@@ -48,12 +45,23 @@ Meteor.startup ->
           Router.go "pleaseLogin"
 
         else
-          if not Roles.userIsInRole(userId,"admin","system")
-            Router.go "index"
+          if Roles.userIsInRole(userId,"admin","system")
+            Meteor.subscribe "allUsers"
+            
+            if Roles.userIsInRole(userId,"admin","dockers")
+              Meteor.subscribe "allDockerInstances"
+              Meteor.subscribe "allDockerImages"
 
           else
-            Meteor.subscribe "allUsers"
+          
+            if Roles.userIsInRole(userId,"admin","dockers")
+              Meteor.subscribe "allDockerInstances"
+              Meteor.subscribe "allDockerImages"
 
+            else
+              Router.go "index"
+            
+              
 
 
 
