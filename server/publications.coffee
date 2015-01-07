@@ -1,6 +1,6 @@
 
-Meteor.publish "myRoles", ->
-  Roles.find userId:@userId
+# Meteor.publish "myRoles", ->
+#   Roles.find userId:@userId
 
 Meteor.publish "dockers", ->
   if not @userId

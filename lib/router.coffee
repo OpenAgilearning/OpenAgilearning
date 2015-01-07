@@ -22,12 +22,13 @@ Meteor.startup ->
         user: ->
           Meteor.user()
       waitOn: ->
-        Meteor.call "checkIsAdmin", (err, res) ->
-          if err
-            Router.go "pleaseLogin"
-          else
-            if not res
-              Router.go "index"
+        userId = Meteor.userId()
+        if not userId 
+          Router.go "pleaseLogin"
+
+        else
+          if not Roles.userIsInRole(userId,"admin","system")
+            Router.go "index"
 
 
     @route "about",
@@ -160,7 +161,7 @@ Meteor.startup ->
           Router.go "pleaseLogin"
         
         Meteor.subscribe "allCourses"
-        Meteor.subscribe "myRoles"
+        # Meteor.subscribe "myRoles"
 
 
     @route "course",

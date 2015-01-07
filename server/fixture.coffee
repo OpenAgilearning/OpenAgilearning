@@ -1,5 +1,6 @@
 
 adminMeetupIds = [59393362, 173080282]
+courseManagerIds = [183363484]
 
 if Chat.find({courseId:"ipynbBasic"}).count() is 0
   Chat.insert {userId:"systemTest",userName:"systemTest",courseId:"ipynbBasic", msg:"Hello, ipynbBasic", createAt:new Date}
@@ -36,18 +37,23 @@ if DockerTypes.find({_id:"rstudio"}).count() is 0
 
 if Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).count() > 0
   defaultAdminUidArray = Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).fetch().map (xx)-> xx._id
-  # console.log "defaultAdminUidArray = "
-  # console.log defaultAdminUidArray
+  defaultCourseManagerUidArray = Meteor.users.find({"services.meetup.id" : {$in:courseManagerIds}}).fetch().map (xx)-> xx._id
 
-  filterArray = Roles.find({role:"admin"}).fetch().map (xx) -> xx.userId  
+  console.log "defaultAdminUidArray = "
+  console.log defaultAdminUidArray
+
+  Roles.addUsersToRoles(defaultAdminUidArray, 'admin', "system")
+  Roles.addUsersToRoles(defaultCourseManagerUidArray, "admin", "courses")
+  # filterArray = Roles.find({role:"admin"}).fetch().map (xx) -> xx.userId  
   # console.log "filterArray = "
   # console.log filterArray
 
-  filteredArray = defaultAdminUidArray.filter (xx) -> xx not in filterArray
+  # filteredArray = defaultAdminUidArray.filter (xx) -> xx not in filterArray
   # console.log "filteredArray = "
   # console.log filteredArray
 
-  Roles.insert {userId:uid, role:"admin"} for uid in filteredArray
+  # Roles.insert {userId:uid, role:"admin"} for uid in filteredArray
+
 
 if DockerImages.find().count() is 0
   dockerDefaultImages = [

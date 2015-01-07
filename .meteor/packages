@@ -7,8 +7,6 @@ meteor-platform
 coffeescript
 meteorhacks:npm
 iron:router
-
-
 npm-container
 mizzao:bootstrap-3
 accounts-meetup
@@ -20,4 +18,6 @@ mrt:moment
 mquandalle:jade
 aldeed:collection2
 aldeed:autoform
+alanning:roles
+ongoworks:security
 
