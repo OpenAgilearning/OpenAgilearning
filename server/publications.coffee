@@ -1,4 +1,12 @@
 
+
+Meteor.publish "allUsers", ->
+  if Roles.userIsInRole this.userId, "admin", "system"
+    Meteor.users.find()
+  else
+    Meteor.users.find _id:"noUsers"
+  
+
 # Meteor.publish "myRoles", ->
 #   Roles.find userId:@userId
 

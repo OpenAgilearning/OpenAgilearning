@@ -31,6 +31,32 @@ Meteor.startup ->
             Router.go "index"
 
 
+    @route "systemAdmin",
+      path: "systemAdmin/"
+      template: "systemAdminPage"
+      data:
+        rootURL:rootURL
+        user: ->
+          Meteor.user()
+
+        allUsers: ->
+          Meteor.users.find()
+
+      waitOn: ->
+        userId = Meteor.userId()
+        if not userId 
+          Router.go "pleaseLogin"
+
+        else
+          if not Roles.userIsInRole(userId,"admin","system")
+            Router.go "index"
+
+          else
+            Meteor.subscribe "allUsers"
+
+
+
+
     @route "about",
       path: "about/"
       template: "about"

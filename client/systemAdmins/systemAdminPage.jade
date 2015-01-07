@@ -1,0 +1,16 @@
+
+template(name="systemAdminPage")
+  .container
+    hr
+    h2 Users:
+    +systemAdminPageUsersTable
+    hr
+    h2 Courses:
+
+    hr
+    h2 Classrooms:
+    hr
+
+template(name="systemAdminPageUsersTable")
+  +reactiveTable settings=settings  
+    
