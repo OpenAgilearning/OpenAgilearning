@@ -23,5 +23,6 @@ Accounts.onCreateUser (options, user) ->
   user.profile.joined = resData.joined
   user.profile.topics = resData.topics
   user.profile.other_services = resData.other_services
+  user.profile.email = null
 
   user
