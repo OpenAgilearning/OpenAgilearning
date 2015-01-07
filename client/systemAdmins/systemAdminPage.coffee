@@ -1,4 +1,31 @@
 
+Template.adminPageDockerInstancesTable.helpers
+  settings: ->
+    removeDockerInstanceBtnsField =
+      key: "containerId"
+      label: "Remove Instance"
+      tmpl: Template.setDockerInstanceBtns
+    
+
+    res = 
+      collection: DockerInstances
+      rowsPerPage: 10
+      showFilter: true
+      fields: [removeDockerInstanceBtnsField, "_id", "userId", "imageId", "imageType", "servicePort", "createAt", "containerId"]
+
+
+Template.setDockerInstanceBtns.events
+  "click .removeDockerInstanceBtn": (e, t)->
+    e.stopPropagation()
+    containerId = $(e.target).attr "containerId"
+    Meteor.call "removeDocker", containerId, (err, res)->
+      if not err
+        console.log "res = "
+        console.log res
+
+  
+
+
 Template.adminPageDockerImagesTable.helpers
   settings: ->
     res = 
@@ -7,15 +34,6 @@ Template.adminPageDockerImagesTable.helpers
       showFilter: true
       fields: ["_id", "type"]
 
-
-Template.adminPageDockerInstancesTable.helpers
-  settings: ->
-    
-    res = 
-      collection: DockerInstances
-      rowsPerPage: 10
-      showFilter: true
-      fields: ["_id", "userId", "imageId", "imageType", "servicePort", "createAt", "containerId"]
 
 Template.adminPageUsersTable.helpers
   settings: ->

@@ -42,6 +42,11 @@ template(name="adminPageUsersTable")
   +reactiveTable settings=settings  
 
 
+template(name="setDockerInstanceBtns")
+  a.removeDockerInstanceBtn.btn.btn-default(href="#",containerId="{{containerId}}") Remove
+    
+
+
 template(name="setSystemAdminBtns")
   ul
     li

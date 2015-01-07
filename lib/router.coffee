@@ -12,6 +12,10 @@ Meteor.startup ->
         rootURL:rootURL
         user: ->
           Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
 
 
     @route "userStatus",
@@ -21,6 +25,10 @@ Meteor.startup ->
         rootURL:rootURL
         user: ->
           Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
       waitOn: ->
         userId = Meteor.userId()
         if not userId 
@@ -38,7 +46,11 @@ Meteor.startup ->
         rootURL:rootURL
         user: ->
           Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
+        
       waitOn: ->
         userId = Meteor.userId()
         if not userId 
@@ -47,13 +59,11 @@ Meteor.startup ->
         else
           if Roles.userIsInRole(userId,"admin","system")
             Meteor.subscribe "allUsers"
-            
-            if Roles.userIsInRole(userId,"admin","dockers")
-              Meteor.subscribe "allDockerInstances"
-              Meteor.subscribe "allDockerImages"
-
+            Meteor.subscribe "allDockerInstances"
+            Meteor.subscribe "allDockerImages"
+  
           else
-          
+
             if Roles.userIsInRole(userId,"admin","dockers")
               Meteor.subscribe "allDockerInstances"
               Meteor.subscribe "allDockerImages"
@@ -72,6 +82,10 @@ Meteor.startup ->
         rootURL:rootURL
         user: ->
           Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
 
 
     @route "howToUse",
@@ -81,6 +95,10 @@ Meteor.startup ->
         rootURL:rootURL
         user: ->
           Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
 
 
     @route "wishFeatures",
@@ -90,6 +108,10 @@ Meteor.startup ->
         rootURL:rootURL
         user: ->
           Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
 
         chats: ->
           Chat.find {}, {sort: {createAt:-1}}
@@ -116,6 +138,10 @@ Meteor.startup ->
         rootURL:rootURL
         user: ->
           Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
 
         dockerImages: ->
           runningImages = DockerInstances.find().fetch().map (x)-> x.imageId
@@ -145,7 +171,7 @@ Meteor.startup ->
         if not userId 
           Router.go "pleaseLogin"
 
-        Meteor.subscribe "allDockerImages"
+        Meteor.subscribe "allDockerImagesOld"
         Meteor.subscribe "allDockerTypes"
         Meteor.subscribe "userDockerInstances"
         Meteor.subscribe "userDockerTypeConfig"
@@ -183,6 +209,10 @@ Meteor.startup ->
       data:
         user: ->
           Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
         isAdmin: ->
           uid = Meteor.userId()
           Roles.find({userId:uid,role:"admin"}).count()>0
@@ -206,6 +236,11 @@ Meteor.startup ->
           rootURL:rootURL
           user: ->
             Meteor.user()
+          showAdminPage: ->
+            userId = Meteor.userId()
+            Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
+
           course: =>
             Courses.findOne _id: @params.cid
 
@@ -252,6 +287,10 @@ Meteor.startup ->
 
         user: ->
           Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
 
         docker: ->
           courseId = Session.get "courseId"
@@ -290,6 +329,10 @@ Meteor.startup ->
         name: "rstudio"
         user: ->
           Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
 
         docker: ->
           courseId = Session.get "courseId"
@@ -332,6 +375,10 @@ Meteor.startup ->
       data:
         user: ->
           Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
       waitOn: ->
         user = Meteor.user()
         if not user
