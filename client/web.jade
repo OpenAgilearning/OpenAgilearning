@@ -39,8 +39,9 @@ template(name="navBar")
           li.nav.navbar-nav
             a(href="{{pathFor 'wishFeatures'}}") Wish Features
 
-          li.nav.navbar-nav
-            a(href="{{pathFor 'settings'}}") Settings
+          if user
+            li.nav.navbar-nav
+              a(href="{{pathFor 'settings'}}") Settings
 
         ul.nav.navbar-nav.navbar-right
           li.nav.navbar-nav
