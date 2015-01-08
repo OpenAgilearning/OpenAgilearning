@@ -1,0 +1,49 @@
+
+template(name="systemAdminPage")
+  .container
+    hr
+    h2 Users:
+    +systemAdminPageUsersTable
+    hr
+    h2 Courses:
+
+    hr
+    h2 Classrooms:
+    hr
+
+template(name="systemAdminPageUsersTable")
+  +reactiveTable settings=settings  
+
+
+template(name="setSystemAdminBtns")
+  ul
+    li
+      a.setAsSystemAdminBtn.btn.btn-default(href="#",userId="{{_id}}") Set As System Admin
+    li
+      a.removeSystemAdminBtn.btn.btn-default(href="#",userId="{{_id}}") Remove System Admin
+
+template(name="setCourseManagerBtns")
+  ul
+    li
+      a.setAsCourseManagerBtn.btn.btn-default(href="#",userId="{{_id}}") Set As Course Manager
+    li
+      a.removeCourseManagerBtn.btn.btn-default(href="#",userId="{{_id}}") Remove Course Manager
+
+
+
+template(name="setTeacherBtns")
+  ul
+    li
+      a.setTeacherBtn.btn.btn-default(href="#",userId="{{_id}}") Set As Teacher
+    li
+      a.removeTeacherBtn.btn.btn-default(href="#",userId="{{_id}}") Remove Teacher
+
+
+template(name="setStudentBtns")
+  ul
+    li
+      a.setStudentBtn.btn.btn-default(href="#",userId="{{_id}}") Set As Student
+    li
+      a.removeStudentBtn.btn.btn-default(href="#",userId="{{_id}}") Remove Student
+
+  

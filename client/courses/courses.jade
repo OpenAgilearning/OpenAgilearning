@@ -32,11 +32,12 @@ template(name="courses")
     .row.clearfix
       .col-md-12.column
         //- +voteForMe
-        hr
-        h2 Add New Course
-        
-        +quickForm id="demo" schema="coursesSchema" type="method" meteormethod="createCourse" template="bootstrap3-inline" label-class="sr-only" afFieldInput-placeholder="schemaLabel"
-        
+        if isInRole "admin" "system"
+          hr
+          h2 Add New Course
+          
+          +quickForm id="demo" schema="coursesSchema" type="method" meteormethod="createCourse" template="bootstrap3-inline" label-class="sr-only" afFieldInput-placeholder="schemaLabel"
+          
         hr
         h2 Study Materials:
         table.table.table-hover

@@ -39,8 +39,13 @@ template(name="navBar")
           li.nav.navbar-nav
             a(href="{{pathFor 'wishFeatures'}}") Wish Features
 
-          li.nav.navbar-nav
-            a(href="{{pathFor 'settings'}}") Settings
+          if user
+            li.nav.navbar-nav
+              a(href="{{pathFor 'settings'}}") Settings
+
+          if isInRole "admin" "system"
+            li.nav.navbar-nav
+              a(href="{{pathFor 'systemAdmin'}}") Admin
 
         ul.nav.navbar-nav.navbar-right
           li.nav.navbar-nav
@@ -192,12 +197,12 @@ template(name="index")
       .col-md-1.column
       .col-md-5.column
 
-        img(src="https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-xpf1/v/t1.0-9/10574319_349490885204086_5397070236425947603_n.jpg?oh=7edbf9c82114fb9b3ff13d0b8cb8295c&oe=54E7AA6D&__gda__=1420486151_73c7713cd908c8193a458b7528063af2",style="width:100%")
+        img(src="images/aha_tutorial_pic.jpg",style="width:100%")
   
   .container
     .row.clearfix
       .col-md-5.column
-        img(src="https://fbcdn-sphotos-b-a.akamaihd.net/hphotos-ak-xfp1/v/t1.0-9/10561820_346961382123703_7933261843675077877_n.jpg?oh=8d8928e1990fd1560a50258a22adb700&oe=54E8D6AB&__gda__=1423953442_b6d26f0a4ead48dc23bdbee427367152",style="width:100%")        
+        img(src="images/dboy_tutorial_pic.jpg",style="width:100%")        
       .col-md-1.column
       .col-md-6.column
         h1 In a tutorial event, the most painful thing ... is ...
@@ -231,6 +236,6 @@ template(name="index")
       .col-md-1.column
       .col-md-5.column
 
-        img(src="https://fbcdn-sphotos-a-a.akamaihd.net/hphotos-ak-xap1/v/t1.0-9/10538054_352644551555386_9147449871248555130_n.jpg?oh=d099265163398f0773c055fce6f32912&oe=54DA6196&__gda__=1423723338_2746cbadaf67d6b5488bdb362a2d3c50",style="width:100%")
+        img(src="images/jiawei_tutorial_pic.jpg",style="width:100%")
   
   

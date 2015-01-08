@@ -22,12 +22,39 @@ Meteor.startup ->
         user: ->
           Meteor.user()
       waitOn: ->
-        Meteor.call "checkIsAdmin", (err, res) ->
-          if err
-            Router.go "pleaseLogin"
+        userId = Meteor.userId()
+        if not userId 
+          Router.go "pleaseLogin"
+
+        else
+          if not Roles.userIsInRole(userId,"admin","system")
+            Router.go "index"
+
+
+    @route "systemAdmin",
+      path: "systemAdmin/"
+      template: "systemAdminPage"
+      data:
+        rootURL:rootURL
+        user: ->
+          Meteor.user()
+
+        allUsers: ->
+          Meteor.users.find()
+
+      waitOn: ->
+        userId = Meteor.userId()
+        if not userId 
+          Router.go "pleaseLogin"
+
+        else
+          if not Roles.userIsInRole(userId,"admin","system")
+            Router.go "index"
+
           else
-            if not res
-              Router.go "index"
+            Meteor.subscribe "allUsers"
+
+
 
 
     @route "about",
@@ -160,7 +187,7 @@ Meteor.startup ->
           Router.go "pleaseLogin"
         
         Meteor.subscribe "allCourses"
-        Meteor.subscribe "myRoles"
+        # Meteor.subscribe "myRoles"
 
 
     @route "course",
