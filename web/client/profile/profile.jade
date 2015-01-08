@@ -3,9 +3,12 @@ template(name="settings")
 template(name="profile")
   .container
     .row.clearfix
-      .col-md-3.column
-      .col-md-6.column
+      .col-md-2.column
         +public_profile
+      .col-md-10.column
+        +dockers  
+    
+      
 
 template(name="public_profile")
   h2 {{user.profile.name}}

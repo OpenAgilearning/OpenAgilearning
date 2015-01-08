@@ -43,10 +43,11 @@ template(name="navBar")
             li.nav.navbar-nav
               a(href="{{pathFor 'settings'}}") Settings
 
-          if isInRole "admin" "system"
+          if showAdminPage
             li.nav.navbar-nav
-              a(href="{{pathFor 'systemAdmin'}}") Admin
+              a(href="{{pathFor 'admin'}}") Admin
 
+          
         ul.nav.navbar-nav.navbar-right
           li.nav.navbar-nav
             img.user-img.img-circle(src="{{user.profile.photo.thumb_link}}")

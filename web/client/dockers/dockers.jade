@@ -65,7 +65,7 @@ template(name="dockerInstancesList")
               each dockerInstances
                 tr
                   td
-                    a.stopInstance.btn.btn-default(containerId="{{containerId}}") Stop Instance
+                    a.showInstance.btn.btn-default(servicePort="{{servicePort}}") Show Instance
                   td
                     p {{imageId}}
                   td
@@ -75,7 +75,7 @@ template(name="dockerInstancesList")
                       each containerInfo.Env
                         li {{this}}
                   td
-                    a.showInstance.btn.btn-default(servicePort="{{servicePort}}") Show Instance
+                    a.stopInstance.btn.btn-default(containerId="{{containerId}}") Stop Instance
 
 
 template(name="dockerRunningConfig")

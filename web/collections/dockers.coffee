@@ -47,9 +47,21 @@ Meteor.methods
     if not user
       throw new Meteor.Error(401, "You need to login")
 
-    if DockerInstances.find({userId:user._id,containerId:containerId}).count() is 0
-      throw new Meteor.Error(1101, "User is not the instance owner!")
-    else
+    console.log "DockerInstances.find({userId:user._id,containerId:containerId}).count() = "
+    console.log DockerInstances.find({userId:user._id,containerId:containerId}).count()
+    
+    hasRemovePermission = DockerInstances.find({userId:user._id,containerId:containerId}).count() > 0
+    
+    console.log "hasRemovePermission = " 
+    console.log hasRemovePermission
+    
+    hasRemovePermission = hasRemovePermission or Roles.userIsInRole(user._id, "admin", "dockers")
+
+    console.log "hasRemovePermission = " 
+    console.log hasRemovePermission
+    
+    if hasRemovePermission
+      
       Docker = Meteor.npmRequire "dockerode"
       docker = new Docker {socketPath: '/var/run/docker.sock'}
       
@@ -80,14 +92,16 @@ Meteor.methods
       console.log data
 
 
-      Alldata = DockerInstances.find({userId:user._id,containerId:containerId}).fetch()
-      DockerInstances.remove {userId:user._id,containerId:containerId}
+      Alldata = DockerInstances.find({containerId:containerId}).fetch()
+      DockerInstances.remove {containerId:containerId}
 
       for x in Alldata
         x.remoteAt = new Date
         DockerInstancesLog.insert x
 
-      
+    else
+      throw new Meteor.Error(1101, "Permission Deny!")
+    
 
 
   "runDocker": (imageId)-> 

@@ -1,0 +1,90 @@
+
+template(name="AdminPage")
+  .container
+    ul.nav.nav-tabs
+      if isInRole "admin" "dockers"
+        li
+          a(data-toggle="tab", href="#dockerAdmin") Docker Admin
+      if isInRole "admin" "system"
+        li
+          a(data-toggle="tab", href="#systemAdmin") System Admin
+    
+    .tab-content
+      if isInRole "admin" "dockers"
+        .tab-pane.fade#dockerAdmin
+          hr
+          h2 Dockers Instances:
+          +adminPageDockerInstancesTable
+
+          hr
+          h2 Dockers Images:
+          +adminPageDockerImagesTable
+
+          hr
+          
+      if isInRole "admin" "system"
+        .tab-pane.fade#systemAdmin
+          hr
+          h2 Set Admins:
+          +adminPageUsersTable
+      
+    
+
+template(name="adminPageDockerImagesTable")
+  +reactiveTable settings=settings  
+
+
+template(name="adminPageDockerInstancesTable")
+  +reactiveTable settings=settings  
+
+
+template(name="adminPageUsersTable")
+  +reactiveTable settings=settings  
+
+
+template(name="setDockerInstanceBtns")
+  a.removeDockerInstanceBtn.btn.btn-default(href="#",containerId="{{containerId}}") Remove
+    
+
+
+template(name="setSystemAdminBtns")
+  ul
+    li
+      a.setSystemAdminBtn.btn.btn-default(href="#",userId="{{_id}}") Set As System Admin
+    li
+      a.removeSystemAdminBtn.btn.btn-default(href="#",userId="{{_id}}") Remove System Admin
+
+template(name="setCourseManagerBtns")
+  ul
+    li
+      a.setCourseManagerBtn.btn.btn-default(href="#",userId="{{_id}}") Set As Course Manager
+    li
+      a.removeCourseManagerBtn.btn.btn-default(href="#",userId="{{_id}}") Remove Course Manager
+
+
+
+template(name="setTeacherBtns")
+  ul
+    li
+      a.setTeacherBtn.btn.btn-default(href="#",userId="{{_id}}") Set As Teacher
+    li
+      a.removeTeacherBtn.btn.btn-default(href="#",userId="{{_id}}") Remove Teacher
+
+
+template(name="setStudentBtns")
+  ul
+    li
+      a.setStudentBtn.btn.btn-default(href="#",userId="{{_id}}") Set As Student
+    li
+      a.removeStudentBtn.btn.btn-default(href="#",userId="{{_id}}") Remove Student
+
+
+
+template(name="setDockerAdminBtns")
+  ul
+    li
+      a.setDockerAdminBtn.btn.btn-default(href="#",userId="{{_id}}") Set As Docker Admin
+    li
+      a.removeDockerAdminBtn.btn.btn-default(href="#",userId="{{_id}}") Remove Docker Admin
+
+  

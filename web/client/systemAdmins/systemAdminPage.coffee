@@ -1,5 +1,41 @@
 
-Template.systemAdminPageUsersTable.helpers
+Template.adminPageDockerInstancesTable.helpers
+  settings: ->
+    removeDockerInstanceBtnsField =
+      key: "containerId"
+      label: "Remove Instance"
+      tmpl: Template.setDockerInstanceBtns
+    
+
+    res = 
+      collection: DockerInstances
+      rowsPerPage: 10
+      showFilter: true
+      fields: [removeDockerInstanceBtnsField, "_id", "userId", "imageId", "imageType", "servicePort", "createAt", "containerId"]
+
+
+Template.setDockerInstanceBtns.events
+  "click .removeDockerInstanceBtn": (e, t)->
+    e.stopPropagation()
+    containerId = $(e.target).attr "containerId"
+    Meteor.call "removeDocker", containerId, (err, res)->
+      if not err
+        console.log "res = "
+        console.log res
+
+  
+
+
+Template.adminPageDockerImagesTable.helpers
+  settings: ->
+    res = 
+      collection: DockerImages
+      rowsPerPage: 10
+      showFilter: true
+      fields: ["_id", "type"]
+
+
+Template.adminPageUsersTable.helpers
   settings: ->
     userIdField =
       key: "_id"
@@ -26,6 +62,13 @@ Template.systemAdminPageUsersTable.helpers
       tmpl: Template.setSystemAdminBtns
     
 
+    setDockerAdminBtnsField =
+      key: "_id"
+      label: "Set Docker Admin"
+      tmpl: Template.setDockerAdminBtns
+    
+
+
     setCourseManagerBtnField =
       key: "_id"
       label: "Set Course Manager"
@@ -48,11 +91,11 @@ Template.systemAdminPageUsersTable.helpers
       collection: Meteor.users
       rowsPerPage: 10
       showFilter: true
-      fields: [userIdField, userNameField, userRolesField, setSystemAdminBtnsField, setCourseManagerBtnField, setTeacherBtnField, setStudentBtnField]
+      fields: [userIdField, userNameField, userRolesField, setSystemAdminBtnsField, setDockerAdminBtnsField, setCourseManagerBtnField, setTeacherBtnField, setStudentBtnField]
 
 
 Template.setSystemAdminBtns.events
-  "click .setAsSystemAdminBtn": (e, t)->
+  "click .setSystemAdminBtn": (e, t)->
     e.stopPropagation()
     userId = $(e.target).attr "userId"
     Meteor.call "setSystemAdmin", userId
@@ -64,7 +107,7 @@ Template.setSystemAdminBtns.events
 
 
 Template.setCourseManagerBtns.events
-  "click .setAsCourseManagerBtn": (e, t)->
+  "click .setCourseManagerBtn": (e, t)->
     e.stopPropagation()
     userId = $(e.target).attr "userId"
     Meteor.call "setCourseManager", userId
@@ -97,3 +140,16 @@ Template.setStudentBtns.events
     e.stopPropagation()
     userId = $(e.target).attr "userId"
     Meteor.call "removeStudent", userId
+
+
+
+Template.setDockerAdminBtns.events
+  "click .setDockerAdminBtn": (e, t)->
+    e.stopPropagation()
+    userId = $(e.target).attr "userId"
+    Meteor.call "setDockerAdmin", userId
+
+  "click .removeDockerAdminBtn": (e, t)->
+    e.stopPropagation()
+    userId = $(e.target).attr "userId"
+    Meteor.call "removeDockerAdmin", userId
