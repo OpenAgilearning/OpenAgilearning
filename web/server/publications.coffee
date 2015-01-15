@@ -1,4 +1,7 @@
 
+PUB_NODES_LIMIT = 50
+
+
 Meteor.publish "allDockerImages", ->
   if Roles.userIsInRole @userId, "admin", "dockers"
     DockerImages.find()
@@ -11,6 +14,24 @@ Meteor.publish "allDockerInstances", ->
     DockerInstances.find()
   else
     DockerInstances.find _id: "permisionDeny"
+
+
+
+Meteor.publish "allLearningResources", ->
+  if Roles.userIsInRole @userId, "admin", "system"
+    LearningResources.find()
+  else
+    LearningResources.find _id:"permisionDeny"
+
+
+Meteor.publish "queryLearningResources", (query) ->
+  if not query
+    query = {}
+  if Roles.userIsInRole @userId, "admin", "system"
+    LearningResources.find query, {limit:PUB_NODES_LIMIT}
+  else
+    LearningResources.find _id:"permisionDeny"
+
 
 Meteor.publish "allUsers", ->
   if Roles.userIsInRole @userId, "admin", "system"

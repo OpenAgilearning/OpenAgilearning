@@ -20,9 +20,33 @@ Meteor.startup ->
           Meteor.subscribe "DevMileStone"
           Meteor.subscribe "WantedFeature"
 
+    @route "learningResources",
+      path: "learningResources/"
+      template: "learningResourcesPage"
+      data:
+        rootURL:rootURL
+        user: ->
+          Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
+        resourceNodes: ->
+          LearningResources.find()
+
+
+      waitOn: ->
+        userId = Meteor.userId()
+        if not userId 
+          Router.go "pleaseLogin"
+
+        else
+          if Roles.userIsInRole(userId,"admin","system")
+            Meteor.subscribe "queryLearningResources"
+            
 
     @route "userStatus",
-      path: "/userStatus/"
+      path: "userStatus/"
       template: "userStatus"
       data:
         rootURL:rootURL
