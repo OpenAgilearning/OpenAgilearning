@@ -4,7 +4,7 @@
   title:
     type: String
   description:
-    type: String  
+    type: String
   type:
     type: String
     allowedValues: ["video","website","slide","youtube"]
@@ -19,10 +19,10 @@
   youtubePlaylistId:
     type: String
     optional: true
-  
-  
-    
-    
+
+
+
+
 Meteor.methods
   "createLearningResource": (data) ->
     user = Meteor.user()
@@ -44,14 +44,14 @@ Meteor.methods
 
   dockerImage:
     type: String
-  
+
   slides:
     type: String
     optional: true
     regEx: SimpleSchema.RegEx.Url
-    autoform: 
+    autoform:
       type: "url"
-    
+
   description:
     type: String
     optional: true
@@ -60,13 +60,13 @@ Meteor.methods
     type: String
     optional: true
     regEx: SimpleSchema.RegEx.Url
-    autoform: 
+    autoform:
       type: "url"
 
 
 Meteor.methods
   "createCourse": (courseData) ->
-    
+
     user = Meteor.user()
 
     if not user
@@ -77,3 +77,19 @@ Meteor.methods
 
     Courses.insert courseData
 
+  "deleteCourse": (courseId) ->
+    loggedInUserId = Meteor.userId()
+
+    if not loggedInUserId
+      throw new Meteor.Error(401, "You need to login")
+
+    if Roles.userIsInRole loggedInUserId, "admin", "system"
+      if Courses.find({_id:courseId}).count() > 0
+        Courses.remove({ "_id": courseId })
+      else
+        throw new Meteor.Error(1302, "[Admin Error] there is no course with id" + courseId)
+    else if Roles.userIsInRole loggedInUserId, "manager", "courses"
+      if Courses.find({_id:courseId}).count() > 0
+        Courses.remove({ "_id": courseId })
+    else
+      throw new Meteor.Error(1301, "[Admin Error] permision deny")

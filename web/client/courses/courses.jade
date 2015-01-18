@@ -4,7 +4,7 @@ template(name="course")
   .container
     .row.clearfix
       //- .col-md-6.column
-        
+
       .col-md-10.column
         if course.video
           hr
@@ -14,14 +14,14 @@ template(name="course")
           video.video-js.vjs-default-skin(id="vid",src="",controls,width="100%",height="700px",data-setup='{ "techOrder": ["youtube"], "src": "{{course.video}}" }')
         hr
         h2 Docker:
-        input.connectBt.btn.btn-default(value="Try Docker Instance:")        
+        input.connectBt.btn.btn-default(value="Try Docker Instance:")
         iframe#docker(src="http://{{rootURL}}:{{docker.servicePort}}", width="100%", height="550px", scrolling="yes")
 
         hr
         if course.slides
-          h2 Reference: 
+          h2 Reference:
           iframe#slides(src="{{course.slides}}", width="100%", height="700px", scrolling="auto")
-      
+
       .col-md-2.column
         +chatroom
 
@@ -35,9 +35,9 @@ template(name="courses")
         if isInRole "admin" "system"
           hr
           h2 Add New Course
-          
+
           +quickForm id="demo" schema="coursesSchema" type="method" meteormethod="createCourse" template="bootstrap3-inline" label-class="sr-only" afFieldInput-placeholder="schemaLabel"
-          
+
         hr
         h2 Study Materials:
         table.table.table-hover
@@ -48,11 +48,12 @@ template(name="courses")
             th Video
             //- th Description
             th Creator's Name
-            th Create / Delete
+            if isInRole "admin" "system"
+              th Create / Delete
           tbody
             //- if isAdmin
             //-   tr
-            //-     td 
+            //-     td
             //-       input.courseName
             //-     td
             //-       input.dockerImage
@@ -61,48 +62,51 @@ template(name="courses")
             //-     td
             //-       input.description
             //-     td
-            //-       p {{user.profile.name}}    
+            //-       p {{user.profile.name}}
             //-     td
             //-       input.createBt.btn.btn-default(value="Create")
 
 
             tr
-              td 
+              td
                 a(href="{{pathFor 'ipynb' cid='ipynb'}}") Try IPyNB
-              td 
+              td
                 a(target="_blank",href="https://registry.hub.docker.com/u/c3h3/oblas-py278-shogun-ipynb") c3h3/oblas-py278-shogun-ipynb
-              td 
+              td
                 p Link
-              //- td 
-              td 
-              td 
+              //- td
+              td
+              td
 
             tr
-              td 
+              td
                 a(href="{{pathFor 'rstudio' cid='rstudio'}}") Try RStudio
-              td 
+              td
                 a(target="_blank",href="https://registry.hub.docker.com/u/rocker/rstudio") rocker/rstudio
-              td 
+              td
                 p Link
-              //- td 
-              td 
-              td 
+              //- td
+              td
+              td
 
 
             each courses
               tr
-                td 
+                td
                   a(href="{{pathFor 'course' cid=_id}}") {{courseName}}
-                td 
+                td
                   a(target="_blank",href="https://registry.hub.docker.com/u/{{dockerImage}}") {{dockerImage}}
-                td 
+                td
                   a(target="_blank",href="{{slides}}") Link
-                td 
-                  if video 
+                td
+                  if video
                     a(target="_blank",href="{{video}}") Video
                 //- td {{description}}
                 td {{creatorName}}
-                td unfeatured 
+
+                if isInRole "admin" "system"
+                  td
+                    input.btn.btn-warning(type="button" value="Delet")
 
 
 
@@ -111,16 +115,16 @@ template(name="analyzer")
   .container
     //- +voteForMe
     hr
-    a.btn.btn-default(target="_blank",href="{{baseImageUrl}}") Browse Base Image ({{docker.imageId}}) on Docker Hub      
+    a.btn.btn-default(target="_blank",href="{{baseImageUrl}}") Browse Base Image ({{docker.imageId}}) on Docker Hub
     hr
-    //- a.goBt.btn.btn-default(target="_blank",href="http://{{rootURL}}:{{docker.servicePort}}") Go to {{name}} page  
+    //- a.goBt.btn.btn-default(target="_blank",href="http://{{rootURL}}:{{docker.servicePort}}") Go to {{name}} page
     //- hr
   .container
     .col-md-10.column
       .tabbable
         .tab-pane.active
-        
-          input.connectBt.btn.btn-default(value="Connect to Docker")        
+
+          input.connectBt.btn.btn-default(value="Connect to Docker")
           iframe#docker(src="http://{{rootURL}}:{{docker.servicePort}}", width="100%", height="550px", scrolling="yes")
             p Your browser does not support iframes.
 

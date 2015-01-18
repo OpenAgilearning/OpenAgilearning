@@ -1,6 +1,9 @@
 Router.configure
   layoutTemplate: 'layout'
+<<<<<<< HEAD
 
+=======
+>>>>>>> close #57, Move userStatus page to system page.
 
 Meteor.startup ->
   Router.map ->
@@ -37,33 +40,12 @@ Meteor.startup ->
 
       waitOn: ->
         userId = Meteor.userId()
-        if not userId 
+        if not userId
           Router.go "pleaseLogin"
 
         else
           if Roles.userIsInRole(userId,"admin","system")
             Meteor.subscribe "queryLearningResources"
-            
-
-    @route "userStatus",
-      path: "userStatus/"
-      template: "userStatus"
-      data:
-        rootURL:rootURL
-        user: ->
-          Meteor.user()
-        showAdminPage: ->
-          userId = Meteor.userId()
-          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
-      waitOn: ->
-        userId = Meteor.userId()
-        if not userId
-          Router.go "pleaseLogin"
-
-        else
-          if not Roles.userIsInRole(userId,"admin","system")
-            Router.go "index"
-
 
     @route "admin",
       path: "admin/"
