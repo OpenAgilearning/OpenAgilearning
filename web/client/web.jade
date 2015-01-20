@@ -31,10 +31,10 @@ template(name="navBar")
 
           //- li.nav.navbar-nav
           //-   +voteForMeLinks
-          
+
           li.nav.navbar-nav
             a(href="{{pathFor 'dockers'}}") Dockers
-          
+
 
           li.nav.navbar-nav
             a(href="{{pathFor 'wishFeatures'}}") Wish Features
@@ -47,7 +47,7 @@ template(name="navBar")
             li.nav.navbar-nav
               a(href="{{pathFor 'admin'}}") Admin
 
-          
+
         ul.nav.navbar-nav.navbar-right
           li.nav.navbar-nav
             img.user-img.img-circle(src="{{user.profile.photo.thumb_link}}")
@@ -57,7 +57,7 @@ template(name="navBar")
   if alertMessage
     .container
       .alert.alert-danger(role="alert") {{alertMessage}}
-  
+
 template(name="about")
   .container
     .row.clearfix
@@ -65,99 +65,99 @@ template(name="about")
         //- +voteForMe
 
         h1 Motivation
-        p Because our community hold MLDM Monday event (MLDM stands for Machine Learning and Data Mining) every week in Taipei, 
-          | some of events were in tutorial forms. In those tutorial events, 
-          | we found the most difficult thing which barriered students to hands on the programs is 
-          | the environment synchronization! 
-        i Some codes could be executed in teacher's computer, but could not in student's. 
+        p Because our community hold MLDM Monday event (MLDM stands for Machine Learning and Data Mining) every week in Taipei,
+          | some of events were in tutorial forms. In those tutorial events,
+          | we found the most difficult thing which barriered students to hands on the programs is
+          | the environment synchronization!
+        i Some codes could be executed in teacher's computer, but could not in student's.
         p Fortunately, we meet docker ......
 
-        h1 Technologies in this project ... 
+        h1 Technologies in this project ...
         ul
           li
-            h3 
+            h3
               a(href="https://www.docker.com/") Docker
-          li  
-            h3 
+          li
+            h3
               a(href="https://www.meteor.com/") Meteor
           li
-            h3 
+            h3
               a(href="https://github.com/apocas/dockerode") dockerode
-          li  
-            h3 
+          li
+            h3
               a(href="https://cloud.google.com/compute/") Google Computer Engine
-        
-        
+
+
       .col-md-6.column
-        
-        h1 Dockerfiles in this project ... 
+
+        h1 Dockerfiles in this project ...
         ul
-          li 
-            h3 
+          li
+            h3
               a(target="_blank",href="https://registry.hub.docker.com/u/c3h3/oblas-py278-shogun-ipynb/") c3h3/oblas-py278-shogun-ipynb
             p (used in Try IPyNB)
-          li 
-            h3 
+          li
+            h3
               a(target="_blank",href="https://registry.hub.docker.com/u/rocker/rstudio/") rocker/rstudio
             p (used in Try RStudio)
 
-          li 
-            h3 
+          li
+            h3
               a(target="_blank",href="https://registry.hub.docker.com/u/c3h3/learning-shogun") c3h3/learning-shogun
             p (used in learning shogun)
 
-          li 
-            h3 
+          li
+            h3
               a(target="_blank",href="https://registry.hub.docker.com/u/c3h3/dsc2014tutorial") c3h3/dsc2014tutorial
             p (used in DSC2014Tutorial Series)
 
-        h1 Fetures In the future ... 
+        h1 Fetures In the future ...
         ul
           li
             h3 Create Study Materials & Create Docker Images & Upload them Up
-            
+
           li
-            h3 Manage students' resources and docker instances 
-            
-        
+            h3 Manage students' resources and docker instances
+
+
 template(name="howToUse")
   .container
     .row.clearfix
       .col-md-6.column
         //- +voteForMe
-        
+
         h1 How to use it NOW?
         ul
           li
-            h3 
-              a(href="{{pathFor 'ipynb' }}") Try IPython Notebook 
+            h3
+              a(href="{{pathFor 'ipynb' }}") Try IPython Notebook
           li
-            h3 
+            h3
               a(href="{{pathFor 'rstudio' }}") Try RStudio
               h4 Account: rstudio / Password: rstudio
           li
-            h3 
+            h3
               a(href="{{pathFor 'courses'}}") Try Learning from Study Materials
 
         h1 Video
         iframe#ytplayer(type="text/html",width="100%", height="400px",src="http://www.youtube.com/embed/f1IAuMTUD2k",frameborder="0",allowfullscreen)
 
-          
+
       .col-md-6.column
         h1 Please DON'T Do ...
         h4 (Because you are the root on each docker instance ... )
         ul
-          li 
-            h2 DON'T ATTACT ME ... 
+          li
+            h2 DON'T ATTACT ME ...
             h3 ( please ~~~ )
-          li 
-            h2 DON'T USE IMAGE TO ATTACT OTHERS ... 
+          li
+            h2 DON'T USE IMAGE TO ATTACT OTHERS ...
             h3 ( please ~~~ )
-          li 
-            h2 DON'T USE TOO MANY MEMORY AND CPU  ... 
+          li
+            h2 DON'T USE TOO MANY MEMORY AND CPU  ...
             h3 ( please leave some resources to others ~~~ )
-          li 
-            h2 DON'T DONWLOAD TOO LARGE DATASET  ... 
+          li
+            h2 DON'T DONWLOAD TOO LARGE DATASET  ...
             h3 ( please leave some resources to others ~~~ )
 
 
@@ -166,13 +166,14 @@ template(name="wishFeatures")
   .container
     .row.clearfix
       .col-md-12.column
-        +chatroom
-  
+        +wantedFeatureEditBoard
+        hr
+        +wantedFeatureTabel
+        //- +chatroom
 
-        
 template(name="pleaseLogin")
   .container
-    h2 Please Login ! 
+    h2 Please Login !
 
 template(name="index")
   //- .container
@@ -187,23 +188,22 @@ template(name="index")
   .container
     .row.clearfix
       .col-md-6.column
-        h1 Running Dockers directly! 
-        h2 Mining Data immediately !
-        h3 You don't need to be cooped in different operation systems anymore! 
-        h3 Needn't spend a lot of time to synchronize environments !
-        h3 Spend most of time playing data!
-
-
+        h1 Running Dockers directly!
+        h3 Mining Data immediately !
+        h4 You don't need to be cooped in different operation systems anymore!
+        h4 Needn't spend a lot of time to synchronize environments !
+        h4 Spend most of time playing data!
+        +msgBoard
 
       .col-md-1.column
       .col-md-5.column
 
         img(src="images/aha_tutorial_pic.jpg",style="width:100%")
-  
+
   .container
     .row.clearfix
       .col-md-5.column
-        img(src="images/dboy_tutorial_pic.jpg",style="width:100%")        
+        img(src="images/dboy_tutorial_pic.jpg",style="width:100%")
       .col-md-1.column
       .col-md-6.column
         h1 In a tutorial event, the most painful thing ... is ...
@@ -212,7 +212,7 @@ template(name="index")
             h2 (for teacher) is to synchronize everyone's environment!
           li
             h2 (for student) is "the programs could not be run in my computer, but it runs on teacher's!"
-        
+
 
   .container
     .row.clearfix
@@ -222,15 +222,15 @@ template(name="index")
           li
             h3
               a(target="_blank", href="http://www.meetup.com/Taiwan-R/") Taiwan R User Group / MLDM Monday
- 
-            p which is the largest data mining community in Taiwan. They also host a two-day tutorial session in the Data Science Conference 2014 (Taiwan). 
-            a(href="{{pathFor 'courses'}}") (see more on study material) 
+
+            p which is the largest data mining community in Taiwan. They also host a two-day tutorial session in the Data Science Conference 2014 (Taiwan).
+            a(href="{{pathFor 'courses'}}") (see more on study material)
           li
-            h3 
+            h3
               a(target="_blank", href="http://www.meetup.com/Docker-Taipei/") Docker Taipei Community
 
           li
-            h3 
+            h3
               a(target="_blank", href="https://www.slidenow.com/slides") SlideNow!
             p The most easy slides editor, most fancy slides platform. They use a lot of dockers' technology in their infrastructure, and give me lots of help in this hackathon.
 
@@ -238,5 +238,3 @@ template(name="index")
       .col-md-5.column
 
         img(src="images/jiawei_tutorial_pic.jpg",style="width:100%")
-  
-  

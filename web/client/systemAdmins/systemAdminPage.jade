@@ -8,7 +8,11 @@ template(name="AdminPage")
       if isInRole "admin" "system"
         li
           a(data-toggle="tab", href="#systemAdmin") System Admin
-    
+
+      if isInRole "admin" "system"
+        li
+          a(data-toggle="tab", href="#editMsgBoard") Message Board
+
     .tab-content
       if isInRole "admin" "dockers"
         .tab-pane.fade#dockerAdmin
@@ -21,30 +25,37 @@ template(name="AdminPage")
           +adminPageDockerImagesTable
 
           hr
-          
+
       if isInRole "admin" "system"
         .tab-pane.fade#systemAdmin
           hr
           h2 Set Admins:
           +adminPageUsersTable
-      
-    
+
+      if isInRole "admin" "system"
+        .tab-pane.fade#editMsgBoard
+          hr
+          h2 Milestone
+          +devMilestoneTable
+          hr
+          h2 Edit Message Board:
+          +msgEditBoard
 
 template(name="adminPageDockerImagesTable")
-  +reactiveTable settings=settings  
+  +reactiveTable settings=settings
 
 
 template(name="adminPageDockerInstancesTable")
-  +reactiveTable settings=settings  
+  +reactiveTable settings=settings
 
 
 template(name="adminPageUsersTable")
-  +reactiveTable settings=settings  
+  +reactiveTable settings=settings
 
 
 template(name="setDockerInstanceBtns")
   a.removeDockerInstanceBtn.btn.btn-default(href="#",containerId="{{containerId}}") Remove
-    
+
 
 
 template(name="setSystemAdminBtns")
@@ -87,4 +98,3 @@ template(name="setDockerAdminBtns")
     li
       a.removeDockerAdminBtn.btn.btn-default(href="#",userId="{{_id}}") Remove Docker Admin
 
-  
