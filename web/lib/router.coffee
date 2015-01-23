@@ -1,9 +1,5 @@
 Router.configure
   layoutTemplate: 'layout'
-<<<<<<< HEAD
-
-=======
->>>>>>> close #57, Move userStatus page to system page.
 
 Meteor.startup ->
   Router.map ->
