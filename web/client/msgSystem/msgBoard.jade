@@ -1,0 +1,50 @@
+template(name="msgBoard")
+  ul.nav.nav-tabs
+    li
+      a(data-toggle="tab", href="#devMilestone") Milestone
+    li
+      a(data-toggle="tab", href="#wantedFeature") Most Wanted
+
+  .tab-content
+    .tab-pane.fade#devMilestone
+      +devMilestoneTable
+
+    .tab-pane.fade#wantedFeature
+      +wantedFeatureTabel
+template(name="devMilestoneTable")
+  +reactiveTable settings=settings
+
+template(name="wantedFeatureTabel")
+  +reactiveTable settings=settings
+
+
+template(name="msgEditBoard")
+  +autoForm schema="devMileStoneSchema" doc=autoFormData  id="editDevMilestone" type="method" meteormethod="postDevMilestone"
+    fieldset
+      label.control-label {{afFieldLabelText name="version"}}
+      +afFieldInput name='version'
+      if afFieldIsInvalid name="version"
+        strong {{{afFieldMessage name="version"}}}
+      label.control-label {{afFieldLabelText name="description"}}
+      +afFieldInput name='description'
+      if afFieldIsInvalid name="description"
+        strong {{{afFieldMessage name="description"}}}
+      br
+    button.btn.btn-primary(type='submit') submit
+
+
+template(name="wantedFeatureEditBoard")
+  +autoForm schema="wantedFeatureSchema" id="editWantedFeature" type="method" meteormethod="postWantedFeature" doc=featureData
+    fieldset
+      label.control-label {{afFieldLabelText name="hot"}}
+      +afFieldInput name='hot'
+      label.control-label {{afFieldLabelText name="description"}}
+      +afFieldInput name='description'
+      if afFieldIsInvalid name="description"
+        strong {{{afFieldMessage name="description"}}}
+      br
+    button.btn.btn-primary(type='submit') submit
+
+template(name="voteFeatureBtn")
+  input.upvoteFeatureBtn.btn.btn-success(id="{{_id}}" type="button" value="Upvote")
+  input.cancelUpvoteFeatureBtn.btn.btn-warning(id="{{_id}}" type="button" value="Cancel")

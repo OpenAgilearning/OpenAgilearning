@@ -3,7 +3,7 @@ template(name="chatroom")
   .chatroom
     h2 Discuss:
     hr
-    +autoForm schema="ChatSchema" id="classChat" type="insert" doc=quickFormData schema="ChatSchema" meteormethod="postChat" type="method"
+    +autoForm id="classChat" doc=quickFormData schema="ChatSchema" meteormethod="postChat" type="method"
       fieldset
         label.control-label {{afFieldLabelText name="msg"}}
         +afFieldInput name='msg'
@@ -12,7 +12,7 @@ template(name="chatroom")
         br
       button.btn.btn-primary(type='submit') submit
     hr
-    .chats 
+    .chats
       each chats
         p {{userName}}:
         p {{msg}}

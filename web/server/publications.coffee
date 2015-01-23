@@ -17,7 +17,7 @@ Meteor.publish "allUsers", ->
     Meteor.users.find()
   else
     Meteor.users.find _id:"permisionDeny"
-  
+
 
 # Meteor.publish "myRoles", ->
 #   Roles.find userId:@userId
@@ -25,7 +25,7 @@ Meteor.publish "allUsers", ->
 Meteor.publish "dockers", ->
   if not @userId
     throw new Meteor.Error(401, "You need to login")
-  
+
   Dockers.findOnd userId:@userId
 
 
@@ -45,8 +45,8 @@ Meteor.publish "userDockers", ->
 
   if not userId
     throw new Meteor.Error(401, "You need to login")
-  
-  Dockers.find userId:userId 
+
+  Dockers.find userId:userId
 
 
 Meteor.publish "userDockerInstances", ->
@@ -61,10 +61,15 @@ Meteor.publish "userDockerTypeConfig", ->
   if userId
     DockerTypeConfig.find {userId:userId}
 
-  
+
 Meteor.publish "allCourses", ->
   Courses.find()
 
-Meteor.publish "Chat", (courseId) -> 
+Meteor.publish "Chat", (courseId) ->
   Chat.find({courseId:courseId}, {sort: {createAt:-1}, limit:20})
 
+Meteor.publish "WantedFeature", ->
+  WantedFeature.find()
+
+Meteor.publish "DevMileStone", ->
+  DevMileStone.find()

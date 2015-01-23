@@ -1,9 +1,9 @@
 Router.configure
   layoutTemplate: 'layout'
-    
+
 
 Meteor.startup ->
-  Router.map -> 
+  Router.map ->
 
     @route "index",
       path: "/"
@@ -16,6 +16,9 @@ Meteor.startup ->
           userId = Meteor.userId()
           Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
+      waitOn: ->
+          Meteor.subscribe "DevMileStone"
+          Meteor.subscribe "WantedFeature"
 
 
     @route "userStatus",
@@ -28,10 +31,9 @@ Meteor.startup ->
         showAdminPage: ->
           userId = Meteor.userId()
           Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
-
       waitOn: ->
         userId = Meteor.userId()
-        if not userId 
+        if not userId
           Router.go "pleaseLogin"
 
         else
@@ -50,10 +52,9 @@ Meteor.startup ->
           userId = Meteor.userId()
           Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
-        
       waitOn: ->
         userId = Meteor.userId()
-        if not userId 
+        if not userId
           Router.go "pleaseLogin"
 
         else
@@ -61,7 +62,8 @@ Meteor.startup ->
             Meteor.subscribe "allUsers"
             Meteor.subscribe "allDockerInstances"
             Meteor.subscribe "allDockerImages"
-  
+            Meteor.subscribe "DevMileStone"
+            Meteor.subscribe "WantedFeature"
           else
 
             if Roles.userIsInRole(userId,"admin","dockers")
@@ -70,8 +72,8 @@ Meteor.startup ->
 
             else
               Router.go "index"
-            
-              
+
+
 
 
 
@@ -112,18 +114,12 @@ Meteor.startup ->
           userId = Meteor.userId()
           Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
-
-        chats: ->
-          Chat.find {}, {sort: {createAt:-1}}
-        # courseId: ->
-        #   "wishFeatures"
-        quickFormData: =>
-          courseId:"wishFeatures"
       waitOn: ->
         Meteor.subscribe "Chat", "wishFeatures"
+        Meteor.subscribe "WantedFeature"
         Session.set "courseId", "wishFeatures"
 
-      
+
     @route "dockers",
       path: "dockers/"
       template: "dockers"
@@ -146,10 +142,10 @@ Meteor.startup ->
         dockerImages: ->
           runningImages = DockerInstances.find().fetch().map (x)-> x.imageId
           DockerImages.find({_id:{$nin:runningImages}})
-        
+
         dockerInstances: ->
           DockerInstances.find()
-        
+
 
         dockerTypes: ->
           user = Meteor.user()
@@ -161,14 +157,14 @@ Meteor.startup ->
                 t.currentSettings = DockerTypeConfig.findOne({userId:user._id,typeId:t._id}).env
               res.push t
 
-            res 
+            res
 
           else
             DockerTypes.find()
 
       waitOn: ->
         userId = Meteor.userId()
-        if not userId 
+        if not userId
           Router.go "pleaseLogin"
 
         Meteor.subscribe "allDockerImagesOld"
@@ -176,12 +172,12 @@ Meteor.startup ->
         Meteor.subscribe "userDockerInstances"
         Meteor.subscribe "userDockerTypeConfig"
 
-        
+
     @route "dockerSetConfig",
       path: "dockerSetConfig/:dockerType"
       template: "dockerSetConfig"
       data: ->
-        resData = 
+        resData =
           dockerType: =>
            @params.dockerType
           dockerTypes: ->
@@ -193,7 +189,7 @@ Meteor.startup ->
 
       waitOn: ->
         userId = Meteor.userId()
-        if not userId 
+        if not userId
           Router.go "pleaseLogin"
 
         #Call by [docker.coffee] Template.dockerSetConfig.events "click .submitENV"
@@ -221,9 +217,9 @@ Meteor.startup ->
 
       waitOn: ->
         userId = Meteor.userId()
-        if not userId 
+        if not userId
           Router.go "pleaseLogin"
-        
+
         Meteor.subscribe "allCourses"
         # Meteor.subscribe "myRoles"
 
@@ -232,7 +228,7 @@ Meteor.startup ->
       path: "course/:cid"
       template: "course"
       data: ->
-        resData =       
+        resData =
           rootURL:rootURL
           user: ->
             Meteor.user()
@@ -255,9 +251,9 @@ Meteor.startup ->
             courseId:@params.cid
         resData
 
-      waitOn: -> 
+      waitOn: ->
         userId = Meteor.userId()
-        if not userId 
+        if not userId
           Router.go "pleaseLogin"
 
         Meteor.subscribe "allCourses"
@@ -304,9 +300,9 @@ Meteor.startup ->
         quickFormData: ->
           courseId:"ipynbBasic"
 
-      waitOn: -> 
+      waitOn: ->
         userId = Meteor.userId()
-        if not userId 
+        if not userId
           Router.go "pleaseLogin"
 
         Meteor.call "runDocker", "c3h3/oblas-py278-shogun-ipynb", (err, data)->
@@ -315,7 +311,7 @@ Meteor.startup ->
             console.log data
 
         Session.set "courseId", "ipynbBasic"
-        
+
         Meteor.subscribe "Chat", "ipynbBasic"
         Meteor.subscribe "userDockerInstances"
 
@@ -339,16 +335,16 @@ Meteor.startup ->
           course = Courses.findOne _id:courseId
           Session.set "docker", DockerInstances.findOne({imageId:"rocker/rstudio"})
           DockerInstances.findOne({imageId:"rocker/rstudio"})
-          
+
         chats: ->
           Chat.find {}, {sort: {createAt:-1}}
 
         quickFormData: ->
           courseId:"rstudioBasic"
 
-      waitOn: -> 
+      waitOn: ->
         userId = Meteor.userId()
-        if not userId 
+        if not userId
           Router.go "pleaseLogin"
 
         Meteor.call "runDocker", "rocker/rstudio", (err, data)->
@@ -364,9 +360,9 @@ Meteor.startup ->
     @route "pleaseLogin",
       path: "pleaseLogin/"
       template: "pleaseLogin"
-      waitOn: -> 
+      waitOn: ->
         userId = Meteor.userId()
-        if userId 
+        if userId
           Router.go "index"
 
     @route "settings",
@@ -391,10 +387,10 @@ Meteor.startup ->
         dockerImages: ->
           runningImages = DockerInstances.find().fetch().map (x)-> x.imageId
           DockerImages.find({_id:{$nin:runningImages}})
-        
+
         dockerInstances: ->
           DockerInstances.find()
-        
+
 
         dockerTypes: ->
           user = Meteor.user()
@@ -406,11 +402,11 @@ Meteor.startup ->
                 t.currentSettings = DockerTypeConfig.findOne({userId:user._id,typeId:t._id}).env
               res.push t
 
-            res 
+            res
 
           else
             DockerTypes.find()
-            
+
       waitOn: ->
         user = Meteor.user()
         if not user

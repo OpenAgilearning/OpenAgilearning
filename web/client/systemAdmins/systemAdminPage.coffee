@@ -5,9 +5,9 @@ Template.adminPageDockerInstancesTable.helpers
       key: "containerId"
       label: "Remove Instance"
       tmpl: Template.setDockerInstanceBtns
-    
 
-    res = 
+
+    res =
       collection: DockerInstances
       rowsPerPage: 10
       showFilter: true
@@ -23,12 +23,12 @@ Template.setDockerInstanceBtns.events
         console.log "res = "
         console.log res
 
-  
+
 
 
 Template.adminPageDockerImagesTable.helpers
   settings: ->
-    res = 
+    res =
       collection: DockerImages
       rowsPerPage: 10
       showFilter: true
@@ -40,7 +40,7 @@ Template.adminPageUsersTable.helpers
     userIdField =
       key: "_id"
       label: "uid"
-    
+
     userNameField =
       key: "profile.name"
       label: "name"
@@ -50,9 +50,10 @@ Template.adminPageUsersTable.helpers
       label: "roles"
       fn: (value) ->
         allRoles = []
-        Object.keys(value).map (xx) ->
-          Object.keys(value[xx]).map (yy)->
-            allRoles.push value[xx][yy] + "." + xx
+        if value
+          Object.keys(value).map (xx) ->
+            Object.keys(value[xx]).map (yy)->
+              allRoles.push value[xx][yy] + "." + xx
 
         allRoles.join " / "
 
@@ -60,34 +61,34 @@ Template.adminPageUsersTable.helpers
       key: "_id"
       label: "Set System Admin"
       tmpl: Template.setSystemAdminBtns
-    
+
 
     setDockerAdminBtnsField =
       key: "_id"
       label: "Set Docker Admin"
       tmpl: Template.setDockerAdminBtns
-    
+
 
 
     setCourseManagerBtnField =
       key: "_id"
       label: "Set Course Manager"
       tmpl: Template.setCourseManagerBtns
-    
+
 
     setTeacherBtnField =
       key: "_id"
       label: "Set Teacher"
       tmpl: Template.setTeacherBtns
-    
+
     setStudentBtnField =
       key: "_id"
       label: "Set Student"
       tmpl: Template.setStudentBtns
-    
 
 
-    res = 
+
+    res =
       collection: Meteor.users
       rowsPerPage: 10
       showFilter: true
