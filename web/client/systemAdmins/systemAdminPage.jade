@@ -8,10 +8,9 @@ template(name="AdminPage")
       if isInRole "admin" "system"
         li
           a(data-toggle="tab", href="#systemAdmin") System Admin
-
-      if isInRole "admin" "system"
         li
           a(data-toggle="tab", href="#editMsgBoard") Message Board
+        li
           a(data-toggle="tab", href="#userStatus") User Status
 
     .tab-content

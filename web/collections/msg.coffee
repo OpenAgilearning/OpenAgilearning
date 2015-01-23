@@ -37,6 +37,7 @@
 
 Meteor.methods
   "postDevMilestone": (autoFormData)->
+    user = Meteor.user()
     if not user
       throw new Meteor.Error(401, "You need to login !")
     user = Meteor.user()
