@@ -3,15 +3,15 @@ template(name="chatroom")
   .chatroom
     h2 Discuss:
     hr
-    +autoForm id="classChat" doc=quickFormData schema="ChatSchema" meteormethod="postChat" type="method"
-      fieldset
-        label.control-label {{afFieldLabelText name="msg"}}
-        +afFieldInput name='msg'
-        label.control-label.none.display {{afFieldLabelText name="courseId"}}
-        +afFieldInput name='courseId' class="input-none-display" type="text"
-        br
-      button.btn.btn-primary(type='submit') submit
-    hr
+    //- +autoForm id="classChat" doc=quickFormData schema="ChatSchema" meteormethod="postChat" type="method"
+    //-   fieldset
+    //-     label.control-label {{afFieldLabelText name="msg"}}
+    //-     +afFieldInput name='msg'
+    //-     label.control-label.none.display {{afFieldLabelText name="courseId"}}
+    //-     +afFieldInput name='courseId' class="input-none-display" type="text"
+    //-     br
+    //-   button.btn.btn-primary(type='submit') submit
+    //- hr
     .chats
       each chats
         p {{userName}}:

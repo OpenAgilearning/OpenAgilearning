@@ -14,8 +14,8 @@ template(name="navBar")
         a.navbar-brand(href="/") Agilearning
       .collapse.navbar-collapse
         ul.nav.navbar-nav
-          li.nav.navbar-nav
-            a(href="{{pathFor 'learningResources'}}") Learning Resources
+          //- li.nav.navbar-nav
+          //-   a(href="{{pathFor 'learningResources'}}") Learning Resources
 
           //- li.nav.navbar-nav
           //-   a(href="{{pathFor 'about'}}") About
@@ -30,7 +30,7 @@ template(name="navBar")
           //-   a(href="{{pathFor 'rstudio'}}") Try RStudio
 
           li.nav.navbar-nav
-            a(href="{{pathFor 'courses'}}") Study Materials
+            a(href="{{pathFor 'courses'}}") Courses
 
           //- li.nav.navbar-nav
           //-   +voteForMeLinks

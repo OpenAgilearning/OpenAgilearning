@@ -5,6 +5,9 @@
     type: String
   description:
     type: String
+  image:
+    type: String
+    optional: true
   type:
     type: String
     allowedValues: ["video","website","slide","youtube"]
@@ -72,7 +75,7 @@ Meteor.methods
     if not user
       throw new Meteor.Error(401, "You need to login")
 
-    courseData["creator"] = user._id
+    courseData["creatorId"] = user._id
     courseData["creatorAt"] = new Date
 
     Courses.insert courseData

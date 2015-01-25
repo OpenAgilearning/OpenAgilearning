@@ -28,8 +28,9 @@ Meteor.methods
     course = Courses.findOne _id:courseId
     
     imageId = course.dockerImage
-    # console.log "imageId = "
-    # console.log imageId
+    console.log "imageId = "
+    console.log imageId
+    console.log DockerImages.findOne({_id:imageId})
 
     imageType = DockerImages.findOne({_id:imageId}).type 
     # console.log "imageType = "
