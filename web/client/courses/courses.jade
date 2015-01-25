@@ -67,27 +67,27 @@ template(name="courses")
             //-       input.createBt.btn.btn-default(value="Create")
 
 
-            tr
-              td
-                a(href="{{pathFor 'ipynb' cid='ipynb'}}") Try IPyNB
-              td
-                a(target="_blank",href="https://registry.hub.docker.com/u/c3h3/oblas-py278-shogun-ipynb") c3h3/oblas-py278-shogun-ipynb
-              td
-                p Link
-              //- td
-              td
-              td
+            //- tr
+            //-   td
+            //-     a(href="{{pathFor 'ipynb' cid='ipynb'}}") Try IPyNB
+            //-   td
+            //-     a(target="_blank",href="https://registry.hub.docker.com/u/c3h3/oblas-py278-shogun-ipynb") c3h3/oblas-py278-shogun-ipynb
+            //-   td
+            //-     p Link
+            //-   //- td
+            //-   td
+            //-   td
 
-            tr
-              td
-                a(href="{{pathFor 'rstudio' cid='rstudio'}}") Try RStudio
-              td
-                a(target="_blank",href="https://registry.hub.docker.com/u/rocker/rstudio") rocker/rstudio
-              td
-                p Link
-              //- td
-              td
-              td
+            //- tr
+            //-   td
+            //-     a(href="{{pathFor 'rstudio' cid='rstudio'}}") Try RStudio
+            //-   td
+            //-     a(target="_blank",href="https://registry.hub.docker.com/u/rocker/rstudio") rocker/rstudio
+            //-   td
+            //-     p Link
+            //-   //- td
+            //-   td
+            //-   td
 
 
             each courses
@@ -106,7 +106,7 @@ template(name="courses")
 
                 if isInRole "admin" "system"
                   td
-                    input.btn.btn-warning(type="button" value="Delet")
+                    input.btn.btn-warning(type="button" value="Delete")
 
 
 
