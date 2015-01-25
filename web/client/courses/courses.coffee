@@ -14,7 +14,7 @@ Template.courses.events
 
     Meteor.call "createCourse", data
 
-  "click input.btn.btn-warning":(e,t)->
+  "click input.courseDeleteBtn":(e,t)->
     e.stopPropagation()
     courseId = this._id
     console.log "delete course: " + courseId
