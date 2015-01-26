@@ -45,6 +45,10 @@ Meteor.methods
   courseName:
     type: String
 
+  publicStatus:
+    type: String
+    allowedValues: ["public","semiprivate","private"]
+
   dockerImage:
     type: String
 
@@ -65,6 +69,9 @@ Meteor.methods
     regEx: SimpleSchema.RegEx.Url
     autoform:
       type: "url"
+
+
+
 
 
 Meteor.methods

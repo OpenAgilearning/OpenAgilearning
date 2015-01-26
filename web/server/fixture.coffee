@@ -57,13 +57,16 @@ if Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).count() > 0
 
 if DockerImages.find().count() is 0
   dockerDefaultImages = [
-    {_id:"c3h3/oblas-py278-shogun-ipynb", type:"ipynb"},
-    {_id:"c3h3/learning-shogun", type:"ipynb"},
-    {_id:"rocker/rstudio", type:"rstudio"},
-    {_id:"c3h3/ml-for-hackers", type:"rstudio"},
-    {_id:"c3h3/dsc2014tutorial", type:"rstudio"},
-    {_id:"c3h3/livehouse20141105", type:"ipynb"},
-    {_id:"c3h3/rladies-hello-kaggle", type:"rstudio"},    
+    {_id:"c3h3/oblas-py278-shogun-ipynb", type:"ipynb", imageURL:"images/ipynb_lmnn1.png"},
+    {_id:"c3h3/learning-shogun", type:"ipynb", imageURL:"images/ipynb_lmnn2.png"},
+    {_id:"c3h3/learning-shogun:u1404-ocv", type:"ipynb", imageURL:"images/ipynb_sudoku.png"},
+    {_id:"c3h3/livehouse20141105", type:"ipynb", imageURL:"images/ipynb_docker_default.png"},
+    {_id: "c3h3/nccu-crawler-courses-201411", type : "ipynb", imageURL:"images/ipynb_docker_default.png" },
+    {_id: "dboyliao/docker-tossug", type : "ipynb", imageURL:"images/ipynb_tossug2.png" },
+    {_id:"rocker/rstudio", type:"rstudio", imageURL:"images/rstudio_docker_default.png"},
+    {_id:"c3h3/ml-for-hackers", type:"rstudio", imageURL:"images/rstudio_docker_default.png"},
+    {_id:"c3h3/dsc2014tutorial", type:"rstudio", imageURL:"images/rstudio_docker_default.png"},
+    {_id:"c3h3/rladies-hello-kaggle", type:"rstudio", imageURL:"images/rstudio_play_kaggle.png"}
   ]
   
   DockerImages.insert image for image in dockerDefaultImages
@@ -92,4 +95,5 @@ for oneCourse in demoCourses
     c3h3User = Meteor.users.findOne({"services.meetup.id" : 59393362})
     oneCourse.creatorId = c3h3User._id
     oneCourse.creatorAt = new Date
+    oneCourse.publicStatus = "public"
     Courses.insert oneCourse

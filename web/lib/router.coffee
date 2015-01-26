@@ -18,6 +18,8 @@ Meteor.startup ->
       waitOn: ->
           Meteor.subscribe "DevMileStone"
           Meteor.subscribe "WantedFeature"
+          Meteor.subscribe "allPublicCourses"
+          Meteor.subscribe "allPublicCoursesDockerImages"
 
     @route "learningResources",
       path: "learningResources/"
