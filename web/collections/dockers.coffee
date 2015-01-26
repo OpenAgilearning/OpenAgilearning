@@ -1,3 +1,6 @@
+@DockerServers = new Meteor.Collection "dockerServers"
+@DockerServerImages = new Meteor.Collection "dockerServerImages"
+
 
 @DockerImages = new Meteor.Collection "dockerImages"
 @DockerTypes = new Meteor.Collection "dockerTypes"
@@ -5,6 +8,7 @@
 @DockerTypeConfig = new Meteor.Collection "dockerTypeConfig"
 @DockerInstances = new Meteor.Collection "dockerInstances"
 @DockerInstancesLog = new Meteor.Collection "dockerInstancesLog"
+
 
 basePort = 8000
 topPort = 9000
@@ -17,6 +21,58 @@ getFreePort = ->
 
 
 Meteor.methods
+  "listImages": (dockerServerIp) -> 
+    # NODE_TLS_REJECT_UNAUTHORIZED=0 MONGO_URL=mongodb://localhost:27017/dockerdata meteor --port 0.0.0.0:3000
+
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+    
+    getListPermission = Roles.userIsInRole(user._id, "admin", "dockers")
+    getListPermission = getListPermission or Roles.userIsInRole(user._id, "admin", "system")
+
+    if not getListPermission
+      throw new Meteor.Error(1101, "Permission Deny!")
+    else
+      Docker = Meteor.npmRequire "dockerode"
+      fs = Meteor.npmRequire 'fs'
+      
+      dockerServerData = DockerServers.findOne {"connect.host":dockerServerIp}
+      
+      dockerServerSettings = 
+        protocol: dockerServerData.connect.protocol
+        host: dockerServerData.connect.host
+        port: dockerServerData.connect.port
+        ca: fs.readFileSync(dockerServerData.security.caPath)
+        cert: fs.readFileSync(dockerServerData.security.certPath)
+        key: fs.readFileSync(dockerServerData.security.keyPath)
+
+      docker = new Docker dockerServerSettings
+      #docker.ping (err, data) -> console.log data
+      
+      Future = Npm.require 'fibers/future'
+      imagesFuture = new Future
+
+      docker.listImages {}, (err, data) -> 
+        imagesFuture.return data
+        
+      images = imagesFuture.wait()
+      
+      DockerServerImages.remove({dockerServerId:dockerServerData._id})
+
+      for imageData in images
+        imageData.dockerServerId = dockerServerData._id
+        DockerServerImages.insert imageData
+
+      images
+  
+  "pullImage": (imageTag, dockerServerIp, dockerHubData) -> 
+    console.log "TODO"
+
+  "nweDockerRun": (imageId)-> 
+    console.log "TODO"
+
+
   "getCourseDocker": (courseId) -> 
     user = Meteor.user()
     if not user

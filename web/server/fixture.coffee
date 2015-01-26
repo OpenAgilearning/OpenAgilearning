@@ -99,3 +99,19 @@ for oneCourse in demoCourses
       oneCourse.creatorAt = new Date
       oneCourse.publicStatus = "public"
       Courses.insert oneCourse
+
+
+if DockerServers.find().count() is 0
+  defaultDockerServerData = 
+    name:"d3-agilearning"
+    connect:
+      protocol: 'https'
+      host:"130.211.244.66"
+      port:2376
+    security:
+      caPath: '/home/c3h3/c3h3works/Dockers/helloDockerode/ca.pem'
+      certPath: '/home/c3h3/c3h3works/Dockers/helloDockerode/cert.pem'
+      keyPath: '/home/c3h3/c3h3works/Dockers/helloDockerode/key.pem'
+
+  DockerServers.insert defaultDockerServerData
+  
