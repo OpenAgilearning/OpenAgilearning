@@ -227,10 +227,36 @@ Meteor.startup ->
         Meteor.subscribe "allCourses"
         # Meteor.subscribe "myRoles"
 
-
     @route "course",
       path: "course/:cid"
       template: "course"
+      data: ->
+        resData =
+          rootURL:rootURL
+          user: ->
+            Meteor.user()
+          showAdminPage: ->
+            userId = Meteor.userId()
+            Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
+          course: =>
+            Courses.findOne _id: @params.cid
+
+        resData
+
+      waitOn: ->
+        userId = Meteor.userId()
+        if not userId
+          Router.go "pleaseLogin"
+
+        Meteor.subscribe "course", @params.cid
+        Meteor.subscribe "allPublicClassrooms", @params.cid
+        Meteor.subscribe "allPublicClassroomManagers", @params.cid
+
+
+    @route "classroom",
+      path: "classroom/:cid"
+      template: "classroom"
       data: ->
         resData =
           rootURL:rootURL

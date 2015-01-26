@@ -1,10 +1,33 @@
 
 PUB_NODES_LIMIT = 50
 
+Meteor.publish "course", (courseId)->
+  Courses.find _id:courseId
+  
+Meteor.publish "allPublicClassrooms", (courseId)->
+  courseDoc = Courses.findOne _id:courseId
+  if courseDoc.publicStatus is "public"
+    if Classrooms.find({courseId:courseId,publicStatus:"public"}).count() is 0
+      publicClassroomDoc = 
+        creatorId: courseDoc.creatorId
+        courseId: courseDoc._id
+        publicStatus:"public"
+        createAt: new Date
+        managerIds: [courseDoc.creatorId]
+      classroomId = Classrooms.insert publicClassroomDoc
+
+      ClassroomManagers.insert {classroomId:classroomId, managerId: courseDoc.creatorId}
+
+    Classrooms.find {courseId:courseId,publicStatus:"public"}    
+
+Meteor.publish "allPublicClassroomManagers", (courseId)->
+  publicClassroomIds = Classrooms.find({courseId:courseId,publicStatus:"public"}).map (classroomDoc) -> classroomDoc._id
+  ClassroomManagers.find classroomId:{$in:publicClassroomIds}
+
+
 Meteor.publish "allPublicCoursesDockerImages", ->
   allPublicCoursesDockerIds = Courses.find({"publicStatus" : "public"}).fetch().map (courseDoc) -> courseDoc.dockerImage
   DockerImages.find _id:{$in:allPublicCoursesDockerIds}
-
 
 
 Meteor.publish "allPublicCourses", ->
