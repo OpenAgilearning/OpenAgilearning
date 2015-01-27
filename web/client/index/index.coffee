@@ -18,6 +18,8 @@ Template.allPublicCoursesTable.helpers
       fields: [goToCoursePageBtnsField, courseNameAndDescriptionField]
       # showColumnToggles: true
 
-Template.goToCoursePageBtn.helpers
+Template.dockerImagePicture.helpers
   getDockerImagePictureURL: (dockerImageId) ->
-    DockerImages.findOne({_id:dockerImageId}).imageURL
+    dockerImageData = DockerImages.findOne({_id:dockerImageId})
+    console.log dockerImageData
+    "/" + dockerImageData.imageURL

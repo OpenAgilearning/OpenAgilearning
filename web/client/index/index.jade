@@ -17,8 +17,11 @@ template(name="allPublicCoursesTable")
   +reactiveTable settings=settings
 
 template(name="goToCoursePageBtn")
-  a(href="{{pathFor 'course' cid=_id}}")
-    img(width="300px",src="{{getDockerImagePictureURL dockerImage}}")
+  a(href="{{pathFor 'course' courseId=_id}}")
+    +dockerImagePicture dockerImage=dockerImage width="300px"
+
+template(name="dockerImagePicture")
+  img(width="{{width}}",src="{{getDockerImagePictureURL dockerImage}}")
   
 template(name="courseNameAndDescription")
   h2 {{courseName}}

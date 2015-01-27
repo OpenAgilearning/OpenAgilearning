@@ -1,4 +1,19 @@
 
+Template.courseClassroomsTable.helpers
+  settings: ->
+    goToClassroomBtnField =
+      key: "_id"
+      label: "Go To Classroom"
+      tmpl: Template.goToClassroomBtn
+
+    res =
+      collection: Classrooms
+      rowsPerPage: 5
+      showFilter: true
+      fields: [goToClassroomBtnField, "creatorId", "courseId", "publicStatus"]
+
+
+
 Template.courses.helpers
   coursesSchema: -> coursesSchema
 

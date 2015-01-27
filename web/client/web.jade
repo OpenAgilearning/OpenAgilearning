@@ -28,6 +28,14 @@ template(name="navBar")
 
           //- li.nav.navbar-nav
           //-   a(href="{{pathFor 'rstudio'}}") Try RStudio
+          
+          if user
+            li.nav.navbar-nav
+              a(href="{{pathFor 'settings'}}") Profile
+
+          
+          li.nav.navbar-nav
+            a(href="{{pathFor 'dockers'}}") Environments
 
           li.nav.navbar-nav
             a(href="{{pathFor 'courses'}}") Courses
@@ -35,17 +43,12 @@ template(name="navBar")
           //- li.nav.navbar-nav
           //-   +voteForMeLinks
 
-          li.nav.navbar-nav
-            a(href="{{pathFor 'dockers'}}") Dockers
-
+          
 
           li.nav.navbar-nav
             a(href="{{pathFor 'wishFeatures'}}") Wish Features
 
-          if user
-            li.nav.navbar-nav
-              a(href="{{pathFor 'settings'}}") Settings
-
+          
           if showAdminPage
             li.nav.navbar-nav
               a(href="{{pathFor 'admin'}}") Admin

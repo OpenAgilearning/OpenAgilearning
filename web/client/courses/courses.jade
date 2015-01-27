@@ -2,33 +2,46 @@
 template(name="course")
   .container
     .row.clearfix
-      h2 {{course.courseName}}
+      .col-md-3.column
+        +dockerImagePicture dockerImage=course.dockerImage width="100%"
+        h2 {{course.courseName}}
+        p {{course.description}}
+      .col-md-9.column
+        h2 Classrooms:
+        +courseClassroomsTable
 
+
+template(name="courseClassroomsTable")
+  +reactiveTable settings=settings        
+
+template(name="goToClassroomBtn")
+  a.btn.btn-warning(href="{{pathFor 'classroom' classroomId=_id}}") Go To Classroom
 
 template(name="classroom")
   .container
     .row.clearfix
+      h2 classroom 
       //- .col-md-6.column
       
-      .col-md-10.column
-        if course.video
-          hr
-          h2 Video:
-          a(target="_blank",href="{{course.video}}")
-            h4 (Open At New Tab)
-          video.video-js.vjs-default-skin(id="vid",src="",controls,width="100%",height="700px",data-setup='{ "techOrder": ["youtube"], "src": "{{course.video}}" }')
-        hr
-        h2 Docker:
-        input.connectBt.btn.btn-default(value="Try Docker Instance:")
-        iframe#docker(src="http://{{rootURL}}:{{docker.servicePort}}", width="100%", height="550px", scrolling="yes")
+      //- .col-md-10.column
+      //-   if course.video
+      //-     hr
+      //-     h2 Video:
+      //-     a(target="_blank",href="{{course.video}}")
+      //-       h4 (Open At New Tab)
+      //-     video.video-js.vjs-default-skin(id="vid",src="",controls,width="100%",height="700px",data-setup='{ "techOrder": ["youtube"], "src": "{{course.video}}" }')
+      //-   hr
+      //-   h2 Docker:
+      //-   input.connectBt.btn.btn-default(value="Try Docker Instance:")
+      //-   iframe#docker(src="http://{{rootURL}}:{{docker.servicePort}}", width="100%", height="550px", scrolling="yes")
 
-        hr
-        if course.slides
-          h2 Reference:
-          iframe#slides(src="{{course.slides}}", width="100%", height="700px", scrolling="auto")
+      //-   hr
+      //-   if course.slides
+      //-     h2 Reference:
+      //-     iframe#slides(src="{{course.slides}}", width="100%", height="700px", scrolling="auto")
 
-      .col-md-2.column
-        +chatroom
+      //- .col-md-2.column
+      //-   +chatroom
 
 
 

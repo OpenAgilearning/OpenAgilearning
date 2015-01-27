@@ -21,6 +21,84 @@ Meteor.startup ->
           Meteor.subscribe "allPublicCourses"
           Meteor.subscribe "allPublicCoursesDockerImages"
 
+    @route "course",
+      path: "course/:courseId"
+      template: "course"
+      data: ->
+        resData =
+          rootURL:rootURL
+          user: ->
+            Meteor.user()
+          showAdminPage: ->
+            userId = Meteor.userId()
+            Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
+          course: =>
+            Courses.findOne _id: @params.courseId
+
+        resData
+
+      waitOn: ->
+        userId = Meteor.userId()
+        if not userId
+          Router.go "pleaseLogin"
+
+        Meteor.subscribe "course", @params.courseId
+        Meteor.subscribe "allPublicClassrooms", @params.courseId
+        Meteor.subscribe "allPublicClassroomManagers", @params.courseId
+        Meteor.subscribe "courseDockerImages", @params.courseId
+
+
+    @route "classroom",
+      path: "classroom/:classroomId"
+      template: "classroom"
+      data: ->
+        resData =
+          rootURL:rootURL
+          user: ->
+            Meteor.user()
+          showAdminPage: ->
+            userId = Meteor.userId()
+            Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
+
+          # course: =>
+          #   Courses.findOne _id: @params.cid
+
+          # docker: =>
+          #   course = Courses.findOne _id:@params.cid
+          #   Session.set "docker", DockerInstances.findOne({imageId:course.dockerImage})
+          #   DockerInstances.findOne({imageId:course.dockerImage})
+
+          # chats: ->
+          #   Chat.find {}, {sort: {createAt:-1}}
+          # quickFormData: ->
+          #   courseId:@params.cid
+        resData
+
+      waitOn: ->
+        userId = Meteor.userId()
+        if not userId
+          Router.go "pleaseLogin"
+
+        # Meteor.subscribe "allCourses"
+        # Session.set "cid", @params.cid
+        # Session.set "courseId", @params.cid
+
+        # Meteor.call "getCourseDocker", @params.cid, (err, data)->
+        #   if not err
+        #     console.log "data = "
+        #     console.log data
+        #   else
+        #     console.log "err = "
+        #     console.log err
+        #     Router.go "dockers"
+
+        # Meteor.subscribe "Chat", @params.cid
+        # Meteor.subscribe "userDockerInstances"
+
+
+
     @route "learningResources",
       path: "learningResources/"
       template: "learningResourcesPage"
@@ -227,82 +305,8 @@ Meteor.startup ->
         Meteor.subscribe "allCourses"
         # Meteor.subscribe "myRoles"
 
-    @route "course",
-      path: "course/:cid"
-      template: "course"
-      data: ->
-        resData =
-          rootURL:rootURL
-          user: ->
-            Meteor.user()
-          showAdminPage: ->
-            userId = Meteor.userId()
-            Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
-          course: =>
-            Courses.findOne _id: @params.cid
-
-        resData
-
-      waitOn: ->
-        userId = Meteor.userId()
-        if not userId
-          Router.go "pleaseLogin"
-
-        Meteor.subscribe "course", @params.cid
-        Meteor.subscribe "allPublicClassrooms", @params.cid
-        Meteor.subscribe "allPublicClassroomManagers", @params.cid
-
-
-    @route "classroom",
-      path: "classroom/:cid"
-      template: "classroom"
-      data: ->
-        resData =
-          rootURL:rootURL
-          user: ->
-            Meteor.user()
-          showAdminPage: ->
-            userId = Meteor.userId()
-            Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
-
-
-          course: =>
-            Courses.findOne _id: @params.cid
-
-          docker: =>
-            course = Courses.findOne _id:@params.cid
-            Session.set "docker", DockerInstances.findOne({imageId:course.dockerImage})
-            DockerInstances.findOne({imageId:course.dockerImage})
-
-          chats: ->
-            Chat.find {}, {sort: {createAt:-1}}
-          quickFormData: ->
-            courseId:@params.cid
-        resData
-
-      waitOn: ->
-        userId = Meteor.userId()
-        if not userId
-          Router.go "pleaseLogin"
-
-        Meteor.subscribe "allCourses"
-        Session.set "cid", @params.cid
-        Session.set "courseId", @params.cid
-
-        Meteor.call "getCourseDocker", @params.cid, (err, data)->
-          if not err
-            console.log "data = "
-            console.log data
-          else
-            console.log "err = "
-            console.log err
-            Router.go "dockers"
-
-        Meteor.subscribe "Chat", @params.cid
-        Meteor.subscribe "userDockerInstances"
-
-
+    
     @route "ipynb",
       path: "ipynb/"
       template: "analyzer"
