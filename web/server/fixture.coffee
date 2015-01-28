@@ -1,5 +1,5 @@
 
-adminMeetupIds = [59393362, 173080282]
+adminMeetupIds = [59393362, 173080282, 129433302]
 courseManagerIds = [183363484]
 
 if Chat.find({courseId:"ipynbBasic"}).count() is 0
@@ -81,12 +81,12 @@ if DockerImages.find({_id:"dboyliao/docker-tossug",type:"ipynb"}).count() is 0
   DockerImages.insert {_id:"dboyliao/docker-tossug",type:"ipynb"}
 
 demoCourses = [
+  { "courseName" : "R Basic", "dockerImage" : "c3h3/dsc2014tutorial", "slides" : "http://dboyliao.github.io/dockerhack2014_RBasic/#1", "description" : "http://taiwanrusergroup.github.io/DSC2014Tutorial/", "video" : "https://www.youtube.com/watch?v=Ut55jPEm-yE"},
   { "courseName" : "livehouse20141105", "dockerImage" : "c3h3/livehouse20141105", "slides" : "https://www.slidenow.com/slide/129/play", "description" : "https://event.livehouse.in/2014/combo8/"},
   { "courseName" : "ml-for-hackers", "dockerImage" : "c3h3/ml-for-hackers", "slides" : "http://shop.oreilly.com/product/0636920018483.do", "description" : ""},
   { "courseName" : "RLadies Play Kaggle", "dockerImage" : "c3h3/rladies-hello-kaggle", "slides" : "http://www.kaggle.com/c/titanic-gettingStarted/dails/new-getting-started-with-r", "description" : ""},
   { "courseName" : "NCCU Crawler 201411", "dockerImage" : "c3h3/nccu-crawler-courses-201411", "slides" : "http://nbviewer.ipython.org/github/c3h3/NCCU-PyData-Courses-2013Spring/blob/master/Lecture1/crawler/Lecture2_WebCrawler.ipynb", "description" : ""},
   { "courseName" : "TOSSUG DS 20141209 BigO", "dockerImage" : "dboyliao/docker-tossug", "slides" : "http://interactivepython.org/runestone/static/pythonds/index.html", "description" : ""},
-  { "courseName" : "R Basic", "dockerImage" : "c3h3/dsc2014tutorial", "slides" : "http://dboyliao.github.io/dockerhack2014_RBasic/#1", "description" : "http://taiwanrusergroup.github.io/DSC2014Tutorial/", "video" : "https://www.youtube.com/watch?v=Ut55jPEm-yE"},
   { "courseName" : "IPython Basic 1", "dockerImage" : "c3h3/learning-shogun:u1404-ocv", "slides" : "https://github.com/yenlung/Nano-Data-Analysis-with-IPython", "description" : "https://github.com/yenlung/Nano-Data-Analysis-with-IPython", "video" : "https://www.youtube.com/watch?v=bNOYkAh5UXE"}
 ]
 
