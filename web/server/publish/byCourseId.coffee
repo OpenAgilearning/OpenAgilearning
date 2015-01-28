@@ -1,10 +1,12 @@
 
 Meteor.publish "courseDockerImages", (courseId)->
+  #FIXME: if someone know th id
   courseData = Courses.findOne _id:courseId
   DockerImages.find _id:courseData.dockerImage
 
 
 Meteor.publish "course", (courseId)->
+  #FIXME: if someone know th id
   Courses.find _id:courseId
   
 Meteor.publish "allPublicClassrooms", (courseId)->

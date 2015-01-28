@@ -98,6 +98,34 @@ Meteor.methods
 
     Meteor.call "runDocker", imageId
 
+  "getClassroomDocker": (classroomId) -> 
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+    
+    if Classrooms.find({_id:classroomId}).count() is 0
+      throw new Meteor.Error(1201, "Classroom doesn't exist")
+    
+    classroomDoc = Classrooms.findOne _id:classroomId
+    if classroomDoc
+      courseData = Courses.findOne _id:classroomDoc.courseId
+      
+      if courseData
+        imageId = courseData.dockerImage
+        # console.log "imageId = "
+        # console.log imageId
+        # console.log DockerImages.findOne({_id:imageId})
+
+        imageType = DockerImages.findOne({_id:imageId}).type 
+        # console.log "imageType = "
+        # console.log imageType
+        
+        if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
+          #FIXME: write a checking function for env vars
+          throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
+
+        Meteor.call "runDocker", imageId
+
 
   "removeDocker": (containerId)-> 
     user = Meteor.user()

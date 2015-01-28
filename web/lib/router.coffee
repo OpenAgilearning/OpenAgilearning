@@ -61,14 +61,14 @@ Meteor.startup ->
             userId = Meteor.userId()
             Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
+          course: =>
+            Courses.findOne()
 
-          # course: =>
-          #   Courses.findOne _id: @params.cid
 
-          # docker: =>
-          #   course = Courses.findOne _id:@params.cid
-          #   Session.set "docker", DockerInstances.findOne({imageId:course.dockerImage})
-          #   DockerInstances.findOne({imageId:course.dockerImage})
+          docker: =>
+            classroomDoc = Classrooms.findOne _id:@params.classroomId
+            courseData = Courses.findOne _id:classroomDoc.courseId
+            DockerInstances.findOne({imageId:courseData.dockerImage})
 
           # chats: ->
           #   Chat.find {}, {sort: {createAt:-1}}
@@ -81,21 +81,22 @@ Meteor.startup ->
         if not userId
           Router.go "pleaseLogin"
 
-        # Meteor.subscribe "allCourses"
-        # Session.set "cid", @params.cid
-        # Session.set "courseId", @params.cid
+        Meteor.subscribe "userDockerInstances"
+        Meteor.subscribe "classroom", @params.classroomId
+        Meteor.subscribe "classroomCourse", @params.classroomId
+        Meteor.subscribe "classroomDockerImages", @params.classroomId
 
-        # Meteor.call "getCourseDocker", @params.cid, (err, data)->
-        #   if not err
-        #     console.log "data = "
-        #     console.log data
-        #   else
-        #     console.log "err = "
-        #     console.log err
-        #     Router.go "dockers"
+        Meteor.call "getClassroomDocker", @params.classroomId, (err, data)->
+          if not err
+            console.log "data = "
+            console.log data
+          else
+            console.log "err = "
+            console.log err
+            Router.go "dockers"
 
         # Meteor.subscribe "Chat", @params.cid
-        # Meteor.subscribe "userDockerInstances"
+        
 
 
 

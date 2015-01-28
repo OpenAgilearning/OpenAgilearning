@@ -40,6 +40,10 @@ Template.course.rendered = ->
   $("video").map ->
     videojs @, JSON.parse($(@).attr("data-setup"))
 
+Template.classroom.rendered = ->
+  $("video").map ->
+    videojs @, JSON.parse($(@).attr("data-setup"))
+
 
 Template.course.events
   "click .connectBt": (e, t)->
@@ -48,6 +52,18 @@ Template.course.events
 
     docker = Session.get "docker"
     url = "http://"+rootURL+":"+docker.servicePort
+
+    $("#docker").attr 'src', url
+
+
+Template.classroom.events
+  "click .connectEnvBtn": (e, t)->
+    e.stopPropagation()
+    $("#docker").attr 'src', ""
+    
+    rootURL = $("#docker").attr "rootURL"
+    servicePort = $("#docker").attr "servicePort"
+    url = "http://"+rootURL+":"+servicePort
 
     $("#docker").attr 'src', url
 
