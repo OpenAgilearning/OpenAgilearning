@@ -1,0 +1,29 @@
+
+template(name="learningResourcesPage")
+  .container
+    +reactiveTable settings=settings  
+    //- +resourcesList
+
+//- template(name="resourcesList")
+//-   .row-fluid
+//-     .clearfix
+//-     .resourcesList
+//-       each resourceNodes
+//-         +resourceNode
+
+//- template(name="resourceNode")
+//-   .resourceNode
+//-     hr
+//-     h2 {{title}}    
+//-     //- if youtubeVideoId
+//-     //-   a(target="_blank",href="http://www.youtube.com//watch?v={{youtubeVideoId}}")
+//-     //-     h4 (Watch At New Tab)
+//-     //-   video.video-js.vjs-default-skin(id="{{youtubeVideoId}}",src="",controls,data-setup='{ "techOrder": ["youtube"], "src": "http://www.youtube.com/watch?v={{youtubeVideoId}}" }')
+//-     h2 {{description}}
+//-     hr    
+
+
+template(name="youtubeVideoPlayer")
+  if youtubeVideoId
+    video.video-js.vjs-default-skin(id="{{youtubeVideoId}}",src="",controls,data-setup='{ "techOrder": ["youtube"], "src": "http://www.youtube.com/embed/{{youtubeVideoId}}" }')
+

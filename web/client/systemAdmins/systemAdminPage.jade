@@ -8,10 +8,10 @@ template(name="AdminPage")
       if isInRole "admin" "system"
         li
           a(data-toggle="tab", href="#systemAdmin") System Admin
-
-      if isInRole "admin" "system"
         li
           a(data-toggle="tab", href="#editMsgBoard") Message Board
+        li
+          a(data-toggle="tab", href="#userStatus") User Status
 
     .tab-content
       if isInRole "admin" "dockers"
@@ -40,6 +40,17 @@ template(name="AdminPage")
           hr
           h2 Edit Message Board:
           +msgEditBoard
+
+          hr
+          h2 Create Learning Resources:
+          +quickForm id="learningResourceCreatorForm" schema="learningResourceSchema" type="method" meteormethod="createLearningResource" template="bootstrap3-inline" label-class="sr-only" afFieldInput-placeholder="schemaLabel"
+          hr
+
+      if isInRole "admin" "system"
+        .tab-pane.fade#userStatus
+          h2 User Status:
+          +userStatus
+
 
 template(name="adminPageDockerImagesTable")
   +reactiveTable settings=settings

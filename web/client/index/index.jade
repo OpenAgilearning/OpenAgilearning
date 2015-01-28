@@ -1,0 +1,128 @@
+template(name="index")
+  .container
+    .row.clearfix
+      
+      .col-md-10.column
+        h2 Public Courses:
+        h4 (in the future) New Learning Resources:
+        +allPublicCoursesTable
+
+      .col-md-2.column
+        h3 New Features:
+        //- +msgBoard
+
+
+  
+template(name="allPublicCoursesTable")
+  +reactiveTable settings=settings
+
+template(name="goToCoursePageBtn")
+  a(href="{{pathFor 'course' courseId=_id}}")
+    +dockerImagePicture dockerImage=dockerImage width="300px"
+
+template(name="dockerImagePicture")
+  img(width="{{width}}",src="{{getDockerImagePictureURL dockerImage}}")
+  
+template(name="courseNameAndDescription")
+  h2 {{courseName}}
+  p {{description}}
+
+
+
+template(name="index3")
+  .container
+    .row.clearfix
+      .col-md-6.column
+        h1 Newest Features:
+        +msgBoard
+      .col-md-1.column
+      .col-md-5.column
+        h1 Running Dockers directly!
+        h3 Mining Data immediately !
+        h4 You don't need to be cooped in different operation systems anymore!
+        h4 Needn't spend a lot of time to synchronize environments !
+        h4 Spend most of time playing data!
+        
+        img(src="images/aha_tutorial_pic.jpg",style="width:100%")
+
+  .container
+    .row.clearfix
+      .col-md-5.column
+        img(src="images/dboy_tutorial_pic.jpg",style="width:100%")
+      .col-md-1.column
+      .col-md-6.column
+        h1 In a tutorial event, the most painful thing ... is ...
+        ul
+          li
+            h2 (for teacher) is to synchronize everyone's environment!
+          li
+            h2 (for student) is "the programs could not be run in my computer, but it runs on teacher's!"
+
+        
+
+        
+
+
+template(name="index2")
+  //- .container
+  //-   .row.clearfix
+  //-     .col-md-5.column
+  //-       h2 Video
+  //-       iframe#ytplayer(type="text/html",width="100%", height="400px",src="http://www.youtube.com/embed/f1IAuMTUD2k",frameborder="0",allowfullscreen)
+  //-     .col-md-1.column
+  //-     .col-md-6.column
+  //-       +voteForMe
+
+  .container
+    .row.clearfix
+      .col-md-6.column
+        h1 Running Dockers directly!
+        h3 Mining Data immediately !
+        h4 You don't need to be cooped in different operation systems anymore!
+        h4 Needn't spend a lot of time to synchronize environments !
+        h4 Spend most of time playing data!
+        +msgBoard
+
+      .col-md-1.column
+      .col-md-5.column
+
+        img(src="images/aha_tutorial_pic.jpg",style="width:100%")
+
+  .container
+    .row.clearfix
+      .col-md-5.column
+        img(src="images/dboy_tutorial_pic.jpg",style="width:100%")
+      .col-md-1.column
+      .col-md-6.column
+        h1 In a tutorial event, the most painful thing ... is ...
+        ul
+          li
+            h2 (for teacher) is to synchronize everyone's environment!
+          li
+            h2 (for student) is "the programs could not be run in my computer, but it runs on teacher's!"
+
+
+  .container
+    .row.clearfix
+      .col-md-6.column
+        h2 Particular Thanks:
+        ul
+          li
+            h3
+              a(target="_blank", href="http://www.meetup.com/Taiwan-R/") Taiwan R User Group / MLDM Monday
+
+            p which is the largest data mining community in Taiwan. They also host a two-day tutorial session in the Data Science Conference 2014 (Taiwan).
+            a(href="{{pathFor 'courses'}}") (see more on study material)
+          li
+            h3
+              a(target="_blank", href="http://www.meetup.com/Docker-Taipei/") Docker Taipei Community
+
+          li
+            h3
+              a(target="_blank", href="https://www.slidenow.com/slides") SlideNow!
+            p The most easy slides editor, most fancy slides platform. They use a lot of dockers' technology in their infrastructure, and give me lots of help in this hackathon.
+
+      .col-md-1.column
+      .col-md-5.column
+
+        img(src="images/jiawei_tutorial_pic.jpg",style="width:100%")

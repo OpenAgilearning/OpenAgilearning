@@ -14,35 +14,41 @@ template(name="navBar")
         a.navbar-brand(href="/") Agilearning
       .collapse.navbar-collapse
         ul.nav.navbar-nav
-          li.nav.navbar-nav
-            a(href="{{pathFor 'about'}}") About
+          //- li.nav.navbar-nav
+          //-   a(href="{{pathFor 'learningResources'}}") Learning Resources
 
-          li.nav.navbar-nav
-            a(href="{{pathFor 'howToUse'}}") How to use it ?
+          //- li.nav.navbar-nav
+          //-   a(href="{{pathFor 'about'}}") About
+
+          //- li.nav.navbar-nav
+          //-   a(href="{{pathFor 'howToUse'}}") How to use it ?
 
           //- li.nav.navbar-nav
           //-   a(href="{{pathFor 'ipynb'}}") Try IPyNB
 
           //- li.nav.navbar-nav
           //-   a(href="{{pathFor 'rstudio'}}") Try RStudio
+          
+          if user
+            li.nav.navbar-nav
+              a(href="{{pathFor 'settings'}}") Profile
+
+          
+          li.nav.navbar-nav
+            a(href="{{pathFor 'dockers'}}") Environments
 
           li.nav.navbar-nav
-            a(href="{{pathFor 'courses'}}") Study Materials
+            a(href="{{pathFor 'courses'}}") Courses
 
           //- li.nav.navbar-nav
           //-   +voteForMeLinks
 
-          li.nav.navbar-nav
-            a(href="{{pathFor 'dockers'}}") Dockers
-
+          
 
           li.nav.navbar-nav
             a(href="{{pathFor 'wishFeatures'}}") Wish Features
 
-          if user
-            li.nav.navbar-nav
-              a(href="{{pathFor 'settings'}}") Settings
-
+          
           if showAdminPage
             li.nav.navbar-nav
               a(href="{{pathFor 'admin'}}") Admin
@@ -175,66 +181,3 @@ template(name="pleaseLogin")
   .container
     h2 Please Login !
 
-template(name="index")
-  //- .container
-  //-   .row.clearfix
-  //-     .col-md-5.column
-  //-       h2 Video
-  //-       iframe#ytplayer(type="text/html",width="100%", height="400px",src="http://www.youtube.com/embed/f1IAuMTUD2k",frameborder="0",allowfullscreen)
-  //-     .col-md-1.column
-  //-     .col-md-6.column
-  //-       +voteForMe
-
-  .container
-    .row.clearfix
-      .col-md-6.column
-        h1 Running Dockers directly!
-        h3 Mining Data immediately !
-        h4 You don't need to be cooped in different operation systems anymore!
-        h4 Needn't spend a lot of time to synchronize environments !
-        h4 Spend most of time playing data!
-        +msgBoard
-
-      .col-md-1.column
-      .col-md-5.column
-
-        img(src="images/aha_tutorial_pic.jpg",style="width:100%")
-
-  .container
-    .row.clearfix
-      .col-md-5.column
-        img(src="images/dboy_tutorial_pic.jpg",style="width:100%")
-      .col-md-1.column
-      .col-md-6.column
-        h1 In a tutorial event, the most painful thing ... is ...
-        ul
-          li
-            h2 (for teacher) is to synchronize everyone's environment!
-          li
-            h2 (for student) is "the programs could not be run in my computer, but it runs on teacher's!"
-
-
-  .container
-    .row.clearfix
-      .col-md-6.column
-        h2 Particular Thanks:
-        ul
-          li
-            h3
-              a(target="_blank", href="http://www.meetup.com/Taiwan-R/") Taiwan R User Group / MLDM Monday
-
-            p which is the largest data mining community in Taiwan. They also host a two-day tutorial session in the Data Science Conference 2014 (Taiwan).
-            a(href="{{pathFor 'courses'}}") (see more on study material)
-          li
-            h3
-              a(target="_blank", href="http://www.meetup.com/Docker-Taipei/") Docker Taipei Community
-
-          li
-            h3
-              a(target="_blank", href="https://www.slidenow.com/slides") SlideNow!
-            p The most easy slides editor, most fancy slides platform. They use a lot of dockers' technology in their infrastructure, and give me lots of help in this hackathon.
-
-      .col-md-1.column
-      .col-md-5.column
-
-        img(src="images/jiawei_tutorial_pic.jpg",style="width:100%")

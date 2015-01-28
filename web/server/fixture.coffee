@@ -1,5 +1,5 @@
 
-adminMeetupIds = [59393362, 173080282]
+adminMeetupIds = [59393362, 173080282, 129433302]
 courseManagerIds = [183363484]
 
 if Chat.find({courseId:"ipynbBasic"}).count() is 0
@@ -57,13 +57,16 @@ if Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).count() > 0
 
 if DockerImages.find().count() is 0
   dockerDefaultImages = [
-    {_id:"c3h3/oblas-py278-shogun-ipynb", type:"ipynb"},
-    {_id:"c3h3/learning-shogun", type:"ipynb"},
-    {_id:"rocker/rstudio", type:"rstudio"},
-    {_id:"c3h3/ml-for-hackers", type:"rstudio"},
-    {_id:"c3h3/dsc2014tutorial", type:"rstudio"},
-    {_id:"c3h3/livehouse20141105", type:"ipynb"},
-    {_id:"c3h3/rladies-hello-kaggle", type:"rstudio"},    
+    {_id:"c3h3/oblas-py278-shogun-ipynb", type:"ipynb", imageURL:"images/ipynb_lmnn1.png"},
+    {_id:"c3h3/learning-shogun", type:"ipynb", imageURL:"images/ipynb_lmnn2.png"},
+    {_id:"c3h3/learning-shogun:u1404-ocv", type:"ipynb", imageURL:"images/ipynb_sudoku.png"},
+    {_id:"c3h3/livehouse20141105", type:"ipynb", imageURL:"images/ipynb_docker_default.png"},
+    {_id: "c3h3/nccu-crawler-courses-201411", type : "ipynb", imageURL:"images/ipynb_docker_default.png" },
+    {_id: "dboyliao/docker-tossug", type : "ipynb", imageURL:"images/ipynb_tossug2.png" },
+    {_id:"rocker/rstudio", type:"rstudio", imageURL:"images/rstudio_docker_default.png"},
+    {_id:"c3h3/ml-for-hackers", type:"rstudio", imageURL:"images/rstudio_docker_default.png"},
+    {_id:"c3h3/dsc2014tutorial", type:"rstudio", imageURL:"images/rstudio_docker_default.png"},
+    {_id:"c3h3/rladies-hello-kaggle", type:"rstudio", imageURL:"images/rstudio_play_kaggle.png"}
   ]
   
   DockerImages.insert image for image in dockerDefaultImages
@@ -76,3 +79,39 @@ if DockerImages.find({_id:"c3h3/learning-shogun:u1404-ocv",type:"ipynb"}).count(
 
 if DockerImages.find({_id:"dboyliao/docker-tossug",type:"ipynb"}).count() is 0
   DockerImages.insert {_id:"dboyliao/docker-tossug",type:"ipynb"}
+
+demoCourses = [
+  { "courseName" : "R Basic", "dockerImage" : "c3h3/dsc2014tutorial", "slides" : "http://dboyliao.github.io/dockerhack2014_RBasic/#1", "description" : "http://taiwanrusergroup.github.io/DSC2014Tutorial/", "video" : "https://www.youtube.com/watch?v=Ut55jPEm-yE"},
+  { "courseName" : "livehouse20141105", "dockerImage" : "c3h3/livehouse20141105", "slides" : "https://www.slidenow.com/slide/129/play", "description" : "https://event.livehouse.in/2014/combo8/"},
+  { "courseName" : "ml-for-hackers", "dockerImage" : "c3h3/ml-for-hackers", "slides" : "http://shop.oreilly.com/product/0636920018483.do", "description" : ""},
+  { "courseName" : "RLadies Play Kaggle", "dockerImage" : "c3h3/rladies-hello-kaggle", "slides" : "http://www.kaggle.com/c/titanic-gettingStarted/dails/new-getting-started-with-r", "description" : ""},
+  { "courseName" : "NCCU Crawler 201411", "dockerImage" : "c3h3/nccu-crawler-courses-201411", "slides" : "http://nbviewer.ipython.org/github/c3h3/NCCU-PyData-Courses-2013Spring/blob/master/Lecture1/crawler/Lecture2_WebCrawler.ipynb", "description" : ""},
+  { "courseName" : "TOSSUG DS 20141209 BigO", "dockerImage" : "dboyliao/docker-tossug", "slides" : "http://interactivepython.org/runestone/static/pythonds/index.html", "description" : ""},
+  { "courseName" : "IPython Basic 1", "dockerImage" : "c3h3/learning-shogun:u1404-ocv", "slides" : "https://github.com/yenlung/Nano-Data-Analysis-with-IPython", "description" : "https://github.com/yenlung/Nano-Data-Analysis-with-IPython", "video" : "https://www.youtube.com/watch?v=bNOYkAh5UXE"}
+]
+
+for oneCourse in demoCourses
+  if Courses.find(oneCourse).count() is 0
+    demoUser = Meteor.users.findOne({"services.meetup.id" : {$in: adminMeetupIds}})
+    
+    if demoUser
+      oneCourse.creatorId = demoUser._id
+      oneCourse.creatorAt = new Date
+      oneCourse.publicStatus = "public"
+      Courses.insert oneCourse
+
+
+if DockerServers.find().count() is 0
+  defaultDockerServerData = 
+    name:"d3-agilearning"
+    connect:
+      protocol: 'https'
+      host:"130.211.244.66"
+      port:2376
+    security:
+      caPath: '/home/c3h3/c3h3works/Dockers/helloDockerode/ca.pem'
+      certPath: '/home/c3h3/c3h3works/Dockers/helloDockerode/cert.pem'
+      keyPath: '/home/c3h3/c3h3works/Dockers/helloDockerode/key.pem'
+
+  DockerServers.insert defaultDockerServerData
+  

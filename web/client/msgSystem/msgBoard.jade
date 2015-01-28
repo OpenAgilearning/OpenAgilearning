@@ -1,18 +1,21 @@
 template(name="msgBoard")
   ul.nav.nav-tabs
-    li
+    li.active
       a(data-toggle="tab", href="#devMilestone") Milestone
     li
       a(data-toggle="tab", href="#wantedFeature") Most Wanted
 
   .tab-content
-    .tab-pane.fade#devMilestone
+    .tab-pane.fade.in.active#devMilestone
       +devMilestoneTable
 
     .tab-pane.fade#wantedFeature
       +wantedFeatureTabel
+
+
 template(name="devMilestoneTable")
   +reactiveTable settings=settings
+
 
 template(name="wantedFeatureTabel")
   +reactiveTable settings=settings
