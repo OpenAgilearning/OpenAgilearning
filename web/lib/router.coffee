@@ -303,7 +303,7 @@ Meteor.startup ->
         if not userId
           Router.go "pleaseLogin"
 
-        Meteor.subscribe "allCourses"
+        Meteor.subscribe "allPublicCourses"
         # Meteor.subscribe "myRoles"
 
 
