@@ -77,7 +77,7 @@ Meteor.methods
 
       images
 
-  "listContainers": (dockerServerIp)->
+  "listContainers": (dockerServerId)->
 
     user = Meteor.user()
     if not user
@@ -91,7 +91,7 @@ Meteor.methods
       Docker = Meteor.npmRequire "dockerode"
       fs = Meteor.npmRequire 'fs'
 
-      dockerServerData = DockerServers.findOne {"_id":dockerServerIp}
+      dockerServerData = DockerServers.findOne {"_id":dockerServerId}
 
       dockerServerSettings = {}
 
@@ -348,9 +348,6 @@ Meteor.methods
 
       DockerInstances.insert dockerData
 
-
-
-
   "setENV": (typeId, envData) ->
     user = Meteor.user()
     if not user
@@ -361,6 +358,175 @@ Meteor.methods
     filteredEnvData = Object.keys(envData).filter((x) -> x in typeFilter).filter((x) -> envData[x] isnt "").map((x)-> x+"="+envData[x])
 
     DockerTypeConfig.upsert {userId:user._id,typeId:typeId}, {$set:{env:filteredEnvData}}
+
+  "runNewDocker": (imageTag)->
+
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    if DockerImages.find({"_id":imageTag}).count() is 0
+      throw new Meteor.Error(1001, "Docker Image ID Error!")
+
+    # TODO: different roles can access different images ...
+
+    imageType = DockerImages.findOne({_id:imageTag}).type
+    if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
+      #FIXME: write a checking function for env vars
+      throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
+
+    if DockerInstances.find({userId:user._id,imageId:imageTag}).count() is 0
+
+      dockerLimit = DockerLimits.findOne _id:"defaultLimit"
+
+      console.log "[in createContainer] dockerLimit = "
+      console.log dockerLimit
+
+      Docker = Meteor.npmRequire "dockerode"
+      fs = Meteor.npmRequire 'fs'
+      # Need change `dockerServerIp = "130.211.244.66"`
+      dockerServerIp = "130.211.244.66"
+      dockerServerData = DockerServers.findOne {"connect.host":dockerServerIp}
+
+      dockerServerSettings = {}
+      _.extend dockerServerSettings, dockerServerData.connect
+      ["ca","cert","key"].map (xx) ->
+        dockerServerSettings[xx] = fs.readFileSync(dockerServerData.security[xx+"Path"])
+      dockerServerSettings["dockerServerId"] = dockerServerData._id
+      dockerServerSettings["dockerServerName"] = dockerServerData.name
+
+      docker = new Docker dockerServerSettings
+      fport = getDockerFreePort(dockerServerData._id)
+
+      console.log "fport = "
+      console.log fport
+
+      imageType = DockerImages.findOne({_id:imageTag}).type
+      containerData = dockerLimit.limit
+      containerData.Image = imageTag
+
+      if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() > 0
+        config = DockerTypeConfig.findOne({userId:user._id,typeId:imageType})
+        containerData.Env = config.env
+
+      servicePort = DockerTypes.findOne({_id:imageType}).servicePort
+
+      containerData.HostConfig = {}
+      containerData.HostConfig.PortBindings = {}
+      containerData.HostConfig.PortBindings[servicePort] = [{"HostPort": fport}]
+
+      console.log "[before2] containerData = "
+      console.log containerData
+
+      Future = Npm.require 'fibers/future'
+      createFuture = new Future
+
+      docker.createContainer containerData, (err, container) ->
+        console.log "[inside] container = "
+        console.log container
+        createFuture.return container
+
+      container = createFuture.wait()
+      console.log "[outside] contaner = "
+      console.log container
+
+      startFuture = new Future
+
+      startOpt = {}
+      # startOpt.PortBindings = containerData.HostConfig.PortBindings
+
+      cont = docker.getContainer container.id
+      cont.start startOpt, (err, data) ->
+        if err
+          console.log "err"
+          console.log err
+        console.log "data = ",
+        console.log data
+        startFuture.return data
+      data = startFuture.wait()
+
+      dockerData =
+        userId: user._id
+        imageId: containerData.Image
+        containerInfo: containerData
+        containerId: container.id
+        servicePort: fport
+        imageType:imageType
+        createAt: new Date
+        dockerServerId: dockerServerData._id
+
+      console.log "[outside] dockerData = "
+      console.log dockerData
+      Meteor.call "listContainers", dockerServerData._id
+      Meteor.call "syncDockerServer"
+      DockerInstances.insert dockerData
+
+  "removeNewDocker": (containerId)->
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    containerData = DockerServerContainers.findOne("Id":containerId)
+    console.log "DockerInstances.find({userId:user._id,containerId:containerId}).count() = "
+    console.log DockerServerContainers.find({userId:user._id,containerId:containerId}).count()
+
+    hasRemovePermission = DockerInstances.find({userId:user._id,containerId:containerId}).count() > 0
+
+    console.log "hasRemovePermission = "
+    console.log hasRemovePermission
+
+    hasRemovePermission = hasRemovePermission or Roles.userIsInRole(user._id, "admin", "dockers")
+
+    console.log "hasRemovePermission = "
+    console.log hasRemovePermission
+
+    if hasRemovePermission
+      dockerServerData = DockerServers.findOne("_id":containerData.dockerServerId)
+
+      Docker = Meteor.npmRequire "dockerode"
+      fs = Meteor.npmRequire 'fs'
+
+      dockerServerSettings = {}
+      _.extend dockerServerSettings, dockerServerData.connect
+      ["ca","cert","key"].map (xx) ->
+        dockerServerSettings[xx] = fs.readFileSync(dockerServerData.security[xx+"Path"])
+
+      docker = new Docker dockerServerSettings
+      Future = Npm.require 'fibers/future'
+
+      stopFuture = new Future
+      container = docker.getContainer containerId
+
+      container.stop {}, (err,data)->
+        console.log "[inside container.stop] data = "
+        console.log data
+        stopFuture.return data
+
+      data = stopFuture.wait()
+      console.log "[outside container.stop] data = "
+      console.log data
+
+      removeFuture = new Future
+      container = docker.getContainer containerId
+
+      container.remove {}, (err,data)->
+        console.log "[inside container.stop] data = "
+        console.log data
+        removeFuture.return data
+
+      data = removeFuture.wait()
+      console.log "[outside container.stop] data = "
+      console.log data
+      Meteor.call "listContainers", dockerServerData.connect.host
+      Meteor.call "syncDockerServer"
+      Alldata = DockerInstances.find({containerId:containerId}).fetch()
+      DockerInstances.remove {containerId:containerId}
+      for x in Alldata
+        x.remoteAt = new Date
+        DockerInstancesLog.insert x
+
+    else
+      throw new Meteor.Error(1101, "Permission Deny!")
 
   # "createContainer": ->
   #   user = Meteor.user()
@@ -414,4 +580,3 @@ Meteor.methods
   #   cont.start {}, (err, data) ->
   #     console.log "data = ",
   #     console.log data
-

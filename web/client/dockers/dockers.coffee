@@ -30,7 +30,7 @@ Template.dockerInstancesList.events
     iframeURL = "http://"+rootURL+":"+servicePort
     Session.set "iframeURL",iframeURL
     $("iframe#docker").attr "src", iframeURL
-  
+
   "click a.hideInstance": (e, t)->
     e.stopPropagation()
     $(".iframeBlock").hide()
@@ -39,13 +39,21 @@ Template.dockerInstancesList.events
     servicePort = $(e.target).attr "servicePort"
     iframeURL = Session.get "iframeURL"
     $("iframe#docker").attr "src", iframeURL
-  
+
   "click a.stopInstance": (e, t)->
     containerId = $(e.target).attr "containerId"
     Meteor.call "removeDocker", containerId, (err, res)->
       if not err
         console.log "res = "
         console.log res
+
+  "click a.stopRemoteContainer": (e, t)->
+    containerId = $(e.target).attr "containerId"
+    Meteor.call "removeNewDocker", containerId, (err, res)->
+      if not err
+        console.log "res = "
+        console.log res
+
 
 Template.dockerImagesList.events
   "click a.runInstance": (e, t)->
@@ -61,5 +69,15 @@ Template.dockerImagesList.events
         console.log err
         Router.go "dockers"
 
-  
-      
+  "click a.runRemoteInstance": (e, t)->
+    e.stopPropagation()
+    imageId = $(e.target).attr "imageId"
+
+    Meteor.call "runNewDocker", imageId, (err, res)->
+      if not err
+        console.log "res = "
+        console.log res
+      else
+        console.log "err = "
+        console.log err
+        Router.go "dockers"
