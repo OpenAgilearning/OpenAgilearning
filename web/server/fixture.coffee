@@ -2,19 +2,19 @@
 adminMeetupIds = [59393362, 173080282, 129433302,114542292]
 courseManagerIds = [183363484]
 
-if Chat.find({courseId:"ipynbBasic"}).count() is 0
-  Chat.insert {userId:"systemTest",userName:"systemTest",courseId:"ipynbBasic", msg:"Hello, ipynbBasic", createAt:new Date}
+# if Chat.find({courseId:"ipynbBasic"}).count() is 0
+#   Chat.insert {userId:"systemTest",userName:"systemTest",courseId:"ipynbBasic", msg:"Hello, ipynbBasic", createAt:new Date}
 
-if Chat.find({courseId:"rstudioBasic"}).count() is 0
-  Chat.insert {userId:"systemTest",userName:"systemTest",courseId:"rstudioBasic", msg:"Hello, rstudioBasic", createAt:new Date}
+# if Chat.find({courseId:"rstudioBasic"}).count() is 0
+#   Chat.insert {userId:"systemTest",userName:"systemTest",courseId:"rstudioBasic", msg:"Hello, rstudioBasic", createAt:new Date}
 
-if Chat.find({courseId:"wishFeatures"}).count() is 0
-  Chat.insert {userId:"systemTest",userName:"systemTest",courseId:"wishFeatures", msg:"Hello, wishFeatures", createAt:new Date}
+# if Chat.find({courseId:"wishFeatures"}).count() is 0
+#   Chat.insert {userId:"systemTest",userName:"systemTest",courseId:"wishFeatures", msg:"Hello, wishFeatures", createAt:new Date}
 
 
-for oneCourse in Courses.find({}, {_id:1}).fetch()
-  if Chat.find({courseId:oneCourse._id}).count() is 0
-    Chat.insert {userId:"systemTest",userName:"systemTest",courseId:oneCourse._id, msg:"Hello!", createAt:new Date}
+# for oneCourse in Courses.find({}, {_id:1}).fetch()
+#   if Chat.find({courseId:oneCourse._id}).count() is 0
+#     Chat.insert {userId:"systemTest",userName:"systemTest",courseId:oneCourse._id, msg:"Hello!", createAt:new Date}
 
 
 if DockerLimits.find().count() is 0

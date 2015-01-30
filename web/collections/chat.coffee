@@ -1,23 +1,42 @@
-@Chat = new Meteor.Collection "chat"
+@ChatMessages = new Mongo.Collection "chatMessages"
 
-@ChatSchema = new SimpleSchema
-  msg:
+
+@MessageSchema = new SimpleSchema
+
+  text:
     type: String
-    label: "msg"
-    max: 200
-  courseId:
+    label: "Message Content"
+    min: 1
+
+  classroomId:
     type: String
-    label: "courseId"
+    label: "Classroom ID"
+
+  type:
+    type: String
+    label: "Message Type: Q (Question), R (Reply), M (Message)"
+    regEx: /^[QRM]$/
+
 
 
 Meteor.methods
-  # "postChat": (courseId, msg) ->
-  "postChat": (quickFormData) ->
+
+  sendMessage: (classroomId, text, type) ->
+
     user = Meteor.user()
+
     if not user
-      throw new Meteor.Error(401, "You need to login")
-    console.log quickFormData
-    quickFormData.userId = user._id
-    quickFormData.userName = user.profile.name
-    quickFormData.createAt = new Date
-    Chat.insert quickFormData
+      throw new Meteor.Error 401, "Please Login"
+
+    if not Match.test {text: text, classroomId: classroomId, type: type}, MessageSchema
+      throw new Meteor.Error 402, "Message must have content"
+
+    ChatMessages.insert
+      userId: user._id
+      userAvatar: user.profile.photo.thumb_link
+      userName: user.profile.name
+      createdAt: new Date
+      classroomId: classroomId
+      type: type
+      text: text
+
