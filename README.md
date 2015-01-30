@@ -10,3 +10,18 @@ type in following command to start develope
 ```
 NODE_TLS_REJECT_UNAUTHORIZED=0 MONGO_URL=mongodb://localhost:27017/dockerdata meteor --port 0.0.0.0:3000 --settings local_settings.json
 ```
+
+###Import testing data
+
+```{shell}
+
+mongoimport --db MONGO_DB_NAME --host MONGODB_PORT --collection MONGODB_COLLECTION --port MONGODB_PORT --file /data/*.json
+
+```
+
+optional attribute:
+
+* --upsert
+
+####Refference
+http://docs.mongodb.org/manual/reference/program/mongoimport/
