@@ -70,13 +70,13 @@ Template.setDockerInstanceBtns.events
         console.log "res = "
         console.log res
 
-# Template.setDockerContainerBtns.events
-#   "click a.removeDockerContainerBtn": (e, t)->
-#     containerId = $(e.target).attr "containerId"
-#     Meteor.call "removeNewDocker", containerId, (err, res)->
-#       if not err
-#         console.log "res = "
-#         console.log res
+Template.setDockerContainerBtns.events
+  "click a.removeDockerContainerBtn": (e, t)->
+    containerId = $(e.target).attr "containerId"
+    Meteor.call "removeNewDocker", containerId, (err, res)->
+      if not err
+        console.log "res = "
+        console.log res
   # Refactor this events by dockerServerContainer
   # "click a.removeDockerContainerBtn": (e, t)->
   #   containerId = $(e.target).attr "Id"
