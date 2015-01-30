@@ -95,7 +95,7 @@ Meteor.startup ->
             console.log err
             Router.go "dockers"
 
-        # Meteor.subscribe "Chat", @params.cid
+        Meteor.subscribe "classChatroom", @params.classroomId
         
 
 
@@ -308,88 +308,88 @@ Meteor.startup ->
 
 
     
-    @route "ipynb",
-      path: "ipynb/"
-      template: "analyzer"
-      data:
-        rootURL:rootURL
-        baseImageUrl: "https://registry.hub.docker.com/u/c3h3/oblas-py278-shogun-ipynb/"
-        name: "ipynb"
+    # @route "ipynb",
+    #   path: "ipynb/"
+    #   template: "analyzer"
+    #   data:
+    #     rootURL:rootURL
+    #     baseImageUrl: "https://registry.hub.docker.com/u/c3h3/oblas-py278-shogun-ipynb/"
+    #     name: "ipynb"
 
-        user: ->
-          Meteor.user()
-        showAdminPage: ->
-          userId = Meteor.userId()
-          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
-
-
-        docker: ->
-          courseId = Session.get "courseId"
-          course = Courses.findOne _id:courseId
-          Session.set "docker", DockerInstances.findOne({imageId:"c3h3/oblas-py278-shogun-ipynb"})
-          DockerInstances.findOne({imageId:"c3h3/oblas-py278-shogun-ipynb"})
-
-        chats: ->
-          Chat.find {}, {sort: {createAt:-1}}
-
-        quickFormData: ->
-          courseId:"ipynbBasic"
-
-      waitOn: ->
-        userId = Meteor.userId()
-        if not userId
-          Router.go "pleaseLogin"
-
-        Meteor.call "runDocker", "c3h3/oblas-py278-shogun-ipynb", (err, data)->
-          if not err
-            console.log "data = "
-            console.log data
-
-        Session.set "courseId", "ipynbBasic"
-
-        Meteor.subscribe "Chat", "ipynbBasic"
-        Meteor.subscribe "userDockerInstances"
+    #     user: ->
+    #       Meteor.user()
+    #     showAdminPage: ->
+    #       userId = Meteor.userId()
+    #       Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
 
-     @route "rstudio",
-      path: "rstudio/"
-      template: "analyzer"
-      data:
-        rootURL:rootURL
-        baseImageUrl: "https://registry.hub.docker.com/u/rocker/rstudio/"
-        name: "rstudio"
-        user: ->
-          Meteor.user()
-        showAdminPage: ->
-          userId = Meteor.userId()
-          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+    #     docker: ->
+    #       courseId = Session.get "courseId"
+    #       course = Courses.findOne _id:courseId
+    #       Session.set "docker", DockerInstances.findOne({imageId:"c3h3/oblas-py278-shogun-ipynb"})
+    #       DockerInstances.findOne({imageId:"c3h3/oblas-py278-shogun-ipynb"})
+
+    #     chats: ->
+    #       Chat.find {}, {sort: {createAt:-1}}
+
+    #     quickFormData: ->
+    #       courseId:"ipynbBasic"
+
+    #   waitOn: ->
+    #     userId = Meteor.userId()
+    #     if not userId
+    #       Router.go "pleaseLogin"
+
+    #     Meteor.call "runDocker", "c3h3/oblas-py278-shogun-ipynb", (err, data)->
+    #       if not err
+    #         console.log "data = "
+    #         console.log data
+
+    #     Session.set "courseId", "ipynbBasic"
+
+    #     Meteor.subscribe "Chat", "ipynbBasic"
+    #     Meteor.subscribe "userDockerInstances"
 
 
-        docker: ->
-          courseId = Session.get "courseId"
-          course = Courses.findOne _id:courseId
-          Session.set "docker", DockerInstances.findOne({imageId:"rocker/rstudio"})
-          DockerInstances.findOne({imageId:"rocker/rstudio"})
+    #  @route "rstudio",
+    #   path: "rstudio/"
+    #   template: "analyzer"
+    #   data:
+    #     rootURL:rootURL
+    #     baseImageUrl: "https://registry.hub.docker.com/u/rocker/rstudio/"
+    #     name: "rstudio"
+    #     user: ->
+    #       Meteor.user()
+    #     showAdminPage: ->
+    #       userId = Meteor.userId()
+    #       Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
-        chats: ->
-          Chat.find {}, {sort: {createAt:-1}}
 
-        quickFormData: ->
-          courseId:"rstudioBasic"
+    #     docker: ->
+    #       courseId = Session.get "courseId"
+    #       course = Courses.findOne _id:courseId
+    #       Session.set "docker", DockerInstances.findOne({imageId:"rocker/rstudio"})
+    #       DockerInstances.findOne({imageId:"rocker/rstudio"})
 
-      waitOn: ->
-        userId = Meteor.userId()
-        if not userId
-          Router.go "pleaseLogin"
+    #     chats: ->
+    #       Chat.find {}, {sort: {createAt:-1}}
 
-        Meteor.call "runDocker", "rocker/rstudio", (err, data)->
-          if not err
-            console.log "data = "
-            console.log data
+    #     quickFormData: ->
+    #       courseId:"rstudioBasic"
 
-        Session.set "courseId", "rstudioBasic"
-        Meteor.subscribe "Chat", "rstudioBasic"
-        Meteor.subscribe "userDockerInstances"
+    #   waitOn: ->
+    #     userId = Meteor.userId()
+    #     if not userId
+    #       Router.go "pleaseLogin"
+
+    #     Meteor.call "runDocker", "rocker/rstudio", (err, data)->
+    #       if not err
+    #         console.log "data = "
+    #         console.log data
+
+    #     Session.set "courseId", "rstudioBasic"
+    #     Meteor.subscribe "Chat", "rstudioBasic"
+    #     Meteor.subscribe "userDockerInstances"
 
 
     @route "pleaseLogin",
