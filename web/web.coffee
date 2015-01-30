@@ -1,5 +1,5 @@
 
-@rootURL = "0.0.0.0"
+@rootURL = Meteor.settings.public.rootURL
 
 if Meteor.isClient
   @UserConnections = new Mongo.Collection("user_status_sessions")
