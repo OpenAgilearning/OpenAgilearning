@@ -64,6 +64,8 @@ Meteor.startup ->
           course: =>
             Courses.findOne()
 
+          classroomAndId: =>
+            "classroom_" + @params.classroomId
 
           docker: =>
             classroomDoc = Classrooms.findOne _id:@params.classroomId
