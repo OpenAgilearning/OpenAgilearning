@@ -43,8 +43,8 @@ if Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).count() > 0
   console.log defaultAdminUidArray
 
   Roles.addUsersToRoles(defaultAdminUidArray, 'admin', "system")
-  Roles.addUsersToRoles(defaultCourseManagerUidArray, "admin", "courses")
-  # filterArray = Roles.find({role:"admin"}).fetch().map (xx) -> xx.userId
+  # Roles.addUsersToRoles(defaultCourseManagerUidArray, "admin", "courses")
+  # filterArray = Roles.find({role:"admin"}).fetch().map (xx) -> xx.userId  
   # console.log "filterArray = "
   # console.log filterArray
 
@@ -81,7 +81,7 @@ if DockerImages.find({_id:"dboyliao/docker-tossug",type:"ipynb"}).count() is 0
   DockerImages.insert {_id:"dboyliao/docker-tossug",type:"ipynb"}
 
 demoCourses = [
-  { "courseName" : "R Basic", "dockerImage" : "c3h3/dsc2014tutorial", "slides" : "http://dboyliao.github.io/dockerhack2014_RBasic/#1", "description" : "http://taiwanrusergroup.github.io/DSC2014Tutorial/", "video" : "https://www.youtube.com/watch?v=Ut55jPEm-yE"},
+  { "courseName" : "R Basic", "dockerImage" : "c3h3/dsc2014tutorial", "slides" : "http://dboyliao.github.io/dockerhack2014_RBasic/#1", "description" : "This is a tutorial series about R given by Taiwan R User Group in Data Science Conference 2014 in Taiwan", "video" : "https://www.youtube.com/watch?v=Ut55jPEm-yE"},
   { "courseName" : "Largest Margin Nearest Neighbours ", "dockerImage" : "c3h3/learning-shogun:u1404-ocv", "slides" : "http://nbviewer.ipython.org/github/shogun-toolbox/shogun/blob/master/doc/ipython-notebooks/metric/LMNN.ipynb", "description" : "Fernando Iglesias talks about the GSoC-Project bringing Large Margin Nearest Neighbours into the Shogun Toolbox.", "video" : "https://www.youtube.com/watch?v=7pm91lCWyfE", "imageURL":"/images/ipynb_lmnn1.png"}
   # { "courseName" : "livehouse20141105", "dockerImage" : "c3h3/livehouse20141105", "slides" : "https://www.slidenow.com/slide/129/play", "description" : "https://event.livehouse.in/2014/combo8/"},
   # { "courseName" : "ml-for-hackers", "dockerImage" : "c3h3/ml-for-hackers", "slides" : "http://shop.oreilly.com/product/0636920018483.do", "description" : ""},

@@ -3,19 +3,23 @@ template(name="goToCoursePageBtn")
   a(href="{{pathFor 'course' courseId=_id}}")
     +courseImage courseDoc=this width="300px"
 
-template(name="courseImage")
-  img(width="{{width}}",src="{{getCourseImageURL courseDoc}}")
-
 template(name="course")
   .container
     .row.clearfix
       .col-md-3.column
         +courseImage courseDoc=course width="100%"
-        h2 {{course.courseName}}
-        p {{course.description}}
+        +courseNameAndDescription courseName=course.courseName description=course.description
+        template(name="courseNameAndDescription")
       .col-md-9.column
         h2 Classrooms:
         +courseClassroomsTable
+
+template(name="courseNameAndDescription")
+  h2 {{courseName}}
+  p {{description}}
+
+template(name="courseImage")
+  img(width="{{width}}",src="{{getCourseImageURL courseDoc}}")
 
 
 template(name="courseClassroomsTable")
