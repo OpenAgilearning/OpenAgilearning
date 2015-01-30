@@ -102,6 +102,14 @@ for oneCourse in demoCourses
 
 
 if DockerServers.find().count() is 0
+  if Meteor.settings.public.DOCKER_CERT_PATH isnt ""
+    DOCKER_CERT_PATH = Meteor.settings.public.DOCKER_CERT_PATH
+  else
+    if process.env["DOCKER_CERT_PATH"]
+      DOCKER_CERT_PATH = process.env["DOCKER_CERT_PATH"]
+    else
+      DOCKER_CERT_PATH = ""
+
   defaultDockerServerData =
     name:"d3-agilearning"
     connect:
@@ -109,9 +117,9 @@ if DockerServers.find().count() is 0
       host:"130.211.244.66"
       port:2376
     security:
-      caPath: '/home/hsiang/workspace/gce-client/d1-agilearning-client/ca.pem'
-      certPath: '/home/hsiang/workspace/gce-client/d1-agilearning-client/cert.pem'
-      keyPath: '/home/hsiang/workspace/gce-client/d1-agilearning-client/key.pem'
+      caPath: DOCKER_CERT_PATH + 'ca.pem'
+      certPath: DOCKER_CERT_PATH + 'cert.pem'
+      keyPath: DOCKER_CERT_PATH + 'key.pem'
 
   defaultDockerServerData2 =
     name:"d1-agilearning"
@@ -120,9 +128,9 @@ if DockerServers.find().count() is 0
       host:"107.167.180.118"
       port:2376
     security:
-      caPath: '/home/hsiang/workspace/gce-client/d1-agilearning-client/ca.pem'
-      certPath: '/home/hsiang/workspace/gce-client/d1-agilearning-client/cert.pem'
-      keyPath: '/home/hsiang/workspace/gce-client/d1-agilearning-client/key.pem'
+      caPath: DOCKER_CERT_PATH + 'ca.pem'
+      certPath: DOCKER_CERT_PATH + 'cert.pem'
+      keyPath: DOCKER_CERT_PATH + 'key.pem'
 
   DockerServers.insert defaultDockerServerData
   DockerServers.insert defaultDockerServerData2
