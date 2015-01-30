@@ -21,5 +21,5 @@ Template.allPublicCoursesTable.helpers
 Template.dockerImagePicture.helpers
   getDockerImagePictureURL: (dockerImageId) ->
     dockerImageData = DockerImages.findOne({_id:dockerImageId})
-    console.log dockerImageData
+    # console.log dockerImageData
     "/" + dockerImageData.imageURL
