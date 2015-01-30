@@ -18,14 +18,14 @@ for oneCourse in Courses.find({}, {_id:1}).fetch()
 
 
 if DockerLimits.find().count() is 0
-   
-  dockerDefaultLimit = 
+
+  dockerDefaultLimit =
     _id: "defaultLimit"
     limit:
       Cpuset: "0"
       CpuShares: 256
       Memory:512000000
-      
+
   DockerLimits.insert dockerDefaultLimit
 
 if DockerTypes.find({_id:"ipynb"}).count() is 0
@@ -44,7 +44,7 @@ if Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).count() > 0
 
   Roles.addUsersToRoles(defaultAdminUidArray, 'admin', "system")
   Roles.addUsersToRoles(defaultCourseManagerUidArray, "admin", "courses")
-  # filterArray = Roles.find({role:"admin"}).fetch().map (xx) -> xx.userId  
+  # filterArray = Roles.find({role:"admin"}).fetch().map (xx) -> xx.userId
   # console.log "filterArray = "
   # console.log filterArray
 
@@ -68,7 +68,7 @@ if DockerImages.find().count() is 0
     {_id:"c3h3/dsc2014tutorial", type:"rstudio", imageURL:"images/rstudio_docker_default.png"},
     {_id:"c3h3/rladies-hello-kaggle", type:"rstudio", imageURL:"images/rstudio_play_kaggle.png"}
   ]
-  
+
   DockerImages.insert image for image in dockerDefaultImages
 
 if DockerImages.find({_id:"c3h3/nccu-crawler-courses-201411",type:"ipynb"}).count() is 0
@@ -93,7 +93,7 @@ demoCourses = [
 for oneCourse in demoCourses
   if Courses.find(oneCourse).count() is 0
     demoUser = Meteor.users.findOne({"services.meetup.id" : {$in: adminMeetupIds}})
-    
+
     if demoUser
       oneCourse.creatorId = demoUser._id
       oneCourse.creatorAt = new Date
@@ -102,16 +102,27 @@ for oneCourse in demoCourses
 
 
 if DockerServers.find().count() is 0
-  defaultDockerServerData = 
+  defaultDockerServerData =
     name:"d3-agilearning"
     connect:
       protocol: 'https'
       host:"130.211.244.66"
       port:2376
     security:
-      caPath: '/home/c3h3/c3h3works/Dockers/helloDockerode/ca.pem'
-      certPath: '/home/c3h3/c3h3works/Dockers/helloDockerode/cert.pem'
-      keyPath: '/home/c3h3/c3h3works/Dockers/helloDockerode/key.pem'
+      caPath: '/home/hsiang/workspace/gce-client/d1-agilearning-client/ca.pem'
+      certPath: '/home/hsiang/workspace/gce-client/d1-agilearning-client/cert.pem'
+      keyPath: '/home/hsiang/workspace/gce-client/d1-agilearning-client/key.pem'
+
+  defaultDockerServerData2 =
+    name:"d1-agilearning"
+    connect:
+      protocol: 'https'
+      host:"107.167.180.118"
+      port:2376
+    security:
+      caPath: '/home/hsiang/workspace/gce-client/d1-agilearning-client/ca.pem'
+      certPath: '/home/hsiang/workspace/gce-client/d1-agilearning-client/cert.pem'
+      keyPath: '/home/hsiang/workspace/gce-client/d1-agilearning-client/key.pem'
 
   DockerServers.insert defaultDockerServerData
-  
+  DockerServers.insert defaultDockerServerData2

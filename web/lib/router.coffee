@@ -96,7 +96,7 @@ Meteor.startup ->
             Router.go "dockers"
 
         # Meteor.subscribe "Chat", @params.cid
-        
+
 
 
 
@@ -147,12 +147,15 @@ Meteor.startup ->
             Meteor.subscribe "allDockerImages"
             Meteor.subscribe "DevMileStone"
             Meteor.subscribe "WantedFeature"
+            Meteor.subscribe "allDockerServerImages"
+            Meteor.subscribe "allDockerServers"
+            Meteor.subscribe "allDockerServerContainers"
           else
-
             if Roles.userIsInRole(userId,"admin","dockers")
               Meteor.subscribe "allDockerInstances"
               Meteor.subscribe "allDockerImages"
-
+              Meteor.subscribe "allDockerServerImages"
+              Meteor.subscribe "allDockerServers"
             else
               Router.go "index"
 
@@ -307,7 +310,7 @@ Meteor.startup ->
         # Meteor.subscribe "myRoles"
 
 
-    
+
     @route "ipynb",
       path: "ipynb/"
       template: "analyzer"

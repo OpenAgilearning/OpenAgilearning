@@ -16,6 +16,14 @@ template(name="AdminPage")
     .tab-content
       if isInRole "admin" "dockers"
         .tab-pane.fade#dockerAdmin
+          h2 Docker Servers
+          +adminPageDockerServersTabel
+          hr
+          h2 Docker Server Images
+          +adminPageDockerServerImagesTabel
+          hr
+          h2 Docker Server Containers
+          +adminPageDockerServerContainersTabel
           hr
           h2 Dockers Instances:
           +adminPageDockerInstancesTable
@@ -109,3 +117,18 @@ template(name="setDockerAdminBtns")
     li
       a.removeDockerAdminBtn.btn.btn-default(href="#",userId="{{_id}}") Remove Docker Admin
 
+
+template(name="dockerServerStatusBtns")
+  a.dockerServerStatusBtn.btn.btn-default(href="{{pathFor 'server' dockerServerId=_id }}", dockerServerId="{{_id}}") More Detail
+
+template(name="setDockerContainerBtns")
+  a.removeDockerContainerBtn.btn.btn-default(href="#", containerId="{{Id}}") Remove Container
+
+template(name="adminPageDockerServerImagesTabel")
+  +reactiveTable settings=settings
+
+template(name="adminPageDockerServersTabel")
+  +reactiveTable settings=settings
+
+template(name="adminPageDockerServerContainersTabel")
+  +reactiveTable settings=settings
