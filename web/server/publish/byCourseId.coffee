@@ -14,9 +14,9 @@ Meteor.publish "allPublicClassrooms", (courseId)->
   if courseDoc.publicStatus is "public"
     Classrooms.find {courseId:courseId,publicStatus:"public"}    
 
-Meteor.publish "allPublicClassroomManagers", (courseId)->
+Meteor.publish "allPublicClassroomRoles", (courseId)->
   publicClassroomIds = Classrooms.find({courseId:courseId,publicStatus:"public"}).map (classroomDoc) -> classroomDoc._id
-  ClassroomManagers.find classroomId:{$in:publicClassroomIds}
+  ClassroomRoles.find classroomId:{$in:publicClassroomIds}
 
 Meteor.publish "Chat", (courseId) ->
   Chat.find({courseId:courseId}, {sort: {createAt:-1}, limit:20})

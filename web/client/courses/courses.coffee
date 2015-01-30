@@ -1,4 +1,20 @@
 
+Template.courseImage.helpers
+  getCourseImageURL: (courseDoc) ->
+    if courseDoc.imageURL
+      courseDoc.imageURL
+    else
+      dockerImageDoc = DockerImages.findOne({_id:courseDoc.dockerImage})
+      if dockerImageDoc.imageURL
+        dockerImageDoc.imageURL
+      else
+        if dockerImageDoc.type is "ipynb"
+          "/images/ipynb_docker_default.png"
+        else if dockerImageDoc.type is "rstudio"
+          "/images/rstudio_docker_default.png"
+
+
+
 Template.courseClassroomsTable.helpers
   settings: ->
     goToClassroomBtnField =
@@ -40,9 +56,6 @@ Template.course.rendered = ->
   $("video").map ->
     videojs @, JSON.parse($(@).attr("data-setup"))
 
-Template.classroom.rendered = ->
-  $("video").map ->
-    videojs @, JSON.parse($(@).attr("data-setup"))
 
 
 Template.course.events
@@ -56,16 +69,6 @@ Template.course.events
     $("#docker").attr 'src', url
 
 
-Template.classroom.events
-  "click .connectEnvBtn": (e, t)->
-    e.stopPropagation()
-    $("#docker").attr 'src', ""
-    
-    rootURL = $("#docker").attr "rootURL"
-    servicePort = $("#docker").attr "servicePort"
-    url = "http://"+rootURL+":"+servicePort
-
-    $("#docker").attr 'src', url
 
 
 Template.analyzer.events

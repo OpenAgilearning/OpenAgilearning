@@ -45,7 +45,7 @@ Meteor.startup ->
 
         Meteor.subscribe "course", @params.courseId
         Meteor.subscribe "allPublicClassrooms", @params.courseId
-        Meteor.subscribe "allPublicClassroomManagers", @params.courseId
+        Meteor.subscribe "allPublicClassroomRoles", @params.courseId
         Meteor.subscribe "courseDockerImages", @params.courseId
 
 

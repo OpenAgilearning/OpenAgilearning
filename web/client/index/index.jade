@@ -11,22 +11,17 @@ template(name="index")
         h3 New Features:
         //- +msgBoard
 
-
-  
 template(name="allPublicCoursesTable")
   +reactiveTable settings=settings
 
-template(name="goToCoursePageBtn")
-  a(href="{{pathFor 'course' courseId=_id}}")
-    +dockerImagePicture dockerImage=dockerImage width="300px"
-
-template(name="dockerImagePicture")
-  img(width="{{width}}",src="{{getDockerImagePictureURL dockerImage}}")
   
-template(name="courseNameAndDescription")
-  h2 {{courseName}}
-  p {{description}}
+//- template(name="dockerImagePicture")
+//-   img(width="{{width}}",src="{{getDockerImagePictureURL dockerImage}}")
 
+  
+//- template(name="courseNameAndDescription")
+//-   h2 {{courseName}}
+//-   p {{description}}
 
 
 template(name="index3")

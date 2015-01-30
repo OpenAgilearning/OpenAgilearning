@@ -1,9 +1,16 @@
 
+template(name="goToCoursePageBtn")
+  a(href="{{pathFor 'course' courseId=_id}}")
+    +courseImage courseDoc=this width="300px"
+
+template(name="courseImage")
+  img(width="{{width}}",src="{{getCourseImageURL courseDoc}}")
+
 template(name="course")
   .container
     .row.clearfix
       .col-md-3.column
-        +dockerImagePicture dockerImage=course.dockerImage width="100%"
+        +courseImage courseDoc=course width="100%"
         h2 {{course.courseName}}
         p {{course.description}}
       .col-md-9.column
@@ -17,49 +24,6 @@ template(name="courseClassroomsTable")
 template(name="goToClassroomBtn")
   a.btn.btn-warning(href="{{pathFor 'classroom' classroomId=_id}}") Go To Classroom
 
-template(name="classroom")
-  .container
-    .row.clearfix
-      .col-md-12.column
-        ul.nav.nav-tabs
-          li.active
-            a(data-toggle="tab", href="#CourseInfo") Info
-
-          if course.video
-            li
-              a(data-toggle="tab", href="#Video") Video
-          
-          if course.dockerImage
-            li
-              a(data-toggle="tab", href="#Environment") Environment
-          
-          if course.slides
-            li
-              a(data-toggle="tab", href="#Slides") Slides
-
-          
-
-        .tab-content
-          .tab-pane.fade.in.active#CourseInfo
-            br 
-            +dockerImagePicture dockerImage=course.dockerImage width="300px"
-            h2 {{course.courseName}}
-            p {{course.description}}
-
-          if course.video
-            .tab-pane.fade#Video
-              video.video-js.vjs-default-skin(id="vid",src="",controls,width="100%",height="700px",data-setup='{ "techOrder": ["youtube"], "src": "{{course.video}}" }')
-                    
-          if course.dockerImage
-            .tab-pane.fade#Environment
-              br
-              input.connectEnvBtn.btn.btn-default(value="Connect Environment Again")
-              iframe#docker(src="http://{{rootURL}}:{{docker.servicePort}}",servicePort="{{docker.servicePort}}",rootURL="{{rootURL}}", width="100%", height="550px", scrolling="yes")
-
-          
-          if course.slides
-            .tab-pane.fade#Slides
-              iframe#slides(src="{{course.slides}}", width="100%", height="700px", scrolling="auto")
 
 template(name="courses")
   .container
