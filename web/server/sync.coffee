@@ -67,6 +67,6 @@ syncDockerServerImage = ->
       imageData.dockerServerName = dockerServerSettings.dockerServerName
       DockerServerImages.insert imageData
 
-Meteor.setInterval syncDockerServerContainer,20000
-Meteor.setInterval syncDockerServerPort,10000
+Meteor.setInterval syncDockerServerContainer, 40000
+Meteor.setInterval syncDockerServerPort,20000
 Meteor.setInterval syncDockerServerImage, 60000

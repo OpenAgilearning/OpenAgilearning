@@ -1,7 +1,7 @@
 @DockerServers = new Meteor.Collection "dockerServers"
 @DockerServerImages = new Meteor.Collection "dockerServerImages"
 @DockerServerContainers = new Meteor.Collection "dockerServerContainers"
-# @DockerServerPullImageLog = new Meteor.Collection "dockerServerPullImageLog"
+@DockerServerPullImageLog = new Meteor.Collection "dockerServerPullImageLog"
 
 @DockerImages = new Meteor.Collection "dockerImages"
 @DockerTypes = new Meteor.Collection "dockerTypes"
@@ -10,6 +10,47 @@
 @DockerInstances = new Meteor.Collection "dockerInstances"
 @DockerInstancesLog = new Meteor.Collection "dockerInstancesLog"
 
+@DockerServerContainersSchema = new SimpleSchema
+  _id:
+    type: String
+  userId:
+    type: String
+  Command:
+    type: String
+  Created:
+    type: Number
+  Id:
+    type: String
+  Image:
+    type: String
+  containerInfo:
+    type: Object
+  imageType:
+    type: String
+  Names:
+    type: [String]
+  Ports:
+    type: [Object]
+  Status:
+    type: String
+  dockerServerId:
+    type: String
+  dockerServerName:
+    type: String
+
+@DockerServerPullImageLogSchema = new SimpleSchema
+  imageName:
+    type: String
+    label: "Image"
+  imageVersion:
+    type: String
+    label: "Image Version"
+  dockerHubIp:
+    type: String
+    label: "Dockerhub IP"
+  dockerServerId:
+    type: String
+    label: "DockerServerId"
 
 basePort = 8000
 topPort = 9000
@@ -126,12 +167,42 @@ Meteor.methods
 
       containers
 
-  "pullImage": (imageTag, dockerServerIp, dockerHubData) ->
-    console.log "TODO"
+  "pullImage": (pullImageData) ->
+    if pullImageData["dockerHubIp"] is "dockerhub"
+      # console.log "pullImageData ="
+      # console.log pullImageData
+      # console.log "pull from docker.com"
+      Docker = Meteor.npmRequire "dockerode"
+      fs = Meteor.npmRequire 'fs'
+      dockerServerData = DockerServers.findOne {"_id":pullImageData["dockerServerId"]}
+      dockerServerSettings = {}
+      _.extend dockerServerSettings, dockerServerData.connect
+      ["ca","cert","key"].map (xx) ->
+        dockerServerSettings[xx] = fs.readFileSync(dockerServerData.security[xx+"Path"])
+      # dockerServerSettings["dockerServerId"] = dockerServerData._id
+      # dockerServerSettings["dockerServerName"] = dockerServerData.name
 
-  "nweDockerRun": (imageId)->
-    console.log "TODO"
+      docker = new Docker dockerServerSettings
+      Future = Npm.require 'fibers/future'
+      pullImageFuture = new Future
 
+      repository = pullImageData["imageName"] + ":" + pullImageData["imageVersion"]
+      console.log "repository ="
+      console.log repository
+
+      docker.pull repository, (err, stream) ->
+        if err
+          console.log "err ="
+          console.log err
+        console.log "pulling image"
+        pullImageFuture.return stream
+
+      pullImage = pullImageFuture.wait()
+      DockerServerPullImageLog.insert pullImage
+      # console.log "pullImage ="
+      # console.log pullImage
+    else
+      console.log "pull from private registry"
 
   "getCourseDocker": (courseId) ->
     user = Meteor.user()
