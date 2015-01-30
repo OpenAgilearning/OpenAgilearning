@@ -98,7 +98,20 @@ for oneCourse in demoCourses
       oneCourse.creatorId = demoUser._id
       oneCourse.creatorAt = new Date
       oneCourse.publicStatus = "public"
-      Courses.insert oneCourse
+
+      courseId = Courses.insert oneCourse
+      
+      if oneCourse.publicStatus is "public"
+        if Classrooms.find({courseId:courseId,publicStatus:"public"}).count() is 0
+          publicClassroomDoc = 
+            creatorId: oneCourse.creatorId
+            courseId: courseId
+            publicStatus:"public"
+            createAt: new Date
+          classroomId = Classrooms.insert publicClassroomDoc
+
+          ClassroomRoles.insert {classroomId:classroomId, userId: oneCourse.creatorId, role:"admin", isActive:true}
+          Roles.addUsersToRoles(demoUser, "admin", "classroom_" + classroomId)
 
 
 if DockerServers.find().count() is 0
