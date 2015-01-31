@@ -1,5 +1,3 @@
-@Classrooms = new Mongo.Collection "classrooms"
-@ClassroomRoles = new Mongo.Collection "classroomRoles"
 
 @LearningResources = new Mongo.Collection "learningResources"
 

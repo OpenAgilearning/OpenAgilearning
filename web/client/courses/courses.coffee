@@ -14,12 +14,34 @@ Template.courseImage.helpers
           "/images/rstudio_docker_default.png"
 
 
+Template.goToClassroomBtn.helpers
+  isClassroomMember: ->
+    userId = Meteor.userId()
+    classroomId = @_id
+    classroomAndId = "classroom_" + classroomId
 
+    isClassroomMember = Roles.userIsInRole(userId,"admin",classroomAndId)
+    isClassroomMember = isClassroomMember  or Roles.userIsInRole(userId,"teacher",classroomAndId)
+    isClassroomMember = isClassroomMember  or Roles.userIsInRole(userId,"student",classroomAndId)
+
+Template.goToClassroomBtn.events
+  "click .joinClassroomBtn": (e,t) ->
+    e.stopPropagation()
+    # console.log @
+    classroomId = $(e.target).attr "classroomId"
+
+    Meteor.call "joinClassroom", classroomId, (err, data) ->
+      if not err
+        console.log data
+      else
+        console.log err
+
+  
 Template.courseClassroomsTable.helpers
   settings: ->
     goToClassroomBtnField =
       key: "_id"
-      label: "Go To Classroom"
+      label: "Learning Now!"
       tmpl: Template.goToClassroomBtn
 
     res =

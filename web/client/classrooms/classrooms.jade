@@ -26,6 +26,10 @@ template(name="classroom")
           if isInRole "teacher" classroomAndId
             li
               a(data-toggle="tab", href="#Teacher") Teacher
+          
+          if isInRole "student" classroomAndId
+            li
+              a(data-toggle="tab", href="#Student") Student
 
 
         .tab-content
@@ -61,4 +65,10 @@ template(name="classroom")
               h2 TODO: Boardcast Message
               h2 TODO: Student List
               h2 TODO: Realtime Exercise
+          
+          if isInRole "student" classroomAndId
+            .tab-pane.fade#Student
+              h2 TODO: Recieve Teacher's Boardcast
+              h2 TODO: Help Btn
+              
           

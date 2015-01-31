@@ -111,8 +111,8 @@ for oneCourse in demoCourses
           classroomId = Classrooms.insert publicClassroomDoc
 
           ClassroomRoles.insert {classroomId:classroomId, userId: oneCourse.creatorId, role:"admin", isActive:true}
-          # Roles.addUsersToRoles(demoUser, "admin", "classroom_" + classroomId)
-          Roles.addUsersToRoles(demoUser, "teacher", "classroom_" + classroomId)
+          Roles.addUsersToRoles(demoUser, "admin", "classroom_" + classroomId)
+          #Roles.addUsersToRoles(demoUser, "teacher", "classroom_" + classroomId)
 
 
 if DockerServers.find().count() is 0

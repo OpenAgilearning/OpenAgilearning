@@ -26,7 +26,11 @@ template(name="courseClassroomsTable")
   +reactiveTable settings=settings        
 
 template(name="goToClassroomBtn")
-  a.btn.btn-warning(href="{{pathFor 'classroom' classroomId=_id}}") Go To Classroom
+  if isClassroomMember
+    a.btn.btn-warning(href="{{pathFor 'classroom' classroomId=_id}}") Go To Classroom
+  else
+    a.btn.btn-warning.joinClassroomBtn(classroomId="{{_id}}") Join fo Free!
+
 
 
 template(name="courses")
