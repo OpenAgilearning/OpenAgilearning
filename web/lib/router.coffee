@@ -83,6 +83,14 @@ Meteor.startup ->
         if not userId
           Router.go "pleaseLogin"
 
+        classroomAndId = "classroom_" + @params.classroomId
+        redirectToIndex = not Roles.userIsInRole(userId,"admin",classroomAndId)
+        redirectToIndex = redirectToIndex  and not Roles.userIsInRole(userId,"teacher",classroomAndId)
+        redirectToIndex = redirectToIndex  and not Roles.userIsInRole(userId,"student",classroomAndId)
+
+        if redirectToIndex
+          Router.go "index"          
+
         Meteor.subscribe "userDockerInstances"
         Meteor.subscribe "classroom", @params.classroomId
         Meteor.subscribe "classroomCourse", @params.classroomId
