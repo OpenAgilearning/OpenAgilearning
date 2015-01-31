@@ -18,11 +18,11 @@ template(name="dockerSuggestion")
               td
                 input.dockerImageReason
               td
-                p {{user.profile.name}}    
+                p {{user.profile.name}}
               td
                 input.suggestBt.btn.btn-default(value="Suggest")
 
-  
+
 template(name="dockerImagesList")
   .container
     .row.clearfix
@@ -38,10 +38,11 @@ template(name="dockerImagesList")
               tr
                 td
                   a.runInstance.btn.btn-default(href="#",imageId="{{_id}}") Run Instance
+                  a.runRemoteInstance.btn.btn-default(href="#",imageId="{{_id}}") Run Remote Instance
                 td
                   p {{_id}}
                 td
-                  p {{type}}    
+                  p {{type}}
 
 
 template(name="dockerInstancesList")
@@ -69,13 +70,14 @@ template(name="dockerInstancesList")
                   td
                     p {{imageId}}
                   td
-                    p {{imageType}}    
+                    p {{imageType}}
                   td
-                    ul 
+                    ul
                       each containerInfo.Env
                         li {{this}}
                   td
                     a.stopInstance.btn.btn-default(containerId="{{containerId}}") Stop Instance
+                    a.stopRemoteContainer.btn.btn-default(containerId="{{containerId}}") Stop Remote Instance
 
 
 template(name="dockerRunningConfig")
@@ -103,10 +105,10 @@ template(name="dockerRunningConfig")
 
                 td
                   if currentSettings
-                    ul 
+                    ul
                       each currentSettings
                         li {{this}}
-                  else  
+                  else
                     p Please Setting ENV
 
 
@@ -124,7 +126,7 @@ template(name="dockerSetConfig")
   .container
     .row.clearfix
       .col-md-12.column
-        h2 {{dockerType}} Type 
+        h2 {{dockerType}} Type
         h2 Docker Set Configures:
         table.table.table-hover
           thead
@@ -142,14 +144,13 @@ template(name="dockerSetConfig")
                     select.envVar(var="{{name}}")
                       each limitValues
                         option(value='{{this}}') {{this}}
-                    
+
                   else
                     input.envVar(var="{{name}}")
                 //- TODO: display current value
                 //- td
 
 
-        input.submitENV.btn.btn-default(value="Submit")        
+        input.submitENV.btn.btn-default(value="Submit")
 
 
-              

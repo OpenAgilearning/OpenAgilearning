@@ -96,7 +96,7 @@ Meteor.startup ->
             Router.go "dockers"
 
         # Meteor.subscribe "Chat", @params.cid
-        
+
 
 
 
@@ -147,18 +147,50 @@ Meteor.startup ->
             Meteor.subscribe "allDockerImages"
             Meteor.subscribe "DevMileStone"
             Meteor.subscribe "WantedFeature"
+            Meteor.subscribe "allDockerServerImages"
+            Meteor.subscribe "allDockerServers"
+            Meteor.subscribe "allDockerServerContainers"
           else
-
             if Roles.userIsInRole(userId,"admin","dockers")
               Meteor.subscribe "allDockerInstances"
               Meteor.subscribe "allDockerImages"
-
+              Meteor.subscribe "allDockerServerImages"
+              Meteor.subscribe "allDockerServers"
             else
               Router.go "index"
 
+    @route "server",
+      path: "admin/server/:dockerServerId"
+      template: "serverPage"
+      data:->
+        resData =
+          rootURL:rootURL
+          user:->
+            Meteor.user()
+          showAdminPage: ->
+            userId = Meteor.userId()
+            Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+          pullImageData: ->
+            "dockerServerId": Router.current().params["dockerServerId"]
+        resData
+      waitOn: ->
+        userId = Meteor.userId()
+        if not userId
+          Router.go "pleaseLogin"
 
-
-
+        else
+          if Roles.userIsInRole(userId,"admin","system")
+            Meteor.subscribe "allUsers"
+            Meteor.subscribe "dockerServerImages", @params.dockerServerId
+            # Meteor.subscribe "dockerInstances", @params.dockerServerId
+            # Meteor.subscribe "dockerImages", @params.dockerServerId
+          else
+            if Roles.userIsInRole(userId,"admin","dockers")
+              Meteor.subscribe "dockerServerImages", @params.dockerServerId
+              # Meteor.subscribe "dockerInstances", @params.dockerServerId
+              # Meteor.subscribe "dockerImages", @params.dockerServerId
+            else
+              Router.go "index"
 
     @route "about",
       path: "about/"
@@ -307,7 +339,7 @@ Meteor.startup ->
         # Meteor.subscribe "myRoles"
 
 
-    
+
     @route "ipynb",
       path: "ipynb/"
       template: "analyzer"

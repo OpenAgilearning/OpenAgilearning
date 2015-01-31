@@ -1,3 +1,51 @@
+Template.adminPageDockerServersTabel.helpers
+  settings: ->
+    dockerServerStatusBtnField =
+      key: "_id"
+      label: "Server details"
+      tmpl: Template.dockerServerStatusBtns
+      sortable:false
+    res=
+      collection:DockerServers
+      rowsPerPage:5
+      showFilter: true
+      fields:[
+        {key:"name", label:"Server Name",sortable:false},
+        dockerServerStatusBtnField
+      ]
+
+Template.adminPageDockerServerImagesTabel.helpers
+  settings: ->
+
+    res=
+      collection:DockerServerImages
+      rowsPerPage:10
+      showFilter: true
+      fields: [
+        {key:"RepoTags", label:"Image Name", sortable:false},
+        {key:"VirtualSize", label:"Image Size", sortable: false},
+        {key:"dockerServerName", label:"Docker Server"},
+        {key:"Created", label:"Created Time"}
+      ]
+
+Template.adminPageDockerServerContainersTabel.helpers
+  settings: ->
+    removeDockerContainerBtnsField =
+      key: "Id"
+      label: "Remove Container"
+      tmpl: Template.setDockerContainerBtns
+
+    res =
+      collection: DockerServerContainers
+      rowsPerPage: 10
+      showFilter: true
+      fields:[
+        removeDockerContainerBtnsField,
+        {key: "_id", label: "_id"},
+        {key: "Created", label: "Created"},
+        {key: "dockerServerId", label: "Server"}
+        # ,{key: "imageType", label: "Image Type"}
+      ]
 
 Template.adminPageDockerInstancesTable.helpers
   settings: ->
@@ -5,7 +53,6 @@ Template.adminPageDockerInstancesTable.helpers
       key: "containerId"
       label: "Remove Instance"
       tmpl: Template.setDockerInstanceBtns
-
 
     res =
       collection: DockerInstances
@@ -23,8 +70,20 @@ Template.setDockerInstanceBtns.events
         console.log "res = "
         console.log res
 
-
-
+Template.setDockerContainerBtns.events
+  "click a.removeDockerContainerBtn": (e, t)->
+    containerId = $(e.target).attr "containerId"
+    Meteor.call "removeNewDocker", containerId, (err, res)->
+      if not err
+        console.log "res = "
+        console.log res
+  # Refactor this events by dockerServerContainer
+  # "click a.removeDockerContainerBtn": (e, t)->
+  #   containerId = $(e.target).attr "Id"
+  #   Meteor.call "removeNewDocker", containerId, (err, res)->
+  #     if not err
+  #       console.log "res = "
+  #       console.log res
 
 Template.adminPageDockerImagesTable.helpers
   settings: ->
@@ -154,3 +213,4 @@ Template.setDockerAdminBtns.events
     e.stopPropagation()
     userId = $(e.target).attr "userId"
     Meteor.call "removeDockerAdmin", userId
+

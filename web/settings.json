@@ -1,5 +1,6 @@
 {
   "public":{
-    "redirectTo": "agilearning.io"
+    "redirectTo": "agilearning.io",
+    "DOCKER_CERT_PATH":""
   }
 }

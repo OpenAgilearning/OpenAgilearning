@@ -1,5 +1,6 @@
 {
   "public":{
-    "redirectTo": "0.0.0.0:3000"
+    "redirectTo": "0.0.0.0:3000",
+    "DOCKER_CERT_PATH":""
   }
 }
