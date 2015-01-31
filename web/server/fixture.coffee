@@ -1,5 +1,5 @@
 
-adminMeetupIds = [59393362, 173080282, 129433302]
+adminMeetupIds = [59393362, 173080282, 129433302,114542292]
 courseManagerIds = [183363484]
 
 if Chat.find({courseId:"ipynbBasic"}).count() is 0
