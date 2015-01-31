@@ -129,12 +129,15 @@ template(name="courses")
                 td
                   a(href="{{pathFor 'course' cid=_id}}") {{courseName}}
                 td
-                  a(target="_blank",href="https://registry.hub.docker.com/u/{{dockerImage}}") {{dockerImage}}
+                  a(target="_blank",href="https://registry.hub.docker.com/u/{{dockerImage}}") 
+                    i.fa.fa-cube &nbsp;{{dockerImage}}
                 td
-                  a(target="_blank",href="{{slides}}") Link
+                  a(target="_blank",href="{{slides}}") 
+                    i.fa.fa-book.fa-2x
                 td
                   if video
-                    a(target="_blank",href="{{video}}") Video
+                    a(target="_blank",href="{{video}}")
+                      i.fa.fa-film.fa-2x
                 //- td {{description}}
                 td {{creatorName}}
 
