@@ -134,7 +134,7 @@ defaultDockerServerData =
     caPath: DOCKER_CERT_PATH + 'ca.pem'
     certPath: DOCKER_CERT_PATH + 'cert.pem'
     keyPath: DOCKER_CERT_PATH + 'key.pem'
-
+  
 defaultDockerServerData2 =
   name:"d1-agilearning"
   connect:
@@ -145,11 +145,14 @@ defaultDockerServerData2 =
     caPath: DOCKER_CERT_PATH + 'ca.pem'
     certPath: DOCKER_CERT_PATH + 'cert.pem'
     keyPath: DOCKER_CERT_PATH + 'key.pem'
+  
 
 defaultDockerServers = [defaultDockerServerData,defaultDockerServerData2] 
 
 for dockerServerData in defaultDockerServers
   if DockerServers.find(dockerServerData).count() is 0
+    dockerServerData.active = false
+    dockerServerData.createAt = new Date
     DockerServers.insert dockerServerData
 
   

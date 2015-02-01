@@ -12,7 +12,7 @@ Template.adminPageDockerServersTable.helpers
       collection:DockerServers
       rowsPerPage:5
       showFilter: true
-      fields:[dockerServerNameField, dockerServerIPField]
+      fields:[dockerServerNameField, dockerServerIPField, "active"]
 
 
 Template.adminPageDockerServerImagesTabel.helpers

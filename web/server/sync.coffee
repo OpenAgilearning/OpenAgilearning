@@ -1,3 +1,51 @@
+syncDockerServerInfo = ->
+  dockerServers = DockerServers.find().fetch()
+  Docker = Meteor.npmRequire "dockerode"
+  fs = Meteor.npmRequire 'fs'
+  
+  for dockerServerData in dockerServers
+    dockerServerSettings = {}
+    _.extend dockerServerSettings, dockerServerData.connect
+    ["ca","cert","key"].map (xx) ->
+      dockerServerSettings[xx] = fs.readFileSync(dockerServerData.security[xx+"Path"])
+    dockerServerSettings["dockerServerId"] = dockerServerData._id
+    dockerServerSettings["dockerServerName"] = dockerServerData.name
+
+    docker = new Docker dockerServerSettings
+    Future = Npm.require 'fibers/future'
+    infoFuture = new Future
+
+    docker.info (err, data) ->
+      if err
+        console.log "err ="
+        console.log err
+      infoFuture.return data
+    
+    dockerInfo = infoFuture.wait()
+    
+    # console.log "dockerInfo = "
+    # console.log dockerInfo
+    
+    if dockerInfo
+      updateData = 
+        active:true
+        serverInfo:dockerInfo
+        lastUpdateAt: new Date
+
+      DockerServers.update {_id:dockerServerData._id},{$set:updateData}
+    else
+      updateData = 
+        active:false
+        lastUpdateAt: new Date
+
+      DockerServers.update {_id:dockerServerData._id},{$set:updateData}
+      DockerServers.update {_id:dockerServerData._id},{$unset:serverInfo}
+
+
+  
+
+
+
 syncDockerServerContainer = ->
   dockerServers = DockerServers.find().fetch()
   Docker = Meteor.npmRequire "dockerode"
@@ -67,6 +115,7 @@ syncDockerServerImage = ->
       imageData.dockerServerName = dockerServerSettings.dockerServerName
       DockerServerImages.insert imageData
 
+Meteor.setInterval syncDockerServerInfo, 5000
 # Meteor.setInterval syncDockerServerContainer, 5000
 # Meteor.setInterval syncDockerServerPort, 5000
 # Meteor.setInterval syncDockerServerImage, 5000
