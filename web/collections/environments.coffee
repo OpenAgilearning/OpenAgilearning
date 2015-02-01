@@ -1,32 +1,12 @@
 @Envs = new Meteor.Collection "envs"
-@EnvCreateLog = new Meteor.Collection "EenvCreateLog"
+@EnvCreateLog = new Meteor.Collection "envCreateLog"
 @EnvTypes = new Meteor.Collection "envTypes"
 @EnvLimits = new Meteor.Collection "envLimits"
 @EnvUserConfigs = new Meteor.Collection "envUserConfigs"
 @EnvInstances = new Meteor.Collection "envInstances"
 @EnvInstancesLog = new Meteor.Collection "envInstancesLog"
 
-@EnvsSchema = new SimpleSchema
-  _id:
-    type: String
-  Created:
-    type: Number
-  Id:
-    type: String
-  ParentId:
-    type: String
-  Size:
-    type: Number
-  VirtualSize:
-    type: Number
-  dockerServerId:
-    type: String
-  lastUpdateAt:
-    type: Date
-  tag:
-    type: String
-  serverName:
-    type: String
+
 # @EnvCreateLogSchema = new SimpleSchema
 #   _id:
 #     type: String
@@ -78,3 +58,14 @@
     type: String
   dockerServerIp:
     type: String
+
+
+Meteor.methods
+  "runEnv": (EnvId) ->
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    if Envs.find({"_id":EnvId}).count() is 0
+      throw new Meteor.Error(1001, "Env ID Error!")
+

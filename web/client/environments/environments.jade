@@ -1,0 +1,15 @@
+template(name="environments")
+  .container
+    .row.clearfix
+      +envsTable
+
+template(name="envsTable")
+  +reactiveTable settings=settings
+
+template(name="envPicture")
+  img(width="{{width}}",src="{{getEnvPictureURL envDoc}}")
+  
+
+template(name="envPictureField")
+  +envPicture envDoc=this width="300px"
+
