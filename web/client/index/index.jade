@@ -3,8 +3,11 @@ template(name="index")
     .row.clearfix
       
       .col-md-10.column
-        h2 Public Courses:
-        h4 (in the future) New Learning Resources:
+        //- h2 Courses:
+        p
+          i.fa.fa-film(style="margin:5px") Video
+          i.fa.fa-book(style="margin:5px") Slides
+          i.fa.fa-cube(style="margin:5px") Environment
         +allPublicCoursesTable
 
       .col-md-2.column
