@@ -3,7 +3,7 @@ template(name="AdminPage")
   .container
     ul.nav.nav-tabs
       if isInRole "admin" "dockers"
-        li
+        li.active
           a(data-toggle="tab", href="#dockerAdmin") Docker Admin
       if isInRole "admin" "system"
         li
@@ -15,24 +15,25 @@ template(name="AdminPage")
 
     .tab-content
       if isInRole "admin" "dockers"
-        .tab-pane.fade#dockerAdmin
+        .tab-pane.fade.in.active#dockerAdmin
+
           h2 Docker Servers
-          +adminPageDockerServersTabel
-          hr
-          h2 Docker Server Images
-          +adminPageDockerServerImagesTabel
-          hr
-          h2 Docker Server Containers
-          +adminPageDockerServerContainersTabel
-          hr
-          h2 Dockers Instances:
-          +adminPageDockerInstancesTable
+          +adminPageDockerServersTable
+          //- hr
+          //- h2 Docker Server Images
+          //- +adminPageDockerServerImagesTabel
+          //- hr
+          //- h2 Docker Server Containers
+          //- +adminPageDockerServerContainersTabel
+          //- hr
+          //- h2 Dockers Instances:
+          //- +adminPageDockerInstancesTable
 
-          hr
-          h2 Dockers Images:
-          +adminPageDockerImagesTable
+          //- hr
+          //- h2 Dockers Images:
+          //- +adminPageDockerImagesTable
 
-          hr
+          //- hr
 
       if isInRole "admin" "system"
         .tab-pane.fade#systemAdmin
@@ -58,6 +59,10 @@ template(name="AdminPage")
         .tab-pane.fade#userStatus
           h2 User Status:
           +userStatus
+
+
+template(name="adminPageDockerServersTable")
+  +reactiveTable settings=settings
 
 
 template(name="adminPageDockerImagesTable")
@@ -127,8 +132,6 @@ template(name="setDockerContainerBtns")
 template(name="adminPageDockerServerImagesTabel")
   +reactiveTable settings=settings
 
-template(name="adminPageDockerServersTabel")
-  +reactiveTable settings=settings
 
 template(name="adminPageDockerServerContainersTabel")
   +reactiveTable settings=settings

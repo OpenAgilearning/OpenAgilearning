@@ -1,4 +1,4 @@
-syncDockerServerContainer =->
+syncDockerServerContainer = ->
   dockerServers = DockerServers.find().fetch()
   Docker = Meteor.npmRequire "dockerode"
   fs = Meteor.npmRequire 'fs'
@@ -33,7 +33,7 @@ syncDockerServerContainer =->
     # syncDockerServer()
     # syncDockerServerFuture.wait()
     # syncDockerServerFuture.return "syncDockerServer done"
-syncDockerServerPort =->
+syncDockerServerPort = ->
   servers = DockerServers.find().fetch()
   for server in servers
     DockerServers.remove(_id:server._id)
@@ -67,6 +67,6 @@ syncDockerServerImage = ->
       imageData.dockerServerName = dockerServerSettings.dockerServerName
       DockerServerImages.insert imageData
 
-Meteor.setInterval syncDockerServerContainer, 5000
-Meteor.setInterval syncDockerServerPort, 5000
-Meteor.setInterval syncDockerServerImage, 5000
+# Meteor.setInterval syncDockerServerContainer, 5000
+# Meteor.setInterval syncDockerServerPort, 5000
+# Meteor.setInterval syncDockerServerImage, 5000

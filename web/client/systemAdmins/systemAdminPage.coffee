@@ -1,18 +1,19 @@
-Template.adminPageDockerServersTabel.helpers
+Template.adminPageDockerServersTable.helpers
   settings: ->
-    dockerServerStatusBtnField =
-      key: "_id"
-      label: "Server details"
-      tmpl: Template.dockerServerStatusBtns
-      sortable:false
+    dockerServerNameField = 
+      key: "name"
+      label: "Server Name"
+      
+    dockerServerIPField =
+      key: "connect.host"
+      label: "Server IP"
+     
     res=
       collection:DockerServers
       rowsPerPage:5
       showFilter: true
-      fields:[
-        {key:"name", label:"Server Name",sortable:false},
-        dockerServerStatusBtnField
-      ]
+      fields:[dockerServerNameField, dockerServerIPField]
+
 
 Template.adminPageDockerServerImagesTabel.helpers
   settings: ->
