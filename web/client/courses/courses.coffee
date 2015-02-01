@@ -83,12 +83,12 @@ Template.course.rendered = ->
 Template.course.events
   "click .connectBt": (e, t)->
     e.stopPropagation()
-    $("#docker").attr 'src', ""
+    $("#docker").attr "src", ""
 
     docker = Session.get "docker"
     url = "http://"+rootURL+":"+docker.servicePort
 
-    $("#docker").attr 'src', url
+    $("#docker").attr "src", url
 
 
 
@@ -96,9 +96,9 @@ Template.course.events
 Template.analyzer.events
   "click .connectBt": (e, t)->
     e.stopPropagation()
-    $("#docker").attr 'src', ""
+    $("#docker").attr "src", ""
 
     docker = Session.get "docker"
     url = "http://"+rootURL+":"+docker.servicePort
 
-    $("#docker").attr 'src', url
+    $("#docker").attr "src", url
