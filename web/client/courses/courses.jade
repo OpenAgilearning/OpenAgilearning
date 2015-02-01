@@ -1,65 +1,45 @@
 
+template(name="goToCoursePageBtn")
+  a(href="{{pathFor 'course' courseId=_id}}")
+    +courseImage courseDoc=this width="300px"
+
 template(name="course")
   .container
     .row.clearfix
       .col-md-3.column
-        +dockerImagePicture dockerImage=course.dockerImage width="100%"
-        h2 {{course.courseName}}
-        p {{course.description}}
+        +courseImage courseDoc=course width="100%"
+        +Template.dynamic template="courseNameAndDescription" data=course
+        //- +courseNameAndDescription courseName=course.courseName description=course.description
+        template(name="courseNameAndDescription")
       .col-md-9.column
         h2 Classrooms:
         +courseClassroomsTable
+
+template(name="courseNameAndDescription")
+  h2 {{courseName}}
+  p {{description}}
+  if video
+    //- h2 TODO: add video icon
+    i.fa.fa-film.fa-2x(style="margin:5px")
+  if slides
+    i.fa.fa-book.fa-2x(style="margin:5px")
+  if dockerImage
+    i.fa.fa-cube.fa-2x(style="margin:5px")
+
+template(name="courseImage")
+  img(width="{{width}}",src="{{getCourseImageURL courseDoc}}")
 
 
 template(name="courseClassroomsTable")
   +reactiveTable settings=settings        
 
 template(name="goToClassroomBtn")
-  a.btn.btn-warning(href="{{pathFor 'classroom' classroomId=_id}}") Go To Classroom
+  if isClassroomMember
+    a.btn.btn-warning(href="{{pathFor 'classroom' classroomId=_id}}") Go To Classroom
+  else
+    a.btn.btn-warning.joinClassroomBtn(classroomId="{{_id}}") Join fo Free!
 
-template(name="classroom")
-  .container
-    .row.clearfix
-      .col-md-12.column
-        ul.nav.nav-tabs
-          li.active
-            a(data-toggle="tab", href="#CourseInfo") Info
 
-          if course.video
-            li
-              a(data-toggle="tab", href="#Video") Video
-          
-          if course.dockerImage
-            li
-              a(data-toggle="tab", href="#Environment") Environment
-          
-          if course.slides
-            li
-              a(data-toggle="tab", href="#Slides") Slides
-
-          
-
-        .tab-content
-          .tab-pane.fade.in.active#CourseInfo
-            br 
-            +dockerImagePicture dockerImage=course.dockerImage width="300px"
-            h2 {{course.courseName}}
-            p {{course.description}}
-
-          if course.video
-            .tab-pane.fade#Video
-              video.video-js.vjs-default-skin(id="vid",src="",controls,width="100%",height="700px",data-setup='{ "techOrder": ["youtube"], "src": "{{course.video}}" }')
-                    
-          if course.dockerImage
-            .tab-pane.fade#Environment
-              br
-              input.connectEnvBtn.btn.btn-default(value="Connect Environment Again")
-              iframe#docker(src="http://{{rootURL}}:{{docker.servicePort}}",servicePort="{{docker.servicePort}}",rootURL="{{rootURL}}", width="100%", height="550px", scrolling="yes")
-
-          
-          if course.slides
-            .tab-pane.fade#Slides
-              iframe#slides(src="{{course.slides}}", width="100%", height="700px", scrolling="auto")
 
 template(name="courses")
   .container
@@ -129,12 +109,15 @@ template(name="courses")
                 td
                   a(href="{{pathFor 'course' cid=_id}}") {{courseName}}
                 td
-                  a(target="_blank",href="https://registry.hub.docker.com/u/{{dockerImage}}") {{dockerImage}}
+                  a(target="_blank",href="https://registry.hub.docker.com/u/{{dockerImage}}") 
+                    i.fa.fa-cube &nbsp;{{dockerImage}}
                 td
-                  a(target="_blank",href="{{slides}}") Link
+                  a(target="_blank",href="{{slides}}") 
+                    i.fa.fa-book.fa-2x
                 td
                   if video
-                    a(target="_blank",href="{{video}}") Video
+                    a(target="_blank",href="{{video}}")
+                      i.fa.fa-film.fa-2x
                 //- td {{description}}
                 td {{creatorName}}
 

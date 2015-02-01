@@ -45,7 +45,7 @@ Meteor.startup ->
 
         Meteor.subscribe "course", @params.courseId
         Meteor.subscribe "allPublicClassrooms", @params.courseId
-        Meteor.subscribe "allPublicClassroomManagers", @params.courseId
+        Meteor.subscribe "allPublicClassroomRoles", @params.courseId
         Meteor.subscribe "courseDockerImages", @params.courseId
 
 
@@ -64,6 +64,8 @@ Meteor.startup ->
           course: =>
             Courses.findOne()
 
+          classroomAndId: =>
+            "classroom_" + @params.classroomId
 
           docker: =>
             classroomDoc = Classrooms.findOne _id:@params.classroomId
@@ -80,6 +82,14 @@ Meteor.startup ->
         userId = Meteor.userId()
         if not userId
           Router.go "pleaseLogin"
+
+        classroomAndId = "classroom_" + @params.classroomId
+        redirectToIndex = not Roles.userIsInRole(userId,"admin",classroomAndId)
+        redirectToIndex = redirectToIndex  and not Roles.userIsInRole(userId,"teacher",classroomAndId)
+        redirectToIndex = redirectToIndex  and not Roles.userIsInRole(userId,"student",classroomAndId)
+
+        if redirectToIndex
+          Router.go "index"          
 
         Meteor.subscribe "userDockerInstances"
         Meteor.subscribe "classroom", @params.classroomId

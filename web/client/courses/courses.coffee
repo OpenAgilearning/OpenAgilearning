@@ -1,9 +1,47 @@
 
+Template.courseImage.helpers
+  getCourseImageURL: (courseDoc) ->
+    if courseDoc.imageURL
+      courseDoc.imageURL
+    else
+      dockerImageDoc = DockerImages.findOne({_id:courseDoc.dockerImage})
+      if dockerImageDoc.imageURL
+        dockerImageDoc.imageURL
+      else
+        if dockerImageDoc.type is "ipynb"
+          "/images/ipynb_docker_default.png"
+        else if dockerImageDoc.type is "rstudio"
+          "/images/rstudio_docker_default.png"
+
+
+Template.goToClassroomBtn.helpers
+  isClassroomMember: ->
+    userId = Meteor.userId()
+    classroomId = @_id
+    classroomAndId = "classroom_" + classroomId
+
+    isClassroomMember = Roles.userIsInRole(userId,"admin",classroomAndId)
+    isClassroomMember = isClassroomMember  or Roles.userIsInRole(userId,"teacher",classroomAndId)
+    isClassroomMember = isClassroomMember  or Roles.userIsInRole(userId,"student",classroomAndId)
+
+Template.goToClassroomBtn.events
+  "click .joinClassroomBtn": (e,t) ->
+    e.stopPropagation()
+    # console.log @
+    classroomId = $(e.target).attr "classroomId"
+
+    Meteor.call "joinClassroom", classroomId, (err, data) ->
+      if not err
+        console.log data
+      else
+        console.log err
+
+  
 Template.courseClassroomsTable.helpers
   settings: ->
     goToClassroomBtnField =
       key: "_id"
-      label: "Go To Classroom"
+      label: "Learning Now!"
       tmpl: Template.goToClassroomBtn
 
     res =
@@ -40,40 +78,27 @@ Template.course.rendered = ->
   $("video").map ->
     videojs @, JSON.parse($(@).attr("data-setup"))
 
-Template.classroom.rendered = ->
-  $("video").map ->
-    videojs @, JSON.parse($(@).attr("data-setup"))
 
 
 Template.course.events
   "click .connectBt": (e, t)->
     e.stopPropagation()
-    $("#docker").attr 'src', ""
+    $("#docker").attr "src", ""
 
     docker = Session.get "docker"
     url = "http://"+rootURL+":"+docker.servicePort
 
-    $("#docker").attr 'src', url
+    $("#docker").attr "src", url
 
 
-Template.classroom.events
-  "click .connectEnvBtn": (e, t)->
-    e.stopPropagation()
-    $("#docker").attr 'src', ""
-    
-    rootURL = $("#docker").attr "rootURL"
-    servicePort = $("#docker").attr "servicePort"
-    url = "http://"+rootURL+":"+servicePort
-
-    $("#docker").attr 'src', url
 
 
 Template.analyzer.events
   "click .connectBt": (e, t)->
     e.stopPropagation()
-    $("#docker").attr 'src', ""
+    $("#docker").attr "src", ""
 
     docker = Session.get "docker"
     url = "http://"+rootURL+":"+docker.servicePort
 
-    $("#docker").attr 'src', url
+    $("#docker").attr "src", url

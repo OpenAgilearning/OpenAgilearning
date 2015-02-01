@@ -3,30 +3,25 @@ template(name="index")
     .row.clearfix
       
       .col-md-10.column
-        h2 Public Courses:
-        h4 (in the future) New Learning Resources:
+        //- h2 Courses:
+        p
+          i.fa.fa-film(style="margin:5px") Video
+          i.fa.fa-book(style="margin:5px") Slides
+          i.fa.fa-cube(style="margin:5px") Environment
         +allPublicCoursesTable
 
       .col-md-2.column
         h3 New Features:
         //- +msgBoard
 
-
-  
 template(name="allPublicCoursesTable")
   +reactiveTable settings=settings
 
-template(name="goToCoursePageBtn")
-  a(href="{{pathFor 'course' courseId=_id}}")
-    +dockerImagePicture dockerImage=dockerImage width="300px"
-
-template(name="dockerImagePicture")
-  img(width="{{width}}",src="{{getDockerImagePictureURL dockerImage}}")
   
-template(name="courseNameAndDescription")
-  h2 {{courseName}}
-  p {{description}}
+//- template(name="dockerImagePicture")
+//-   img(width="{{width}}",src="{{getDockerImagePictureURL dockerImage}}")
 
+  
 
 
 template(name="index3")
