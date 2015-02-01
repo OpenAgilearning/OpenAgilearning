@@ -86,6 +86,8 @@ syncDockerServerImages = ->
           setData = 
             lastUpdateAt:lastUpdateAt
             tag:tag
+            serverName: dockerServerData.name
+            
           DockerServerImages.upsert queryImageData, {$set:setData}
           
 
