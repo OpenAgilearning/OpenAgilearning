@@ -12,22 +12,42 @@ Template.adminPageDockerServersTable.helpers
       collection:DockerServers
       rowsPerPage:5
       showFilter: true
-      fields:[dockerServerNameField, dockerServerIPField, "active"]
+      fields:[dockerServerNameField, dockerServerIPField, "active", "lastUpdateAt"]
+
+Template.dockerServerNameFromId.helpers
+  dockerServerName: ->
+    DockerServers.findOne({_id:@dockerServerId}).name
 
 
-Template.adminPageDockerServerImagesTabel.helpers
+Template.adminPageDockerServerImagesTable.helpers
   settings: ->
+    dockerServerNameField = 
+      key: "dockerServerId"
+      label: "Server Name"
+      tmpl: Template.dockerServerNameField
 
-    res=
-      collection:DockerServerImages
-      rowsPerPage:10
+    
+    res =
+      collection: DockerServerImages
+      rowsPerPage: 10
       showFilter: true
-      fields: [
-        {key:"RepoTags", label:"Image Name", sortable:false},
-        {key:"VirtualSize", label:"Image Size", sortable: false},
-        {key:"dockerServerName", label:"Docker Server"},
-        {key:"Created", label:"Created Time"}
-      ]
+      fields: [dockerServerNameField,"tag","lastUpdateAt"]
+
+
+
+# Template.adminPageDockerServerImagesTabel.helpers
+#   settings: ->
+
+#     res=
+#       collection:DockerServerImages
+#       rowsPerPage:10
+#       showFilter: true
+#       fields: [
+#         {key:"RepoTags", label:"Image Name", sortable:false},
+#         {key:"VirtualSize", label:"Image Size", sortable: false},
+#         {key:"dockerServerName", label:"Docker Server"},
+#         {key:"Created", label:"Created Time"}
+#       ]
 
 Template.adminPageDockerServerContainersTabel.helpers
   settings: ->
@@ -86,13 +106,6 @@ Template.setDockerContainerBtns.events
   #       console.log "res = "
   #       console.log res
 
-Template.adminPageDockerImagesTable.helpers
-  settings: ->
-    res =
-      collection: DockerImages
-      rowsPerPage: 10
-      showFilter: true
-      fields: ["_id", "type"]
 
 
 Template.adminPageUsersTable.helpers

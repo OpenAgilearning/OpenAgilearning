@@ -124,6 +124,12 @@ else
     DOCKER_CERT_PATH = ""
 
 
+defaultLocalDockerServerData =
+  name:"localhost"
+  connect:
+    socketPath: '/var/run/docker.sock'
+  
+
 defaultDockerServerData =
   name:"d3-agilearning"
   connect:
@@ -147,7 +153,7 @@ defaultDockerServerData2 =
     keyPath: DOCKER_CERT_PATH + 'key.pem'
   
 
-defaultDockerServers = [defaultDockerServerData,defaultDockerServerData2] 
+defaultDockerServers = [defaultLocalDockerServerData, defaultDockerServerData,defaultDockerServerData2] 
 
 for dockerServerData in defaultDockerServers
   if DockerServers.find(dockerServerData).count() is 0

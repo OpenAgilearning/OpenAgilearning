@@ -19,10 +19,13 @@ template(name="AdminPage")
 
           h2 Docker Servers
           +adminPageDockerServersTable
-          //- hr
-          //- h2 Docker Server Images
-          //- +adminPageDockerServerImagesTabel
-          //- hr
+          
+          hr
+          
+          h2 Docker Server Images
+          +adminPageDockerServerImagesTable
+          
+          hr
           //- h2 Docker Server Containers
           //- +adminPageDockerServerContainersTabel
           //- hr
@@ -65,8 +68,20 @@ template(name="adminPageDockerServersTable")
   +reactiveTable settings=settings
 
 
-template(name="adminPageDockerImagesTable")
+template(name="adminPageDockerServerImagesTable")
   +reactiveTable settings=settings
+
+
+template(name="dockerServerNameField")
+  +dockerServerNameFromId dockerServerId=dockerServerId
+
+template(name="dockerServerNameFromId")
+  //- a(href="{{pathFor ... =dockerServerId}}")
+  p {{dockerServerName}}
+
+
+
+
 
 
 template(name="adminPageDockerInstancesTable")
@@ -129,8 +144,6 @@ template(name="dockerServerStatusBtns")
 template(name="setDockerContainerBtns")
   a.removeDockerContainerBtn.btn.btn-default(href="#", containerId="{{Id}}") Remove Container
 
-template(name="adminPageDockerServerImagesTabel")
-  +reactiveTable settings=settings
 
 
 template(name="adminPageDockerServerContainersTabel")
