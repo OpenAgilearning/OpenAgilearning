@@ -110,7 +110,6 @@ Meteor.startup ->
         Meteor.subscribe "classChatroom", @params.classroomId
 
 
-
     @route "learningResources",
       path: "learningResources/"
       template: "learningResourcesPage"
