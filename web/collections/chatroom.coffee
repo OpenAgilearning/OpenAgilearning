@@ -32,7 +32,7 @@ Meteor.methods
       throw new Meteor.Error 402, "Message must have content"
 
     user.profile.photo = user.profile.photo or {}
-    user.profile.photo.thumb_link = user.profile.thumb_link or "http://photos1.meetupstatic.com/img/noPhoto_50.png"
+    user.profile.photo.thumb_link = user.profile.photo.thumb_link or "http://photos1.meetupstatic.com/img/noPhoto_50.png"
 
     ChatMessages.insert
       userId: user._id
