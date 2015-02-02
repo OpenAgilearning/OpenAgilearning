@@ -20,7 +20,7 @@ template(name="goToClassroomBtn")
 template(name="classroom")
   .container
     .row.clearfix
-      .col-md-12.column
+      .col-md-9.column
         ul.nav.nav-tabs
           li.active
             a(data-toggle="tab", href="#CourseInfo") Info
@@ -60,6 +60,8 @@ template(name="classroom")
           if course.slides
             .tab-pane.fade#Slides
               iframe#slides(src="{{course.slides}}", width="100%", height="700px", scrolling="auto")
+
+      +chatroom classroomId=classroomId
 
 template(name="courses")
   .container
