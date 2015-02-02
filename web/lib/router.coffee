@@ -72,6 +72,8 @@ Meteor.startup ->
             courseData = Courses.findOne _id:classroomDoc.courseId
             DockerInstances.findOne({imageId:courseData.dockerImage})
 
+          classroomId: @params.classroomId
+
           # chats: ->
           #   Chat.find {}, {sort: {createAt:-1}}
           # quickFormData: ->

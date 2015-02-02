@@ -1,0 +1,13 @@
+.thumb {
+	height: 40px;
+	width: 40px;
+}
+
+.chatroom-body {
+	height: 400px;
+	overflow: auto;
+}
+
+.green-background {
+	background-color: #DFF0D8;
+}

@@ -1,7 +1,7 @@
 template(name="classroom")
   .container
     .row.clearfix
-      .col-md-12.column
+      .col-md-9.column
 
         ul.nav.nav-tabs
           li.active
@@ -70,5 +70,6 @@ template(name="classroom")
             .tab-pane.fade#Student
               h2 TODO: Recieve Teacher's Boardcast
               h2 TODO: Help Btn
-              
+
+      +chatroom classroomId=classroomId
           

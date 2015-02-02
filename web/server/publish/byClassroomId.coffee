@@ -21,4 +21,4 @@ Meteor.publish "classroomDockerImages", (classroomId)->
 
 Meteor.publish "classChatroom", (classroomId) ->
 
-  ChatMessages.find {classroomId: classroomId}, {sort: {createdAt: -1}, limit: 200}
+  ChatMessages.find {classroomId: classroomId}
