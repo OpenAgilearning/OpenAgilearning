@@ -32,5 +32,29 @@ Template.envPicture.helpers
 
 
 Template.envPictureField.events
-  "click .runEnv"
+  "click .runEnv": (e,t) ->
+    e.stopPropagation()
+
+    #[TODOLIST: building running containerData]
+    #TODO: check user's config
+    #TODO: (if has config) getEnvUserConfigs 
+    #TODO: checkingRunningCondition
+    #TODO: (if can run) choosing Running Limit
+    #TODO: use limit, EnvTypes' config => build containerData
+    
+    #[TODOLIST: get free server & ports]
+    #TODO: get free server has the image ()
+    #TODO: (if has server) get free ports in that server (include multiports)
+    #TODO: get free server has the image
+    #FIXME: two server might acquire the same port
+
+    #[TODOLIST: runServer and write data to db]
+    #TODO: createContainer
+    #TODO: getContainer
+    #TODO: write status and logging data to dbs
+    
+    
+
+
+
 

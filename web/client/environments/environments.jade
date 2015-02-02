@@ -1,6 +1,10 @@
 template(name="environments")
   .container
     .row.clearfix
+      .runningEnvIframeBlock
+        a.hideInstance.btn.btn-default Hide Instance
+        a.reconnectInstance.btn.btn-default Reconnect Instance
+        iframe#runningEnv(src="", width="100%", height="550px", scrolling="yes")
       +envsTable
 
 template(name="envsTable")
@@ -12,4 +16,6 @@ template(name="envPicture")
 
 template(name="envPictureField")
   +envPicture envDoc=this width="300px"
+
+
 
