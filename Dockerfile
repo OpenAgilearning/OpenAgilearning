@@ -1,11 +1,11 @@
 
-FROM node:latest
+FROM node
 
 #####
 
-# docker build -t liangcc/aglweb2 .
+# docker build -t agilearning .
 
-# docker run -it -p 3000:3000 liangcc/aglweb2 bash -c "cd /web/ && meteor --port 0.0.0.0:3000 --settings local_settings.json"
+# docker run -it -p 3000:3000 agilearning bash -c "cd /var/www/app/ && node bundle/main.js "
 
 
 #####
@@ -13,11 +13,19 @@ FROM node:latest
 
 ADD web/ /web
 
-
 WORKDIR /web
+
+RUN curl https://install.meteor.com | /bin/sh \
+    && meteor build --directory /var/www/app
+
+WORKDIR /var/www/app
+
+RUN cd bundle/programs/server && npm install
+
+ENV MONGO_URL=mongodb://agilemongo:27017/agilearning \
+    ROOT_URL=http://0.0.0.0 \
+    PORT=3000
 
 EXPOSE 3000
 
-RUN curl https://install.meteor.com | /bin/sh \
-    && npm install -g fibers \
-#    && meteor --port 0.0.0.0:3000 --settings deploy_settings.json
+#CMD node ./bundle/main.js
