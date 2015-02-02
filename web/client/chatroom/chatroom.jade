@@ -23,7 +23,7 @@ template(name="chatroom")
 									p= text
 									small.text-muted
 										span.glyphicon.glyphicon-time
-										{{createdAt.toLocaleString}}
+										| {{createdAt.toLocaleString}}
 								.col-lg-3.col-md-4.col-sm-2.col-xs-2
 									img(src=userAvatar).img-circle.thumb
 					else
@@ -36,6 +36,6 @@ template(name="chatroom")
 									p= text
 									small.text-muted
 										span.glyphicon.glyphicon-time
-										{{createdAt.toLocaleString}}
+										| {{createdAt.toLocaleString}}
 
 
