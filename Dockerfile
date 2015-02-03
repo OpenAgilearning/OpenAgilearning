@@ -35,7 +35,7 @@ RUN cd bundle/programs/server && npm install
 ENV ROOT_URL http://0.0.0.0
 ENV PORT 3000 
 ENV NODE_TLS_REJECT_UNAUTHORIZED 0 
-ENV METEOR_SETTINGS {"public":{"redirectTo": "0.0.0.0:3000","DOCKER_CERT_PATH":"/CAs/"}}
+ENV METEOR_SETTINGS {"public":{"redirectTo": "0.0.0.0:3000","DOCKER_CERT_PATH":"/CAs/","environment": "production"}}
 
 EXPOSE 3000
 
