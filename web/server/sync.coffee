@@ -4,8 +4,9 @@ getDockerServerSettings = (dockerServerData) ->
   _.extend dockerServerSettings, dockerServerData.connect
   
   if not dockerServerSettings.socketPath
-    ["ca","cert","key"].map (xx) ->
-      dockerServerSettings[xx] = fs.readFileSync(dockerServerData.security[xx+"Path"])
+    if dockerServerData.connect.protocol is "https"
+      ["ca","cert","key"].map (xx) ->
+        dockerServerSettings[xx] = fs.readFileSync(dockerServerData.security[xx+"Path"])
     dockerServerSettings["dockerServerId"] = dockerServerData._id
     dockerServerSettings["dockerServerName"] = dockerServerData.name
   
