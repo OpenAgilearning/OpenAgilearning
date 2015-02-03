@@ -115,36 +115,50 @@ for oneCourse in demoCourses
           #Roles.addUsersToRoles(demoUser, "teacher", "classroom_" + classroomId)
 
 
-if DockerServers.find().count() is 0
-  if Meteor.settings.public.DOCKER_CERT_PATH isnt ""
-    DOCKER_CERT_PATH = Meteor.settings.public.DOCKER_CERT_PATH
+if Meteor.settings.public.DOCKER_CERT_PATH isnt ""
+  DOCKER_CERT_PATH = Meteor.settings.public.DOCKER_CERT_PATH
+else
+  if process.env["DOCKER_CERT_PATH"]
+    DOCKER_CERT_PATH = process.env["DOCKER_CERT_PATH"]
   else
-    if process.env["DOCKER_CERT_PATH"]
-      DOCKER_CERT_PATH = process.env["DOCKER_CERT_PATH"]
-    else
-      DOCKER_CERT_PATH = ""
+    DOCKER_CERT_PATH = ""
 
-  defaultDockerServerData =
-    name:"d3-agilearning"
-    connect:
-      protocol: 'https'
-      host:"130.211.244.66"
-      port:2376
-    security:
-      caPath: DOCKER_CERT_PATH + 'ca.pem'
-      certPath: DOCKER_CERT_PATH + 'cert.pem'
-      keyPath: DOCKER_CERT_PATH + 'key.pem'
 
-  defaultDockerServerData2 =
-    name:"d1-agilearning"
-    connect:
-      protocol: 'https'
-      host:"107.167.180.118"
-      port:2376
-    security:
-      caPath: DOCKER_CERT_PATH + 'ca.pem'
-      certPath: DOCKER_CERT_PATH + 'cert.pem'
-      keyPath: DOCKER_CERT_PATH + 'key.pem'
+defaultLocalDockerServerData =
+  name:"localhost"
+  connect:
+    socketPath: '/var/run/docker.sock'
+  
 
-  DockerServers.insert defaultDockerServerData
-  DockerServers.insert defaultDockerServerData2
+defaultDockerServerData =
+  name:"d3-agilearning"
+  connect:
+    protocol: 'https'
+    host:"130.211.244.66"
+    port:2376
+  security:
+    caPath: DOCKER_CERT_PATH + 'ca.pem'
+    certPath: DOCKER_CERT_PATH + 'cert.pem'
+    keyPath: DOCKER_CERT_PATH + 'key.pem'
+  
+defaultDockerServerData2 =
+  name:"d1-agilearning"
+  connect:
+    protocol: 'https'
+    host:"107.167.180.118"
+    port:2376
+  security:
+    caPath: DOCKER_CERT_PATH + 'ca.pem'
+    certPath: DOCKER_CERT_PATH + 'cert.pem'
+    keyPath: DOCKER_CERT_PATH + 'key.pem'
+  
+
+defaultDockerServers = [defaultLocalDockerServerData, defaultDockerServerData,defaultDockerServerData2] 
+
+for dockerServerData in defaultDockerServers
+  if DockerServers.find(dockerServerData).count() is 0
+    dockerServerData.active = false
+    dockerServerData.createAt = new Date
+    DockerServers.insert dockerServerData
+
+  
