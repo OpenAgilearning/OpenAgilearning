@@ -2,9 +2,11 @@
 template(name="AdminPage")
   .container
     ul.nav.nav-tabs
+      li.active 
+        a(data-toggle="tab", href="#info") Info
       if isInRole "admin" "dockers"
-        li.active
-          a(data-toggle="tab", href="#dockerAdmin") Docker Admin
+        li
+          a(data-toggle="tab", href="#dockerServersMonitor") Docker Servers Monitor
       if isInRole "admin" "system"
         li
           a(data-toggle="tab", href="#systemAdmin") System Admin
@@ -14,8 +16,11 @@ template(name="AdminPage")
           a(data-toggle="tab", href="#userStatus") User Status
 
     .tab-content
+      .tab-pane.fade.in.active#info
+        h2 [TODO List:Admin Info Page]
+        h2 TODO: Listing my admin roles
       if isInRole "admin" "dockers"
-        .tab-pane.fade.in.active#dockerAdmin
+        .tab-pane.fade#dockerServersMonitor
 
           h2 Docker Servers
           +adminPageDockerServersTable
