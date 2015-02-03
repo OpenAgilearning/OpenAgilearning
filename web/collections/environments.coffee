@@ -9,7 +9,7 @@
 @EnvInstancesLog = new Meteor.Collection "envInstancesLog"
 
 
-@EnvTypesInsertSchema = new SimpleSchema
+@EnvTypesSchema = new SimpleSchema
   name:
     type: String
 
