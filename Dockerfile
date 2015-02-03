@@ -35,8 +35,6 @@ WORKDIR /var/www/app
 
 RUN cd bundle/programs/server && npm install
 
-ENV PORT 3000
-
 EXPOSE 3000
 
 ADD docker_run.sh /var/www/app/docker_run.sh
