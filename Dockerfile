@@ -1,6 +1,6 @@
 ##### Instructions:
 
-#### please put all .pem files in `web/` directory. 
+#### Before you started, please put all .pem files in `dockerServerCAs/` directory. 
 
 # docker build -t agilearning .
 
@@ -10,9 +10,12 @@
 
 # ## Run your nodejs container
 # #### MUST use the name "mongodb"!
-# docker run --link mongo:mongodb -it -p 3000:3000 agilearning bash -c "cd /var/www/app/ && MONGO_URL=mongodb://\${MONGODB_PORT_27017_TCP_ADDR}:27017/agilearning node bundle/main.js "
+# docker run --link mongo:mongodb -it -p 3000:3000 agilearning
 
-# ## The sucessful run prints no message on terminal, check the browser at localhost:3000 directly.
+# #### MAC users should specify HOST:
+# docker run --env HOST=dockerhost --link mongo:mongodb -it -p 3000:3000 agilearning
+
+# ## The sucessful run prints no message on terminal, check the browser directly.
 
 #####
 
@@ -21,7 +24,7 @@ FROM node
 ADD web/ /web
 ADD dockerServerCAs/ /CAs
 
-RUN rm -r web/.meteor/local
+RUN rm -rf web/.meteor/local
 
 WORKDIR /web
 
@@ -32,11 +35,10 @@ WORKDIR /var/www/app
 
 RUN cd bundle/programs/server && npm install
 
-ENV ROOT_URL http://0.0.0.0
-ENV PORT 3000 
-ENV NODE_TLS_REJECT_UNAUTHORIZED 0 
-ENV METEOR_SETTINGS {"public":{"redirectTo": "0.0.0.0:3000","DOCKER_CERT_PATH":"/CAs/","environment": "production"}}
+ENV PORT 3000
 
 EXPOSE 3000
 
-CMD node ./bundle/main.js
+ADD docker_run.sh /var/www/app/docker_run.sh
+
+CMD sh docker_run.sh
