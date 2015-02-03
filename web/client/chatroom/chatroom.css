@@ -1,27 +1,27 @@
 .thumb {
-	height: 40px;
-	width: 40px;
+  height: 40px;
+  width: 40px;
 }
 
 .chatroom-body {
-	height: 400px;
-	overflow: auto;
+  height: 400px;
+  overflow: auto;
 }
 
 .green-background {
-	background-color: #DFF0D8;
+  background-color: #DFF0D8;
 }
 
 .chat-header:hover {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 .minimised-chatroom > a {
-	background-color: #337ab7;
-	color: #FFFFFF;
+  background-color: #337ab7;
+  color: #FFFFFF;
 }
 
 ul.classroom-nav > li.minimised-chatroom > a:hover {
-	background-color: #3279b6;
-	cursor: pointer;
+  background-color: #3279b6;
+  cursor: pointer;
 }
