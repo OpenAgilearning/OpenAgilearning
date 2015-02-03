@@ -166,6 +166,9 @@ Meteor.startup ->
           userId = Meteor.userId()
           Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
+        testEnvTypeData: ->
+          EnvTypes.findOne()
+
       waitOn: ->
         userId = Meteor.userId()
         if not userId
@@ -181,12 +184,14 @@ Meteor.startup ->
             Meteor.subscribe "allDockerServerImages"
             Meteor.subscribe "allDockerServers"
             Meteor.subscribe "allDockerServerContainers"
+            Meteor.subscribe "allEnvTypes"
           else
             if Roles.userIsInRole(userId,"admin","dockers")
               Meteor.subscribe "allDockerInstances"
               Meteor.subscribe "allDockerImages"
               Meteor.subscribe "allDockerServerImages"
               Meteor.subscribe "allDockerServers"
+              Meteor.subscribe "allEnvTypes"
             else
               Router.go "index"
 

@@ -15,10 +15,10 @@ if Envs.find().count() is 0
 
 
 if EnvTypes.find({_id:"ipynb"}).count() is 0
-  EnvTypes.insert {_id:"ipynb", publicStatus:"public", configs:{servicePorts:["8888/tcp"], envs:[{name:"PASSWORD",mustHave:true},{name:"IPYNB_PROFILE",limitValues:["","default","c3h3-dark"]}]}}
+  EnvTypes.insert {_id:"ipynb", "publicStatus" : "public", "name" : "ipynb", "configs" : { "servicePorts" : [ { "port" : "8888", "type" : "http" } ], "envs" : [ { "name" : "PASSWORD", "mustHave" : true }, { "name" : "IPYNB_PROFILE", "mustHave" : true, "limitValues" : [ "default", "c3h3-dark" ] } ] } }
 
 if EnvTypes.find({_id:"rstudio"}).count() is 0
-  EnvTypes.insert {_id:"rstudio",  publicStatus:"private",configs:{servicePorts:["8787/tcp"], envs:[{name:"USER",mustHave:true}, {name:"PASSWORD",mustHave:true}]}}
+  EnvTypes.insert {_id:"rstudio", "publicStatus" : "private", "name" : "rstudio", "configs" : { "servicePorts" : [ { "port" : "8787", "type" : "http" } ], "envs" : [ { "name" : "USER", "mustHave" : true }, { "name" : "PASSWORD", "mustHave" : true } ] } }
 
 
 if EnvLimits.find().count() is 0

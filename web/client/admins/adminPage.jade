@@ -36,6 +36,8 @@ template(name="AdminPage")
           hr
         .tab-pane.fade#envsSettings
           h2 EnvTypes
+          +envTypesTable
+
 
       if isInRole "admin" "system"
         .tab-pane.fade#rolesSetting

@@ -1,66 +1,86 @@
+@EnvTypes = new Meteor.Collection "envTypes"
+
 @Envs = new Meteor.Collection "envs"
 @EnvCreateLog = new Meteor.Collection "envCreateLog"
-@EnvTypes = new Meteor.Collection "envTypes"
+
 @EnvLimits = new Meteor.Collection "envLimits"
 @EnvUserConfigs = new Meteor.Collection "envUserConfigs"
 @EnvInstances = new Meteor.Collection "envInstances"
 @EnvInstancesLog = new Meteor.Collection "envInstancesLog"
 
 
-# @EnvCreateLogSchema = new SimpleSchema
-#   _id:
-#     type: String
-#   createdAt:
-#     type:
+@EnvTypesInsertSchema = new SimpleSchema
+  name:
+    type: String
 
-@EnvTypesSchema = new SimpleSchema
-  _id:
+  publicStatus:
     type: String
-  servicePort:
-    type: String
-  envVariable:
-    type: [Object]
+    allowedValues: ["public","semipublic","private"]    
+    # autoform: 
+    #   afFieldInput:
+    #     options: ->
+    #       res = 
+    #         public: "public"
+    #         semipublic: "semipublic"
+    #         private: "private"            
 
-@EnvLimitsSchema = new SimpleSchema
-  _id:
-    type: String
-  limit:
+  "configs.servicePorts":
+    type: Array
+    
+  "configs.servicePorts.$":
     type: Object
+    
+  "configs.servicePorts.$.port":
+    type: String
+    optional: true
+    regEx: /^[1-9][0-9]*/
 
-@EnvUserConfigsSchema = new SimpleSchema
-  _id:
+  "configs.servicePorts.$.type":
     type: String
-  userId:
-    type: String
-  typeId:
-    type: String
-  envVariable:
-    type: [String]
+    optional: true
+    allowedValues: ["http","ftp","vnc","mongodb","mysql","postgresql"]   
+    # autoform: 
+    #   afFieldInput:
+    #     options: ->
+    #       res = 
+    #         http: "http"
+    #         ftp: "ftp"
+    #         vnc: "vnc"
+    #         mongodb: "mongodb"
+    #         mysql: "mysql"
+    #         postgresql: "postgresql"
 
-@EnvInstancesSchema = new SimpleSchema
-  _id:
-    type: String
-  Command:
-    type: String
-  Created:
-    type: Number
-  Id:
-    type: String
-  Image:
-    type: String
-  Names:
-    type: [String]
-  Ports:
-    type: [Object]
-  Status:
-    type: String
-  dockerServerId:
-    type: String
-  dockerServerIp:
-    type: String
 
+
+  "configs.envs":
+    type: Array
+
+  "configs.envs.$":
+    type: Object
+    optional: true
+
+  "configs.envs.$.name":
+    type: String
+  
+  "configs.envs.$.mustHave":
+    type: Boolean
+    defaultValue: true
+
+  "configs.envs.$.limitValues":
+    type: Array
+    optional: true
+    
+  "configs.envs.$.limitValues.$":
+    type: String
+    optional:true    
+  
+    
 
 Meteor.methods
+  "createEnvType": (EnvTypesInsertSchemaData) ->
+    console.log EnvTypesInsertSchemaData
+    EnvTypes.insert EnvTypesInsertSchemaData
+
   "runEnv": (EnvId) ->
 
     #[TODOLIST: checking before running]    
