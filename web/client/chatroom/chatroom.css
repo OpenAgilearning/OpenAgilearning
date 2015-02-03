@@ -11,3 +11,17 @@
 .green-background {
 	background-color: #DFF0D8;
 }
+
+.chat-header:hover {
+	cursor: pointer;
+}
+
+.minimised-chatroom > a {
+	background-color: #337ab7;
+	color: #FFFFFF;
+}
+
+ul.classroom-nav > li.minimised-chatroom > a:hover {
+	background-color: #3279b6;
+	cursor: pointer;
+}

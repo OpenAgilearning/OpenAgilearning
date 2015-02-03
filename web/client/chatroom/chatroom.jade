@@ -2,11 +2,11 @@ template(name="chatroom")
 	
 	.class-chatroom.col-md-3
 		.panel.panel-primary
-			.panel-heading
+			.panel-heading.chat-header
 				span.glyphicon.glyphicon-comment
 				| Chat
 
-			.panel-footer
+			.panel-footer.new-message-form-wrapper
 				form.form-inline.new-message-form
 					.input-group
 						input(type="text", placeholder="Type in some message...").form-control.input-sm#new-message-text
@@ -38,4 +38,9 @@ template(name="chatroom")
 										span.glyphicon.glyphicon-time
 										| {{createdAt.toLocaleString}}
 
+template(name="minimisedChatroom")
+	li.minimised-chatroom.pull-right(style="{{display}}")
+		a
+			span.glyphicon.glyphicon-comment
+			| Chat
 
