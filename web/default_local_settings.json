@@ -1,10 +1,11 @@
 {
-  "public":{
+  "public": {
     "redirectTo": "0.0.0.0:3000",
-    "DOCKER_CERT_PATH":"",
+    "DOCKER_CERT_PATH": "",
     "rootURL": "0.0.0.0",
     "dockerodeConfig": {
       "socketPath": "/var/run/docker.sock"
-    }
+    },
+    "environment": "development"
   }
 }
