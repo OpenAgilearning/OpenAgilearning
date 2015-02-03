@@ -19,6 +19,9 @@
 FROM node
 
 ADD web/ /web
+ADD dockerServerCAs/ /CAs
+
+RUN rm -r web/.meteor/local
 
 WORKDIR /web
 
@@ -29,10 +32,10 @@ WORKDIR /var/www/app
 
 RUN cd bundle/programs/server && npm install
 
-ENV ROOT_URL=http://0.0.0.0 \
-    PORT=3000 \
-    NODE_TLS_REJECT_UNAUTHORIZED=0 \
-    METEOR_SETTINGS='{"public":{"redirectTo": "0.0.0.0:3000","DOCKER_CERT_PATH":"/web/"}}'
+ENV ROOT_URL http://0.0.0.0
+ENV PORT 3000 
+ENV NODE_TLS_REJECT_UNAUTHORIZED 0 
+ENV METEOR_SETTINGS {"public":{"redirectTo": "0.0.0.0:3000","DOCKER_CERT_PATH":"/CAs/"}}
 
 EXPOSE 3000
 
