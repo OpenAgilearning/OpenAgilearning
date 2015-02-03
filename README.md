@@ -26,6 +26,7 @@ optional attribute:
 
 ### Dockerize Meteor
 
+Before you started, please put all `.pem` files in `web/` directory. 
 
 ```
     docker build -t agilearning .

@@ -1,5 +1,7 @@
 ##### Instructions:
 
+#### please put all .pem files in `web/` directory. 
+
 # docker build -t agilearning .
 
 # ## Run a mongodb container
