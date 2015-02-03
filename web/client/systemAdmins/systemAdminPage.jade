@@ -7,6 +7,8 @@ template(name="AdminPage")
       if isInRole "admin" "dockers"
         li
           a(data-toggle="tab", href="#dockerServersMonitor") Docker Servers Monitor
+        li
+          a(data-toggle="tab", href="#envsSettings") Envs Settings
       if isInRole "admin" "system"
         li
           a(data-toggle="tab", href="#rolesSetting") Roles Setting
@@ -32,6 +34,8 @@ template(name="AdminPage")
           +adminPageDockerServerImagesTable
           
           hr
+        .tab-pane.fade#envsSettings
+          h2 EnvTypes
           //- h2 Docker Server Containers
           //- +adminPageDockerServerContainersTabel
           //- hr

@@ -1,0 +1,64 @@
+
+template(name="AdminPage")
+  .container
+    ul.nav.nav-tabs
+      li.active 
+        a(data-toggle="tab", href="#info") Info
+      if isInRole "admin" "dockers"
+        li
+          a(data-toggle="tab", href="#dockerServersMonitor") Docker Servers Monitor
+        li
+          a(data-toggle="tab", href="#envsSettings") Envs Settings
+      if isInRole "admin" "system"
+        li
+          a(data-toggle="tab", href="#rolesSetting") Roles Setting
+        
+        //- li
+        //-   a(data-toggle="tab", href="#editMsgBoard") Message Board
+        //- li
+        //-   a(data-toggle="tab", href="#userStatus") User Status
+
+    .tab-content
+      .tab-pane.fade.in.active#info
+        h2 [TODO List:Admin Info Page]
+        h2 TODO: Listing my admin roles
+      if isInRole "admin" "dockers"
+        .tab-pane.fade#dockerServersMonitor
+
+          h2 Docker Servers
+          +adminPageDockerServersTable
+          
+          hr
+          
+          h2 Docker Server Images
+          +adminPageDockerServerImagesTable
+          
+          hr
+        .tab-pane.fade#envsSettings
+          h2 EnvTypes
+
+      if isInRole "admin" "system"
+        .tab-pane.fade#rolesSetting
+          hr
+          h2 Set Admins:
+          +adminPageUsersTable
+
+      //- if isInRole "admin" "system"
+      //-   .tab-pane.fade#editMsgBoard
+      //-     hr
+      //-     h2 Milestone
+      //-     +devMilestoneTable
+      //-     hr
+      //-     h2 Edit Message Board:
+      //-     +msgEditBoard
+
+      //-     hr
+      //-     h2 Create Learning Resources:
+      //-     +quickForm id="learningResourceCreatorForm" schema="learningResourceSchema" type="method" meteormethod="createLearningResource" template="bootstrap3-inline" label-class="sr-only" afFieldInput-placeholder="schemaLabel"
+      //-     hr
+
+      //- if isInRole "admin" "system"
+      //-   .tab-pane.fade#userStatus
+      //-     h2 User Status:
+      //-     +userStatus
+
