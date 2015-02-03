@@ -43,4 +43,6 @@ template(name="minimisedChatroom")
 		a
 			span.glyphicon.glyphicon-comment
 			| Chat
+			if unreadMessages
+				span.label.label-warning= unreadMessages
 

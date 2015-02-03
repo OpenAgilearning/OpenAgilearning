@@ -1,11 +1,12 @@
 Template.chatroom.created = ->
 	Session.set "chatroomIsMinimised", no
+	Session.set "readMessages", 0
 
 Template.chatroom.helpers
 	messages: ->
 		ChatMessages.find({}, {sort: {createdAt: -1}}).fetch()
 	messageIsSentByCurrentUser: (message) ->
-		return message.userId is Meteor.user()._id
+		message.userId is Meteor.user()._id
 
 Template.chatroom.events
 	"submit .new-message-form": (event, template) ->
@@ -23,14 +24,8 @@ Template.chatroom.events
 			classChatroom.hide()
 			$(".classroom-body").removeClass("col-md-9").addClass("col-md-12")
 			Session.set "chatroomIsMinimised", yes
-		# newMessageFormWrapper = template.$ ".new-message-form-wrapper"
-		# chatroomBody = template.$ ".chatroom-body"
-		# if newMessageFormWrapper.css("display") is "none"
-		# 	newMessageFormWrapper.show()
-		# 	chatroomBody.show()
-		# else
-		# 	newMessageFormWrapper.hide()
-		# 	chatroomBody.hide()
+			Session.set "readMessages", ChatMessages.find().count()
+
 
 Template.minimisedChatroom.helpers
 	display: ->
@@ -38,6 +33,8 @@ Template.minimisedChatroom.helpers
 			return "display:none"
 		else
 			return "display:block"
+	unreadMessages: ->
+		ChatMessages.find().count() - Session.get "readMessages"
 
 Template.minimisedChatroom.events
 	"click .minimised-chatroom": (event, template) ->
