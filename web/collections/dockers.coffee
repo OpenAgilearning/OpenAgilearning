@@ -279,8 +279,8 @@ Meteor.methods
     if hasRemovePermission
 
       Docker = Meteor.npmRequire "dockerode"
-      docker = new Docker {socketPath: '/var/run/docker.sock'}
-
+      docker = new Docker Meteor.settings.public.dockerodeConfig
+      
       Future = Npm.require 'fibers/future'
 
       stopFuture = new Future
@@ -345,7 +345,7 @@ Meteor.methods
       console.log dockerLimit
 
       Docker = Meteor.npmRequire "dockerode"
-      docker = new Docker {socketPath: '/var/run/docker.sock'}
+      docker = new Docker Meteor.settings.public.dockerodeConfig
       fport = getFreePort()
 
       imageType = DockerImages.findOne({_id:imageId}).type
