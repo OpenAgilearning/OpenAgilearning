@@ -1,41 +1,48 @@
 template(name="chatroom")
-	
-	.class-chatroom.col-md-3
-		.panel.panel-primary
-			.panel-heading
-				span.glyphicon.glyphicon-comment
-				| Chat
+  
+  .class-chatroom.col-md-3
+    .panel.panel-primary
+      .panel-heading.chat-header
+        span.glyphicon.glyphicon-comment
+        | Chat
 
-			.panel-footer
-				form.form-inline.new-message-form
-					.input-group
-						input(type="text", placeholder="Type in some message...").form-control.input-sm#new-message-text
-						span.input-group-btn
-							input(type="submit").btn.btn-sm.btn-primary
+      .panel-footer.new-message-form-wrapper
+        form.form-inline.new-message-form
+          .input-group
+            input(type="text", placeholder="Type in some message...").form-control.input-sm#new-message-text
+            span.input-group-btn
+              input(type="submit", value="Send").btn.btn-sm.btn-primary
 
-			ul.list-group.chatroom-body
-				each messages
-					if messageIsSentByCurrentUser this
-						li.list-group-item.green-background
-							.row
-								.col-lg-9.col-md-8.col-sm-10.col-xs-10
-									strong= userName
-									p= text
-									small.text-muted
-										span.glyphicon.glyphicon-time
-										| {{createdAt.toLocaleString}}
-								.col-lg-3.col-md-4.col-sm-2.col-xs-2
-									img(src=userAvatar).img-circle.thumb
-					else
-						li.list-group-item
-							.row
-								.col-lg-2.col-md-3.col-sm-1.col-xs-2
-									img(src=userAvatar).img-circle.thumb
-								.col-lg-10.col-md-9.col-sm-11.col-xs-10
-									strong= userName
-									p= text
-									small.text-muted
-										span.glyphicon.glyphicon-time
-										| {{createdAt.toLocaleString}}
+      ul.list-group.chatroom-body
+        each messages
+          if messageIsSentByCurrentUser this
+            li.list-group-item.green-background
+              .row
+                .col-lg-9.col-md-8.col-sm-10.col-xs-10
+                  strong= userName
+                  p= text
+                  small.text-muted
+                    span.glyphicon.glyphicon-time
+                    | {{createdAt.toLocaleString}}
+                .col-lg-3.col-md-4.col-sm-2.col-xs-2
+                  img(src=userAvatar).img-circle.thumb
+          else
+            li.list-group-item
+              .row
+                .col-lg-2.col-md-3.col-sm-1.col-xs-2
+                  img(src=userAvatar).img-circle.thumb
+                .col-lg-10.col-md-9.col-sm-11.col-xs-10
+                  strong= userName
+                  p= text
+                  small.text-muted
+                    span.glyphicon.glyphicon-time
+                    | {{createdAt.toLocaleString}}
 
+template(name="minimisedChatroom")
+  li.minimised-chatroom.pull-right(style="{{display}}")
+    a
+      span.glyphicon.glyphicon-comment
+      | Chat
+      if unreadMessages
+        span.label.label-warning= unreadMessages
 

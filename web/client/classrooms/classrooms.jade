@@ -1,9 +1,9 @@
 template(name="classroom")
   .container
     .row.clearfix
-      .col-md-9.column
+      .col-md-9.column.classroom-body
 
-        ul.nav.nav-tabs
+        ul.nav.nav-tabs.classroom-nav
           li.active
             a(data-toggle="tab", href="#CourseInfo") Info
 
@@ -30,6 +30,8 @@ template(name="classroom")
           if isInRole "student" classroomAndId
             li
               a(data-toggle="tab", href="#Student") Student
+
+          +minimisedChatroom
 
 
         .tab-content
