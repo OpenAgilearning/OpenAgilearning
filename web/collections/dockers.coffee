@@ -93,6 +93,25 @@ getFreePort = ->
   filteredPorts = ports.filter (x) -> x not in filterPorts
   filteredPorts[0]
 
+getDockerServerConnectionSettings = (dockerServerName) ->
+
+  dockerServerData = DockerServers.findOne name:dockerServerName
+  
+  fs = Meteor.npmRequire 'fs'
+
+  dockerServerSettings = {}
+  _.extend dockerServerSettings, dockerServerData.connect
+  if not dockerServerSettings.socketPath
+    if dockerServerData.connect.protocol is "https"
+      ["ca","cert","key"].map (xx) ->
+        dockerServerSettings[xx] = fs.readFileSync(dockerServerData.security[xx+"Path"])
+  
+  dockerServerSettings
+
+
+getFreeDockerServerName = (imageTag) -> "localhost"  
+
+
 getDockerFreePort = (dockerServerId)->
   ports = [basePort..topPort]
   filterPorts = DockerServerContainers.find("dockerServerId":dockerServerId).fetch().map (x)-> x.Ports[0].PublicPort
@@ -315,7 +334,12 @@ Meteor.methods
       console.log dockerLimit
 
       Docker = Meteor.npmRequire "dockerode"
-      docker = new Docker Meteor.settings.public.dockerodeConfig
+      
+      freeDockerServerName = getFreeDockerServerName(imageTag)
+      dockerServerSettings = getDockerServerConnectionSettings(freeDockerServerName)
+
+      docker = new Docker dockerServerSettings
+
       fport = getFreePort()
 
       imageType = DockerImages.findOne({_id:imageTag}).type

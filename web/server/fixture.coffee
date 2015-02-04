@@ -115,8 +115,7 @@ else
 
 defaultLocalDockerServerData =
   name:"localhost"
-  connect:
-    socketPath: '/var/run/docker.sock'
+  connect: Meteor.settings.public.dockerodeConfig
 
 
 defaultDockerServerData =
