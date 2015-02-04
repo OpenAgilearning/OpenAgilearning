@@ -70,7 +70,7 @@ Meteor.startup ->
           docker: =>
             classroomDoc = Classrooms.findOne _id:@params.classroomId
             courseData = Courses.findOne _id:classroomDoc.courseId
-            DockerInstances.findOne({imageId:courseData.dockerImage})
+            DockerInstances.findOne({imageTag:courseData.dockerImage})
 
           classroomId: @params.classroomId
 

@@ -267,24 +267,24 @@ Meteor.methods
 
 
 
-  "runDocker": (imageId)->
+  "runDocker": (imageTag)->
 
     user = Meteor.user()
     if not user
       throw new Meteor.Error(401, "You need to login")
 
-    if DockerImages.find({_id:imageId}).count() is 0
+    if DockerImages.find({_id:imageTag}).count() is 0
       throw new Meteor.Error(1001, "Docker Image ID Error!")
 
     # TODO: different roles can access different images ...
 
-    imageType = DockerImages.findOne({_id:imageId}).type
+    imageType = DockerImages.findOne({_id:imageTag}).type
     if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
       #FIXME: write a checking function for env vars
       throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
 
 
-    if DockerInstances.find({userId:user._id,imageId:imageId}).count() is 0
+    if DockerInstances.find({userId:user._id,imageTag:imageTag}).count() is 0
 
       dockerLimit = DockerLimits.findOne _id:"defaultLimit"
 
@@ -295,10 +295,10 @@ Meteor.methods
       docker = new Docker Meteor.settings.public.dockerodeConfig
       fport = getFreePort()
 
-      imageType = DockerImages.findOne({_id:imageId}).type
+      imageType = DockerImages.findOne({_id:imageTag}).type
 
       containerData = dockerLimit.limit
-      containerData.Image = imageId
+      containerData.Image = imageTag
 
       if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() > 0
         config = DockerTypeConfig.findOne({userId:user._id,typeId:imageType})
@@ -354,7 +354,7 @@ Meteor.methods
 
       dockerData =
         userId: user._id
-        imageId: containerData.Image
+        imageTag: containerData.Image
         containerInfo: containerData
         containerId: container.id
         servicePort: fport
