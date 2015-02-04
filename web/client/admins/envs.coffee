@@ -1,8 +1,14 @@
 
+Template.testAutoForm.helpers
+  formId: ->
+    @data._id + "1234"
+
 
 Template.envTypesTable.helpers
   # EnvTypesInsertSchema: =>
   #   @EnvTypesInsertSchema
+  autoFormId: (test) ->
+    test + "1234"
 
   settings: ->
 

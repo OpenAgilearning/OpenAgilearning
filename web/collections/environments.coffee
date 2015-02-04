@@ -16,13 +16,13 @@
   publicStatus:
     type: String
     allowedValues: ["public","semipublic","private"]    
-    # autoform: 
-    #   afFieldInput:
-    #     options: ->
-    #       res = 
-    #         public: "public"
-    #         semipublic: "semipublic"
-    #         private: "private"            
+    autoform: 
+      afFieldInput:
+        options: ->
+          res = 
+            public: "public"
+            semipublic: "semipublic"
+            private: "private"            
 
   "configs.servicePorts":
     type: Array
@@ -77,9 +77,10 @@
     
 
 Meteor.methods
-  "createEnvType": (EnvTypesInsertSchemaData) ->
-    console.log EnvTypesInsertSchemaData
-    EnvTypes.insert EnvTypesInsertSchemaData
+  "createEnvType": (data) ->
+    console.log "data = "
+    console.log data
+    # EnvTypes.insert EnvTypesInsertSchemaData
 
   "runEnv": (EnvId) ->
 
