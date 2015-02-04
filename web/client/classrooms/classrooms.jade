@@ -52,9 +52,8 @@ template(name="classroom")
                 //- h2 {{classroomId}}
                 +setEnvConfigsForm classroomId=classroomId
               else
-                br
-                input.connectEnvBtn.btn.btn-default(value="Connect Environment Again")
-                iframe#docker(src="http://{{rootURL}}:{{docker.servicePort}}",servicePort="{{docker.servicePort}}",rootURL="{{rootURL}}", width="100%", height="550px", scrolling="yes")
+              
+                +classroomEnvIframe docker=docker
 
           
           if course.slides
@@ -83,3 +82,14 @@ template(name="classroom")
 template(name="setEnvConfigsForm")
   if envConfigsSchema
     +quickForm id="setEnvConfigs" schema=envConfigsSchema type="method" meteormethod="setEnvConfigs" 
+
+template(name="classroomEnvIframe")
+  if iframePort
+    +envIframe ip=iframeIp port=iframePort
+
+
+
+
+template(name="envIframe")
+  input.connectEnvBtn.btn.btn-default(value="Connect Environment Again")
+  iframe#envIframe(src="http://{{ip}}:{{port}}",port="{{port}}",ip="{{ip}}", width="100%", height="550px", scrolling="yes")

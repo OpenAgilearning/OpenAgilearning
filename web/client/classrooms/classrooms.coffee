@@ -2,16 +2,28 @@ Template.classroom.rendered = ->
   $("video.video-js").map ->
     videojs @, JSON.parse($(@).attr("data-setup"))
 
-Template.classroom.events
+Template.envIframe.events
   "click .connectEnvBtn": (e, t)->
     e.stopPropagation()
-    $("#docker").attr 'src', ""
+    $("#EnvIframe").attr 'src', ""
     
-    rootURL = $("#docker").attr "rootURL"
-    servicePort = $("#docker").attr "servicePort"
-    url = "http://"+rootURL+":"+servicePort
+    ip = $("#envIframe").attr "ip"
+    port = $("#envIframe").attr "port"
+    url = "http://"+ip+":"+port
 
-    $("#docker").attr 'src', url
+    $("#envIframe").attr 'src', url
+
+Template.classroomEnvIframe.helpers
+  iframeIp: ->
+    console.log @
+    @docker.ip
+
+  iframePort: ->
+    httpPortData = @docker.portDataArray.filter (portData)-> portData["type"] is "http"
+    if httpPortData.length > 0
+      httpPortData[0].hostPort
+    
+     
 
 
 Template.setEnvConfigsForm.helpers
@@ -40,5 +52,5 @@ Template.setEnvConfigsForm.helpers
       defaultValue: @classroomId
       autoform:
         type: "hidden"
-        
+
     new SimpleSchema schemaSettings

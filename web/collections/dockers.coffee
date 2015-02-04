@@ -295,6 +295,12 @@ Meteor.methods
 
 
   "runDocker": (imageTag)->
+    
+    if imageTag.split(":").length is 1
+      fullImageTag = imageTag + ":latest"
+    else
+      fullImageTag = imageTag
+
 
     #[TODOLIST: checking before running]    
     #TODO: assert user logged in
@@ -305,7 +311,6 @@ Meteor.methods
     #TODO: assert imageTag exists
     if DockerImages.find({_id:imageTag}).count() is 0
       throw new Meteor.Error(1001, "Docker Image ID Error!")
-
 
     #[TODOLIST: building running containerData]
     #TODO: check user's config
@@ -339,23 +344,13 @@ Meteor.methods
     #TODO: (if has server) get free ports in that server (include multiports)
       
       servicePorts = EnvConfigTypes.findOne({_id:configTypeId}).configs.servicePorts
-      
-      console.log "servicePorts = "
-      console.log servicePorts
-
       fports = getFreePorts(servicePorts.length)
-
-      console.log "fports = "
-      console.log fports
 
       portDataArray = [0..fports.length-1].map (i)-> 
         portData = 
           guestPort: servicePorts[i].port
           hostPort: fports[i]
           type: servicePorts[i].type 
-
-      console.log "portDataArray = "
-      console.log portDataArray
 
       containerData.HostConfig = {}
       containerData.HostConfig.PortBindings = {}
@@ -371,19 +366,15 @@ Meteor.methods
     #TODO: getContainer
     #TODO: write status and logging data to dbs
 
-    if DockerInstances.find({userId:user._id,imageTag:imageTag}).count() is 0
+    if DockerInstances.find({userId:user._id,imageTag:fullImageTag}).count() is 0
 
       Future = Npm.require 'fibers/future'
       createFuture = new Future
 
       docker.createContainer containerData, (err, container) ->
-        console.log "[inside] container = "
-        console.log container
         createFuture.return container
 
       container = createFuture.wait()
-      console.log "[outside] contaner = "
-      console.log container
 
       startFuture = new Future
 
@@ -392,23 +383,25 @@ Meteor.methods
 
       cont = docker.getContainer container.id
       cont.start startOpt, (err, data) ->
-        console.log "data = ",
-        console.log data
         startFuture.return data
 
       data = startFuture.wait()
 
+      serverIP = dockerServerSettings.host
+      if not serverIP
+        serverIP = "localhost"
+
       dockerData =
         userId: user._id
-        imageTag: containerData.Image
-        containerInfo: containerData
+        imageTag: fullImageTag
+        dockerLimitId: "defaultLimit"
+        containerConfig: containerData
         containerId: container.id
-        servicePort: fports[0]
-        imageType:configTypeId
+        configTypeId:configTypeId
+        portDataArray:portDataArray
+        configTypeId:configTypeId
+        ip:serverIP
         createAt: new Date
-
-      console.log "[outside] dockerData = "
-      console.log dockerData
 
       DockerInstances.insert dockerData
 
