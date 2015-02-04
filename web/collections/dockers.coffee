@@ -117,7 +117,7 @@ getDockerServerConnectionSettings = (dockerServerName) ->
   dockerServerSettings
 
 
-getFreeDockerServerName = (imageTag) -> "localhost"  
+getFreeDockerServerName = (imageTag) -> "d3-agilearning"  
 
 
 getDockerFreePort = (dockerServerId)->
