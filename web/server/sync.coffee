@@ -47,7 +47,7 @@ syncDockerServerInfo = ->
         lastUpdateAt: new Date
 
       DockerServers.update {_id:dockerServerData._id},{$set:updateData}
-      DockerServers.update {_id:dockerServerData._id},{$unset:serverInfo}
+      DockerServers.update {_id:dockerServerData._id},{$unset:{serverInfo:""}}
 
 syncDockerServerImages = ->
   Docker = Meteor.npmRequire "dockerode"
@@ -86,6 +86,8 @@ syncDockerServerImages = ->
           setData = 
             lastUpdateAt:lastUpdateAt
             tag:tag
+            serverName: dockerServerData.name
+            
           DockerServerImages.upsert queryImageData, {$set:setData}
           
 

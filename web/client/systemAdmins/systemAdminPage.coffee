@@ -21,17 +21,16 @@ Template.dockerServerNameFromId.helpers
 
 Template.adminPageDockerServerImagesTable.helpers
   settings: ->
-    dockerServerNameField = 
-      key: "dockerServerId"
-      label: "Server Name"
-      tmpl: Template.dockerServerNameField
-
+    # dockerServerNameField = 
+    #   key: "dockerServerId"
+    #   label: "Server Name"
+    #   tmpl: Template.dockerServerNameField
     
     res =
       collection: DockerServerImages
       rowsPerPage: 10
       showFilter: true
-      fields: [dockerServerNameField,"tag","lastUpdateAt"]
+      fields: ["serverName","tag","lastUpdateAt"]
 
 
 

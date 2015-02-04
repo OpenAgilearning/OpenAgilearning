@@ -44,7 +44,7 @@ if Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).count() > 0
 
   Roles.addUsersToRoles(defaultAdminUidArray, 'admin', "system")
   # Roles.addUsersToRoles(defaultCourseManagerUidArray, "admin", "courses")
-  # filterArray = Roles.find({role:"admin"}).fetch().map (xx) -> xx.userId  
+  # filterArray = Roles.find({role:"admin"}).fetch().map (xx) -> xx.userId
   # console.log "filterArray = "
   # console.log filterArray
 
@@ -55,21 +55,21 @@ if Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).count() > 0
   # Roles.insert {userId:uid, role:"admin"} for uid in filteredArray
 
 
-if DockerImages.find().count() is 0
+if Envs.find().count() is 0
   dockerDefaultImages = [
-    {_id:"c3h3/oblas-py278-shogun-ipynb", type:"ipynb", imageURL:"/images/ipynb_lmnn1.png"},
-    {_id:"c3h3/learning-shogun", type:"ipynb", imageURL:"/images/ipynb_lmnn2.png"},
-    {_id:"c3h3/learning-shogun:u1404-ocv", type:"ipynb", imageURL:"/images/ipynb_sudoku.png"},
-    {_id:"c3h3/livehouse20141105", type:"ipynb", imageURL:"/images/ipynb_docker_default.png"},
-    {_id: "c3h3/nccu-crawler-courses-201411", type : "ipynb", imageURL:"/images/ipynb_docker_default.png" },
-    {_id: "dboyliao/docker-tossug", type : "ipynb", imageURL:"/images/ipynb_tossug2.png" },
-    {_id:"rocker/rstudio", type:"rstudio", imageURL:"/images/rstudio_docker_default.png"},
-    {_id:"c3h3/ml-for-hackers", type:"rstudio", imageURL:"/images/rstudio_docker_default.png"},
-    {_id:"c3h3/dsc2014tutorial", type:"rstudio", imageURL:"/images/rstudio_docker_default.png"},
-    {_id:"c3h3/rladies-hello-kaggle", type:"rstudio", imageURL:"/images/rstudio_play_kaggle.png"}
+    # {_id:"c3h3/oblas-py278-shogun-ipynb:last", type:"ipynb", pictures:["/images/ipynb_lmnn1.png"]},
+    # {_id:"c3h3/learning-shogun:last", type:"ipynb", pictures:["/images/ipynb_lmnn2.png"]},
+    {imageTag:"c3h3/learning-shogun:u1404-ocv",description: "This powerful enviroment provide opencv and shogun. You can use this enviroments to study machine learning.", type:"ipynb", pictures:["/images/ipynb_sudoku.png"],publicStatus:"public"},
+    # {_id:"c3h3/livehouse20141105:last", type:"ipynb", pictures:["/images/ipynb_docker_default.png"]},
+    # {_id: "c3h3/nccu-crawler-courses-201411:last",type : "ipynb", pictures:["/images/ipynb_docker_default.png" ]},
+    # {_id: "dboyliao/docker-tossug:last", type : "ipynb", pictures:["/images/ipynb_tossug2.png" ]},
+    # {_id:"rocker/rstudio:last", type:"rstudio", pictures:["/images/rstudio_docker_default.png"]},
+    # {_id:"c3h3/ml-for-hackers:last", type:"rstudio", pictures:["/images/rstudio_docker_default.png"]},
+    # {_id:"c3h3/rladies-hello-kaggle:last", type:"rstudio", pictures:["/images/rstudio_play_kaggle.png"]},
+    {imageTag:"c3h3/dsc2014tutorial:last", description: "This enviroments was used at 2014 DSC at Taiwan workshop.", type:"rstudio", pictures:["/images/rstudio_docker_default.png"],publicStatus:"public"}
   ]
 
-  DockerImages.insert image for image in dockerDefaultImages
+  Envs.insert image for image in dockerDefaultImages
 
 if DockerImages.find({_id:"c3h3/nccu-crawler-courses-201411",type:"ipynb"}).count() is 0
   DockerImages.insert {_id:"c3h3/nccu-crawler-courses-201411",type:"ipynb"}
@@ -87,7 +87,7 @@ demoCourses = [
   # { "courseName" : "ml-for-hackers", "dockerImage" : "c3h3/ml-for-hackers", "slides" : "http://shop.oreilly.com/product/0636920018483.do", "description" : ""},
   # { "courseName" : "RLadies Play Kaggle", "dockerImage" : "c3h3/rladies-hello-kaggle", "slides" : "http://www.kaggle.com/c/titanic-gettingStarted/dails/new-getting-started-with-r", "description" : ""},
   # { "courseName" : "NCCU Crawler 201411", "dockerImage" : "c3h3/nccu-crawler-courses-201411", "slides" : "http://nbviewer.ipython.org/github/c3h3/NCCU-PyData-Courses-2013Spring/blob/master/Lecture1/crawler/Lecture2_WebCrawler.ipynb", "description" : ""},
-  # { "courseName" : "TOSSUG DS 20141209 BigO", "dockerImage" : "dboyliao/docker-tossug", "slides" : "http://interactivepython.org/runestone/static/pythonds/index.html", "description" : ""},  
+  # { "courseName" : "TOSSUG DS 20141209 BigO", "dockerImage" : "dboyliao/docker-tossug", "slides" : "http://interactivepython.org/runestone/static/pythonds/index.html", "description" : ""},
 ]
 
 for oneCourse in demoCourses
@@ -100,10 +100,10 @@ for oneCourse in demoCourses
       oneCourse.publicStatus = "public"
 
       courseId = Courses.insert oneCourse
-      
+
       if oneCourse.publicStatus is "public"
         if Classrooms.find({courseId:courseId,publicStatus:"public"}).count() is 0
-          publicClassroomDoc = 
+          publicClassroomDoc =
             creatorId: oneCourse.creatorId
             courseId: courseId
             publicStatus:"public"
@@ -128,7 +128,7 @@ defaultLocalDockerServerData =
   name:"localhost"
   connect:
     socketPath: '/var/run/docker.sock'
-  
+
 
 defaultDockerServerData =
   name:"d3-agilearning"
@@ -140,7 +140,7 @@ defaultDockerServerData =
     caPath: DOCKER_CERT_PATH + 'ca.pem'
     certPath: DOCKER_CERT_PATH + 'cert.pem'
     keyPath: DOCKER_CERT_PATH + 'key.pem'
-  
+
 defaultDockerServerData2 =
   name:"d1-agilearning"
   connect:
@@ -151,9 +151,9 @@ defaultDockerServerData2 =
     caPath: DOCKER_CERT_PATH + 'ca.pem'
     certPath: DOCKER_CERT_PATH + 'cert.pem'
     keyPath: DOCKER_CERT_PATH + 'key.pem'
-  
 
-defaultDockerServers = [defaultLocalDockerServerData, defaultDockerServerData,defaultDockerServerData2] 
+
+defaultDockerServers = [defaultLocalDockerServerData, defaultDockerServerData,defaultDockerServerData2]
 
 for dockerServerData in defaultDockerServers
   if DockerServers.find(dockerServerData).count() is 0
@@ -161,4 +161,3 @@ for dockerServerData in defaultDockerServers
     dockerServerData.createAt = new Date
     DockerServers.insert dockerServerData
 
-  

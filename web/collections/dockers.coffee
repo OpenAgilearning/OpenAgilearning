@@ -10,6 +10,30 @@
 @DockerInstances = new Meteor.Collection "dockerInstances"
 @DockerInstancesLog = new Meteor.Collection "dockerInstancesLog"
 
+
+@DockerServerImagesSchema = new SimpleSchema
+  _id:
+    type: String
+  Created:
+    type: Number
+  Id:
+    type: String
+  ParentId:
+    type: String
+  Size:
+    type: Number
+  VirtualSize:
+    type: Number
+  dockerServerId:
+    type: String
+  lastUpdateAt:
+    type: Date
+  tag:
+    type: String
+  serverName:
+    type: String
+
+
 @DockerServerContainersSchema = new SimpleSchema
   _id:
     type: String

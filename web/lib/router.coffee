@@ -107,7 +107,28 @@ Meteor.startup ->
             console.log err
             Router.go "dockers"
 
-        Meteor.subscribe "classChatroom", @params.classroomId
+        # Meteor.subscribe "Chat", @params.cid
+
+    @route "environments",
+      path: "environments/"
+      template: "environments"
+      data: ->
+        resData =
+          rootURL:rootURL
+          user: ->
+            Meteor.user()
+          showAdminPage: ->
+            userId = Meteor.userId()
+            Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
+      waitOn: ->
+        userId = Meteor.userId()
+        if not userId
+          Router.go "pleaseLogin"
+
+        #TODO: no password! no envs!
+        Meteor.subscribe "allPublicEnvs"
+    
 
 
     @route "learningResources",
@@ -145,6 +166,9 @@ Meteor.startup ->
           userId = Meteor.userId()
           Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
+        testEnvTypeData: ->
+          EnvTypes.findOne()
+
       waitOn: ->
         userId = Meteor.userId()
         if not userId
@@ -160,12 +184,14 @@ Meteor.startup ->
             Meteor.subscribe "allDockerServerImages"
             Meteor.subscribe "allDockerServers"
             Meteor.subscribe "allDockerServerContainers"
+            Meteor.subscribe "allEnvTypes"
           else
             if Roles.userIsInRole(userId,"admin","dockers")
               Meteor.subscribe "allDockerInstances"
               Meteor.subscribe "allDockerImages"
               Meteor.subscribe "allDockerServerImages"
               Meteor.subscribe "allDockerServers"
+              Meteor.subscribe "allEnvTypes"
             else
               Router.go "index"
 

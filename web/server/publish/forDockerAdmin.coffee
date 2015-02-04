@@ -1,3 +1,10 @@
+Meteor.publish "allEnvTypes", ->
+  if Roles.userIsInRole @userId, "admin", "dockers"
+    EnvTypes.find()
+  else
+    EnvTypes.find _id: "permisionDeny"
+
+
 Meteor.publish "allDockerImages", ->
   if Roles.userIsInRole @userId, "admin", "dockers"
     DockerImages.find()
