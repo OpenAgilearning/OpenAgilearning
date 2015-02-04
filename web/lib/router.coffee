@@ -76,20 +76,24 @@ Meteor.startup ->
 
           needToSetEnvConfigs: =>
             userId = Meteor.userId()
-            classroomDoc = Classrooms.findOne _id:@params.classroomId
-            courseData = Courses.findOne _id:classroomDoc.courseId
-            imageTag = courseData.dockerImage
+            # classroomDoc = Classrooms.findOne _id:@params.classroomId
+            # courseData = Courses.findOne _id:classroomDoc.courseId
+            # imageTag = courseData.dockerImage
             
-            configTypeId = DockerImages.findOne({_id:imageTag}).type
+            # configTypeId = DockerImages.findOne({_id:imageTag}).type
+            
+            configTypeId = getEnvConfigTypeIdFromClassroomId(@params.classroomId)
             EnvUserConfigs.find({userId:userId, configTypeId:configTypeId}).count() is 0            
 
           envConfigsSchema: =>
             userId = Meteor.userId()
-            classroomDoc = Classrooms.findOne _id:@params.classroomId
-            courseData = Courses.findOne _id:classroomDoc.courseId
-            imageTag = courseData.dockerImage
+            # classroomDoc = Classrooms.findOne _id:@params.classroomId
+            # courseData = Courses.findOne _id:classroomDoc.courseId
+            # imageTag = courseData.dockerImage
             
-            configTypeId = DockerImages.findOne({_id:imageTag}).type
+            # configTypeId = DockerImages.findOne({_id:imageTag}).type
+            
+            configTypeId = getEnvConfigTypeIdFromClassroomId(@params.classroomId)
             
             envConfigsData = EnvConfigTypes.findOne _id:configTypeId
             schemaSettings = {}
@@ -124,11 +128,13 @@ Meteor.startup ->
         if redirectToIndex
           Router.go "index"          
 
+        Meteor.subscribe "allPublicEnvConfigTypes"
         Meteor.subscribe "userDockerInstances"
+        Meteor.subscribe "userEnvUserConfigs"
         Meteor.subscribe "classroom", @params.classroomId
         Meteor.subscribe "classroomCourse", @params.classroomId
         Meteor.subscribe "classroomDockerImages", @params.classroomId
-        Meteor.subscribe "allPublicEnvConfigTypes"
+        
 
         Meteor.call "getClassroomDocker", @params.classroomId, (err, data)->
           if not err

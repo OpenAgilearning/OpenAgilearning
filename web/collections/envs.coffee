@@ -61,6 +61,15 @@
 #             private: "private"            
 
 
+@getEnvConfigTypeIdFromClassroomId = (classroomId) ->
+  classroomDoc = Classrooms.findOne _id:classroomId
+  courseData = Courses.findOne _id:classroomDoc.courseId
+  imageTag = courseData.dockerImage
+  
+  #TODO: Need to change DockerImages to EnvUserConfigs 
+  configTypeId = DockerImages.findOne({_id:imageTag}).type
+            
+
 
 @EnvTypesSchema = new SimpleSchema
   _id:
@@ -133,6 +142,33 @@
     
 
 Meteor.methods
+  "setEnvConfigs": (data) ->
+    loggedInUserId = Meteor.userId()
+
+    if not loggedInUserId
+      throw new Meteor.Error(401, "You need to login")
+    
+    classroomId = data.classroomId  
+    courseId = Classrooms.findOne({_id: classroomId}).courseId
+    if courseId and classroomId
+      classroomAndId = "classroom_" + classroomId
+      notAssessDenied = loggedInUserId and Roles.userIsInRole(loggedInUserId,["admin","teacher","student"],classroomAndId)
+      
+      if notAssessDenied
+        console.log "data = "
+        console.log data
+        configTypeId = getEnvConfigTypeIdFromClassroomId(classroomId)
+        #FIXME: need to gen schema and check data before insert
+        delete data.classroomId
+        EnvUserConfigs.insert userId:loggedInUserId, configTypeId:configTypeId, configData:data 
+      else
+        throw new Meteor.Error(403, "Access denied")
+
+    else
+      console.log "TODO:raise error"
+
+
+    
   "createEnv": (data) ->
     loggedInUserId = Meteor.userId()
 

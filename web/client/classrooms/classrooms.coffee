@@ -35,4 +35,10 @@ Template.setEnvConfigsForm.helpers
       if env.limitValues
         schemaSettings[env.name].allowedValues = env.limitValues
 
+    schemaSettings.classroomId = 
+      type: String
+      defaultValue: @classroomId
+      autoform:
+        type: "hidden"
+        
     new SimpleSchema schemaSettings

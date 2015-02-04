@@ -1,3 +1,10 @@
+Meteor.publish "userEnvUserConfigs", ->
+  userId = @userId
+
+  if userId
+    EnvUserConfigs.find {userId:userId}
+
+
 Meteor.publish "userDockerInstances", ->
   userId = @userId
 

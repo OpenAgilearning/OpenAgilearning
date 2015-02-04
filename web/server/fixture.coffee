@@ -17,17 +17,6 @@ courseManagerIds = [183363484]
 #     Chat.insert {userId:"systemTest",userName:"systemTest",courseId:oneCourse._id, msg:"Hello!", createAt:new Date}
 
 
-if DockerLimits.find().count() is 0
-
-  dockerDefaultLimit =
-    _id: "defaultLimit"
-    limit:
-      Cpuset: "0"
-      CpuShares: 256
-      Memory:512000000
-
-  DockerLimits.insert dockerDefaultLimit
-
 if DockerTypes.find({_id:"ipynb"}).count() is 0
   DockerTypes.insert {_id:"ipynb", servicePort:"8888/tcp", env:[{name:"PASSWORD",mustHave:true},{name:"IPYNB_PROFILE",limitValues:["","default","c3h3-dark"]}]}
 
