@@ -93,6 +93,14 @@ getFreePort = ->
   filteredPorts = ports.filter (x) -> x not in filterPorts
   filteredPorts[0]
 
+getFreePorts = (n) ->
+  ports = [basePort..topPort].map String
+  filterPorts = DockerInstances.find().fetch().map (x)-> x.servicePort
+  filteredPorts = ports.filter (x) -> x not in filterPorts
+  if filteredPorts.length >= n
+    filteredPorts.slice(0,n)
+
+
 getDockerServerConnectionSettings = (dockerServerName) ->
 
   dockerServerData = DockerServers.findOne name:dockerServerName
@@ -321,64 +329,48 @@ Meteor.methods
       containerData.Image = imageTag
       containerData.Env = EnvsArray
 
-    # imageType = DockerImages.findOne({_id:imageTag}).type
-    # if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
-    #   #FIXME: write a checking function for env vars
-    #   throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
-
-
-    if DockerInstances.find({userId:user._id,imageTag:imageTag}).count() is 0
-
-
-      console.log "[in createContainer] dockerLimit = "
-      console.log dockerLimit
-
+    #[TODOLIST: get free server & ports]
+    #TODO: get free server has the image
       Docker = Meteor.npmRequire "dockerode"
-      
       freeDockerServerName = getFreeDockerServerName(imageTag)
       dockerServerSettings = getDockerServerConnectionSettings(freeDockerServerName)
-
       docker = new Docker dockerServerSettings
 
-      fport = getFreePort()
+    #TODO: (if has server) get free ports in that server (include multiports)
+      
+      servicePorts = EnvConfigTypes.findOne({_id:configTypeId}).configs.servicePorts
+      
+      console.log "servicePorts = "
+      console.log servicePorts
 
-      imageType = DockerImages.findOne({_id:imageTag}).type
+      fports = getFreePorts(servicePorts.length)
 
-      servicePort = DockerTypes.findOne({_id:imageType}).servicePort
+      console.log "fports = "
+      console.log fports
 
-      # console.log "[before1] containerData = "
-      # console.log containerData
-      # console.log typeof containerData
+      portDataArray = [0..fports.length-1].map (i)-> 
+        portData = 
+          guestPort: servicePorts[i].port
+          hostPort: fports[i]
+          type: servicePorts[i].type 
 
-      # outPort = [{"HostPort": fport}]
-
-      # console.log "[before1] outPort = "
-      # console.log outPort
-
-      # console.log "[before1] servicePort = "
-      # console.log servicePort
-      # console.log typeof servicePort
+      console.log "portDataArray = "
+      console.log portDataArray
 
       containerData.HostConfig = {}
       containerData.HostConfig.PortBindings = {}
-      containerData.HostConfig.PortBindings[servicePort] = [{"HostPort": fport}]
 
+      for portData in portDataArray
+        servicePort = portData.guestPort + "/tcp"
+        containerData.HostConfig.PortBindings[servicePort] = [{"HostPort": portData.hostPort}]
 
-      console.log "[before2] containerData = "
-      console.log containerData
-
-    
-
-    #[TODOLIST: get free server & ports]
-    #TODO: get free server has the image ()
-    #TODO: (if has server) get free ports in that server (include multiports)
-    #TODO: get free server has the image
     #FIXME: two server might acquire the same port
 
     #[TODOLIST: runServer and write data to db]
     #TODO: createContainer
     #TODO: getContainer
     #TODO: write status and logging data to dbs
+
     if DockerInstances.find({userId:user._id,imageTag:imageTag}).count() is 0
 
       Future = Npm.require 'fibers/future'
@@ -411,8 +403,8 @@ Meteor.methods
         imageTag: containerData.Image
         containerInfo: containerData
         containerId: container.id
-        servicePort: fport
-        imageType:imageType
+        servicePort: fports[0]
+        imageType:configTypeId
         createAt: new Date
 
       console.log "[outside] dockerData = "
