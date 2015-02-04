@@ -56,22 +56,23 @@ Template.setEnvConfigsForm.helpers
 
       new SimpleSchema schemaSettings
 
-Template.classroom.helpers
-  users:Meteor.users.find()
-
 Template.studentListTable.helpers
   settings: ->
     roles =
-      key: "roles.classroom_" + @classroomId
+      key: "roles." + @classroomAndId()
       label:"Roles"
       fn: (value) ->value.join "/"
-#        allRoles = []
-#        if value
-#            Object.keys(value[xx]).map (yy)->
-#              allRoles.push value[xx][yy] + "." + xx
-#
-#        allRoles.join " / "
 
+    setTeacherBtnField =
+      key: "_id"
+      label: "Set Teacher"
+      tmpl: Template.setClassroomTeacher
+      
+    setAdminBtnField =
+      key: "_id"
+      label: "Set Administrator"
+      tmpl: Template.setClassroomAdmin
+      
     res =
       collection: Meteor.users
       rowsPerPage: 30
@@ -80,5 +81,17 @@ Template.studentListTable.helpers
         {key: "_id", label: "id", hidden: true},
         {key: "profile.photo.thumb_link", label: "Pic", tmpl: Template.studentPhoto},
         {key: "profile.name", label: "Name"},
-        roles
+        roles,
+        setTeacherBtnField,
+        setAdminBtnField
       ]
+
+Template.studentListTable.events
+  "click .setRole": (e, t)->
+    e.stopPropagation()
+    userId = $(e.target).attr "user_id"
+    role = $(e.target).attr "role"
+    action = $(e.target).attr "action"
+    classroomAndId = "classroom_" + Router.current().params.classroomId
+    
+    Meteor.call "setClassroomRole", classroomAndId, action, role, userId

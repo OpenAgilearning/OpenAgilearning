@@ -62,9 +62,8 @@ template(name="classroom")
 
           if isInRole "admin" classroomAndId
             .tab-pane.fade#Admin
-              h2 You are admin in this classroom
-              h2 TODO: student list 
-              h2 TODO: make student as teacher or admin
+              h2 Classroom Participants
+              p You are the administrator of this classroom. You can see class participants in the list and can add change their roles.
               +studentListTable
               
           
@@ -97,7 +96,19 @@ template(name="envIframe")
   iframe#envIframe(src="http://{{ip}}:{{port}}",port="{{port}}",ip="{{ip}}", width="100%", height="550px", scrolling="yes")
 
 template(name="studentListTable")
-  +reactiveTable settings=settings
+  +reactiveTable settings=settings classroomAndId=classroomAndId classroomId=classroomId
   
 template(name="studentPhoto")
   img(src="{{profile.photo.thumb_link}}").img-rounded.thumb
+  
+template(name="setClassroomTeacher")
+  +setRoleButton(role="teacher" roleUI="Teacher" _id=_id)
+  
+template(name="setClassroomAdmin")
+  +setRoleButton(role="admin" roleUI="Administrator" _id=_id) 
+
+
+template(name="setRoleButton")
+  button(user_id="{{_id}}" role="{{role}}" action="add").btn.btn-default.btn-xs.setRole Add as {{roleUI}}
+  br
+  button(user_id="{{_id}}" role="{{role}}" action="remove").btn.btn-default.btn-xs.setRole Remove {{roleUI}}
