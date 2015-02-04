@@ -149,3 +149,41 @@ for dockerServerData in defaultDockerServers
     dockerServerData.createAt = new Date
     DockerServers.insert dockerServerData
 
+generateUsers = (roles, numbers) ->
+  #TODO: gen users for specific classroom
+  faker = Meteor.npmRequire 'Faker'
+  fakeUsers = _.range(numbers).map ->
+    userPhoto = faker.Image.avatar()
+    
+    newUser =
+      fake: true
+      creatAt: faker.Date.recent(1000)
+      profile:
+        name: faker.Internet.userName()
+        photo:
+          photo_link: userPhoto
+          highres_link: userPhoto
+          thumb_link: userPhoto
+          photo_id: null
+        link: null #'http://www.meetup.com/members/123456789'
+        city: faker.Address.city()
+        country: faker.Address.ukCountry()
+        joined: faker.Date.recent(5000)
+        topics:[]
+        email: faker.Internet.email()
+      roles:
+        classroom_Kz57XyJezB7J4HiuD: roles
+        classroom_dzGBH5dcvw29jDJsd: roles
+        courses: roles
+        #dockers: [ 'admin' ]
+        #system: [ 'admin' ]
+  return fakeUsers
+ 
+if Meteor.users.find().count() < 25
+  teachers = generateUsers ['teacher'], 2
+  teachers.forEach (user)->
+    Meteor.users.insert user
+  
+  students = generateUsers ['student'], 23
+  students.forEach (user)->
+    Meteor.users.insert user

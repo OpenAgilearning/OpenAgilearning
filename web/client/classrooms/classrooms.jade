@@ -65,6 +65,8 @@ template(name="classroom")
               h2 You are admin in this classroom
               h2 TODO: student list 
               h2 TODO: make student as teacher or admin
+              +studentListTable
+              
           
           if isInRole "teacher" classroomAndId
             .tab-pane.fade#Teacher
@@ -93,3 +95,9 @@ template(name="classroomEnvIframe")
 template(name="envIframe")
   input.connectEnvBtn.btn.btn-default(value="Connect Environment Again")
   iframe#envIframe(src="http://{{ip}}:{{port}}",port="{{port}}",ip="{{ip}}", width="100%", height="550px", scrolling="yes")
+
+template(name="studentListTable")
+  +reactiveTable settings=settings
+  
+template(name="studentPhoto")
+  img(src="{{profile.photo.thumb_link}}").img-rounded.thumb

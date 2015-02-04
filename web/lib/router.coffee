@@ -170,6 +170,7 @@ Meteor.startup ->
             # Router.go "dockers"
 
         Meteor.subscribe "classChatroom", @params.classroomId
+        Meteor.subscribe "usersOfClassroom", @params.classroomId
 
     @route "environments",
       path: "environments/"

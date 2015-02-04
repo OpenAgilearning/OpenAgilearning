@@ -55,3 +55,30 @@ Template.setEnvConfigsForm.helpers
           type: "hidden"
 
       new SimpleSchema schemaSettings
+
+Template.classroom.helpers
+  users:Meteor.users.find()
+
+Template.studentListTable.helpers
+  settings: ->
+    roles =
+      key: "roles.classroom_" + @classroomId
+      label:"Roles"
+      fn: (value) ->value.join "/"
+#        allRoles = []
+#        if value
+#            Object.keys(value[xx]).map (yy)->
+#              allRoles.push value[xx][yy] + "." + xx
+#
+#        allRoles.join " / "
+
+    res =
+      collection: Meteor.users
+      rowsPerPage: 30
+      showFilter: true
+      fields:[
+        {key: "_id", label: "id", hidden: true},
+        {key: "profile.photo.thumb_link", label: "Pic", tmpl: Template.studentPhoto},
+        {key: "profile.name", label: "Name"},
+        roles
+      ]
