@@ -269,15 +269,24 @@ Meteor.methods
 
   "runDocker": (imageTag)->
 
+    #[TODOLIST: checking before running]    
+    #TODO: assert user logged in
     user = Meteor.user()
     if not user
       throw new Meteor.Error(401, "You need to login")
 
+    #TODO: assert imageTag exists
     if DockerImages.find({_id:imageTag}).count() is 0
       throw new Meteor.Error(1001, "Docker Image ID Error!")
 
-    # TODO: different roles can access different images ...
 
+    #[TODOLIST: building running containerData]
+    #TODO: check user's config
+    #TODO: (if has config) getEnvUserConfigs 
+    #TODO: checkingRunningCondition
+    #TODO: (if can run) choosing Running Limit
+    #TODO: use limit, EnvTypes' config => build containerData
+    
     imageType = DockerImages.findOne({_id:imageTag}).type
     if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
       #FIXME: write a checking function for env vars
@@ -327,6 +336,20 @@ Meteor.methods
       console.log "[before2] containerData = "
       console.log containerData
 
+    
+
+    #[TODOLIST: get free server & ports]
+    #TODO: get free server has the image ()
+    #TODO: (if has server) get free ports in that server (include multiports)
+    #TODO: get free server has the image
+    #FIXME: two server might acquire the same port
+
+    #[TODOLIST: runServer and write data to db]
+    #TODO: createContainer
+    #TODO: getContainer
+    #TODO: write status and logging data to dbs
+    if DockerInstances.find({userId:user._id,imageTag:imageTag}).count() is 0
+
       Future = Npm.require 'fibers/future'
       createFuture = new Future
 
@@ -365,6 +388,11 @@ Meteor.methods
       console.log dockerData
 
       DockerInstances.insert dockerData
+
+    
+
+    # TODO: different roles can access different images ...
+
 
   "setENV": (typeId, envData) ->
     user = Meteor.user()

@@ -74,6 +74,16 @@ Meteor.startup ->
 
           classroomId: @params.classroomId
 
+          needToSetEnvConfigs: =>
+            userId = Meteor.userId()
+            classroomDoc = Classrooms.findOne _id:@params.classroomId
+            courseData = Courses.findOne _id:classroomDoc.courseId
+            imageTag = courseData.dockerImage
+            
+            configTypeId = DockerImages.findOne({_id:imageTag}).type
+            EnvUserConfigs.find({userId:userId, configTypeId:configTypeId}).count() is 0            
+
+
           # chats: ->
           #   Chat.find {}, {sort: {createAt:-1}}
           # quickFormData: ->

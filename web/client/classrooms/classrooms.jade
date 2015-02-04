@@ -47,9 +47,12 @@ template(name="classroom")
                     
           if course.dockerImage
             .tab-pane.fade#Environment
-              br
-              input.connectEnvBtn.btn.btn-default(value="Connect Environment Again")
-              iframe#docker(src="http://{{rootURL}}:{{docker.servicePort}}",servicePort="{{docker.servicePort}}",rootURL="{{rootURL}}", width="100%", height="550px", scrolling="yes")
+              if needToSetEnvConfigs
+                h2 Need to Set ENV Configs
+              else
+                br
+                input.connectEnvBtn.btn.btn-default(value="Connect Environment Again")
+                iframe#docker(src="http://{{rootURL}}:{{docker.servicePort}}",servicePort="{{docker.servicePort}}",rootURL="{{rootURL}}", width="100%", height="550px", scrolling="yes")
 
           
           if course.slides

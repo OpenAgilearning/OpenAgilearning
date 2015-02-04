@@ -3,6 +3,7 @@
 # @EnvTypePorts = new Meteor.Collection "envTypePorts"
 # @EnvTypeVars = new Meteor.Collection "envTypeVars"
 
+@EnvUserConfigs = new Meteor.Collection "envUserConfigs"
 
 
 @Envs = new Meteor.Collection "envs"
@@ -10,7 +11,7 @@
 
 @EnvUsageLimits = new Meteor.Collection "envUsageLimits"
 
-@EnvUserConfigs = new Meteor.Collection "envUserConfigs"
+
 @EnvInstances = new Meteor.Collection "envInstances"
 @EnvInstancesLog = new Meteor.Collection "envInstancesLog"
 
