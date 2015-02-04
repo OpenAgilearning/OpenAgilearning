@@ -282,20 +282,34 @@ Meteor.methods
 
     #[TODOLIST: building running containerData]
     #TODO: check user's config
+    configTypeId = DockerImages.findOne({_id:imageTag}).type
+    if EnvUserConfigs.find({userId:user._id,configTypeId:configTypeId}).count() is 0
+      #FIXME: write a checking function for env vars
+      throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
+
+    else
+      configData = EnvUserConfigs.findOne({userId:user._id,configTypeId:configTypeId}).configData
+      EnvsArray = configData.map (envData) -> envData["key"] + "=" + envData["value"]
+      
+  
     #TODO: (if has config) getEnvUserConfigs 
     #TODO: checkingRunningCondition
     #TODO: (if can run) choosing Running Limit
+      dockerLimit = DockerLimits.findOne _id:"defaultLimit"
+      
     #TODO: use limit, EnvTypes' config => build containerData
-    
-    imageType = DockerImages.findOne({_id:imageTag}).type
-    if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
-      #FIXME: write a checking function for env vars
-      throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
+      containerData = dockerLimit.limit
+      containerData.Image = imageTag
+      containerData.Env = EnvsArray
+
+    # imageType = DockerImages.findOne({_id:imageTag}).type
+    # if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
+    #   #FIXME: write a checking function for env vars
+    #   throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
 
 
     if DockerInstances.find({userId:user._id,imageTag:imageTag}).count() is 0
 
-      dockerLimit = DockerLimits.findOne _id:"defaultLimit"
 
       console.log "[in createContainer] dockerLimit = "
       console.log dockerLimit
@@ -305,13 +319,6 @@ Meteor.methods
       fport = getFreePort()
 
       imageType = DockerImages.findOne({_id:imageTag}).type
-
-      containerData = dockerLimit.limit
-      containerData.Image = imageTag
-
-      if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() > 0
-        config = DockerTypeConfig.findOne({userId:user._id,typeId:imageType})
-        containerData.Env = config.env
 
       servicePort = DockerTypes.findOne({_id:imageType}).servicePort
 
