@@ -1,11 +1,13 @@
+
+template(name="envsTableAdminPage")
+  +reactiveTable settings=settings
+
+
 template(name="envTypesTable")
-  .col-md-6.column
-    +reactiveTable settings=settings
-    hr     
-    br
+  +reactiveTable settings=settings
     
     //- +quickForm id="envTypeCreator" schema="EnvTypesSchema" type="method" meteormethod="createEnvType" 
-    +testAutoForm data=testEnvTypeData autosave=true
+    //- +testAutoForm data=testEnvTypeData autosave=true
 
 template(name="envTypePortsField")
   ul

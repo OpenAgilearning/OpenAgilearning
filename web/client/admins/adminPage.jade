@@ -35,8 +35,18 @@ template(name="AdminPage")
           
           hr
         .tab-pane.fade#envsSettings
-          h2 EnvTypes
-          +envTypesTable
+          .col-md-6.column
+            h2 EnvTypes
+            +envTypesTable
+            //- h2 EnvTypes Creator
+            //- +quickForm id="envTypeCreator" schema="EnvTypesSchema" type="method" meteormethod="createEnvType" 
+          .col-md-6.column
+            h2 Envs
+            +envsTableAdminPage
+            h2 Envs Creator
+    
+            +autoForm id="envCreator" schema="EnvsSchema" type="method" meteormethod="createEnv" 
+              +afQuickField name="imageTag" options=uniqueDockerImageTagsForAutoForm
 
 
       if isInRole "admin" "system"

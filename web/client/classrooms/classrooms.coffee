@@ -1,5 +1,5 @@
 Template.classroom.rendered = ->
-  $("video").map ->
+  $("video.video-js").map ->
     videojs @, JSON.parse($(@).attr("data-setup"))
 
 Template.classroom.events

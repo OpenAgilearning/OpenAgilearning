@@ -3,6 +3,14 @@
 @DockerServerContainers = new Meteor.Collection "dockerServerContainers"
 @DockerServerPullImageLog = new Meteor.Collection "dockerServerPullImageLog"
 
+@DockerConfigTypes = new Meteor.Collection "dockerConfigTypes"
+@DockerImageIsConfigTypes = new Meteor.Collection "dockerImageIsConfigTypes"
+
+@DockerUsageLimits = new Meteor.Collection "dockerUsageLimits"
+
+@DockersUsedInEnvs = new Meteor.Collection "dockersUsedInEnvs"
+
+
 @DockerImages = new Meteor.Collection "dockerImages"
 @DockerTypes = new Meteor.Collection "dockerTypes"
 @DockerLimits = new Meteor.Collection "dockerLimits"
@@ -105,91 +113,6 @@ Meteor.methods
       server.PublicPort = filterPorts
       DockerServers.insert server
     servers
-
-  "listImages": (dockerServerIp) ->
-    if not checkDockerPermission()
-      throw new Meteor.Error(1101, "Permission Deny!")
-    else
-      Docker = Meteor.npmRequire "dockerode"
-      fs = Meteor.npmRequire 'fs'
-
-      dockerServerData = DockerServers.findOne {"connect.host":dockerServerIp}
-
-      dockerServerSettings = {}
-
-      _.extend dockerServerSettings, dockerServerData.connect
-
-      ["ca","cert","key"].map (xx) ->
-        dockerServerSettings[xx] = fs.readFileSync(dockerServerData.security[xx+"Path"])
-
-      docker = new Docker dockerServerSettings
-      #docker.ping (err, data) -> console.log data
-
-      Future = Npm.require 'fibers/future'
-      imagesFuture = new Future
-
-      docker.listImages {}, (err, data) ->
-        imagesFuture.return data
-
-      images = imagesFuture.wait()
-
-      DockerServerImages.remove({dockerServerId:dockerServerData._id})
-
-      for imageData in images
-        imageData.dockerServerId = dockerServerData._id
-        imageData.dockerServerName = dockerServerData.name
-        DockerServerImages.insert imageData
-
-      images
-
-  "listContainers": (dockerServerId)->
-
-    user = Meteor.user()
-    if not user
-      throw new Meteor.Error(401, "You need to login")
-    getListPermission = Roles.userIsInRole(user._id, "admin", "dockers")
-    getListPermission = getListPermission or Roles.userIsInRole(user._id, "admin", "system")
-
-    if not getListPermission
-      throw new Meteor.Error(1101, "Permission Deny!")
-    else
-      Docker = Meteor.npmRequire "dockerode"
-      fs = Meteor.npmRequire 'fs'
-
-      dockerServerData = DockerServers.findOne {"_id":dockerServerId}
-
-      dockerServerSettings = {}
-
-      _.extend dockerServerSettings, dockerServerData.connect
-      ["ca","cert","key"].map (xx) ->
-        dockerServerSettings[xx] = fs.readFileSync(dockerServerData.security[xx+"Path"])
-      dockerServerSettings["dockerServerId"] = dockerServerData._id
-      dockerServerSettings["dockerServerName"] = dockerServerData.name
-
-      docker = new Docker dockerServerSettings
-      Future = Npm.require 'fibers/future'
-      containersFuture = new Future
-
-      docker.listContainers {}, (err, data) ->
-        if err
-          console.log "err ="
-          console.log err
-        containersFuture.return data
-
-      containers = containersFuture.wait()
-
-      console.log "containers = "
-      console.log containers
-
-      DockerServerContainers.remove({dockerServerId:dockerServerSettings.dockerServerId})
-
-      for containerData in containers
-        containerData.dockerServerId = dockerServerSettings.dockerServerId
-        containerData.dockerServerName = dockerServerSettings.dockerServerName
-        console.log "[listContainers] insert DockerServerContainers"
-        DockerServerContainers.insert containerData
-
-      containers
 
   "pullImage": (pullImageData) ->
     if pullImageData["dockerHubIp"] is "dockerhub"

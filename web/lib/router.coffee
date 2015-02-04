@@ -169,6 +169,16 @@ Meteor.startup ->
         testEnvTypeData: ->
           EnvTypes.findOne()
 
+        uniqueDockerImageTagsForAutoForm: ->
+          values = _.uniq(DockerServerImages.find().fetch().map((xx) -> xx["tag"]))
+          res = {}
+          values.map (xx) ->
+            res[xx] = xx
+          res
+
+        uniqueDockerImageTags: ->
+          _.uniq(DockerServerImages.find().fetch().map((xx) -> xx["tag"]))
+          
       waitOn: ->
         userId = Meteor.userId()
         if not userId
@@ -185,6 +195,7 @@ Meteor.startup ->
             Meteor.subscribe "allDockerServers"
             Meteor.subscribe "allDockerServerContainers"
             Meteor.subscribe "allEnvTypes"
+            Meteor.subscribe "allEnvs"
           else
             if Roles.userIsInRole(userId,"admin","dockers")
               Meteor.subscribe "allDockerInstances"
@@ -192,6 +203,7 @@ Meteor.startup ->
               Meteor.subscribe "allDockerServerImages"
               Meteor.subscribe "allDockerServers"
               Meteor.subscribe "allEnvTypes"
+              Meteor.subscribe "allEnvs"
             else
               Router.go "index"
 

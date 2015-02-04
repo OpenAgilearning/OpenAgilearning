@@ -1,3 +1,11 @@
+Meteor.publish "allEnvs", ->
+  if Roles.userIsInRole @userId, "admin", "dockers"
+    Envs.find()
+  else
+    Envs.find _id: "permisionDeny"
+
+
+
 Meteor.publish "allEnvTypes", ->
   if Roles.userIsInRole @userId, "admin", "dockers"
     EnvTypes.find()

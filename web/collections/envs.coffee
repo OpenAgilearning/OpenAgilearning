@@ -1,15 +1,71 @@
-@EnvTypes = new Meteor.Collection "envTypes"
+
+@EnvConfigTypes = new Meteor.Collection "envConfigTypes"
+# @EnvTypePorts = new Meteor.Collection "envTypePorts"
+# @EnvTypeVars = new Meteor.Collection "envTypeVars"
+
+
 
 @Envs = new Meteor.Collection "envs"
 @EnvCreateLog = new Meteor.Collection "envCreateLog"
 
-@EnvLimits = new Meteor.Collection "envLimits"
+@EnvUsageLimits = new Meteor.Collection "envUsageLimits"
+
 @EnvUserConfigs = new Meteor.Collection "envUserConfigs"
 @EnvInstances = new Meteor.Collection "envInstances"
 @EnvInstancesLog = new Meteor.Collection "envInstancesLog"
 
+@EnvsSchema = new SimpleSchema
+  name:
+    type: String
+
+  publicStatus:
+    type: String
+    allowedValues: ["public","semipublic","private"]    
+    autoform: 
+      afFieldInput:
+        options: ->
+          res = 
+            public: "public"
+            semipublic: "semipublic"
+            private: "private"            
+
+  imageTag:
+    type: String
+
+
+# TODO: Normalized EnvTypesSchema into EnvTypePorts and EnvTypeVars 
+# @EnvTypesSchema = new SimpleSchema
+#   _id:
+#     type: String
+#     optional: true
+
+#   name:
+#     type: String
+
+#   description:
+#     type: String
+#     optional: true    
+#     autoform: 
+#       row: 5
+
+#   publicStatus:
+#     type: String
+#     allowedValues: ["public","semipublic","private"]    
+#     autoform: 
+#       afFieldInput:
+#         options: ->
+#           res = 
+#             public: "public"
+#             semipublic: "semipublic"
+#             private: "private"            
+
+
 
 @EnvTypesSchema = new SimpleSchema
+  _id:
+    type: String
+    optional: true
+
   name:
     type: String
 
@@ -39,17 +95,16 @@
     type: String
     optional: true
     allowedValues: ["http","ftp","vnc","mongodb","mysql","postgresql"]   
-    # autoform: 
-    #   afFieldInput:
-    #     options: ->
-    #       res = 
-    #         http: "http"
-    #         ftp: "ftp"
-    #         vnc: "vnc"
-    #         mongodb: "mongodb"
-    #         mysql: "mysql"
-    #         postgresql: "postgresql"
-
+    autoform: 
+      afFieldInput:
+        options: ->
+          res = 
+            http: "http"
+            ftp: "ftp"
+            vnc: "vnc"
+            mongodb: "mongodb"
+            mysql: "mysql"
+            postgresql: "postgresql"
 
 
   "configs.envs":
@@ -77,11 +132,36 @@
     
 
 Meteor.methods
-  "createEnvType": (data) ->
-    console.log "data = "
-    console.log data
-    # EnvTypes.insert EnvTypesInsertSchemaData
+  "createEnv": (data) ->
+    loggedInUserId = Meteor.userId()
 
+    if not loggedInUserId
+      throw new Meteor.Error(401, "You need to login")
+    
+    if Roles.userIsInRole loggedInUserId, "docker", "system"
+      console.log "data = "
+      console.log data
+  
+    else
+      throw new Meteor.Error(1301, "[Admin Error] permision deny")
+
+    
+  "createEnvType": (data) ->
+    loggedInUserId = Meteor.userId()
+
+    if not loggedInUserId
+      throw new Meteor.Error(401, "You need to login")
+    
+    if Roles.userIsInRole loggedInUserId, "docker", "system"
+      console.log "data = "
+      console.log data
+      EnvTypes.insert data
+  
+    else
+      throw new Meteor.Error(1301, "[Admin Error] permision deny")
+
+
+    
   "runEnv": (EnvId) ->
 
     #[TODOLIST: checking before running]    
