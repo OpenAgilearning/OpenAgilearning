@@ -160,7 +160,10 @@ Meteor.methods
         configTypeId = getEnvConfigTypeIdFromClassroomId(classroomId)
         #FIXME: need to gen schema and check data before insert
         delete data.classroomId
-        EnvUserConfigs.insert userId:loggedInUserId, configTypeId:configTypeId, configData:data 
+
+        configData = Object.keys(data).map (key) -> {key:key,value:data[key]}
+
+        EnvUserConfigs.insert userId:loggedInUserId, configTypeId:configTypeId, configData:configData
       else
         throw new Meteor.Error(403, "Access denied")
 

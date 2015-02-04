@@ -46,7 +46,7 @@ Template.envTypesTable.helpers
 
 
     res=
-      collection:EnvTypes
+      collection:EnvUserConfigs
       rowsPerPage:5
       showFilter: false
       showNavigation:'never'

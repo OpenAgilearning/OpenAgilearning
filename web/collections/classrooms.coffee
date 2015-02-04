@@ -5,9 +5,6 @@ Meteor.methods
   "joinClassroom": (classroomId) ->
     loginedUserId = Meteor.userId()
 
-    console.log "loginedUserId = "
-    console.log loginedUserId
-
     if not loginedUserId
       throw new Meteor.Error(401, "You need to login")
 

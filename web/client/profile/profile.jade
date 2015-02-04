@@ -1,14 +1,26 @@
 template(name="settings")
   +profile
+
 template(name="profile")
   .container
     .row.clearfix
       .col-md-2.column
         +public_profile
       .col-md-10.column
-        +dockers  
+        //- +dockers  
+        h2 EnvUserConfigs:
+        +profilePageEnvUserConfigsTable
+
     
-      
+template(name="profilePageEnvUserConfigsTable")
+  +reactiveTable settings=settings
+
+template(name="profilePageEnvUserConfigsTableConfigDataField")
+  ul
+    each configData
+      li {{key}}={{value}}
+
+
 
 template(name="public_profile")
   h2 {{user.profile.name}}
