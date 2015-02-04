@@ -49,6 +49,7 @@ template(name="classroom")
             .tab-pane.fade#Environment
               if needToSetEnvConfigs
                 h2 Need to Set ENV Configs
+                +setEnvConfigsForm classroomId=classroomId
               else
                 br
                 input.connectEnvBtn.btn.btn-default(value="Connect Environment Again")
@@ -77,4 +78,7 @@ template(name="classroom")
               h2 TODO: Help Btn
 
       +chatroom classroomId=classroomId
-          
+
+template(name="setEnvConfigsForm")
+  if envConfigsSchema
+    +quickForm id="setEnvConfigs" schema=envConfigsSchema type="method" meteormethod="setEnvConfigs" 

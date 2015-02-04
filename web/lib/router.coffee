@@ -83,6 +83,27 @@ Meteor.startup ->
             configTypeId = DockerImages.findOne({_id:imageTag}).type
             EnvUserConfigs.find({userId:userId, configTypeId:configTypeId}).count() is 0            
 
+          envConfigsSchema: =>
+            userId = Meteor.userId()
+            classroomDoc = Classrooms.findOne _id:@params.classroomId
+            courseData = Courses.findOne _id:classroomDoc.courseId
+            imageTag = courseData.dockerImage
+            
+            configTypeId = DockerImages.findOne({_id:imageTag}).type
+            
+            envConfigsData = EnvConfigTypes.findOne _id:configTypeId
+            schemaSettings = {}
+
+            envConfigsData.configs.envs.map (env)->
+              schemaSettings[env.name] = {type: String}
+                
+              if not env.mustHave
+                schemaSettings[env.name].optional = true
+
+              if env.limitValues
+                schemaSettings[env.name].allowedValues = env.limitValues
+
+            new SimpleSchema schemaSettings
 
           # chats: ->
           #   Chat.find {}, {sort: {createAt:-1}}
@@ -107,6 +128,7 @@ Meteor.startup ->
         Meteor.subscribe "classroom", @params.classroomId
         Meteor.subscribe "classroomCourse", @params.classroomId
         Meteor.subscribe "classroomDockerImages", @params.classroomId
+        Meteor.subscribe "allPublicEnvConfigTypes"
 
         Meteor.call "getClassroomDocker", @params.classroomId, (err, data)->
           if not err

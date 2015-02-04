@@ -1,3 +1,7 @@
+Meteor.publish "allPublicEnvConfigTypes", ->
+  EnvConfigTypes.find publicStatus:"public"
+
+
 Meteor.publish "allPublicEnvs", ->
   Envs.find publicStatus:"public"
   
