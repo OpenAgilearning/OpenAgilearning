@@ -122,10 +122,6 @@ syncDockerServerContainer = ->
 
 
     for containerData in containers
-      console.log "containerData = "
-      console.log containerData
-      console.log "dockerServerSettings = "
-      console.log dockerServerSettings
       queryData =
         Id:containerData.Id
         Image:containerData.Image
