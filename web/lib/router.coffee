@@ -107,7 +107,7 @@ Meteor.startup ->
             console.log err
             Router.go "dockers"
 
-        # Meteor.subscribe "Chat", @params.cid
+        Meteor.subscribe "classChatroom", @params.classroomId
 
     @route "environments",
       path: "environments/"
