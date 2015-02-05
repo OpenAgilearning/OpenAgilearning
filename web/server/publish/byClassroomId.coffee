@@ -1,3 +1,25 @@
+
+# FIXME: no courseId bug
+# Meteor.publish "userDockerInstances", (classroomId)->
+#   userId = @userId
+
+#   if userId
+#     classroomDoc = Classrooms.findOne _id:classroomId
+    
+#     console.log "classroomDoc = "
+#     console.log classroomDoc
+
+#     courseData = Courses.findOne _id:classroomDoc.courseId
+#     imageTag = courseData.dockerImage
+#     if imageTag.split(":").length is 1
+#       fullImageTag = imageTag + ":latest"
+#     else
+#       fullImageTag = imageTag
+
+
+#     DockerInstances.find {userId:userId,imageTag:fullImageTag}
+
+
 Meteor.publish "classroomCourse", (classroomId)->
   #FIXME: if someone know th id
   classroomDoc = Classrooms.findOne _id:classroomId

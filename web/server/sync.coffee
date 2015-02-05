@@ -7,8 +7,9 @@ getDockerServerSettings = (dockerServerData) ->
     if dockerServerData.connect.protocol is "https"
       ["ca","cert","key"].map (xx) ->
         dockerServerSettings[xx] = fs.readFileSync(dockerServerData.security[xx+"Path"])
-    dockerServerSettings["dockerServerId"] = dockerServerData._id
-    dockerServerSettings["dockerServerName"] = dockerServerData.name
+  
+  dockerServerSettings["dockerServerId"] = dockerServerData._id
+  dockerServerSettings["dockerServerName"] = dockerServerData.name
   
   dockerServerSettings
 
@@ -102,20 +103,14 @@ syncDockerServerImages = ->
 syncDockerServerContainer = ->
   dockerServers = DockerServers.find().fetch()
   Docker = Meteor.npmRequire "dockerode"
-  fs = Meteor.npmRequire 'fs'
-  # Future = Npm.require 'fibers/future'
-
+  
   for dockerServerData in dockerServers
-    dockerServerSettings = {}
-    _.extend dockerServerSettings, dockerServerData.connect
-    ["ca","cert","key"].map (xx) ->
-      dockerServerSettings[xx] = fs.readFileSync(dockerServerData.security[xx+"Path"])
-    dockerServerSettings["dockerServerId"] = dockerServerData._id
-    dockerServerSettings["dockerServerName"] = dockerServerData.name
+    dockerServerSettings = getDockerServerSettings dockerServerData
 
     docker = new Docker dockerServerSettings
     Future = Npm.require 'fibers/future'
     containersFuture = new Future
+    lastUpdateAt = new Date
 
     docker.listContainers {}, (err, data) ->
       if err
@@ -123,12 +118,28 @@ syncDockerServerContainer = ->
         console.log err
       containersFuture.return data
     containers = containersFuture.wait()
-    DockerServerContainers.remove({dockerServerId:dockerServerSettings.dockerServerId})
+    # DockerServerContainers.remove({dockerServerId:dockerServerSettings.dockerServerId})
+
 
     for containerData in containers
-      containerData.dockerServerId = dockerServerSettings.dockerServerId
-      containerData.dockerServerName = dockerServerSettings.dockerServerName
-      DockerServerContainers.insert containerData
+      console.log "containerData = "
+      console.log containerData
+      console.log "dockerServerSettings = "
+      console.log dockerServerSettings
+      queryData =
+        Id:containerData.Id
+        Image:containerData.Image
+        serverId: dockerServerSettings.dockerServerId
+        serverName: dockerServerSettings.dockerServerName
+
+      setData = 
+        lastUpdateAt:lastUpdateAt
+        serverId: dockerServerSettings.dockerServerId
+        serverName: dockerServerSettings.dockerServerName
+
+      setData = _.extend setData, containerData
+      
+      DockerServerContainers.upsert queryData, {$set:setData}
 
     # syncDockerServerFuture = new Future
     # syncDockerServer()
@@ -145,5 +156,5 @@ syncDockerServerPort = ->
 
 Meteor.setInterval syncDockerServerInfo, 5000
 Meteor.setInterval syncDockerServerImages, 5000
-# Meteor.setInterval syncDockerServerContainer, 5000
+Meteor.setInterval syncDockerServerContainer, 5000
 # Meteor.setInterval syncDockerServerPort, 5000

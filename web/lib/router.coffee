@@ -37,7 +37,7 @@ Meteor.startup ->
         if not user
           Router.go "pleaseLogin"
         Meteor.subscribe "userEnvUserConfigs"
-
+        Meteor.subscribe "userDockerServerContainers"
 
     @route "course",
       path: "course/:courseId"
@@ -153,12 +153,12 @@ Meteor.startup ->
           Router.go "index"          
 
         Meteor.subscribe "allPublicEnvConfigTypes"
-        Meteor.subscribe "userDockerInstances"
         Meteor.subscribe "userEnvUserConfigs"
+        Meteor.subscribe "userDockerInstances"
         Meteor.subscribe "classroom", @params.classroomId
         Meteor.subscribe "classroomCourse", @params.classroomId
         Meteor.subscribe "classroomDockerImages", @params.classroomId
-        
+        # Meteor.subscribe "userDockerInstances", @params.classroomId
 
         Meteor.call "getClassroomDocker", @params.classroomId, (err, data)->
           if not err

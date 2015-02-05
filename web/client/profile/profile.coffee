@@ -29,3 +29,12 @@ Template.profilePageEnvUserConfigsTable.helpers
       showNavigation:'never'
       fields:["configTypeId",ConfigDataField]
 
+
+Template.profilePageDockerServerContainersTable.helpers
+  settings: ->
+    res=
+      collection:DockerServerContainers
+      rowsPerPage:5
+      showFilter: false
+      showNavigation:'never'
+      fields:["serverName","Image","lastUpdateAt", "Status"]

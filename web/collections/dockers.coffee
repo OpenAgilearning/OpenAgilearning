@@ -95,7 +95,10 @@ getFreePort = ->
 
 getFreePorts = (n) ->
   ports = [basePort..topPort].map String
-  filterPorts = DockerInstances.find().fetch().map (x)-> x.servicePort
+  filterPorts = []
+  DockerInstances.find().fetch().map (x)-> 
+    x.portDataArray.map (xx) ->
+      filterPorts.push xx.hostPort
   filteredPorts = ports.filter (x) -> x not in filterPorts
   if filteredPorts.length >= n
     filteredPorts.slice(0,n)
@@ -117,8 +120,8 @@ getDockerServerConnectionSettings = (dockerServerName) ->
   dockerServerSettings
 
 
-getFreeDockerServerName = (imageTag) -> "d3-agilearning"  
-
+# getFreeDockerServerName = (imageTag) -> "d3-agilearning"  
+getFreeDockerServerName = (imageTag) -> "localhost"  
 
 getDockerFreePort = (dockerServerId)->
   ports = [basePort..topPort]
@@ -217,17 +220,11 @@ Meteor.methods
 
       if courseData
         imageId = courseData.dockerImage
-        # console.log "imageId = "
-        # console.log imageId
-        # console.log DockerImages.findOne({_id:imageId})
-
-        imageType = DockerImages.findOne({_id:imageId}).type
-        # console.log "imageType = "
-        # console.log imageType
-
-        if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
-          #FIXME: write a checking function for env vars
-          throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
+        
+        # imageType = DockerImages.findOne({_id:imageId}).type
+        # if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
+        #   #FIXME: write a checking function for env vars
+        #   throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
 
         Meteor.call "runDocker", imageId
 
@@ -301,6 +298,8 @@ Meteor.methods
     else
       fullImageTag = imageTag
 
+    console.log "fullImageTag = "
+    console.log fullImageTag
 
     #[TODOLIST: checking before running]    
     #TODO: assert user logged in
@@ -367,6 +366,9 @@ Meteor.methods
     #TODO: write status and logging data to dbs
 
     if DockerInstances.find({userId:user._id,imageTag:fullImageTag}).count() is 0
+
+      console.log "fullImageTag = "
+      console.log fullImageTag
 
       Future = Npm.require 'fibers/future'
       createFuture = new Future

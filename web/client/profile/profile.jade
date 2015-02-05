@@ -10,7 +10,8 @@ template(name="profile")
         //- +dockers  
         h2 EnvUserConfigs:
         +profilePageEnvUserConfigsTable
-
+        h2 Servers' Containers:
+        +profilePageDockerServerContainersTable
     
 template(name="profilePageEnvUserConfigsTable")
   +reactiveTable settings=settings
@@ -19,6 +20,9 @@ template(name="profilePageEnvUserConfigsTableConfigDataField")
   ul
     each configData
       li {{key}}={{value}}
+
+template(name="profilePageDockerServerContainersTable")
+  +reactiveTable settings=settings
 
 
 
