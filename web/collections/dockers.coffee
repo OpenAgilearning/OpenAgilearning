@@ -93,12 +93,19 @@ getFreePort = ->
   filteredPorts = ports.filter (x) -> x not in filterPorts
   filteredPorts[0]
 
-getFreePorts = (n) ->
+getFreePorts = (n, serverName) ->
+  if not serverName
+    serverName = "localhost"
   ports = [basePort..topPort].map String
   filterPorts = []
-  DockerInstances.find().fetch().map (x)-> 
+  DockerInstances.find({serverName:serverName}).fetch().map (x)-> 
     x.portDataArray.map (xx) ->
       filterPorts.push xx.hostPort
+
+  DockerServerContainers.find({serverName:serverName}).fetch().map (x)-> 
+    x.Ports.map (xx) ->
+      filterPorts.push String xx.PublicPort
+
   filteredPorts = ports.filter (x) -> x not in filterPorts
   if filteredPorts.length >= n
     filteredPorts.slice(0,n)
@@ -120,8 +127,8 @@ getDockerServerConnectionSettings = (dockerServerName) ->
   dockerServerSettings
 
 
-# getFreeDockerServerName = (imageTag) -> "d3-agilearning"  
-getFreeDockerServerName = (imageTag) -> "localhost"  
+getFreeDockerServerName = (imageTag) -> "d3-agilearning"  
+# getFreeDockerServerName = (imageTag) -> "localhost"  
 
 getDockerFreePort = (dockerServerId)->
   ports = [basePort..topPort]
@@ -343,7 +350,7 @@ Meteor.methods
     #TODO: (if has server) get free ports in that server (include multiports)
       
       servicePorts = EnvConfigTypes.findOne({_id:configTypeId}).configs.servicePorts
-      fports = getFreePorts(servicePorts.length)
+      fports = getFreePorts servicePorts.length, freeDockerServerName
 
       portDataArray = [0..fports.length-1].map (i)-> 
         portData = 
@@ -403,6 +410,7 @@ Meteor.methods
         portDataArray:portDataArray
         configTypeId:configTypeId
         ip:serverIP
+        serverName: freeDockerServerName
         createAt: new Date
 
       DockerInstances.insert dockerData
