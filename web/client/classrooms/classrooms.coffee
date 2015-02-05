@@ -38,19 +38,20 @@ Template.setEnvConfigsForm.helpers
     envConfigsData = EnvConfigTypes.findOne _id:configTypeId
     schemaSettings = {}
 
-    envConfigsData.configs.envs.map (env)->
-      schemaSettings[env.name] = {type: String}
-        
-      if not env.mustHave
-        schemaSettings[env.name].optional = true
+    if envConfigsData?.configs?.envs
+      envConfigsData.configs.envs.map (env)->
+        schemaSettings[env.name] = {type: String}
+          
+        if not env.mustHave
+          schemaSettings[env.name].optional = true
 
-      if env.limitValues
-        schemaSettings[env.name].allowedValues = env.limitValues
+        if env.limitValues
+          schemaSettings[env.name].allowedValues = env.limitValues
 
-    schemaSettings.classroomId = 
-      type: String
-      defaultValue: @classroomId
-      autoform:
-        type: "hidden"
+      schemaSettings.classroomId = 
+        type: String
+        defaultValue: @classroomId
+        autoform:
+          type: "hidden"
 
-    new SimpleSchema schemaSettings
+      new SimpleSchema schemaSettings

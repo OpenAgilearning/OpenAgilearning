@@ -167,7 +167,7 @@ Meteor.startup ->
           else
             console.log "err = "
             console.log err
-            Router.go "dockers"
+            # Router.go "dockers"
 
         # Meteor.subscribe "Chat", @params.cid
 
