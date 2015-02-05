@@ -542,6 +542,11 @@ Meteor.startup ->
           userId = Meteor.userId()
           Roles.userIsInRole(userId, "admin", "system") or Roles.userIsInRole(userId, "admin", "dockers")
 
+      waitOn: ->
+        userId = Meteor.userId()
+        if not userId
+          Router.go "pleaseLogin"
+
 
     @route "pleaseLogin",
       path: "pleaseLogin/"

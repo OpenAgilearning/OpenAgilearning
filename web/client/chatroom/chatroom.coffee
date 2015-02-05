@@ -13,6 +13,7 @@ Template.chatroom.events
     event.preventDefault()
     Meteor.call(
       "sendMessage", 
+      null, 
       template.data.classroomId, 
       template.$("#new-message-text").val(), 
       "M")

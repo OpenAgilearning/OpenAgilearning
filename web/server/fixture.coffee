@@ -191,3 +191,11 @@ if Meteor.users.find().count() < 25
   nobodies = generateUsers [], 50
   nobodies.forEach (user)->
     Meteor.users.insert user
+
+Classrooms.find().forEach (classroom) ->
+  console.log classroom
+  if not Chatrooms.findOne( classroomId: classroom._id )
+    Chatrooms.insert
+      classroomId: classroom._id
+      name: Courses.findOne( _id: classroom.courseId ).courseName + "(#{classroom._id})"
+      creatorId: classroom.creatorId
