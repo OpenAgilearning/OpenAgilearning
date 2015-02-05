@@ -58,7 +58,21 @@ Template.setEnvConfigsForm.helpers
 
 Template.studentListTable.helpers
   settings: ->
-    roles =
+    idField =
+      key: "_id"
+      label: "id"
+      hidden: true
+    
+    picField =
+      key: "profile.photo.thumb_link"
+      label: "Pic"
+      tmpl: Template.studentPhoto
+    
+    nameField =
+      key: "profile.name"
+      label: "Name"
+    
+    rolesField =
       key: "roles." + @classroomAndId()
       label:"Roles"
       fn: (value) ->value.join "/"
@@ -78,13 +92,14 @@ Template.studentListTable.helpers
       rowsPerPage: 30
       showFilter: true
       fields:[
-        {key: "_id", label: "id", hidden: true},
-        {key: "profile.photo.thumb_link", label: "Pic", tmpl: Template.studentPhoto},
-        {key: "profile.name", label: "Name"},
-        roles,
-        setTeacherBtnField,
+        idField
+        picField
+        nameField
+        rolesField
+        setTeacherBtnField
         setAdminBtnField
       ]
+
 
 Template.studentListTable.events
   "click .setRole": (e, t)->
