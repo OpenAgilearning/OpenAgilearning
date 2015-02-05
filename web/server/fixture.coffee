@@ -187,3 +187,7 @@ if Meteor.users.find().count() < 25
   students = generateUsers ['student'], 23
   students.forEach (user)->
     Meteor.users.insert user
+
+  nobodies = generateUsers [], 50
+  nobodies.forEach (user)->
+    Meteor.users.insert user

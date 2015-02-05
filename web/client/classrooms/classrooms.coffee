@@ -88,7 +88,7 @@ Template.studentListTable.helpers
       tmpl: Template.setClassroomAdmin
       
     res =
-      collection: Meteor.users
+      collection: Roles.getUsersInRole( ["student","teacher","admin"],@classroomAndId())
       rowsPerPage: 30
       showFilter: true
       fields:[
