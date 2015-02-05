@@ -1,17 +1,30 @@
+
+template(name="envsTableAdminPage")
+  +reactiveTable settings=settings
+
+
 template(name="envTypesTable")
-  .col-md-6.column
-    +reactiveTable settings=settings
-    hr     
-    br
+  +reactiveTable settings=settings
     
-    +quickForm id="envTypeCreator" schema="EnvTypesSchema" type="method" meteormethod="createEnvType" 
-    //- +autoForm id="envTypeCreator" doc=testEnvTypeData schema="EnvTypesInsertSchema" type="method" meteormethod="createEnvType" 
-    //-   +afQuickField name="publicStatus"
+    //- +quickForm id="envTypeCreator" schema="EnvTypesSchema" type="method" meteormethod="createEnvType" 
+    //- +testAutoForm data=testEnvTypeData autosave=true
 
 template(name="envTypePortsField")
   ul
     each configs.servicePorts
       li {{port}} ({{type}})
+
+template(name="testAutoForm")
+  hr
+  +autoForm id=formId doc=data schema="EnvTypesSchema" type="method" meteormethod="createEnvType" 
+    +afQuickField name="configs.servicePorts"
+  
+  hr
+  +autoForm id=formId doc=data schema="EnvTypesSchema" type="method" meteormethod="createEnvType"  
+    +afQuickField name="configs.envs.$"
+
+
+
 
 template(name="envTypeEnvsField")
   ul

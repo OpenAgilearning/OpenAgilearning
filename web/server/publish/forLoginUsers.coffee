@@ -1,3 +1,19 @@
+Meteor.publish "userDockerServerContainers", ->
+  userId = @userId
+
+  if userId
+    dockerInstances = DockerInstances.find({userId:userId}).fetch()
+    containerIds = dockerInstances.map (xx)-> xx.containerId
+    DockerServerContainers.find Id:{"$in":containerIds}
+
+
+Meteor.publish "userEnvUserConfigs", ->
+  userId = @userId
+
+  if userId
+    EnvUserConfigs.find {userId:userId}
+
+
 Meteor.publish "userDockerInstances", ->
   userId = @userId
 

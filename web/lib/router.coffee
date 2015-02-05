@@ -21,6 +21,24 @@ Meteor.startup ->
           Meteor.subscribe "allPublicCourses"
           Meteor.subscribe "allPublicCoursesDockerImages"
 
+    @route "profile",
+      path: "profile/"
+      template: "profile"
+      data:
+        rootURL:rootURL
+        user: ->
+          Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
+      waitOn: ->
+        user = Meteor.user()
+        if not user
+          Router.go "pleaseLogin"
+        Meteor.subscribe "userEnvUserConfigs"
+        Meteor.subscribe "userDockerServerContainers"
+
     @route "course",
       path: "course/:courseId"
       template: "course"
@@ -70,9 +88,50 @@ Meteor.startup ->
           docker: =>
             classroomDoc = Classrooms.findOne _id:@params.classroomId
             courseData = Courses.findOne _id:classroomDoc.courseId
-            DockerInstances.findOne({imageId:courseData.dockerImage})
+            imageTag = courseData.dockerImage
+            if imageTag.split(":").length is 1
+              fullImageTag = imageTag + ":latest"
+            else
+              fullImageTag = imageTag
+
+            DockerInstances.findOne({imageTag:fullImageTag})
 
           classroomId: @params.classroomId
+
+          needToSetEnvConfigs: =>
+            userId = Meteor.userId()
+            # classroomDoc = Classrooms.findOne _id:@params.classroomId
+            # courseData = Courses.findOne _id:classroomDoc.courseId
+            # imageTag = courseData.dockerImage
+            
+            # configTypeId = DockerImages.findOne({_id:imageTag}).type
+            
+            configTypeId = getEnvConfigTypeIdFromClassroomId(@params.classroomId)
+            EnvUserConfigs.find({userId:userId, configTypeId:configTypeId}).count() is 0            
+
+          envConfigsSchema: =>
+            userId = Meteor.userId()
+            # classroomDoc = Classrooms.findOne _id:@params.classroomId
+            # courseData = Courses.findOne _id:classroomDoc.courseId
+            # imageTag = courseData.dockerImage
+            
+            # configTypeId = DockerImages.findOne({_id:imageTag}).type
+            
+            configTypeId = getEnvConfigTypeIdFromClassroomId(@params.classroomId)
+            
+            envConfigsData = EnvConfigTypes.findOne _id:configTypeId
+            schemaSettings = {}
+
+            envConfigsData.configs.envs.map (env)->
+              schemaSettings[env.name] = {type: String}
+                
+              if not env.mustHave
+                schemaSettings[env.name].optional = true
+
+              if env.limitValues
+                schemaSettings[env.name].allowedValues = env.limitValues
+
+            new SimpleSchema schemaSettings
 
           # chats: ->
           #   Chat.find {}, {sort: {createAt:-1}}
@@ -93,10 +152,13 @@ Meteor.startup ->
         if redirectToIndex
           Router.go "index"          
 
+        Meteor.subscribe "allPublicEnvConfigTypes"
+        Meteor.subscribe "userEnvUserConfigs"
         Meteor.subscribe "userDockerInstances"
         Meteor.subscribe "classroom", @params.classroomId
         Meteor.subscribe "classroomCourse", @params.classroomId
         Meteor.subscribe "classroomDockerImages", @params.classroomId
+        # Meteor.subscribe "userDockerInstances", @params.classroomId
 
         Meteor.call "getClassroomDocker", @params.classroomId, (err, data)->
           if not err
@@ -105,7 +167,7 @@ Meteor.startup ->
           else
             console.log "err = "
             console.log err
-            Router.go "dockers"
+            # Router.go "dockers"
 
         Meteor.subscribe "classChatroom", @params.classroomId
 
@@ -169,6 +231,16 @@ Meteor.startup ->
         testEnvTypeData: ->
           EnvTypes.findOne()
 
+        uniqueDockerImageTagsForAutoForm: ->
+          values = _.uniq(DockerServerImages.find().fetch().map((xx) -> xx["tag"]))
+          res = {}
+          values.map (xx) ->
+            res[xx] = xx
+          res
+
+        uniqueDockerImageTags: ->
+          _.uniq(DockerServerImages.find().fetch().map((xx) -> xx["tag"]))
+          
       waitOn: ->
         userId = Meteor.userId()
         if not userId
@@ -185,6 +257,7 @@ Meteor.startup ->
             Meteor.subscribe "allDockerServers"
             Meteor.subscribe "allDockerServerContainers"
             Meteor.subscribe "allEnvTypes"
+            Meteor.subscribe "allEnvs"
           else
             if Roles.userIsInRole(userId,"admin","dockers")
               Meteor.subscribe "allDockerInstances"
@@ -192,6 +265,7 @@ Meteor.startup ->
               Meteor.subscribe "allDockerServerImages"
               Meteor.subscribe "allDockerServers"
               Meteor.subscribe "allEnvTypes"
+              Meteor.subscribe "allEnvs"
             else
               Router.go "index"
 
@@ -467,53 +541,4 @@ Meteor.startup ->
         if userId
           Router.go "index"
 
-    @route "settings",
-      path: "settings/profile"
-      template: "settings"
-      data:
-        alertMessage: ->
-          user = Meteor.user()
-          if DockerTypes.find().count() > DockerTypeConfig.find({userId:user._id}).count()
-            "please setting Docker Running Configures"
-          else
-            false
-
-        rootURL:rootURL
-        user: ->
-          Meteor.user()
-        showAdminPage: ->
-          userId = Meteor.userId()
-          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
-
-
-        dockerImages: ->
-          runningImages = DockerInstances.find().fetch().map (x)-> x.imageId
-          DockerImages.find({_id:{$nin:runningImages}})
-
-        dockerInstances: ->
-          DockerInstances.find()
-
-
-        dockerTypes: ->
-          user = Meteor.user()
-          if Meteor.user() and DockerTypeConfig.find({userId:user._id}).count() > 0
-
-            res = []
-            for t in DockerTypes.find().fetch()
-              if DockerTypeConfig.find({userId:user._id,typeId:t._id}).count() > 0
-                t.currentSettings = DockerTypeConfig.findOne({userId:user._id,typeId:t._id}).env
-              res.push t
-
-            res
-
-          else
-            DockerTypes.find()
-
-      waitOn: ->
-        user = Meteor.user()
-        if not user
-          Router.go "pleaseLogin"
-        Meteor.subscribe "allDockerImagesOld"
-        Meteor.subscribe "allDockerTypes"
-        Meteor.subscribe "userDockerInstances"
-        Meteor.subscribe "userDockerTypeConfig"
+    

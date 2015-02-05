@@ -6,6 +6,7 @@
     "dockerodeConfig": {
       "socketPath": "/var/run/docker.sock"
     },
-    "environment": "development"
+    "environment": "development",
+    "adminMeetupIds":[59393362, 173080282, 129433302,114542292]
   }
 }
