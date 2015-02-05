@@ -533,6 +533,15 @@ Meteor.startup ->
     #     Meteor.subscribe "Chat", "rstudioBasic"
     #     Meteor.subscribe "userDockerInstances"
 
+    @route "discussions", 
+      path: "discuss/"
+      template: "discussions"
+      data:
+        user: -> Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId, "admin", "system") or Roles.userIsInRole(userId, "admin", "dockers")
+
 
     @route "pleaseLogin",
       path: "pleaseLogin/"
