@@ -158,6 +158,8 @@ Meteor.startup ->
         Meteor.subscribe "classroom", @params.classroomId
         Meteor.subscribe "classroomCourse", @params.classroomId
         Meteor.subscribe "classroomDockerImages", @params.classroomId
+        Meteor.subscribe "classChatroom", @params.classroomId
+        Meteor.subscribe "classChatroomMessages", @params.classroomId
         # Meteor.subscribe "userDockerInstances", @params.classroomId
 
         Meteor.call "getClassroomDocker", @params.classroomId, (err, data)->
@@ -546,6 +548,9 @@ Meteor.startup ->
         userId = Meteor.userId()
         if not userId
           Router.go "pleaseLogin"
+
+        Meteor.subscribe "chatroomsWithoutClassChatroom"
+        Meteor.subscribe "userJoinsChatroom"
 
 
     @route "pleaseLogin",

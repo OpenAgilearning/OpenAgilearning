@@ -41,6 +41,9 @@ Meteor.publish "classroomDockerImages", (classroomId)->
       DockerImages.find _id:courseData.dockerImage
 
 
-Meteor.publish "classChatroom", (classroomId) ->
-
+Meteor.publish "classChatroomMessages", (classroomId) ->
   ChatMessages.find {classroomId: classroomId}
+
+
+Meteor.publish "classChatroom", (classroomId) ->
+  Chatrooms.find {classroomId: classroomId}

@@ -20,8 +20,8 @@ Template.chatroom.events
     template.$("#new-message-text").val("")
 
   "click .chat-header": (event, template) ->
-    classChatroom = template.$ ".class-chatroom"
-    if Session.get("chatroomIsMinimised") is no
+    classChatroom = template.$ ".chatroom-main"
+    if template.data.type is "classroom"
       classChatroom.hide()
       $(".classroom-body").removeClass("col-md-9").addClass("col-md-12")
       Session.set "chatroomIsMinimised", yes
@@ -39,7 +39,6 @@ Template.minimisedChatroom.helpers
 
 Template.minimisedChatroom.events
   "click .minimised-chatroom": (event, template) ->
-    Session.set "chatroomIsMinimised", not Session.get("chatroomIsMinimised")
-    $(".class-chatroom").show()
-    $(".classroom-body").removeClass("col-md-12").addClass("col-md-9")
     Session.set "chatroomIsMinimised", no
+    $(".chatroom-main").show()
+    $(".classroom-body").removeClass("col-md-12").addClass("col-md-9")

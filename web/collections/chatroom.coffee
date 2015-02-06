@@ -1,5 +1,6 @@
 @Chatrooms = new Mongo.Collection "chatrooms"
 @ChatMessages = new Mongo.Collection "chatMessages"
+@UserJoinsChatroom = new Mongo.Collection "userJoinsChatroom"
 
 
 @MessageSchema = new SimpleSchema
@@ -59,5 +60,43 @@ Meteor.methods
       doc.classroomId = classroomId
 
     ChatMessages.insert doc
+
+
+  createRoom: (name) ->
+
+    user = Meteor.user()
+
+    if not user
+      throw new Meteor.Error 401, "Please Login"
+
+    chatroomId = Chatrooms.insert
+      name: name
+      creatorId: user._id
+
+    UserJoinsChatroom.insert
+      userId: user._id
+      userName: user.profile.name
+      chatroomId: chatroomId
+      chatroomName: name
+
+  joinRoom: (chatroomId) ->
+
+    user = Meteor.user()
+    chatroom = Chatrooms.findOne(_id: chatroomId)
+
+    if not user
+      throw new Meteor.Error 401, "Please Login"
+
+    if not chatroom
+      throw new Meteor.Error 402, "No such chatroom"
+
+    if UserJoinsChatroom.findOne( {userId: user._id, chatroomId: chatroom._id} )
+      throw new Meteor.Error 402, "Already in the chatroom"
+
+    UserJoinsChatroom.insert
+      userId: user._id
+      userName: user.profile.name
+      chatroomId: chatroomId
+      chatroomName: chatroom.name
 
 
