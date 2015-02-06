@@ -38,6 +38,73 @@ getFreeDockerServerName = (imageTag) -> "d3-agilearning"
 # getFreeDockerServerName = (imageTag) -> "localhost"  
 
 Meteor.methods
+  "removeDockerInstance": (instanceId)->
+    #[TODOLIST: checking before running]    
+    #TODO: assert user logged in
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    #TODO: assert container exists
+    instanceDoc = DockerInstances.findOne _id: instanceId
+
+    if not instanceDoc
+      throw new Meteor.Error(1001, "Docker Server Container ID Error!")
+
+    hasRemovePermission = instanceDoc.userId is user._id
+    hasRemovePermission = hasRemovePermission or Roles.userIsInRole(user._id, "admin", "dockers")
+
+    if hasRemovePermission
+      dockerServerContainerId = instanceDoc.containerId
+      containerDoc = DockerServerContainers.findOne Id: dockerServerContainerId
+
+      containerId = containerDoc.Id
+
+      Docker = Meteor.npmRequire "dockerode"
+      dockerServerSettings = getDockerServerConnectionSettings(containerDoc.serverName)
+      docker = new Docker dockerServerSettings
+
+      Future = Meteor.npmRequire 'fibers/future'
+      stopFuture = new Future
+      container = docker.getContainer containerId
+
+      container.stop {}, (err,data)->
+        stopFuture.return data
+
+      data = stopFuture.wait()
+
+      removeFuture = new Future
+      container = docker.getContainer containerId
+
+      container.remove {}, (err,data)->
+        removeFuture.return data
+
+      data = removeFuture.wait()
+
+      DockerServerContainers.remove _id: dockerServerContainerId
+
+      containerDoc.removeAt = new Date
+      containerDoc.removeBy = "user"
+      containerDoc.removeByUid = user._id 
+
+      DockerServerContainersLog.insert containerDoc
+
+      #TODO: modift DockerInstances data
+      instanceQuery = 
+        serverName: containerDoc.serverName
+        containerId: containerId
+
+      dockerInstanceDoc = DockerInstances.findOne instanceQuery
+      if dockerInstanceDoc
+        DockerInstances.remove _id: dockerInstanceDoc._id
+
+        dockerInstanceDoc.removeAt = new Date
+        dockerInstanceDoc.removeBy = "user"
+        dockerInstanceDoc.removeByUid = user._id 
+        DockerInstancesLog.insert dockerInstanceDoc
+
+
+    
   "removeDockerServerContainer": (dockerServerContainerId)->
     #[TODOLIST: checking before running]    
     #TODO: assert user logged in
@@ -47,7 +114,6 @@ Meteor.methods
 
     #TODO: assert container exists
     containerDoc = DockerServerContainers.findOne _id: dockerServerContainerId
-
 
     if not containerDoc
       throw new Meteor.Error(1001, "Docker Server Container ID Error!")
@@ -80,7 +146,8 @@ Meteor.methods
       DockerServerContainers.remove _id: dockerServerContainerId
 
       containerDoc.removeAt = new Date
-      containerDoc.removeBy = user._id 
+      containerDoc.removeBy = "dockerAdmin"
+      containerDoc.removeByUid = user._id 
 
       DockerServerContainersLog.insert containerDoc
 
@@ -94,7 +161,8 @@ Meteor.methods
         DockerInstances.remove _id: dockerInstanceDoc._id
 
         dockerInstanceDoc.removeAt = new Date
-        dockerInstanceDoc.removeBy = user._id 
+        dockerInstanceDoc.removeBy = "dockerAdmin"
+        dockerInstanceDoc.removeByUid = user._id 
         DockerInstancesLog.insert dockerInstanceDoc
 
     

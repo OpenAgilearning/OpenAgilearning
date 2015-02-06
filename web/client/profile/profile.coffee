@@ -38,3 +38,31 @@ Template.profilePageDockerServerContainersTable.helpers
       showFilter: false
       showNavigation:'never'
       fields:["serverName","Image","lastUpdateAt", "Status"]
+
+
+Template.profilePageDockerInstancesTable.helpers
+  settings: ->
+    envField = 
+      key: "containerConfig.Env"
+      label: "ENVs"
+      tmpl: Template.profilePageDockerInstancesTableEnvField
+
+    removeBtnField = 
+      key: "_id"
+      label: "Remove"
+      tmpl: Template.profilePageDockerInstancesTableRemoveBtnField
+
+
+    res=
+      collection:DockerInstances
+      rowsPerPage:5
+      showFilter: false
+      showNavigation:'never'
+      fields:["serverName", "configTypeId", "imageTag", envField, "status", removeBtnField]
+
+
+Template.profilePageDockerInstancesTableRemoveBtnField.events
+  "click .removeInstanceBtn": (e,t)-> 
+    instanceId = $(e.target).attr "instanceId"
+    $(e.target).html "Stopping"
+    Meteor.call "removeDockerInstance", instanceId

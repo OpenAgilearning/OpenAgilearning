@@ -47,6 +47,7 @@ Template.adminPageDockerServerContainersTable.helpers
 Template.adminPageDockerServerContainersTableRemoveContainerBtnField.events
   "click .removeContainerBtn": (e, t)->
     containerId = $(e.target).attr "containerId"
+    $(e.target).html "Stopping"
     Meteor.call "removeDockerServerContainer", containerId
 
 

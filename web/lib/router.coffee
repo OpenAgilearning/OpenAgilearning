@@ -37,6 +37,8 @@ Meteor.startup ->
         if not user
           Router.go "pleaseLogin"
         Meteor.subscribe "userEnvUserConfigs"
+        Meteor.subscribe "userDockerInstances"
+        
         Meteor.subscribe "userDockerServerContainers"
 
     @route "course",

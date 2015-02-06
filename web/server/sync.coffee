@@ -151,7 +151,19 @@ syncDockerServerContainer = ->
         else
           setData.firstMonitorAt = new Date
           DockerServerContainers.upsert queryData, {$set:setData}
-      
+        
+        instanceQuery = 
+          serverName: dockerServerSettings.dockerServerName
+          containerId: containerData.Id
+
+        setInstanceData = 
+          "$set":
+            status: setData.Status
+            lastUpdateAt: lastUpdateAt
+
+        DockerInstances.update instanceQuery, setInstanceData
+
+
     else
       console.log "serverName = "
       console.log dockerServerSettings.dockerServerName
