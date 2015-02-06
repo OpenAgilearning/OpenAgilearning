@@ -31,14 +31,22 @@ Template.adminPageDockerServerContainersTable.helpers
       label: "Ports"
       tmpl: Template.adminPageDockerServerContainersTablePortsField
 
+    removeContainerBtnField = 
+      key: "_id"
+      label: "Remove Container"
+      tmpl: Template.adminPageDockerServerContainersTableRemoveContainerBtnField
+
+
     res =
       collection: DockerServerContainers
       rowsPerPage: 10
       showFilter: true
-      fields: ["serverName","Image",portsField,"Status","lastUpdateAt"]
+      fields: ["serverName","Image",portsField,"Status","lastUpdateAt", removeContainerBtnField]
 
 
-
-
+Template.adminPageDockerServerContainersTableRemoveContainerBtnField.events
+  "click .removeContainerBtn": (e, t)->
+    containerId = $(e.target).attr "containerId"
+    Meteor.call "removeDockerServerContainer", containerId
 
 

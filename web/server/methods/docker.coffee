@@ -38,6 +38,68 @@ getFreeDockerServerName = (imageTag) -> "d3-agilearning"
 # getFreeDockerServerName = (imageTag) -> "localhost"  
 
 Meteor.methods
+  "removeDockerServerContainer": (dockerServerContainerId)->
+    #[TODOLIST: checking before running]    
+    #TODO: assert user logged in
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    #TODO: assert container exists
+    containerDoc = DockerServerContainers.findOne _id: dockerServerContainerId
+
+
+    if not containerDoc
+      throw new Meteor.Error(1001, "Docker Server Container ID Error!")
+
+
+    if Roles.userIsInRole user._id, "admin", "dockers"
+      containerId = containerDoc.Id
+
+      Docker = Meteor.npmRequire "dockerode"
+      dockerServerSettings = getDockerServerConnectionSettings(containerDoc.serverName)
+      docker = new Docker dockerServerSettings
+
+      Future = Meteor.npmRequire 'fibers/future'
+      stopFuture = new Future
+      container = docker.getContainer containerId
+
+      container.stop {}, (err,data)->
+        stopFuture.return data
+
+      data = stopFuture.wait()
+
+      removeFuture = new Future
+      container = docker.getContainer containerId
+
+      container.remove {}, (err,data)->
+        removeFuture.return data
+
+      data = removeFuture.wait()
+
+      DockerServerContainers.remove _id: dockerServerContainerId
+
+      containerDoc.removeAt = new Date
+      containerDoc.removeBy = user._id 
+
+      DockerServerContainersLog.insert containerDoc
+
+      #TODO: modift DockerInstances data
+      instanceQuery = 
+        serverName: containerDoc.serverName
+        containerId: containerId
+
+      dockerInstanceDoc = DockerInstances.findOne instanceQuery
+      if dockerInstanceDoc
+        DockerInstances.remove _id: dockerInstanceDoc._id
+
+        dockerInstanceDoc.removeAt = new Date
+        dockerInstanceDoc.removeBy = user._id 
+        DockerInstancesLog.insert dockerInstanceDoc
+
+    
+    
+
   "getClassroomDocker": (classroomId) ->
     user = Meteor.user()
     if not user
@@ -133,8 +195,8 @@ Meteor.methods
 
     if DockerInstances.find({userId:user._id,imageTag:fullImageTag}).count() is 0
 
-      console.log "fullImageTag = "
-      console.log fullImageTag
+      # console.log "fullImageTag = "
+      # console.log fullImageTag
 
       Future = Npm.require 'fibers/future'
       createFuture = new Future

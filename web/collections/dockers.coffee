@@ -1,6 +1,9 @@
 @DockerServers = new Meteor.Collection "dockerServers"
 @DockerServerImages = new Meteor.Collection "dockerServerImages"
 @DockerServerContainers = new Meteor.Collection "dockerServerContainers"
+@DockerServerContainersLog = new Meteor.Collection "dockerServerContainersLog"
+
+
 @DockerServerPullImageLog = new Meteor.Collection "dockerServerPullImageLog"
 
 @DockerConfigTypes = new Meteor.Collection "dockerConfigTypes"

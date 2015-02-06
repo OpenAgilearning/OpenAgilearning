@@ -15,7 +15,7 @@ Template.envIframe.events
 
 Template.classroomEnvIframe.helpers
   iframeIp: ->
-    console.log @
+    # console.log @
     @docker.ip
 
   iframePort: ->

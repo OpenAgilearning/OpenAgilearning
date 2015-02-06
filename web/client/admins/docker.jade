@@ -10,8 +10,12 @@ template(name="adminPageDockerServerImagesTable")
 template(name="adminPageDockerServerContainersTable")
   +reactiveTable settings=settings
 
+
 template(name="adminPageDockerServerContainersTablePortsField")
   ul
     each Ports
       li {{IP}}:{{PublicPort}} ->  {{PrivatePort}}/{{Type}}
 
+
+template(name="adminPageDockerServerContainersTableRemoveContainerBtnField")
+  botton.removeContainerBtn.btn.btn-warning(containerId="{{_id}}") Remove
