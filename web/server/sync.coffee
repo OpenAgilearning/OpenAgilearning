@@ -120,22 +120,33 @@ syncDockerServerContainer = ->
     containers = containersFuture.wait()
     # DockerServerContainers.remove({dockerServerId:dockerServerSettings.dockerServerId})
 
+    if containers.length > 0
+      for containerData in containers
+        queryData =
+          Id:containerData.Id
+          Image:containerData.Image
+          serverId: dockerServerSettings.dockerServerId
+          serverName: dockerServerSettings.dockerServerName
 
-    for containerData in containers
-      queryData =
-        Id:containerData.Id
-        Image:containerData.Image
-        serverId: dockerServerSettings.dockerServerId
-        serverName: dockerServerSettings.dockerServerName
+        setData = 
+          lastUpdateAt:lastUpdateAt
+          serverId: dockerServerSettings.dockerServerId
+          serverName: dockerServerSettings.dockerServerName
 
-      setData = 
-        lastUpdateAt:lastUpdateAt
-        serverId: dockerServerSettings.dockerServerId
-        serverName: dockerServerSettings.dockerServerName
-
-      setData = _.extend setData, containerData
+        setData = _.extend setData, containerData
+        
+        DockerServerContainers.upsert queryData, {$set:setData}
       
-      DockerServerContainers.upsert queryData, {$set:setData}
+    else
+      console.log "serverName = "
+      console.log dockerServerSettings.dockerServerName
+
+      console.log "containers.length = "
+      console.log containers.length
+
+      console.log "containers = "
+      console.log containers
+
 
     # syncDockerServerFuture = new Future
     # syncDockerServer()
