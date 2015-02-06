@@ -67,6 +67,7 @@ Template.studentListTable.helpers
       key: "profile.photo.thumb_link"
       label: "Pic"
       tmpl: Template.studentPhoto
+      sortable: false
     
     nameField =
       key: "profile.name"
@@ -75,17 +76,20 @@ Template.studentListTable.helpers
     rolesField =
       key: "roles." + @classroomAndId()
       label:"Roles"
-      fn: (value) ->value.join "/"
+      fn: (value) -> value.sort().join "/"
+      sortByValue:true
 
     setTeacherBtnField =
       key: "_id"
       label: "Set Teacher"
       tmpl: Template.setClassroomTeacher
+      sortable: false
       
     setAdminBtnField =
       key: "_id"
       label: "Set Administrator"
       tmpl: Template.setClassroomAdmin
+      sortable: false
       
     res =
       collection: Roles.getUsersInRole( ["student","teacher","admin"],@classroomAndId())
