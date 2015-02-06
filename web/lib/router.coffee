@@ -162,14 +162,7 @@ Meteor.startup ->
         Meteor.subscribe "classChatroomMessages", @params.classroomId
         # Meteor.subscribe "userDockerInstances", @params.classroomId
 
-        Meteor.call "getClassroomDocker", @params.classroomId, (err, data)->
-          if not err
-            console.log "data = "
-            console.log data
-          else
-            console.log "err = "
-            console.log err
-            # Router.go "dockers"
+        Meteor.call "getClassroomDocker", @params.classroomId
 
         Meteor.subscribe "classChatroom", @params.classroomId
         Meteor.subscribe "usersOfClassroom", @params.classroomId
