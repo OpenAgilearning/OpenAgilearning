@@ -67,9 +67,6 @@ Meteor.methods
     else
       fullImageTag = imageTag
 
-    console.log "fullImageTag = "
-    console.log fullImageTag
-
     #[TODOLIST: checking before running]    
     #TODO: assert user logged in
     user = Meteor.user()
