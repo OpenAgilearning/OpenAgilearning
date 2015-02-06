@@ -1,0 +1,17 @@
+template(name="studentListTableAdmin")
+  +reactiveTable settings=settings classroomAndId=classroomAndId classroomId=classroomId
+  
+template(name="studentPhoto")
+  img(src="{{profile.photo.thumb_link}}").img-rounded.thumb
+  
+template(name="setClassroomTeacher")
+  +setRoleButton(role="teacher" roleUI="Teacher" _id=_id)
+  
+template(name="setClassroomAdmin")
+  +setRoleButton(role="admin" roleUI="Administrator" _id=_id) 
+
+
+template(name="setRoleButton")
+  button(user_id="{{_id}}" role="{{role}}" action="add").btn.btn-default.btn-xs.setRole Add as {{roleUI}}
+  br
+  button(user_id="{{_id}}" role="{{role}}" action="remove").btn.btn-default.btn-xs.setRole Remove {{roleUI}}
