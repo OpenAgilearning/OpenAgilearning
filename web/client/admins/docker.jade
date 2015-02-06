@@ -1,0 +1,17 @@
+
+template(name="adminPageDockerServersTable")
+  +reactiveTable settings=settings
+
+
+template(name="adminPageDockerServerImagesTable")
+  +reactiveTable settings=settings
+
+
+template(name="adminPageDockerServerContainersTable")
+  +reactiveTable settings=settings
+
+template(name="adminPageDockerServerContainersTablePortsField")
+  ul
+    each Ports
+      li {{IP}}:{{PublicPort}} ->  {{PrivatePort}}/{{Type}}
+

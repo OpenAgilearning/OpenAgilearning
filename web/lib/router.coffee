@@ -252,22 +252,28 @@ Meteor.startup ->
         else
           if Roles.userIsInRole(userId,"admin","system")
             Meteor.subscribe "allUsers"
-            Meteor.subscribe "allDockerInstances"
-            Meteor.subscribe "allDockerImages"
-            Meteor.subscribe "DevMileStone"
-            Meteor.subscribe "WantedFeature"
-            Meteor.subscribe "allDockerServerImages"
+            # Meteor.subscribe "allDockerInstances"
+            # Meteor.subscribe "allDockerImages"
+            # Meteor.subscribe "DevMileStone"
+            # Meteor.subscribe "WantedFeature"
+            
             Meteor.subscribe "allDockerServers"
+            Meteor.subscribe "allDockerServerImages"
             Meteor.subscribe "allDockerServerContainers"
-            Meteor.subscribe "allEnvTypes"
+
+            # Meteor.subscribe "allEnvTypes"
             Meteor.subscribe "allEnvs"
+
           else
             if Roles.userIsInRole(userId,"admin","dockers")
-              Meteor.subscribe "allDockerInstances"
-              Meteor.subscribe "allDockerImages"
-              Meteor.subscribe "allDockerServerImages"
+              # Meteor.subscribe "allDockerInstances"
+              # Meteor.subscribe "allDockerImages"
+              
               Meteor.subscribe "allDockerServers"
-              Meteor.subscribe "allEnvTypes"
+              Meteor.subscribe "allDockerServerImages"
+              Meteor.subscribe "allDockerServerContainers"
+            
+              # Meteor.subscribe "allEnvTypes"
               Meteor.subscribe "allEnvs"
             else
               Router.go "index"
