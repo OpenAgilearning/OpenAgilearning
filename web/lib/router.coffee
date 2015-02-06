@@ -38,8 +38,6 @@ Meteor.startup ->
           Router.go "pleaseLogin"
         Meteor.subscribe "userEnvUserConfigs"
         Meteor.subscribe "userDockerInstances"
-        
-        Meteor.subscribe "userDockerServerContainers"
 
     @route "course",
       path: "course/:courseId"
