@@ -99,4 +99,40 @@ Meteor.methods
       chatroomId: chatroomId
       chatroomName: chatroom.name
 
+  leaveRoom: (chatroomId) ->
+
+    user = Meteor.user()
+    chatroom = Chatrooms.findOne(_id: chatroomId)
+
+    if not user
+      throw new Meteor.Error 401, "Please Login"
+
+    if not chatroom
+      throw new Meteor.Error 402, "No such chatroom"
+
+    joinInfo = UserJoinsChatroom.findOne( {userId: user._id, chatroomId: chatroom._id} )
+
+    if not joinInfo
+      throw new Meteor.Error 402, "Not in the chatroom"
+
+    UserJoinsChatroom.remove(_id: joinInfo._id)
+
+
+  deleteRoom: (chatroomId) ->
+
+    user = Meteor.user()
+    chatroom = Chatrooms.findOne(_id: chatroomId)
+
+    if not user
+      throw new Meteor.Error 401, "Please Login"
+
+    if not chatroom
+      throw new Meteor.Error 402, "No such chatroom"
+
+    if user._id isnt chatroom.creatorId
+      throw new Meteor.Error 401, "Permission Denied"
+
+    UserJoinsChatroom.remove(chatroomId: chatroomId)
+    Chatrooms.remove(_id: chatroomId)
+
 
