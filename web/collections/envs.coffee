@@ -142,6 +142,31 @@
     
 
 Meteor.methods
+  "setEnvConfigsById": (data) ->
+    loggedInUserId = Meteor.userId()
+
+    if not loggedInUserId
+      throw new Meteor.Error(401, "You need to login")
+    
+    if EnvConfigTypes.find({_id:data.configTypeId}).count() is 0
+      throw new Meteor.Error(1001, "configTypeId Error!")
+
+    configTypeId = data.configTypeId
+
+    delete data.configTypeId
+    configData = 
+      configData: Object.keys(data).map (key) -> {key:key,value:data[key]}
+
+    console.log "configData = "
+    console.log configData
+
+    query = 
+      userId: loggedInUserId
+      configTypeId: configTypeId
+
+    EnvUserConfigs.upsert query, {$set:configData}
+    
+
   "setEnvConfigs": (data) ->
     loggedInUserId = Meteor.userId()
 

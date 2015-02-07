@@ -17,7 +17,7 @@ template(name="profile")
 
 template(name="profilePageEnvConfigsForm")
   if envConfigsSchema
-    +quickForm id="setEnvConfigs" schema=envConfigsSchema type="method" meteormethod="setEnvConfigs" template="bootstrap3-inline" label-class="sr-only" afFieldInput-placeholder="schemaLabel"
+    +quickForm id="setEnvConfigs" schema=envConfigsSchema type="method" meteormethod="setEnvConfigsById" template="bootstrap3-inline" label-class="sr-only" afFieldInput-placeholder="schemaLabel"
 
 
 template(name="profilePageEnvUserConfigsTable")
