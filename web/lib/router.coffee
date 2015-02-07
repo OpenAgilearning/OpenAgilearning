@@ -33,7 +33,8 @@ Meteor.startup ->
           Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
         userConfigId: ->
-          Session.get "userConfigId"
+          if Session.get("userConfigId") isnt ""
+            Session.get "userConfigId"
 
       waitOn: ->
         user = Meteor.user()
@@ -42,7 +43,7 @@ Meteor.startup ->
         Meteor.subscribe "userEnvUserConfigs"
         Meteor.subscribe "userDockerInstances"
         Meteor.subscribe "userEnvUserConfigs"
-        
+
         Meteor.subscribe "allPublicEnvConfigTypes"
 
         

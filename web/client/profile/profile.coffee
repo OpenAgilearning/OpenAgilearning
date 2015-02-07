@@ -14,11 +14,17 @@ AutoForm.hooks profileUpdate:
     $(".profile-editor").toggle()
 
 
+AutoForm.hooks
+  setEnvConfigs: 
+    onSuccess: (operation, result, template)->
+      Session.set "userConfigId", ""
+
+
 Template.profilePageEnvConfigsForm.helpers
   envConfigsSchema: ->
     userConfigId = @userConfigId
     # userConfigId = Session.get "userConfigId"
-    
+
     envUserConfingDoc = EnvUserConfigs.findOne _id: userConfigId
 
     configTypeId = envUserConfingDoc.configTypeId
