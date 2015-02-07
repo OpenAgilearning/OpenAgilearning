@@ -10,9 +10,16 @@ template(name="profile")
         //- +dockers  
         h2 EnvUserConfigs:
         +profilePageEnvUserConfigsTable
+        +profilePageEnvConfigsForm userConfigId=userConfigId
         h2 Servers' Instance:
         +profilePageDockerInstancesTable
-    
+
+
+template(name="profilePageEnvConfigsForm")
+  if envConfigsSchema
+    +quickForm id="setEnvConfigs" schema=envConfigsSchema type="method" meteormethod="setEnvConfigs" template="bootstrap3-inline" label-class="sr-only" afFieldInput-placeholder="schemaLabel"
+
+
 template(name="profilePageEnvUserConfigsTable")
   +reactiveTable settings=settings
 
@@ -20,6 +27,12 @@ template(name="profilePageEnvUserConfigsTableConfigDataField")
   ul
     each configData
       li {{key}}={{value}}
+
+
+template(name="profilePageEnvUserConfigsTableEditBtnField")
+  botton.envConfigEditBtn.btn.btn-warning(userConfigId="{{_id}}") Edit
+
+
 
 template(name="profilePageDockerServerContainersTable")
   +reactiveTable settings=settings
@@ -34,7 +47,7 @@ template(name="profilePageDockerInstancesTableEnvField")
       li {{this}}
 
 template(name="profilePageDockerInstancesTableRemoveBtnField")
-  botton.removeInstanceBtn.btn.btn-warning(instanceId="{{_id}}") Remove
+  botton.removeInstanceBtn.btn.btn-warning(userConfigId="{{_id}}") Remove
 
 template(name="public_profile")
   h2 {{user.profile.name}}

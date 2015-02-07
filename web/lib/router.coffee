@@ -32,12 +32,20 @@ Meteor.startup ->
           userId = Meteor.userId()
           Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
+        userConfigId: ->
+          Session.get "userConfigId"
+
       waitOn: ->
         user = Meteor.user()
         if not user
           Router.go "pleaseLogin"
         Meteor.subscribe "userEnvUserConfigs"
         Meteor.subscribe "userDockerInstances"
+        Meteor.subscribe "userEnvUserConfigs"
+        
+        Meteor.subscribe "allPublicEnvConfigTypes"
+
+        
 
     @route "course",
       path: "course/:courseId"
