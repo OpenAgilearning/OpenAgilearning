@@ -1,0 +1,51 @@
+
+template(name="exercisePanelTeacher")
+  if active
+    +exerciseActiveTeacher
+  else
+    h2 Why quiz your students
+    button.btn.btn-default New Exercise
+    
+template(name="exercisePanelStudent")
+  if active
+    +exerciseActiveStudent
+  else
+    span No active exercise now.
+    
+template(name="exerciseHistoryTeacher")
+  h1 Exercises History
+  each exercisesDone
+    +exerciseDoneTeacher
+
+template(name="exerciseHistoryStudent")
+  h1 Exercises History
+  each exercisesDone
+    +exerciseDoneStudent
+
+template(name="exerciseActiveTeacher")
+  h2 Exercise: {{Title}}
+  h3 Remaining time {{time}}
+  p students completed
+  p students needs help
+  button.btn.btn-default Close Exercise
+  
+template(name="exerciseDoneTeacher")
+  h2 Exercise: {{Title}}
+  h3 CreateAt {{createAt}}
+  p students completed
+  
+template(name="exerciseActiveStudent")
+  h2 Exercise:{{title}}
+  if active
+    h3 Remaining time {{remaining_time}}
+  else
+    p {{creatAt}}
+  
+    h3 Completed time {{completed_time}}
+  button.btn.btn-default.done Done
+  button.btn.btn-default.help Help
+  
+template(name="exerciseDoneStudent")
+  h2 Exercise:{{title}}
+  p {{creatAt}}
+  h3 Completed time {{completed_time}}
