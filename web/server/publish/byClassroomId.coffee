@@ -47,3 +47,7 @@ Meteor.publish "classChatroomMessages", (classroomId) ->
 
 Meteor.publish "classChatroom", (classroomId) ->
   Chatrooms.find {classroomId: classroomId}
+  
+Meteor.publish "classExercises", (classroomId) ->
+
+  Exercises.find {classroomId: classroomId}

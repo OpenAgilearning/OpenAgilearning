@@ -2,10 +2,6 @@ template(name="classroom")
   .container
     .row.clearfix
       .col-md-9.column.classroom-body
-        if isInRole "teacher" classroomAndId
-          +exercisePanelTeacher
-        if isInRole "student" classroomAndId
-          +exercisePanelStudent
         ul.nav.nav-tabs.classroom-nav
           li.active
             a(data-toggle="tab", href="#CourseInfo") Info
@@ -73,16 +69,14 @@ template(name="classroom")
           
           if isInRole "teacher" classroomAndId
             .tab-pane.fade#Teacher
-              h2 TODO: Boardcast Message
-              h2 TODO: Student List
-              h2 TODO: Realtime Exercise
-              +exerciseHistoryTeacher
+              //h2 TODO: Boardcast Message
+              //h2 TODO: Student List
+              //h2 TODO: Realtime Exercise
+              +exercisePanelTeacher
           
           if isInRole "student" classroomAndId
             .tab-pane.fade#Student
-              h2 TODO: Recieve Teacher's Boardcast
-              h2 TODO: Help Btn
-              +exerciseHistoryStudent
+              +exercisePanelStudent
 
       +chatroom classroomId=classroomId type="classroom"
 

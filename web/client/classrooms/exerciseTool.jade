@@ -1,51 +1,71 @@
 
 template(name="exercisePanelTeacher")
-  if active
+  h2 Why not quiz your students
+  +addNewExercise
+  h2 Active Exercises
+  each activeExercise
     +exerciseActiveTeacher
-  else
-    h2 Why quiz your students
-    button.btn.btn-default New Exercise
-    
-template(name="exercisePanelStudent")
-  if active
-    +exerciseActiveStudent
-  else
-    span No active exercise now.
-    
-template(name="exerciseHistoryTeacher")
-  h1 Exercises History
-  each exercisesDone
+  h2 Done Exercises
+  each exerciseDone
     +exerciseDoneTeacher
 
-template(name="exerciseHistoryStudent")
+template(name="addNewExercise")
+  +quickForm id="createNewExecise" schema=ExercisesSchema type="method" meteormethod="createNewExercise"
+//  //this is for predefined schema
+//  +quickForm id="createNewExecise" schema="ExercisesSchema" type="method" meteormethod="createNewExercise"
+
+template(name="exercisePanelStudent")
+  each activeExercise
+    +exerciseActiveStudent
   h1 Exercises History
-  each exercisesDone
+  each exerciseDone
     +exerciseDoneStudent
 
+//template(name="miniExercisePanelStudent")
+
 template(name="exerciseActiveTeacher")
-  h2 Exercise: {{Title}}
-  h3 Remaining time {{time}}
-  p students completed
-  p students needs help
-  button.btn.btn-default Close Exercise
+  h3 Exercise: {{title}}
+  h4 Remaining time 
+    span(data-livestamp="{{remaining_time}}")
+  p students completed: 
+    each completedStudents
+      span.label.label-default {{profile.name}}
+    
+  p students need help:
+    each needHelpStudents
+      span.label.label-default {{profile.name}}
+
+      
+  button(id="{{_id}}").btn.btn-default.closeExercise Close Exercise
   
 template(name="exerciseDoneTeacher")
-  h2 Exercise: {{Title}}
-  h3 CreateAt {{createAt}}
-  p students completed
+  h3 Exercise: {{title}}
+  span(data-livestamp="{{createAt}}")
+  p students completed: 
+  each completedStudents
+    span.label.label-default {{profile.name}}
   
 template(name="exerciseActiveStudent")
   h2 Exercise:{{title}}
-  if active
-    h3 Remaining time {{remaining_time}}
-  else
-    p {{creatAt}}
+  h3 Remaining time 
+    span(data-livestamp="{{remaining_time}}")
   
-    h3 Completed time {{completed_time}}
-  button.btn.btn-default.done Done
-  button.btn.btn-default.help Help
+  if I_am_in completedStudents
+    h3 
+      span.glyphicon.glyphicon-ok
+    //p Completed time
+    //  span(data-livestamp="{{completed_time}}")
+  else
+    button(id="{{_id}}").btn.btn-default.doneExercise Done
+  if I_am_in needHelpStudents
+    i.fa.fa-ambulance Notified the instructors, help is coming soon!
+  else
+    button(id="{{_id}}").btn.btn-default.helpExercise Help
   
 template(name="exerciseDoneStudent")
   h2 Exercise:{{title}}
-  p {{creatAt}}
-  h3 Completed time {{completed_time}}
+  p Created {{createdAt.toLocaleString}}
+  
+//template(name="miniThumbRow")
+//  each profile arr
+//    span foo {{name}} 
