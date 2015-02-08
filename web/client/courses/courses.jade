@@ -29,8 +29,8 @@ template(name="courseNameAndDescription")
     i.fa.fa-cube.fa-2x(style="margin:5px")
 
 template(name="goToCoursePageBtn")
-  a(href="{{pathFor 'course' courseId=_id}}")
-    +courseImage courseDoc=this width="300px"
+  //- a(href="{{pathFor 'course' courseId=_id}}")
+  +courseImage courseDoc=this width="300px"
 
 
 //- ######################################
@@ -59,7 +59,8 @@ template(name="course")
 
 
 template(name="courseImage")
-  img(width="{{width}}",src="{{getCourseImageURL courseDoc}}")
+  a(href="{{pathFor 'course' courseId=courseDoc._id}}")
+    img(width="{{width}}",src="{{getCourseImageURL courseDoc}}")
 
 
 template(name="courseClassroomsTable")

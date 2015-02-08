@@ -1,14 +1,14 @@
 template(name="index")
   .container
-    .row.clearfix
-      
-      .col-md-10.column
-        //- h2 Courses:
-        +aboutCoursesIcons
-        +allPublicCoursesTable
+    .row-fluid
+      +nodesList
+      //- .col-md-10.column
+      //-   //- h2 Courses:
+      //-   +aboutCoursesIcons
+      //-   +allPublicCoursesTable
 
-      .col-md-2.column
-        h3 New Features:
+      //- .col-md-2.column
+      //-   h3 New Features:
         //- +msgBoard
 
   
@@ -16,7 +16,33 @@ template(name="index")
 //- template(name="dockerImagePicture")
 //-   img(width="{{width}}",src="{{getDockerImagePictureURL dockerImage}}")
 
-  
+
+template(name="nodesList")
+  .nodesList
+    each nodes
+      +nodeInfo
+      //- .nodeInfo
+      //-   hr
+      //-   h2 {{courseName}}
+      //-   p {{description}}
+      //-   hr
+
+template(name="nodeInfo")
+  .nodeInfo.col-md-3
+
+    hr
+    +courseImage courseDoc=this width="100%"
+    h3 {{courseName}}
+    p {{description}}
+    if video
+      i.fa.fa-film.fa-2x(style="margin:5px")
+    if slides
+      i.fa.fa-book.fa-2x(style="margin:5px")
+    if dockerImage
+      i.fa.fa-cube.fa-2x(style="margin:5px")
+
+    hr
+
 
 
 template(name="index3")
