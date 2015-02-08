@@ -69,11 +69,20 @@ template(name="classroom")
           
           if isInRole "teacher" classroomAndId
             .tab-pane.fade#Teacher
-              //h2 TODO: Boardcast Message
-              //h2 TODO: Student List
-              //h2 TODO: Realtime Exercise
-              +exercisePanelTeacher
-          
+              h2 Teacher's Dashboard
+              p You are the teacher of this classroom. You can quiz the class with some exercise. Switch to another tab, you can also see class participants in the list.
+              ul#teacherTabs.nav.nav-tabs
+                li.active
+                  a(href='#exerciseTab', data-toggle='tab') Exercise 
+                li
+                  a(href='#studentsListTeacher', data-toggle='tab') Student List
+              .tab-content
+                #exerciseTab.tab-pane.active
+                  +exercisePanelTeacher
+                #studentsListTeacher.tab-pane.fade
+                  +studentListTableTeacher
+
+
           if isInRole "student" classroomAndId
             .tab-pane.fade#Student
               +exercisePanelStudent
