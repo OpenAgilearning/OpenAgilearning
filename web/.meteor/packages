@@ -10,7 +10,6 @@ iron:router
 npm-container
 mizzao:bootstrap-3
 accounts-meetup
-accounts-ui
 http
 mizzao:user-status
 mizzao:timesync
@@ -24,3 +23,5 @@ aslagle:reactive-table
 
 natestrauser:font-awesome
 mike:mocha
+ian:accounts-ui-bootstrap-3
+mrt:jquery-imagesloaded
