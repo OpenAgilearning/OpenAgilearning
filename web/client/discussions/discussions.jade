@@ -1,0 +1,22 @@
+template(name="discussions")
+  .container
+    .row.clearfix
+      .col-md-12.column
+
+        ul.nav.nav-tabs
+          li.active
+            a(data-toggle="tab", href="#forums") Forums
+          li
+            a(data-toggle="tab", href="#chatrooms") Chatrooms
+        
+        .tab-content
+          +forums
+          +chatrooms
+
+template(name="forums")
+  .tab-pane.fade.in.active#forums
+    h1 TODO: Forums
+
+template(name="chatrooms")
+  .tab-pane.fade#chatrooms
+    h1 TODO: Chatrooms

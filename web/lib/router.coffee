@@ -158,6 +158,8 @@ Meteor.startup ->
         Meteor.subscribe "classroom", @params.classroomId
         Meteor.subscribe "classroomCourse", @params.classroomId
         Meteor.subscribe "classroomDockerImages", @params.classroomId
+        Meteor.subscribe "classChatroom", @params.classroomId
+        Meteor.subscribe "classChatroomMessages", @params.classroomId
         # Meteor.subscribe "userDockerInstances", @params.classroomId
 
         Meteor.call "getClassroomDocker", @params.classroomId, (err, data)->
@@ -532,6 +534,23 @@ Meteor.startup ->
     #     Session.set "courseId", "rstudioBasic"
     #     Meteor.subscribe "Chat", "rstudioBasic"
     #     Meteor.subscribe "userDockerInstances"
+
+    @route "discussions", 
+      path: "discuss/"
+      template: "discussions"
+      data:
+        user: -> Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId, "admin", "system") or Roles.userIsInRole(userId, "admin", "dockers")
+
+      waitOn: ->
+        userId = Meteor.userId()
+        if not userId
+          Router.go "pleaseLogin"
+
+        Meteor.subscribe "chatroomsWithoutClassChatroom"
+        Meteor.subscribe "userJoinsChatroom"
 
 
     @route "pleaseLogin",
