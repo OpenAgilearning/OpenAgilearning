@@ -1,7 +1,49 @@
 
+template(name="courses")
+  .container
+    .row.clearfix
+      .col-md-12.column
+        //- if isInRole "admin" "system"
+        //-   hr
+        //-   h2 Add New Course
+
+        //-   +quickForm id="demo" schema="coursesSchema" type="method" meteormethod="createCourse" template="bootstrap3-inline" label-class="sr-only" afFieldInput-placeholder="schemaLabel"
+        
+        +aboutCoursesIcons
+        +allPublicCoursesTable
+
+//- ######################################
+
+template(name="allPublicCoursesTable")
+  +reactiveTable settings=settings
+
+template(name="courseNameAndDescription")
+  h2 {{courseName}}
+  p {{description}}
+  if video
+    //- h2 TODO: add video icon
+    i.fa.fa-film.fa-2x(style="margin:5px")
+  if slides
+    i.fa.fa-book.fa-2x(style="margin:5px")
+  if dockerImage
+    i.fa.fa-cube.fa-2x(style="margin:5px")
+
 template(name="goToCoursePageBtn")
   a(href="{{pathFor 'course' courseId=_id}}")
     +courseImage courseDoc=this width="300px"
+
+
+//- ######################################
+
+template(name="aboutCoursesIcons")
+  p
+    i.fa.fa-film(style="margin:5px") Video
+    i.fa.fa-book(style="margin:5px") Slides
+    i.fa.fa-cube(style="margin:5px") Environment
+
+
+//- ######################################
+
 
 template(name="course")
   .container
@@ -15,16 +57,6 @@ template(name="course")
         h2 Classrooms:
         +courseClassroomsTable
 
-template(name="courseNameAndDescription")
-  h2 {{courseName}}
-  p {{description}}
-  if video
-    //- h2 TODO: add video icon
-    i.fa.fa-film.fa-2x(style="margin:5px")
-  if slides
-    i.fa.fa-book.fa-2x(style="margin:5px")
-  if dockerImage
-    i.fa.fa-cube.fa-2x(style="margin:5px")
 
 template(name="courseImage")
   img(width="{{width}}",src="{{getCourseImageURL courseDoc}}")
@@ -40,110 +72,4 @@ template(name="goToClassroomBtn")
     a.btn.btn-warning.joinClassroomBtn(classroomId="{{_id}}") Join fo Free!
 
 
-template(name="courses")
-  .container
-    .row.clearfix
-      .col-md-12.column
-        //- +voteForMe
-        if isInRole "admin" "system"
-          hr
-          h2 Add New Course
-
-          +quickForm id="demo" schema="coursesSchema" type="method" meteormethod="createCourse" template="bootstrap3-inline" label-class="sr-only" afFieldInput-placeholder="schemaLabel"
-
-        hr
-        h2 Study Materials:
-        table.table.table-hover
-          thead
-            th Name
-            th Docker
-            th Ref. (Slide/Note/Site)
-            th Video
-            //- th Description
-            th Creator's Name
-            if isInRole "admin" "system"
-              th Create / Delete
-          tbody
-            //- if isAdmin
-            //-   tr
-            //-     td
-            //-       input.courseName
-            //-     td
-            //-       input.dockerImage
-            //-     td
-            //-       input.slides
-            //-     td
-            //-       input.description
-            //-     td
-            //-       p {{user.profile.name}}
-            //-     td
-            //-       input.createBt.btn.btn-default(value="Create")
-
-
-            //- tr
-            //-   td
-            //-     a(href="{{pathFor 'ipynb' cid='ipynb'}}") Try IPyNB
-            //-   td
-            //-     a(target="_blank",href="https://registry.hub.docker.com/u/c3h3/oblas-py278-shogun-ipynb") c3h3/oblas-py278-shogun-ipynb
-            //-   td
-            //-     p Link
-            //-   //- td
-            //-   td
-            //-   td
-
-            //- tr
-            //-   td
-            //-     a(href="{{pathFor 'rstudio' cid='rstudio'}}") Try RStudio
-            //-   td
-            //-     a(target="_blank",href="https://registry.hub.docker.com/u/rocker/rstudio") rocker/rstudio
-            //-   td
-            //-     p Link
-            //-   //- td
-            //-   td
-            //-   td
-
-
-            each courses
-              tr
-                td
-                  a(href="{{pathFor 'course' cid=_id}}") {{courseName}}
-                td
-                  a(target="_blank",href="https://registry.hub.docker.com/u/{{dockerImage}}") 
-                    i.fa.fa-cube &nbsp;{{dockerImage}}
-                td
-                  a(target="_blank",href="{{slides}}") 
-                    i.fa.fa-book.fa-2x
-                td
-                  if video
-                    a(target="_blank",href="{{video}}")
-                      i.fa.fa-film.fa-2x
-                //- td {{description}}
-                td {{creatorName}}
-
-                if isInRole "admin" "system"
-                  td
-                    input.btn.btn-warning.courseDeleteBtn(type="button" value="Delete")
-
-
-
-
-template(name="analyzer")
-  .container
-    //- +voteForMe
-    hr
-    a.btn.btn-default(target="_blank",href="{{baseImageUrl}}") Browse Base Image ({{docker.imageId}}) on Docker Hub
-    hr
-    //- a.goBt.btn.btn-default(target="_blank",href="http://{{rootURL}}:{{docker.servicePort}}") Go to {{name}} page
-    //- hr
-  .container
-    .col-md-10.column
-      .tabbable
-        .tab-pane.active
-
-          input.connectBt.btn.btn-default(value="Connect to Docker")
-          iframe#docker(src="http://{{rootURL}}:{{docker.servicePort}}", width="100%", height="550px", scrolling="yes")
-            p Your browser does not support iframes.
-
-    .col-md-2.column
-      +chatroom
-
+//- ######################################

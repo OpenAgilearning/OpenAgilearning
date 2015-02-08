@@ -4,19 +4,14 @@ template(name="index")
       
       .col-md-10.column
         //- h2 Courses:
-        p
-          i.fa.fa-film(style="margin:5px") Video
-          i.fa.fa-book(style="margin:5px") Slides
-          i.fa.fa-cube(style="margin:5px") Environment
+        +aboutCoursesIcons
         +allPublicCoursesTable
 
       .col-md-2.column
         h3 New Features:
         //- +msgBoard
 
-template(name="allPublicCoursesTable")
-  +reactiveTable settings=settings
-
+  
   
 //- template(name="dockerImagePicture")
 //-   img(width="{{width}}",src="{{getDockerImagePictureURL dockerImage}}")
