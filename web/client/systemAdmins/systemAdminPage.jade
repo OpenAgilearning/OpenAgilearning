@@ -1,19 +1,4 @@
 
-template(name="adminPageDockerServersTable")
-  +reactiveTable settings=settings
-
-
-template(name="adminPageDockerServerImagesTable")
-  +reactiveTable settings=settings
-
-
-template(name="dockerServerNameField")
-  +dockerServerNameFromId dockerServerId=dockerServerId
-
-template(name="dockerServerNameFromId")
-  //- a(href="{{pathFor ... =dockerServerId}}")
-  p {{dockerServerName}}
-
 
 
 

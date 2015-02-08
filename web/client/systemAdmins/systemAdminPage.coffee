@@ -1,36 +1,3 @@
-Template.adminPageDockerServersTable.helpers
-  settings: ->
-    dockerServerNameField = 
-      key: "name"
-      label: "Server Name"
-      
-    dockerServerIPField =
-      key: "connect.host"
-      label: "Server IP"
-     
-    res=
-      collection:DockerServers
-      rowsPerPage:5
-      showFilter: true
-      fields:[dockerServerNameField, dockerServerIPField, "active", "lastUpdateAt"]
-
-Template.dockerServerNameFromId.helpers
-  dockerServerName: ->
-    DockerServers.findOne({_id:@dockerServerId}).name
-
-
-Template.adminPageDockerServerImagesTable.helpers
-  settings: ->
-    # dockerServerNameField = 
-    #   key: "dockerServerId"
-    #   label: "Server Name"
-    #   tmpl: Template.dockerServerNameField
-    
-    res =
-      collection: DockerServerImages
-      rowsPerPage: 10
-      showFilter: true
-      fields: ["serverName","tag","lastUpdateAt"]
 
 
 

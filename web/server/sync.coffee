@@ -92,11 +92,7 @@ syncDockerServerImages = ->
           DockerServerImages.upsert queryImageData, {$set:setData}
           
 
-        
-        
-
-
-        # TODO: remove disappear images
+        # TODO: modify disappear images
         
   
 
@@ -112,7 +108,7 @@ syncDockerServerContainer = ->
     containersFuture = new Future
     lastUpdateAt = new Date
 
-    docker.listContainers {}, (err, data) ->
+    docker.listContainers {all:1}, (err, data) ->
       if err
         console.log "err ="
         console.log err
@@ -121,7 +117,20 @@ syncDockerServerContainer = ->
     # DockerServerContainers.remove({dockerServerId:dockerServerSettings.dockerServerId})
 
     if containers.length > 0
+      
       for containerData in containers
+
+        containerObj = docker.getContainer containerData.Id
+
+        containerInspectDataFuture = new Future
+        containerObj.inspect (err,data) ->
+          if err
+            console.log "err ="
+            console.log err
+          containerInspectDataFuture.return data
+
+        containerInspectData = containerInspectDataFuture.wait()
+
         queryData =
           Id:containerData.Id
           Image:containerData.Image
@@ -132,11 +141,29 @@ syncDockerServerContainer = ->
           lastUpdateAt:lastUpdateAt
           serverId: dockerServerSettings.dockerServerId
           serverName: dockerServerSettings.dockerServerName
+          inspectData: containerInspectData
 
         setData = _.extend setData, containerData
+
+        if DockerServerContainers.find(queryData).count() > 0
+          DockerServerContainers.upsert queryData, {$set:setData}
+
+        else
+          setData.firstMonitorAt = new Date
+          DockerServerContainers.upsert queryData, {$set:setData}
         
-        DockerServerContainers.upsert queryData, {$set:setData}
-      
+        instanceQuery = 
+          serverName: dockerServerSettings.dockerServerName
+          containerId: containerData.Id
+
+        setInstanceData = 
+          "$set":
+            status: setData.Status
+            lastUpdateAt: lastUpdateAt
+
+        DockerInstances.update instanceQuery, setInstanceData
+
+
     else
       console.log "serverName = "
       console.log dockerServerSettings.dockerServerName
@@ -148,20 +175,6 @@ syncDockerServerContainer = ->
       console.log containers
 
 
-    # syncDockerServerFuture = new Future
-    # syncDockerServer()
-    # syncDockerServerFuture.wait()
-    # syncDockerServerFuture.return "syncDockerServer done"
-syncDockerServerPort = ->
-  servers = DockerServers.find().fetch()
-  for server in servers
-    DockerServers.remove(_id:server._id)
-    filterPorts = DockerServerContainers.find("dockerServerId":server._id).fetch().map (x)-> x.Ports[0].PublicPort
-    server.PublicPort = filterPorts
-    DockerServers.insert server
-
-
 Meteor.setInterval syncDockerServerInfo, 5000
 Meteor.setInterval syncDockerServerImages, 5000
-Meteor.setInterval syncDockerServerContainer, 5000
-# Meteor.setInterval syncDockerServerPort, 5000
+Meteor.setInterval syncDockerServerContainer, 10000

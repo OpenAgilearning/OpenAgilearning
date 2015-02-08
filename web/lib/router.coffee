@@ -32,12 +32,21 @@ Meteor.startup ->
           userId = Meteor.userId()
           Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
+        userConfigId: ->
+          if Session.get("userConfigId") isnt ""
+            Session.get "userConfigId"
+
       waitOn: ->
         user = Meteor.user()
         if not user
           Router.go "pleaseLogin"
         Meteor.subscribe "userEnvUserConfigs"
-        Meteor.subscribe "userDockerServerContainers"
+        Meteor.subscribe "userDockerInstances"
+        Meteor.subscribe "userEnvUserConfigs"
+
+        Meteor.subscribe "allPublicEnvConfigTypes"
+
+        
 
     @route "course",
       path: "course/:courseId"
@@ -164,12 +173,9 @@ Meteor.startup ->
 
         Meteor.call "getClassroomDocker", @params.classroomId, (err, data)->
           if not err
-            console.log "data = "
-            console.log data
+            console.log "get env successfully!"
           else
-            console.log "err = "
-            console.log err
-            # Router.go "dockers"
+            console.log "get env failed!"
 
         Meteor.subscribe "classChatroom", @params.classroomId
         Meteor.subscribe "usersOfClassroom", @params.classroomId
@@ -252,22 +258,28 @@ Meteor.startup ->
         else
           if Roles.userIsInRole(userId,"admin","system")
             Meteor.subscribe "allUsers"
-            Meteor.subscribe "allDockerInstances"
-            Meteor.subscribe "allDockerImages"
-            Meteor.subscribe "DevMileStone"
-            Meteor.subscribe "WantedFeature"
-            Meteor.subscribe "allDockerServerImages"
+            # Meteor.subscribe "allDockerInstances"
+            # Meteor.subscribe "allDockerImages"
+            # Meteor.subscribe "DevMileStone"
+            # Meteor.subscribe "WantedFeature"
+            
             Meteor.subscribe "allDockerServers"
+            Meteor.subscribe "allDockerServerImages"
             Meteor.subscribe "allDockerServerContainers"
-            Meteor.subscribe "allEnvTypes"
+
+            # Meteor.subscribe "allEnvTypes"
             Meteor.subscribe "allEnvs"
+
           else
             if Roles.userIsInRole(userId,"admin","dockers")
-              Meteor.subscribe "allDockerInstances"
-              Meteor.subscribe "allDockerImages"
-              Meteor.subscribe "allDockerServerImages"
+              # Meteor.subscribe "allDockerInstances"
+              # Meteor.subscribe "allDockerImages"
+              
               Meteor.subscribe "allDockerServers"
-              Meteor.subscribe "allEnvTypes"
+              Meteor.subscribe "allDockerServerImages"
+              Meteor.subscribe "allDockerServerContainers"
+            
+              # Meteor.subscribe "allEnvTypes"
               Meteor.subscribe "allEnvs"
             else
               Router.go "index"
