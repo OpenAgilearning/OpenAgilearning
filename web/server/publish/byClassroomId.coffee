@@ -51,3 +51,12 @@ Meteor.publish "classChatroom", (classroomId) ->
 Meteor.publish "classExercises", (classroomId) ->
 
   Exercises.find {classroomId: classroomId}
+
+
+Meteor.publish "usersOfClassroom", (classroomId)->
+  classroomAndId = "classroom_" + classroomId
+  if Roles.userIsInRole @userId, ["student","teacher","admin"], classroomAndId
+    # FIXME: expensive query
+    Roles.getUsersInRole ["student","teacher","admin"],classroomAndId
+  else
+    Meteor.users.find _id: "permisionDeny"
