@@ -69,40 +69,6 @@ if DockerImages.find({_id:"c3h3/learning-shogun:u1404-ocv",type:"ipynb"}).count(
 if DockerImages.find({_id:"dboyliao/docker-tossug",type:"ipynb"}).count() is 0
   DockerImages.insert {_id:"dboyliao/docker-tossug",type:"ipynb"}
 
-demoCourses = [
-  { "courseName" : "R Basic", "dockerImage" : "c3h3/dsc2014tutorial", "slides" : "http://dboyliao.github.io/RBasic_reveal/", "description" : "This is a tutorial series about R given by Taiwan R User Group in Data Science Conference 2014 in Taiwan", "video" : "https://www.youtube.com/watch?v=Ut55jPEm-yE"},
-  { "courseName" : "Large Margin Nearest Neighbours ", "dockerImage" : "c3h3/learning-shogun:u1404-ocv", "slides" : "http://nbviewer.ipython.org/github/shogun-toolbox/shogun/blob/master/doc/ipython-notebooks/metric/LMNN.ipynb", "description" : "Fernando Iglesias talks about the GSoC-Project bringing Large Margin Nearest Neighbours into the Shogun Toolbox.", "video" : "https://www.youtube.com/watch?v=7pm91lCWyfE", "imageURL":"/images/ipynb_lmnn1.png"}
-  # { "courseName" : "livehouse20141105", "dockerImage" : "c3h3/livehouse20141105", "slides" : "https://www.slidenow.com/slide/129/play", "description" : "https://event.livehouse.in/2014/combo8/"},
-  # { "courseName" : "ml-for-hackers", "dockerImage" : "c3h3/ml-for-hackers", "slides" : "http://shop.oreilly.com/product/0636920018483.do", "description" : ""},
-  # { "courseName" : "RLadies Play Kaggle", "dockerImage" : "c3h3/rladies-hello-kaggle", "slides" : "http://www.kaggle.com/c/titanic-gettingStarted/dails/new-getting-started-with-r", "description" : ""},
-  # { "courseName" : "NCCU Crawler 201411", "dockerImage" : "c3h3/nccu-crawler-courses-201411", "slides" : "http://nbviewer.ipython.org/github/c3h3/NCCU-PyData-Courses-2013Spring/blob/master/Lecture1/crawler/Lecture2_WebCrawler.ipynb", "description" : ""},
-  # { "courseName" : "TOSSUG DS 20141209 BigO", "dockerImage" : "dboyliao/docker-tossug", "slides" : "http://interactivepython.org/runestone/static/pythonds/index.html", "description" : ""},
-]
-
-for oneCourse in demoCourses
-  if Courses.find(oneCourse).count() is 0
-    demoUser = Meteor.users.findOne({"services.meetup.id" : {$in: adminMeetupIds}})
-
-    if demoUser
-      oneCourse.creatorId = demoUser._id
-      oneCourse.creatorAt = new Date
-      oneCourse.publicStatus = "public"
-
-      courseId = Courses.insert oneCourse
-
-      if oneCourse.publicStatus is "public"
-        if Classrooms.find({courseId:courseId,publicStatus:"public"}).count() is 0
-          publicClassroomDoc =
-            creatorId: oneCourse.creatorId
-            courseId: courseId
-            publicStatus:"public"
-            createAt: new Date
-          classroomId = Classrooms.insert publicClassroomDoc
-
-          ClassroomRoles.insert {classroomId:classroomId, userId: oneCourse.creatorId, role:"admin", isActive:true}
-          Roles.addUsersToRoles(demoUser, "admin", "classroom_" + classroomId)
-          #Roles.addUsersToRoles(demoUser, "teacher", "classroom_" + classroomId)
-
 
 if Meteor.settings.public.DOCKER_CERT_PATH isnt ""
   DOCKER_CERT_PATH = Meteor.settings.public.DOCKER_CERT_PATH
