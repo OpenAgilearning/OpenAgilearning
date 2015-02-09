@@ -396,7 +396,7 @@ Meteor.startup ->
         if not userId
           Router.go "pleaseLogin"
 
-        Meteor.subscribe "chatroomsWithoutClassChatroom"
+        Meteor.subscribe "chatrooms"
         Meteor.subscribe "userJoinsChatroom"
 
 

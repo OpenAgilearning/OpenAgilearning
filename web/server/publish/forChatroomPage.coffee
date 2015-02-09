@@ -1,4 +1,4 @@
-Meteor.publish "chatroomsWithoutClassChatroom", ->
+Meteor.publish "chatrooms", ->
   Chatrooms.find
     classroomId:
       $exists: false
