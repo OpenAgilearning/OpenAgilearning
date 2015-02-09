@@ -69,7 +69,7 @@ Template.courseClassroomsTable.helpers
       collection: Classrooms
       rowsPerPage: 5
       showFilter: true
-      fields: [goToClassroomBtnField, "creatorId", "courseId", "publicStatus"]
+      fields: [goToClassroomBtnField, "publicStatus"]
 
 
 
