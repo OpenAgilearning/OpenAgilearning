@@ -247,6 +247,7 @@ Meteor.startup ->
 
         Meteor.subscribe "classChatroom", @params.classroomId
         Meteor.subscribe "usersOfClassroom", @params.classroomId
+        Meteor.subscribe "classExercises", @params.classroomId
 
 
     @route "learningResources",

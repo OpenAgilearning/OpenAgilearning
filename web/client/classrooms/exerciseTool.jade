@@ -1,0 +1,67 @@
+
+template(name="exercisePanelTeacher")
+  h2 Why not quiz your students
+  +addNewExercise
+  h2 Active Exercises
+  each activeExercise
+    +exerciseActiveTeacher
+  h2 Done Exercises
+  each exerciseDone
+    +exerciseDoneTeacher
+
+template(name="addNewExercise")
+  +quickForm id="createNewExecise" schema=ExercisesSchema type="method" meteormethod="createNewExercise"
+//  //this is for predefined schema
+//  +quickForm id="createNewExecise" schema="ExercisesSchema" type="method" meteormethod="createNewExercise"
+
+template(name="exercisePanelStudent")
+  each activeExercise
+    +exerciseActiveStudent
+  h1 Exercises History
+  each exerciseDone
+    +exerciseDoneStudent
+
+//template(name="miniExercisePanelStudent")
+
+template(name="exerciseActiveTeacher")
+  h3 Exercise: {{title}}
+  h4 Remaining time 
+    span(data-livestamp="{{remaining_time}}")
+  p students completed: 
+    each completedStudents
+      span.label.label-default {{profile.name}}
+    
+  p students need help:
+    each needHelpStudents
+      span.label.label-default {{profile.name}}
+
+      
+  button(id="{{_id}}").btn.btn-default.closeExercise Close Exercise
+  
+template(name="exerciseDoneTeacher")
+  h3 Exercise: {{title}}
+  span(data-livestamp="{{createAt}}")
+  p students completed: 
+  each completedStudents
+    span.label.label-default {{profile.name}}
+  
+template(name="exerciseActiveStudent")
+  h2 Exercise:{{title}}
+  h3 Remaining time 
+    span(data-livestamp="{{remaining_time}}")
+  
+  if I_am_in completedStudents
+    h3 
+      span.glyphicon.glyphicon-ok
+    //p Completed time
+    //  span(data-livestamp="{{completed_time}}")
+  else
+    button(id="{{_id}}").btn.btn-default.doneExercise Done
+  if I_am_in needHelpStudents
+    i.fa.fa-ambulance Notified the instructors, help is coming soon!
+  else
+    button(id="{{_id}}").btn.btn-default.helpExercise Help
+  
+template(name="exerciseDoneStudent")
+  h2 Exercise:{{title}}
+  p Created {{createdAt.toLocaleString}}
