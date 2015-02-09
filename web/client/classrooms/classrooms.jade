@@ -43,7 +43,8 @@ template(name="classroom")
 
           if course.video
             .tab-pane.fade#Video
-              video.video-js.vjs-oudefault-skin(id="vid",src="",controls,width="100%",height="700px",data-setup='{ "techOrder": ["youtube"], "src": "{{course.video}}" }')
+              video.video-js.vjs-default-skin(id="vid",src="",controls 
+  preload="auto",width="100%",height="500px",data-setup='{ "techOrder": ["youtube"], "src": "{{course.video}}" }')
                     
           if course.dockerImage
             .tab-pane.fade#Environment
