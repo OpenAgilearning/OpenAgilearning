@@ -17,8 +17,6 @@
   
 
 Template.addNewExercise.helpers
-
-    
   ExercisesSchema: ->
     schemaSettings =
       classroomId:
@@ -114,9 +112,3 @@ Template.exerciseActiveStudent.helpers
     
   completed_time:(listOfStudents)->
     listOfStudents.filter((student)->student.id is Meteor.userId())[0].completedTime
-
-    
-Template.miniThumbRow.helpers
-  profile:(arr)->
-    Meteor.users.find _id:
-      $in: arr.map (user)->user.id
