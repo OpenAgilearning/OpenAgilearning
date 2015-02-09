@@ -29,19 +29,19 @@ template(name="nodesList")
 
 template(name="nodeInfo")
   .nodeInfo.col-md-3
+    .well
+      hr
+      +courseImage courseDoc=this width="100%"
+      h3 {{courseName}}
+      p {{description}}
+      if video
+        i.fa.fa-film.fa-2x(style="margin:5px")
+      if slides
+        i.fa.fa-book.fa-2x(style="margin:5px")
+      if dockerImage
+        i.fa.fa-cube.fa-2x(style="margin:5px")
 
-    hr
-    +courseImage courseDoc=this width="100%"
-    h3 {{courseName}}
-    p {{description}}
-    if video
-      i.fa.fa-film.fa-2x(style="margin:5px")
-    if slides
-      i.fa.fa-book.fa-2x(style="margin:5px")
-    if dockerImage
-      i.fa.fa-cube.fa-2x(style="margin:5px")
-
-    hr
+      hr
 
 
 
