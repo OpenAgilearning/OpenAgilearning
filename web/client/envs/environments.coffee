@@ -1,4 +1,48 @@
 
+Template.envPageEnvConfigTypesTable.helpers
+  
+  settings: ->
+    ConfigEnvsField =
+      ke1y: "configs.envs"
+      label: "Config Envs"
+      tmpl: Template.envPageEnvConfigTypesTableConfigEnvsField
+
+    EditBtnField =
+      key: "_id"
+      label: "Edit"
+      tmpl: Template.envPageEnvConfigTypesTableEditBtnField
+
+    RelatedCoursesField =
+      key: "_id"
+      label: "Related Courses"
+      tmpl: Template.envPageEnvConfigTypesTableRelatedCoursesField
+
+
+    res=
+      collection:@filteredEnvConfigTypes
+      rowsPerPage:5
+      showFilter: false
+      showNavigation:'never'
+      fields:["_id", RelatedCoursesField, ConfigEnvsField, EditBtnField]
+
+
+Template.EnvConfigTypesRelatedCoursesField.helpers
+  configTypeCourses: ->
+    imageTags = DockerImages.find({type:@_id}).fetch().map (xx)-> xx._id#.split(":").length is 2 ? xx._id : xx._id+":latest"
+    Courses.find dockerImage:{$in:imageTags}
+
+Template.envPageEnvConfigTypesTableEditBtnField.events
+  "click .envConfigEditBtn": (e,t)->
+    e.stopPropagation()
+    envConfigTypeId = $(e.target).attr "envConfigTypeId"
+
+    Session.set "userConfigId", ""
+    Session.set "envConfigTypeId", envConfigTypeId
+
+    
+
+
+
 Template.envsTable.helpers
   settings: ->
     envPictureField =

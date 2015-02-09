@@ -48,8 +48,12 @@ Meteor.methods
     #TODO: assert container exists
     instanceDoc = DockerInstances.findOne _id: instanceId
 
+    console.log "instanceId = "
+    console.log instanceId
+    console.log instanceDoc
+
     if not instanceDoc
-      throw new Meteor.Error(1001, "Docker Server Container ID Error!")
+      throw new Meteor.Error(1001, "Docker Server Instance ID Error!")
 
     hasRemovePermission = instanceDoc.userId is user._id
     hasRemovePermission = hasRemovePermission or Roles.userIsInRole(user._id, "admin", "dockers")

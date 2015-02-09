@@ -15,24 +15,28 @@ AutoForm.hooks profileUpdate:
 
 
 AutoForm.hooks
-  setEnvConfigs: 
+  setEnvUserConfigs: 
     onSuccess: (operation, result, template)->
       Session.set "userConfigId", ""
+      Session.set "envConfigTypeId", ""
 
 
 Template.profilePageEnvConfigsForm.helpers
   envConfigsSchema: ->
-    userConfigId = @userConfigId
-    # userConfigId = Session.get "userConfigId"
+    if @envConfigTypeId
+      configTypeId = @envConfigTypeId
+    else
+      userConfigId = @userConfigId
+      # userConfigId = Session.get "userConfigId"
 
-    envUserConfingDoc = EnvUserConfigs.findOne _id: userConfigId
+      envUserConfingDoc = EnvUserConfigs.findOne _id: userConfigId
 
-    configTypeId = envUserConfingDoc.configTypeId
+      configTypeId = envUserConfingDoc?.configTypeId
     
     envConfigsData = EnvConfigTypes.findOne _id:configTypeId
     schemaSettings = {}
 
-    if envConfigsData?.configs?.envs and userConfigId
+    if envConfigsData?.configs?.envs
       envConfigsData.configs.envs.map (env)->
         schemaSettings[env.name] = {type: String}
           
@@ -64,20 +68,27 @@ Template.profilePageEnvUserConfigsTable.helpers
       label: "Edit"
       tmpl: Template.profilePageEnvUserConfigsTableEditBtnField
 
+    RelatedCoursesField =
+      key: "configTypeId"
+      label: "Related Courses"
+      tmpl: Template.profilePageEnvConfigTypesTableRelatedCoursesField
+
 
     res=
       collection:EnvUserConfigs
       rowsPerPage:5
       showFilter: false
       showNavigation:'never'
-      fields:["configTypeId",ConfigDataField,EditBtnField]
+      fields:["configTypeId", RelatedCoursesField, ConfigDataField,EditBtnField]
 
 
 Template.profilePageEnvUserConfigsTableEditBtnField.events
-  "click .envConfigEditBtn": (e,t)->
+  "click .envUserConfigEditBtn": (e,t)->
     e.stopPropagation()
     userConfigId = $(e.target).attr "userConfigId"
+    Session.set "envConfigTypeId", ""
     Session.set "userConfigId", userConfigId
+    
 
     # Meteor.call "removeDocker", configTypeId, (err, res)->
     #   if not err
@@ -113,11 +124,15 @@ Template.profilePageDockerInstancesTable.helpers
       rowsPerPage:5
       showFilter: false
       showNavigation:'never'
-      fields:["serverName", "configTypeId", "imageTag", envField, "status", removeBtnField]
+      fields:["serverName", "configTypeId", "imageTag", envField, "status", "_id",removeBtnField]
 
 
 Template.profilePageDockerInstancesTableRemoveBtnField.events
   "click .removeInstanceBtn": (e,t)-> 
     instanceId = $(e.target).attr "instanceId"
     $(e.target).html "Stopping"
-    Meteor.call "removeDockerInstance", instanceId
+    Meteor.call "removeDockerInstance", instanceId, (err,data)->
+      if not err
+        console.log data
+      else
+        console.log err

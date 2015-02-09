@@ -1,26 +1,28 @@
-Template.allPublicCoursesTable.helpers
-  settings: ->
-    goToCoursePageBtnsField =
-      key: ["_id","courseName", "dockerImage"]
-      label: "Learning Immediately"
-      tmpl: Template.goToCoursePageBtn
 
-    courseNameAndDescriptionField =
-      key: ["courseName", "description"]
-      label: "Courses"
-      tmpl: Template.courseNameAndDescription
+Template.nodesList.helpers
+  nodes: ->
+    Courses.find()
 
+Template.nodesList.rendered = ->
+  container = $(".nodeList")
+  container.imagesLoaded ->
+    container.masonry
+      itemSelector: ".nodeInfo"
+          
+  # $('.nodesList').masonry
+  #   # columnWidth: ".col-md-3"
+  #   itemSelector: '.nodeInfo'
 
-    res =
-      collection: Courses
-      rowsPerPage: 5
-      showFilter: true
-      fields: [goToCoursePageBtnsField, courseNameAndDescriptionField]
-      # showColumnToggles: true
+Template.index.rendered = ->
+  $('.nodesList').masonry()
 
-# Template.dockerImagePicture.helpers
-#   getDockerImagePictureURL: (dockerImageId) ->
-#     dockerImageData = DockerImages.findOne({_id:dockerImageId})
-#     # console.log dockerImageData
-#     dockerImageData.imageURL
+Template.nodeInfo.rendered = ->
+#   elem = this.find ".nodeInfo"
+  
+#   $('.nodesList').masonry 'appended', elem 
 
+  # $('.nodesList').masonry 'reloadItems' 
+  $('.nodesList').masonry()
+
+# Template.courseImage.rendered = ->
+#   $('.nodesList').masonry('layout')

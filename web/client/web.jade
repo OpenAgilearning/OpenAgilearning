@@ -14,40 +14,23 @@ template(name="navBar")
         a.navbar-brand(href="/") Agilearning
       .collapse.navbar-collapse
         ul.nav.navbar-nav
-          //- li.nav.navbar-nav
-          //-   a(href="{{pathFor 'learningResources'}}") Learning Resources
-
-          //- li.nav.navbar-nav
-          //-   a(href="{{pathFor 'about'}}") About
-
-          //- li.nav.navbar-nav
-          //-   a(href="{{pathFor 'howToUse'}}") How to use it ?
-
-          //- li.nav.navbar-nav
-          //-   a(href="{{pathFor 'ipynb'}}") Try IPyNB
-
-          //- li.nav.navbar-nav
-          //-   a(href="{{pathFor 'rstudio'}}") Try RStudio
           
-          if user
-            li.nav.navbar-nav
-              a(href="{{pathFor 'profile'}}") Profile
+          //- if user
+          //-   li.nav.navbar-nav
+          //-     a(href="{{pathFor 'profile'}}") Profile
 
           
           li.nav.navbar-nav
-            a(href="{{pathFor 'environments'}}") Environments
+            a(href="{{pathFor 'envs'}}") Environments
 
           li.nav.navbar-nav
             a(href="{{pathFor 'courses'}}") Courses
 
-          //- li.nav.navbar-nav
-          //-   +voteForMeLinks
-
           li.nav.navbar-nav
             a(href="{{pathFor 'discussions'}}") Discuss
 
-          li.nav.navbar-nav
-            a(href="{{pathFor 'wishFeatures'}}") Wish Features
+          //- li.nav.navbar-nav
+          //-   a(href="{{pathFor 'wishFeatures'}}") Wish Features
 
           
           if showAdminPage
@@ -61,9 +44,6 @@ template(name="navBar")
           li
             +loginButtons
 
-  if alertMessage
-    .container
-      .alert.alert-danger(role="alert") {{alertMessage}}
 
 template(name="about")
   .container

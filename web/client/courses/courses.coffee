@@ -1,4 +1,25 @@
 
+Template.allPublicCoursesTable.helpers
+  settings: ->
+    goToCoursePageBtnsField =
+      key: ["_id","courseName", "dockerImage"]
+      label: "Learning Immediately"
+      tmpl: Template.goToCoursePageBtn
+
+    courseNameAndDescriptionField =
+      key: ["courseName", "description"]
+      label: "Courses"
+      tmpl: Template.courseNameAndDescription
+
+
+    res =
+      collection: Courses
+      rowsPerPage: 5
+      showFilter: true
+      fields: [goToCoursePageBtnsField, courseNameAndDescriptionField]
+      # showColumnToggles: true
+
+
 Template.courseImage.helpers
   getCourseImageURL: (courseDoc) ->
     if courseDoc.imageURL
@@ -90,15 +111,3 @@ Template.course.events
 
     $("#docker").attr "src", url
 
-
-
-
-Template.analyzer.events
-  "click .connectBt": (e, t)->
-    e.stopPropagation()
-    $("#docker").attr "src", ""
-
-    docker = Session.get "docker"
-    url = "http://"+rootURL+":"+docker.servicePort
-
-    $("#docker").attr "src", url

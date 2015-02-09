@@ -21,6 +21,51 @@ Meteor.startup ->
           Meteor.subscribe "allPublicCourses"
           Meteor.subscribe "allPublicCoursesDockerImages"
 
+    @route "envs",
+      path: "envs/"
+      template: "envs"
+      data: ->
+        resData =
+          rootURL:rootURL
+          user: ->
+            Meteor.user()
+          showAdminPage: ->
+            userId = Meteor.userId()
+            Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
+          envConfigTypeId: ->
+            if Session.get("envConfigTypeId") isnt ""
+              Session.get "envConfigTypeId"
+
+          userConfigId: ->
+            if Session.get("userConfigId") isnt ""
+              Session.get "userConfigId"
+
+          hasEnvUserConfigs: ->
+            EnvUserConfigs.find().count() > 0
+
+          hasUnsettingEnvUserConfigs: -> 
+            (EnvConfigTypes.find().count() - EnvUserConfigs.find().count() )> 0
+
+          filteredEnvConfigTypes: ->
+            filteringConfigTypeIds = EnvUserConfigs.find().fetch().map (xx)-> xx.configTypeId            
+            EnvConfigTypes.find _id:{$nin:filteringConfigTypeIds}            
+
+      waitOn: ->
+        userId = Meteor.userId()
+        if not userId
+          Router.go "pleaseLogin"
+
+        #TODO: no password! no envs!
+        Meteor.subscribe "userEnvUserConfigs"
+        Meteor.subscribe "userDockerInstances"
+        Meteor.subscribe "userEnvUserConfigs"
+
+        Meteor.subscribe "allPublicEnvConfigTypes"
+        Meteor.subscribe "allPublicCourses"
+        Meteor.subscribe "allPublicCoursesDockerImages"
+
+
     @route "profile",
       path: "profile/"
       template: "profile"
@@ -46,7 +91,30 @@ Meteor.startup ->
 
         Meteor.subscribe "allPublicEnvConfigTypes"
 
-        
+    @route "courses",
+      path: "courses/"
+      template: "courses"
+      data:
+        user: ->
+          Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+
+        isAdmin: ->
+          uid = Meteor.userId()
+          Roles.find({userId:uid,role:"admin"}).count()>0
+        courses: ->
+          Courses.find()
+
+      waitOn: ->
+        userId = Meteor.userId()
+        if not userId
+          Router.go "pleaseLogin"
+
+        Meteor.subscribe "allPublicCourses"
+        Meteor.subscribe "allPublicCoursesDockerImages"
+ 
 
     @route "course",
       path: "course/:courseId"
@@ -180,27 +248,6 @@ Meteor.startup ->
         Meteor.subscribe "classChatroom", @params.classroomId
         Meteor.subscribe "usersOfClassroom", @params.classroomId
 
-    @route "environments",
-      path: "environments/"
-      template: "environments"
-      data: ->
-        resData =
-          rootURL:rootURL
-          user: ->
-            Meteor.user()
-          showAdminPage: ->
-            userId = Meteor.userId()
-            Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
-
-      waitOn: ->
-        userId = Meteor.userId()
-        if not userId
-          Router.go "pleaseLogin"
-
-        #TODO: no password! no envs!
-        Meteor.subscribe "allPublicEnvs"
-    
-
 
     @route "learningResources",
       path: "learningResources/"
@@ -317,235 +364,22 @@ Meteor.startup ->
             else
               Router.go "index"
 
-    @route "about",
-      path: "about/"
-      template: "about"
-      data:
-        rootURL:rootURL
-        user: ->
-          Meteor.user()
-        showAdminPage: ->
-          userId = Meteor.userId()
-          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
-
-
-
-    @route "howToUse",
-      path: "howToUse/"
-      template: "howToUse"
-      data:
-        rootURL:rootURL
-        user: ->
-          Meteor.user()
-        showAdminPage: ->
-          userId = Meteor.userId()
-          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
-
-
-
-    @route "wishFeatures",
-      path: "wishFeatures/"
-      template: "wishFeatures/"
-      data:
-        rootURL:rootURL
-        user: ->
-          Meteor.user()
-        showAdminPage: ->
-          userId = Meteor.userId()
-          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
-
-      waitOn: ->
-        Meteor.subscribe "Chat", "wishFeatures"
-        Meteor.subscribe "WantedFeature"
-        Session.set "courseId", "wishFeatures"
-
-
-    @route "dockers",
-      path: "dockers/"
-      template: "dockers"
-      data:
-        alertMessage: ->
-          user = Meteor.user()
-          if DockerTypes.find().count() > DockerTypeConfig.find({userId:user._id}).count()
-            "please setting Docker Running Configures"
-          else
-            false
-
-        rootURL:rootURL
-        user: ->
-          Meteor.user()
-        showAdminPage: ->
-          userId = Meteor.userId()
-          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
-
-
-        dockerImages: ->
-          runningImages = DockerInstances.find().fetch().map (x)-> x.imageId
-          DockerImages.find({_id:{$nin:runningImages}})
-
-        dockerInstances: ->
-          DockerInstances.find()
-
-
-        dockerTypes: ->
-          user = Meteor.user()
-          if Meteor.user() and DockerTypeConfig.find({userId:user._id}).count() > 0
-
-            res = []
-            for t in DockerTypes.find().fetch()
-              if DockerTypeConfig.find({userId:user._id,typeId:t._id}).count() > 0
-                t.currentSettings = DockerTypeConfig.findOne({userId:user._id,typeId:t._id}).env
-              res.push t
-
-            res
-
-          else
-            DockerTypes.find()
-
-      waitOn: ->
-        userId = Meteor.userId()
-        if not userId
-          Router.go "pleaseLogin"
-
-        Meteor.subscribe "allDockerImagesOld"
-        Meteor.subscribe "allDockerTypes"
-        Meteor.subscribe "userDockerInstances"
-        Meteor.subscribe "userDockerTypeConfig"
-
-
-    @route "dockerSetConfig",
-      path: "dockerSetConfig/:dockerType"
-      template: "dockerSetConfig"
-      data: ->
-        resData =
-          dockerType: =>
-           @params.dockerType
-          dockerTypes: ->
-            DockerTypes.find()
-          env: ->
-            DockerTypes.findOne().env
-
-        resData
-
-      waitOn: ->
-        userId = Meteor.userId()
-        if not userId
-          Router.go "pleaseLogin"
-
-        #Call by [docker.coffee] Template.dockerSetConfig.events "click .submitENV"
-        Session.set "dockerType", @params.dockerType
-
-        Meteor.subscribe "oneDockerTypes", @params.dockerType
-        Meteor.subscribe "userDockerTypeConfig"
-
-
-    @route "courses",
-      path: "courses/"
-      template: "courses"
-      data:
-        user: ->
-          Meteor.user()
-        showAdminPage: ->
-          userId = Meteor.userId()
-          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
-
-        isAdmin: ->
-          uid = Meteor.userId()
-          Roles.find({userId:uid,role:"admin"}).count()>0
-        courses: ->
-          Courses.find()
-
-      waitOn: ->
-        userId = Meteor.userId()
-        if not userId
-          Router.go "pleaseLogin"
-
-        Meteor.subscribe "allPublicCourses"
-        # Meteor.subscribe "myRoles"
-
-    
-    # @route "ipynb",
-    #   path: "ipynb/"
-    #   template: "analyzer"
+    # @route "wishFeatures",
+    #   path: "wishFeatures/"
+    #   template: "wishFeatures/"
     #   data:
     #     rootURL:rootURL
-    #     baseImageUrl: "https://registry.hub.docker.com/u/c3h3/oblas-py278-shogun-ipynb/"
-    #     name: "ipynb"
-
     #     user: ->
     #       Meteor.user()
     #     showAdminPage: ->
     #       userId = Meteor.userId()
     #       Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
-
-    #     docker: ->
-    #       courseId = Session.get "courseId"
-    #       course = Courses.findOne _id:courseId
-    #       Session.set "docker", DockerInstances.findOne({imageId:"c3h3/oblas-py278-shogun-ipynb"})
-    #       DockerInstances.findOne({imageId:"c3h3/oblas-py278-shogun-ipynb"})
-
-    #     chats: ->
-    #       Chat.find {}, {sort: {createAt:-1}}
-
-    #     quickFormData: ->
-    #       courseId:"ipynbBasic"
-
     #   waitOn: ->
-    #     userId = Meteor.userId()
-    #     if not userId
-    #       Router.go "pleaseLogin"
+    #     Meteor.subscribe "Chat", "wishFeatures"
+    #     Meteor.subscribe "WantedFeature"
+    #     Session.set "courseId", "wishFeatures"
 
-    #     Meteor.call "runDocker", "c3h3/oblas-py278-shogun-ipynb", (err, data)->
-    #       if not err
-    #         console.log "data = "
-    #         console.log data
-
-    #     Session.set "courseId", "ipynbBasic"
-
-    #     Meteor.subscribe "Chat", "ipynbBasic"
-    #     Meteor.subscribe "userDockerInstances"
-
-
-    #  @route "rstudio",
-    #   path: "rstudio/"
-    #   template: "analyzer"
-    #   data:
-    #     rootURL:rootURL
-    #     baseImageUrl: "https://registry.hub.docker.com/u/rocker/rstudio/"
-    #     name: "rstudio"
-    #     user: ->
-    #       Meteor.user()
-    #     showAdminPage: ->
-    #       userId = Meteor.userId()
-    #       Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
-
-
-    #     docker: ->
-    #       courseId = Session.get "courseId"
-    #       course = Courses.findOne _id:courseId
-    #       Session.set "docker", DockerInstances.findOne({imageId:"rocker/rstudio"})
-    #       DockerInstances.findOne({imageId:"rocker/rstudio"})
-
-    #     chats: ->
-    #       Chat.find {}, {sort: {createAt:-1}}
-
-    #     quickFormData: ->
-    #       courseId:"rstudioBasic"
-
-    #   waitOn: ->
-    #     userId = Meteor.userId()
-    #     if not userId
-    #       Router.go "pleaseLogin"
-
-    #     Meteor.call "runDocker", "rocker/rstudio", (err, data)->
-    #       if not err
-    #         console.log "data = "
-    #         console.log data
-
-    #     Session.set "courseId", "rstudioBasic"
-    #     Meteor.subscribe "Chat", "rstudioBasic"
-    #     Meteor.subscribe "userDockerInstances"
 
     @route "discussions", 
       path: "discuss/"

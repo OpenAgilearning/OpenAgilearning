@@ -17,11 +17,16 @@ template(name="profile")
 
 template(name="profilePageEnvConfigsForm")
   if envConfigsSchema
-    +quickForm id="setEnvConfigs" schema=envConfigsSchema type="method" meteormethod="setEnvConfigsById" template="bootstrap3-inline" label-class="sr-only" afFieldInput-placeholder="schemaLabel"
+    +quickForm id="setEnvUserConfigs" schema=envConfigsSchema type="method" meteormethod="setEnvConfigsById" template="bootstrap3-inline" label-class="sr-only" afFieldInput-placeholder="schemaLabel"
 
 
 template(name="profilePageEnvUserConfigsTable")
   +reactiveTable settings=settings
+
+
+template(name="profilePageEnvConfigTypesTableRelatedCoursesField")
+  +EnvConfigTypesRelatedCoursesField _id=configTypeId
+
 
 template(name="profilePageEnvUserConfigsTableConfigDataField")
   ul
@@ -30,7 +35,7 @@ template(name="profilePageEnvUserConfigsTableConfigDataField")
 
 
 template(name="profilePageEnvUserConfigsTableEditBtnField")
-  botton.envConfigEditBtn.btn.btn-warning(userConfigId="{{_id}}") Edit
+  botton.envUserConfigEditBtn.btn.btn-warning(userConfigId="{{_id}}") Edit
 
 
 
@@ -47,7 +52,7 @@ template(name="profilePageDockerInstancesTableEnvField")
       li {{this}}
 
 template(name="profilePageDockerInstancesTableRemoveBtnField")
-  botton.removeInstanceBtn.btn.btn-warning(userConfigId="{{_id}}") Remove
+  botton.removeInstanceBtn.btn.btn-warning(instanceId="{{_id}}") Remove
 
 template(name="public_profile")
   h2 {{user.profile.name}}
