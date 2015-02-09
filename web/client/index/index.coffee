@@ -4,9 +4,9 @@ Template.nodesList.helpers
     Courses.find()
 
 Template.nodesList.rendered = ->
-  container = $(".nodeList")
-  container.imagesLoaded ->
-    container.masonry
+  $container = $(".nodeList")
+  $container.imagesLoaded ->
+    $container.masonry
       itemSelector: ".nodeInfo"
           
   # $('.nodesList').masonry
@@ -14,7 +14,10 @@ Template.nodesList.rendered = ->
   #   itemSelector: '.nodeInfo'
 
 Template.index.rendered = ->
-  $('.nodesList').masonry()
+  $container = $(".nodeList")
+  $container.imagesLoaded ->
+    $container.masonry
+      itemSelector: ".nodeInfo"
 
 Template.nodeInfo.rendered = ->
 #   elem = this.find ".nodeInfo"
@@ -22,7 +25,10 @@ Template.nodeInfo.rendered = ->
 #   $('.nodesList').masonry 'appended', elem 
 
   # $('.nodesList').masonry 'reloadItems' 
-  $('.nodesList').masonry()
+  $container = $(".nodeList")
+  $container.imagesLoaded ->
+    $container.masonry
+      itemSelector: ".nodeInfo"
 
 # Template.courseImage.rendered = ->
 #   $('.nodesList').masonry('layout')
