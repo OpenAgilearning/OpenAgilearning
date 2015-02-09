@@ -13,6 +13,9 @@ Template.nodesList.rendered = ->
   #   # columnWidth: ".col-md-3"
   #   itemSelector: '.nodeInfo'
 
+Template.index.rendered = ->
+  $('.nodesList').masonry()
+
 Template.nodeInfo.rendered = ->
 #   elem = this.find ".nodeInfo"
   
