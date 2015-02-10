@@ -32,17 +32,22 @@ for oneCourse in demoCourses
       oneCourse.publicStatus = "public"
 
       courseId = Courses.insert oneCourse
+  else
+    oneCourse = Courses.findOne oneCourse
+    courseId = oneCourse._id
 
-      if oneCourse.publicStatus is "public"
-        if Classrooms.find({courseId:courseId,publicStatus:"public"}).count() is 0
-          publicClassroomDoc =
-            creatorId: oneCourse.creatorId
-            courseId: courseId
-            publicStatus:"public"
-            createAt: new Date
-          classroomId = Classrooms.insert publicClassroomDoc
+  if oneCourse.publicStatus is "public"
+    if Classrooms.find({courseId:courseId,publicStatus:"public"}).count() is 0
+      publicClassroomDoc =
+        name: "Public Classroom"
+        description: "Everyone is welcome!"
+        creatorId: oneCourse.creatorId
+        courseId: courseId
+        publicStatus:"public"
+        createAt: new Date
+      classroomId = Classrooms.insert publicClassroomDoc
 
-          ClassroomRoles.insert {classroomId:classroomId, userId: oneCourse.creatorId, role:"admin", isActive:true}
-          Roles.addUsersToRoles(demoUser, "admin", "classroom_" + classroomId)
-          #Roles.addUsersToRoles(demoUser, "teacher", "classroom_" + classroomId)
+      ClassroomRoles.insert {classroomId:classroomId, userId: oneCourse.creatorId, role:"admin", isActive:true}
+      Roles.addUsersToRoles(demoUser, "admin", "classroom_" + classroomId)
+      #Roles.addUsersToRoles(demoUser, "teacher", "classroom_" + classroomId)
 

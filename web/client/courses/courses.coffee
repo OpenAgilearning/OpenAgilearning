@@ -67,12 +67,13 @@ Template.courseClassroomsTable.helpers
       key: "_id"
       label: "Learning Now!"
       tmpl: Template.goToClassroomBtn
-
+      
     res =
       collection: Classrooms
       rowsPerPage: 5
-      showFilter: true
-      fields: [goToClassroomBtnField, "publicStatus"]
+      showFilter: false
+      showNavigation:'never'
+      fields: [goToClassroomBtnField, "name", "description"]
 
 
 
