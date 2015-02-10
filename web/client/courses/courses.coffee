@@ -56,6 +56,9 @@ Template.goToClassroomBtn.events
         console.log data
       else
         console.log err
+        if err.error is 401
+          Cookies.set "redirectAfterLogin", window.location.href
+          Router.go "pleaseLogin"
 
   
 Template.courseClassroomsTable.helpers
