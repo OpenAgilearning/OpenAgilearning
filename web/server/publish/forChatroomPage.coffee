@@ -1,7 +1,5 @@
 Meteor.publish "chatrooms", ->
-  Chatrooms.find
-    classroomId:
-      $exists: false
+  Chatrooms.find()
 
 Meteor.publish "userJoinsChatroom", ->
   UserJoinsChatroom.find()

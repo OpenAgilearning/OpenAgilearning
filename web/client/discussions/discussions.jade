@@ -25,46 +25,49 @@ template(name="chatroomsPage")
         .row
           .col-md-4
             .list-group
-              a(href="#").list-group-item.list-group-item-success
+              a(href="#").list-group-item.list-group-item-success#create-room
                 span.glyphicon.glyphicon-plus
                 | Create
-              a(href="#").list-group-item.list-group-item-info
-                span.glyphicon.glyphicon-comment
-                | Chatroom 1
-              a(href="#").list-group-item.list-group-item-info.active
-                span.glyphicon.glyphicon-comment
-                | Chatroom 2
+              each myChatrooms
+                if isCurrentChatroom this
+                  a(href="#").list-group-item.list-group-item-info.active
+                    span.glyphicon.glyphicon-comment
+                    | {{name}}
+                else
+                  a(href="#").list-group-item.list-group-item-info
+                    span.glyphicon.glyphicon-comment
+                    | {{name}}
           .col-md-8
             .panel.panel-info
               .panel-heading
                 span.glyphicon.glyphicon-comment
-                | Chatroom 2
+                | {{currentChatroomName}}
               .panel-footer
                 form.form-group
                   textarea.form-control#new-message-text
                   input(type="submit", value="Send").btn.btn-block.btn-primary
               ul.list-group.chatroom-body
-                li.list-group-item
-                  .row
-                    .col-lg-2.col-md-3.col-sm-1.col-xs-2
-                      img(src="http://photos1.meetupstatic.com/photos/member/a/8/e/0/member_94003232.jpeg").img-circle.thumb
-                    .col-lg-10.col-md-9.col-sm-11.col-xs-10
-                      strong Chia-Chi Chang
-                      p Hello World
-                      small.text-muted
-                        span.glyphicon.glyphicon-time
-                        | 15:32:40
-                li.list-group-item.green-background
-                  .row
-                    .col-lg-9.col-md-8.col-sm-10.col-xs-10
-                      strong Adrian Liaw
-                      p Yet Another Hello World
-                      small.text-muted
-                        span.glyphicon.glyphicon-time
-                        | 15:31:50
-                    .col-lg-3.col-md-4.col-sm-2.col-xs-2
-                      img(src="http://photos2.meetupstatic.com/photos/member/9/d/c/8/thumb_172060392.jpeg").img-circle.thumb
-
+                each messages
+                  li.list-group-item
+                    .row
+                      if messageIsSentByCurrentUser this
+                        .col-lg-9.col-md-8.col-sm-10.col-xs-10
+                          strong= name
+                          p= text
+                          small.text-muted
+                            span.glyphicon.glyphicon-time
+                            | {{createdAt}}
+                        .col-lg-3.col-md-4.col-sm-2.col-xs-2
+                          img(src=userAvatar).img-circle.thumb
+                      else
+                        .col-lg-2.col-md-3.col-sm-1.col-xs-2
+                          img(src=userAvatar).img-circle.thumb
+                        .col-lg-10.col-md-9.col-sm-11.col-xs-10
+                          strong= name
+                          p= text
+                          small.text-muted
+                            span.glyphicon.glyphicon-time
+                            | {{createdAt}}
       .col-md-3
         h1 Join Others:
         .row

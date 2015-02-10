@@ -116,3 +116,12 @@ for dockerServerData in defaultDockerServers
     DockerServers.insert dockerServerData
 
 
+Classrooms.find().forEach (classroom) ->
+  # console.log classroom
+  createCondition = Chatrooms.find( classroomId: classroom._id ).count() is 0
+  createCondition = createCondition and Courses.find( _id: classroom.courseId ).count() > 0
+  if createCondition
+    Chatrooms.insert
+      classroomId: classroom._id
+      name: Courses.findOne( _id: classroom.courseId ).courseName + "(#{classroom._id[..5]}...)"
+      creatorId: classroom.creatorId
