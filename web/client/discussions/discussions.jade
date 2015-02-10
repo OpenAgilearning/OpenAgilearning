@@ -30,11 +30,11 @@ template(name="chatroomsPage")
                 | Create
               each myChatrooms
                 if isCurrentChatroom this
-                  a(href="#").list-group-item.list-group-item-info.active
+                  a(href="#", roomid=_id).list-group-item.list-group-item-info.select-chatroom.active
                     span.glyphicon.glyphicon-comment
                     | {{name}}
                 else
-                  a(href="#").list-group-item.list-group-item-info
+                  a(href="#", roomid=_id).list-group-item.list-group-item-info.select-chatroom
                     span.glyphicon.glyphicon-comment
                     | {{name}}
           .col-md-8
@@ -43,28 +43,30 @@ template(name="chatroomsPage")
                 span.glyphicon.glyphicon-comment
                 | {{currentChatroomName}}
               .panel-footer
-                form.form-group
-                  textarea.form-control#new-message-text
+                form.form-group#new-message-form
+                  textarea(placeholder="Type in some message...").form-control#new-message-text
                   input(type="submit", value="Send").btn.btn-block.btn-primary
               ul.list-group.chatroom-body
                 each messages
-                  li.list-group-item
-                    .row
-                      if messageIsSentByCurrentUser this
+                  if messageIsSentByCurrentUser this
+                    li.list-group-item.green-background
+                      .row
                         .col-lg-9.col-md-8.col-sm-10.col-xs-10
                           strong= name
-                          p= text
+                          p.message-content= text
                           small.text-muted
                             span.glyphicon.glyphicon-time
-                            | {{createdAt}}
+                            | {{createdAt.toLocaleString}}
                         .col-lg-3.col-md-4.col-sm-2.col-xs-2
                           img(src=userAvatar).img-circle.thumb
-                      else
+                  else
+                    li.list-group-item
+                      .row
                         .col-lg-2.col-md-3.col-sm-1.col-xs-2
                           img(src=userAvatar).img-circle.thumb
                         .col-lg-10.col-md-9.col-sm-11.col-xs-10
                           strong= name
-                          p= text
+                          p.message-content= text
                           small.text-muted
                             span.glyphicon.glyphicon-time
                             | {{createdAt}}

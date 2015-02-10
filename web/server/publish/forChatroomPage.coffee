@@ -3,3 +3,7 @@ Meteor.publish "chatrooms", ->
 
 Meteor.publish "userJoinsChatroom", ->
   UserJoinsChatroom.find()
+
+Meteor.publish "chatMessages", (chatroomId) ->
+  ChatMessages.find
+    chatroomId: chatroomId

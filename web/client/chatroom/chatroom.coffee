@@ -1,14 +1,14 @@
-Template.chatroom.created = ->
+Template.classChatroom.created = ->
   Session.set "chatroomIsMinimised", no
   Session.set "readMessages", 0
 
-Template.chatroom.helpers
+Template.classChatroom.helpers
   messages: ->
-    ChatMessages.find({}, {sort: {createdAt: -1}}).fetch()
+    ChatMessages.find({classroomId: @classroomId}, {sort: {createdAt: -1}}).fetch()
   messageIsSentByCurrentUser: (message) ->
     message.userId is Meteor.user()._id
 
-Template.chatroom.events
+Template.classChatroom.events
   "submit .new-message-form": (event, template) ->
     event.preventDefault()
     Meteor.call(
