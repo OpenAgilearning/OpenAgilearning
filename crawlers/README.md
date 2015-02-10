@@ -10,6 +10,7 @@ Youtube Channels:
 - PyCon2014
 - taipeipython
 - EnthoughtMedia (Scipy2014)
+- iyenlung
 
 Python Videos:
 - http://pyvideo.org/

@@ -270,15 +270,15 @@ Meteor.startup ->
         resourceNodes: ->
           LearningResources.find()
 
+        youtubeVideoId: ->
+          LearningResources.findOne().youtubeVideoId
 
       waitOn: ->
-        userId = Meteor.userId()
-        if not userId
-          Router.go "pleaseLogin"
+        # userId = Meteor.userId()
+        # if not userId
+        #   Router.go "pleaseLogin"
 
-        else
-          if Roles.userIsInRole(userId,"admin","system")
-            Meteor.subscribe "queryLearningResources"
+        Meteor.subscribe "allLearningResources"
 
     @route "admin",
       path: "admin/"
