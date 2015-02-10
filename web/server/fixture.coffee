@@ -44,30 +44,30 @@ if Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).count() > 0
   # Roles.insert {userId:uid, role:"admin"} for uid in filteredArray
 
 
-if Envs.find().count() is 0
+if DockerImages.find().count() is 0
   dockerDefaultImages = [
     # {_id:"c3h3/oblas-py278-shogun-ipynb:last", type:"ipynb", pictures:["/images/ipynb_lmnn1.png"]},
     # {_id:"c3h3/learning-shogun:last", type:"ipynb", pictures:["/images/ipynb_lmnn2.png"]},
-    {imageTag:"c3h3/learning-shogun:u1404-ocv",description: "This powerful enviroment provide opencv and shogun. You can use this enviroments to study machine learning.", type:"ipynb", pictures:["/images/ipynb_sudoku.png"],publicStatus:"public"},
+    {_id:"c3h3/learning-shogun:u1404-ocv",description: "This powerful enviroment provide opencv and shogun. You can use this enviroments to study machine learning.", type:"ipynb", pictures:["/images/ipynb_sudoku.png"],publicStatus:"public"},
     # {_id:"c3h3/livehouse20141105:last", type:"ipynb", pictures:["/images/ipynb_docker_default.png"]},
     # {_id: "c3h3/nccu-crawler-courses-201411:last",type : "ipynb", pictures:["/images/ipynb_docker_default.png" ]},
     # {_id: "dboyliao/docker-tossug:last", type : "ipynb", pictures:["/images/ipynb_tossug2.png" ]},
     # {_id:"rocker/rstudio:last", type:"rstudio", pictures:["/images/rstudio_docker_default.png"]},
-    # {_id:"c3h3/ml-for-hackers:last", type:"rstudio", pictures:["/images/rstudio_docker_default.png"]},
-    # {_id:"c3h3/rladies-hello-kaggle:last", type:"rstudio", pictures:["/images/rstudio_play_kaggle.png"]},
-    {imageTag:"c3h3/dsc2014tutorial:last", description: "This enviroments was used at 2014 DSC at Taiwan workshop.", type:"rstudio", pictures:["/images/rstudio_docker_default.png"],publicStatus:"public"}
+    {_id:"c3h3/ml-for-hackers", type:"rstudio", pictures:["/images/rstudio_docker_default.png"]},
+    {_id:"c3h3/rladies-hello-kaggle", type:"rstudio", pictures:["/images/rstudio_play_kaggle.png"]},
+    {_id:"c3h3/dsc2014tutorial", description: "This enviroments was used at 2014 DSC at Taiwan workshop.", type:"rstudio", pictures:["/images/rstudio_docker_default.png"],publicStatus:"public"}
   ]
 
-  Envs.insert image for image in dockerDefaultImages
+  DockerImages.insert image for image in dockerDefaultImages
 
-if DockerImages.find({_id:"c3h3/nccu-crawler-courses-201411",type:"ipynb"}).count() is 0
-  DockerImages.insert {_id:"c3h3/nccu-crawler-courses-201411",type:"ipynb"}
+# if DockerImages.find({_id:"c3h3/nccu-crawler-courses-201411",type:"ipynb"}).count() is 0
+#   DockerImages.insert {_id:"c3h3/nccu-crawler-courses-201411",type:"ipynb"}
 
-if DockerImages.find({_id:"c3h3/learning-shogun:u1404-ocv",type:"ipynb"}).count() is 0
-  DockerImages.insert {_id:"c3h3/learning-shogun:u1404-ocv",type:"ipynb"}
+# if DockerImages.find({_id:"c3h3/learning-shogun:u1404-ocv",type:"ipynb"}).count() is 0
+#   DockerImages.insert {_id:"c3h3/learning-shogun:u1404-ocv",type:"ipynb"}
 
-if DockerImages.find({_id:"dboyliao/docker-tossug",type:"ipynb"}).count() is 0
-  DockerImages.insert {_id:"dboyliao/docker-tossug",type:"ipynb"}
+# if DockerImages.find({_id:"dboyliao/docker-tossug",type:"ipynb"}).count() is 0
+#   DockerImages.insert {_id:"dboyliao/docker-tossug",type:"ipynb"}
 
 
 if Meteor.settings.public.DOCKER_CERT_PATH isnt ""
