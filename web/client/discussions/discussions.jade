@@ -69,7 +69,7 @@ template(name="chatroomsPage")
                           p.message-content= text
                           small.text-muted
                             span.glyphicon.glyphicon-time
-                            | {{createdAt}}
+                            | {{createdAt.toLocaleString}}
       .col-md-3
         h1 Join Others:
         .row
