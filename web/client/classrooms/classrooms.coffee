@@ -5,7 +5,7 @@ Template.classroom.rendered = ->
 Template.envIframe.events
   "click .connectEnvBtn": (e, t)->
     e.stopPropagation()
-    $("#EnvIframe").attr 'src', ""
+    $("#envIframe").attr 'src', ""
     
     ip = $("#envIframe").attr "ip"
     port = $("#envIframe").attr "port"
@@ -19,11 +19,21 @@ Template.classroomEnvIframe.helpers
     @docker.ip
 
   iframePort: ->
-    httpPortData = @docker.portDataArray.filter (portData)-> portData["type"] is "http"
+    httpPortData = @docker?.portDataArray?.filter (portData)-> portData["type"] is "http"
     if httpPortData.length > 0
       httpPortData[0].hostPort
     
      
+Template.classroomEnvIframe.rendered = ->
+  
+  $("#envIframe").attr 'src', ""
+    
+  ip = $("#envIframe").attr "ip"
+  port = $("#envIframe").attr "port"
+  url = "http://"+ip+":"+port
+
+  $("#envIframe").attr 'src', url
+
 
 
 Template.setEnvConfigsForm.helpers
