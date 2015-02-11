@@ -3,7 +3,7 @@
 Template.resourcesList.rendered = -> 
   $(".resourcesList").masonry
     columnWidth: ".col-md-3"
-    itemSelector: '.nodeInfo'
+    itemSelector: '.resourceNode'
 
 
 Template.learningResourcesPage.rendered = ->
@@ -14,7 +14,7 @@ Template.learningResourcesPage.rendered = ->
 
   $(".resourcesList").masonry
     columnWidth: ".col-md-3"
-    itemSelector: '.nodeInfo'
+    itemSelector: '.resourceNode'
 
 
 Template.resourceNode.events
@@ -37,48 +37,24 @@ Template.resourceNode.rendered = ->
   #   $(@).toggleClass "col-md-6"
   #   $(".resourceNode").masonry()
 
+  # $conotianer = $(".resourcesList")
+  
+  # if $conotianer
+  #   $conotianer.masonry "appended", elem
+  # else
+  #   $conotianer.masonry
+  #     columnWidth: ".col-md-3"
+  #     itemSelector: '.resourceNode'
+
   $(".resourcesList").masonry
     columnWidth: ".col-md-3"
     itemSelector: '.resourceNode'
 
-
-# Template.resourcesList.rendered = ->
-#   $('.resourcesList').masonry
-#     columnWidth: 300
-#     itemSelector: '.resourceNode'
-
-# Template.resourceNode.rendered = ->
-#   # elem = this.find ".resourceNode"
-#   # $('.resourcesList').masonry 'appended', elem 
-
-#   $('.resourcesList').masonry 'reloadItems' 
-#   $('.resourcesList').masonry 'layout' 
-
-
-# Template.learningResourcesPage.helpers
-#   settings: ->
-#     youtubeVideoPlayerField =
-#       key: "youtubeVideoId"
-#       label: "Youtube Video"
-#       tmpl: Template.youtubeVideoPlayer
-    
-
-#     res = 
-#       collection: LearningResources
-#       rowsPerPage: 10
-#       showFilter: true
-#       fields: [youtubeVideoPlayerField, "type", "title", "description"]
 
 Template.learningResourcesPage.rendered = ->
-  $("video").map -> 
-    videojs @, JSON.parse($(@).attr("data-setup"))
+  # $("video").map -> 
+  #   videojs @, JSON.parse($(@).attr("data-setup"))
 
   $(".resourcesList").masonry
     columnWidth: ".col-md-3"
     itemSelector: '.resourceNode'
-
-# Template.youtubeVideoPlayer.rendered = ->
-#   youtubeId = @data.youtubeVideoId
-#   $el = $("#"+youtubeId)
-#   videojs $el[0], JSON.parse($el.attr("data-setup"))
-  

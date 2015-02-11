@@ -22,12 +22,8 @@ template(name="resourceNode")
     .well
       hr
       img.play(youtubeVideoId="{{youtubeVideoId}}",width="100%",src="http://img.youtube.com/vi/{{youtubeVideoId}}/hqdefault.jpg")  
-      h2 {{title}}    
-      //- if youtubeVideoId
-      //-   a(target="_blank",href="http://www.youtube.com//watch?v={{youtubeVideoId}}")
-      //-     h4 (Watch At New Tab)
-      //-   video.video-js.vjs-default-skin(id="{{youtubeVideoId}}",src="",controls,data-setup='{ "techOrder": ["youtube"], "src": "http://www.youtube.com/watch?v={{youtubeVideoId}}" }')
-      //- p {{description}}
+      h3 {{ytTitle}}    
+      //- p {{ytDescription}}
       hr    
 
 

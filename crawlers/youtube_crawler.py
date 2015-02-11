@@ -16,6 +16,7 @@ video_data = crawlers.crawl_channel_uploads(YT_CHANNEL_ID)
 video_data_df = pd.DataFrame(video_data)
 
 video_data_df = video_data_df[["title","description","ytid"]]
+video_data_df.columns = [u'ytTitle', u'ytDescription', u'ytid']
 video_data_df["youtubeVideoId"] = video_data_df["ytid"]
 video_data_df = video_data_df.drop("ytid",1)
 video_data_df["_id"] = video_data_df["youtubeVideoId"].map(lambda xx:"YTV_"+xx)
