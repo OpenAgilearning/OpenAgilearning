@@ -32,6 +32,8 @@ for oneCourse in demoCourses
       oneCourse.publicStatus = "public"
 
       courseId = Courses.insert oneCourse
+
+      Roles.addUsersToRoles(oneCourse.creatorId, "admin", "course_" + courseId)
   else
     oneCourse = Courses.findOne oneCourse
     courseId = oneCourse._id
@@ -48,6 +50,6 @@ for oneCourse in demoCourses
       classroomId = Classrooms.insert publicClassroomDoc
 
       ClassroomRoles.insert {classroomId:classroomId, userId: oneCourse.creatorId, role:"admin", isActive:true}
-      Roles.addUsersToRoles(demoUser, "admin", "classroom_" + classroomId)
+      Roles.addUsersToRoles(oneCourse.creatorId, "admin", "classroom_" + classroomId)
       #Roles.addUsersToRoles(demoUser, "teacher", "classroom_" + classroomId)
 
