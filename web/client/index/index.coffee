@@ -14,9 +14,9 @@ Template.nodesList.rendered = ->
     itemSelector: '.nodeInfo'
 
 Template.nodeIcons.rendered = -> 
-  $(".nodeList").masonry
-    columnWidth: ".col-md-3"
-    itemSelector: '.nodeInfo'
+  $(".nodeList").masonry()
+    # columnWidth: ".col-md-3"
+    # itemSelector: '.nodeInfo'
 
 
 Template.index.rendered = ->
@@ -25,9 +25,9 @@ Template.index.rendered = ->
   #   $container.masonry
   #     itemSelector: ".nodeInfo"
 
-  $(".nodeList").masonry
-    columnWidth: ".col-md-3"
-    itemSelector: '.nodeInfo'
+  $(".nodeList").masonry()
+    # columnWidth: ".col-md-3"
+    # itemSelector: '.nodeInfo'
 
 
 
@@ -43,9 +43,18 @@ Template.nodeInfo.rendered = ->
     $(@).toggleClass "col-md-6"
     $(".nodesList").masonry()
 
-  $(".nodeList").masonry
-    columnWidth: ".col-md-3"
-    itemSelector: '.nodeInfo'
+  $conotianer = $(".nodesList")
+  
+  if $conotianer
+    $conotianer.masonry "appended", elem
+  else
+    $conotianer.masonry
+      columnWidth: ".col-md-3"
+      itemSelector: '.nodeInfo'
+
+  $(".nodeList").masonry()
+    # columnWidth: ".col-md-3"
+    # itemSelector: '.nodeInfo'
 
 
   # briefView = ->

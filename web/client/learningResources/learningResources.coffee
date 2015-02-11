@@ -12,9 +12,9 @@ Template.learningResourcesPage.rendered = ->
   #   $container.masonry
   #     itemSelector: ".nodeInfo"
 
-  $(".resourcesList").masonry
-    columnWidth: ".col-md-3"
-    itemSelector: '.resourceNode'
+  $(".resourcesList").masonry()
+    # columnWidth: ".col-md-3"
+    # itemSelector: '.resourceNode'
 
 
 Template.resourceNode.events
@@ -30,26 +30,24 @@ Template.resourceNode.events
 
 
 Template.resourceNode.rendered = ->
-  # elem = @find ".resourceNode"
+  elem = @find ".resourceNode"
     
   # $(elem).click ->
   #   $(@).toggleClass "col-md-3"
   #   $(@).toggleClass "col-md-6"
   #   $(".resourceNode").masonry()
 
-  # $conotianer = $(".resourcesList")
+  $conotianer = $(".resourcesList")
   
-  # if $conotianer
-  #   $conotianer.masonry "appended", elem
-  # else
-  #   $conotianer.masonry
-  #     columnWidth: ".col-md-3"
-  #     itemSelector: '.resourceNode'
+  if $conotianer
+    $conotianer.masonry "appended", elem
+  else
+    $conotianer.masonry
+      columnWidth: ".col-md-3"
+      itemSelector: '.resourceNode'
 
-  $(".resourcesList").masonry
-    columnWidth: ".col-md-3"
-    itemSelector: '.resourceNode'
-
+  $(".resourcesList").masonry()
+    
 
 Template.learningResourcesPage.rendered = ->
   # $("video").map -> 
