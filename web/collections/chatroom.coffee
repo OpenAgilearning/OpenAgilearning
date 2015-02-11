@@ -90,7 +90,9 @@ Meteor.methods
       createdAt: new Date
       chatroomId: chatroomId
       type: "M"
-      text: "Chatroom Created"
+      text: "Chatroom Created by #{user.profile.name}"
+
+    chatroomId
 
   joinRoom: (chatroomId) ->
 

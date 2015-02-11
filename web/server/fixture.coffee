@@ -121,10 +121,11 @@ Classrooms.find().forEach (classroom) ->
   createCondition = Chatrooms.find( classroomId: classroom._id ).count() is 0
   createCondition = createCondition and Courses.find( _id: classroom.courseId ).count() > 0
   if createCondition
+    creator = Meteor.users.findOne(_id: classroom.creatorId)
     chatroom = Chatrooms.insert
       classroomId: classroom._id
       name: Courses.findOne( _id: classroom.courseId ).courseName + "(#{classroom._id[..5]}...)"
-      creatorId: classroom.creatorId
+      creatorId: creator._id
       lastUpdate: new Date
     ChatMessages.insert
       chatroomId: chatroom
@@ -134,4 +135,9 @@ Classrooms.find().forEach (classroom) ->
       userName: "System"
       createdAt: new Date
       type: "M"
-      text: "Chatroom Created"
+      text: "Chatroom Created by #{creator.profile.name}"
+    UserJoinsChatroom.insert
+      userId: creator._id
+      userName: creator.profile.name
+      chatroomId: chatroom
+      chatroomName: Chatrooms.findOne(_id: chatroom).name

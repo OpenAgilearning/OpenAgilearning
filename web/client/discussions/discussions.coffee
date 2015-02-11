@@ -25,7 +25,7 @@ Template.chatroomsPage.helpers
 
   otherChatrooms: ->
     res = []
-    Chatrooms.find().forEach (chatroom) ->
+    Chatrooms.find({classroomId: {$exists: false}}).forEach (chatroom) ->
       if not UserJoinsChatroom.findOne {userId: Meteor.userId(), chatroomId: chatroom._id}
         res.push chatroom
     res
@@ -37,6 +37,9 @@ Template.chatroomsPage.helpers
       {chatroomId: Session.get "currentChatroom"},
       {sort: {createdAt: -1}}
     )
+
+  chatroomCreatorName: (chatroom) ->
+    UserJoinsChatroom.findOne({chatroomId: chatroom._id, userId: chatroom.creatorId}).userName
 
   isCurrentChatroom: (chatroom) ->
     chatroom._id is Session.get "currentChatroom"
@@ -71,7 +74,16 @@ Template.chatroomsPage.events
   "click #submit-creation": (event, template) ->
     event.preventDefault()
     newRoomName = template.$("#new-room-text").val()
-    console.log newRoomName
     if newRoomName.length >= 1
-      Meteor.call "createRoom", newRoomName
+      Meteor.call "createRoom", newRoomName, (error, newChatroomId) ->
+        if not error
+          Session.set "currentChatroom", newChatroomId
+          Meteor.subscribe "chatMessages", newChatroomId
       $("#create-room-modal").modal "hide"
+      template.$("#new-room-text").val ""
+
+  "click .join-chat": (event, template) ->
+    chatroomId = $(event.target).attr "chatroomId"
+    Meteor.call "joinRoom", chatroomId
+    Session.set "currentChatroom", chatroomId
+    Meteor.subscribe "chatMessages", chatroomId
