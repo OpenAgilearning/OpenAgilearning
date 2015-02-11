@@ -1,28 +1,28 @@
 
 @LearningResources = new Mongo.Collection "learningResources"
 
-@learningResourceSchema = new SimpleSchema
-  title:
-    type: String
-  description:
-    type: String
-  image:
-    type: String
-    optional: true
-  type:
-    type: String
-    allowedValues: ["video","website","slide","youtube"]
-    optional: true
-  url:
-    type: String
-    optional: true
-    regEx: SimpleSchema.RegEx.Url
-  youtubeVideoId:
-    type: String
-    optional: true
-  youtubePlaylistId:
-    type: String
-    optional: true
+# @learningResourceSchema = new SimpleSchema
+#   title:
+#     type: String
+#   description:
+#     type: String
+#   image:
+#     type: String
+#     optional: true
+#   type:
+#     type: String
+#     allowedValues: ["video","website","slide","youtube"]
+#     optional: true
+#   url:
+#     type: String
+#     optional: true
+#     regEx: SimpleSchema.RegEx.Url
+#   youtubeVideoId:
+#     type: String
+#     optional: true
+#   youtubePlaylistId:
+#     type: String
+#     optional: true
 
 
 
@@ -42,40 +42,77 @@ Meteor.methods
 
 @Courses = new Mongo.Collection "courses"
 
-@coursesSchema = new SimpleSchema
-  courseName:
-    type: String
 
-  publicStatus:
-    type: String
-    allowedValues: ["public","semiprivate","private"]
+@getCoursesEditSchema = (courseId, dockerImagesArray=[], slidesArray=[], VideosArray=[]) ->
+  resSchema = new SimpleSchema
+    # id:
+    #   type: String
+    #   defaultValues: [courseId]
 
-  dockerImage:
-    type: String
+    courseName:
+      type: String
 
-  slides:
-    type: String
-    optional: true
-    regEx: SimpleSchema.RegEx.Url
-    autoform:
-      type: "url"
+    publicStatus:
+      type: String
+      allowedValues: ["public","semiprivate","private"]
 
-  description:
-    type: String
-    optional: true
+    description:
+      type: String
+      optional: true
+      autoform:
+        rows: 5
 
-  video:
-    type: String
-    optional: true
-    regEx: SimpleSchema.RegEx.Url
-    autoform:
-      type: "url"
+  if dockerImagesArray.length > 0
+    resSchema.dockerImage = 
+      type: String
+      allowedValues: dockerImagesArray
+      optional: true
+  
+  if slidesArray.length > 0
+    resSchema.slides = 
+      type: String
+      allowedValues: slidesArray
+      optional: true
+
+  if VideosArray.length > 0
+    resSchema.video = 
+      type: String
+      allowedValues: VideosArray
+      optional: true
+
+  # resSchema.courseId = 
+  #   type: String
+  #   defaultValues: [courseId]
+    # autoform:
+    #   type: "hidden"
 
 
+  resSchema
 
 
 
 Meteor.methods
+  "editCourseInfoByAdmin": (courseDoc) ->
+    console.log "courseDoc = "
+    console.log courseDoc
+
+    loggedInUserId = Meteor.userId()
+
+    if not loggedInUserId
+      throw new Meteor.Error(401, "You need to login")
+
+    courseId = courseDoc._id
+    courseAndId = "course_" + courseId
+
+    console.log "courseAndId = "
+    console.log courseAndId
+
+    # if Roles.userIsInRole loggedInUserId, "admin", courseAndId
+    #   delete courseDoc._id
+    #   Courses.update {_id:courseId}, {$set:courseDoc}
+    
+
+
   "createCourse": (courseData) ->
 
     user = Meteor.user()

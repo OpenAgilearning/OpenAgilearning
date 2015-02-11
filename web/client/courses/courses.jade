@@ -52,11 +52,18 @@ template(name="course")
         +courseImage courseDoc=course width="100%"
         +Template.dynamic template="courseNameAndDescription" data=course
         //- +courseNameAndDescription courseName=course.courseName description=course.description
-        template(name="courseNameAndDescription")
+        if isInRole "admin" courseAndId
+          +courseInfoAdminEditor 
+          
       .col-md-9.column
         h2 Classrooms:
         +courseClassroomsTable
 
+template(name="courseInfoAdminEditor")
+  if coursesEditSchema
+    hr
+    +quickForm id="courseInfoAdminEditor" doc=course schema=coursesEditSchema type="method" meteormethod="editCourseInfoByAdmin" 
+    
 
 template(name="courseImage")
   a(href="{{pathFor 'course' courseId=courseDoc._id}}")

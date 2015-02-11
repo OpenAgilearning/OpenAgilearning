@@ -137,6 +137,13 @@ Meteor.startup ->
           course: =>
             Courses.findOne _id: @params.courseId
 
+          courseAndId: =>
+            "course_" + @params.courseId
+
+          coursesEditSchema: =>
+            getCoursesEditSchema(@params.courseId)
+
+
         resData
 
       waitOn: ->
@@ -192,29 +199,29 @@ Meteor.startup ->
             configTypeId = getEnvConfigTypeIdFromClassroomId(@params.classroomId)
             EnvUserConfigs.find({userId:userId, configTypeId:configTypeId}).count() is 0            
 
-          envConfigsSchema: =>
-            userId = Meteor.userId()
-            # classroomDoc = Classrooms.findOne _id:@params.classroomId
-            # courseData = Courses.findOne _id:classroomDoc.courseId
-            # imageTag = courseData.dockerImage
+          # envConfigsSchema: =>
+          #   userId = Meteor.userId()
+          #   # classroomDoc = Classrooms.findOne _id:@params.classroomId
+          #   # courseData = Courses.findOne _id:classroomDoc.courseId
+          #   # imageTag = courseData.dockerImage
             
-            # configTypeId = DockerImages.findOne({_id:imageTag}).type
+          #   # configTypeId = DockerImages.findOne({_id:imageTag}).type
             
-            configTypeId = getEnvConfigTypeIdFromClassroomId(@params.classroomId)
+          #   configTypeId = getEnvConfigTypeIdFromClassroomId(@params.classroomId)
             
-            envConfigsData = EnvConfigTypes.findOne _id:configTypeId
-            schemaSettings = {}
+          #   envConfigsData = EnvConfigTypes.findOne _id:configTypeId
+          #   schemaSettings = {}
 
-            envConfigsData.configs.envs.map (env)->
-              schemaSettings[env.name] = {type: String}
+          #   envConfigsData.configs.envs.map (env)->
+          #     schemaSettings[env.name] = {type: String}
                 
-              if not env.mustHave
-                schemaSettings[env.name].optional = true
+          #     if not env.mustHave
+          #       schemaSettings[env.name].optional = true
 
-              if env.limitValues
-                schemaSettings[env.name].allowedValues = env.limitValues
+          #     if env.limitValues
+          #       schemaSettings[env.name].allowedValues = env.limitValues
 
-            new SimpleSchema schemaSettings
+          #   new SimpleSchema schemaSettings
 
           # chats: ->
           #   Chat.find {}, {sort: {createAt:-1}}
