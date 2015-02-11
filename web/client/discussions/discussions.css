@@ -1,0 +1,8 @@
+#new-message-text {
+  resize: vertical;
+}
+
+.message-content {
+  white-space: pre;
+  overflow: auto;
+}

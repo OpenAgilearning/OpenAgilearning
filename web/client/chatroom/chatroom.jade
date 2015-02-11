@@ -1,4 +1,4 @@
-template(name="chatroom")
+template(name="classChatroom")
   
   .chatroom-main.col-md-3
     .panel.panel-primary
@@ -20,7 +20,7 @@ template(name="chatroom")
               .row
                 .col-lg-9.col-md-8.col-sm-10.col-xs-10
                   strong= userName
-                  p= text
+                  p.message-content= text
                   small.text-muted
                     span.glyphicon.glyphicon-time
                     | {{createdAt.toLocaleString}}
@@ -33,7 +33,7 @@ template(name="chatroom")
                   img(src=userAvatar).img-circle.thumb
                 .col-lg-10.col-md-9.col-sm-11.col-xs-10
                   strong= userName
-                  p= text
+                  p.message-content= text
                   small.text-muted
                     span.glyphicon.glyphicon-time
                     | {{createdAt.toLocaleString}}
