@@ -9,12 +9,19 @@ Template.chatroomsPage.helpers
       if key[0..9] is "classroom_"
         room = Chatrooms.findOne {classroomId: key[10..]}
         res.push room if room
-    res.concat(UserJoinsChatroom.find
+    res = res.concat(UserJoinsChatroom.find
         userId: Meteor.userId()
       .map (rel) ->
         Chatrooms.findOne
           _id: rel.chatroomId
     )
+    Chatrooms.find({
+      $or: res.map (chatroom) ->
+        _id: chatroom._id
+      }, {
+        sort: 
+          lastUpdate: -1
+      }).fetch()
 
   otherChatrooms: ->
     res = []
@@ -30,7 +37,6 @@ Template.chatroomsPage.helpers
       {chatroomId: Session.get "currentChatroom"},
       {sort: {createdAt: -1}}
     )
-
 
   isCurrentChatroom: (chatroom) ->
     chatroom._id is Session.get "currentChatroom"
@@ -61,3 +67,11 @@ Template.chatroomsPage.events
         "M"
       )
       template.$("#new-message-text").val ""
+
+  "click #submit-creation": (event, template) ->
+    event.preventDefault()
+    newRoomName = template.$("#new-room-text").val()
+    console.log newRoomName
+    if newRoomName.length >= 1
+      Meteor.call "createRoom", newRoomName
+      $("#create-room-modal").modal "hide"

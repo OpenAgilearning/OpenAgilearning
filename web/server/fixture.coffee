@@ -121,7 +121,17 @@ Classrooms.find().forEach (classroom) ->
   createCondition = Chatrooms.find( classroomId: classroom._id ).count() is 0
   createCondition = createCondition and Courses.find( _id: classroom.courseId ).count() > 0
   if createCondition
-    Chatrooms.insert
+    chatroom = Chatrooms.insert
       classroomId: classroom._id
       name: Courses.findOne( _id: classroom.courseId ).courseName + "(#{classroom._id[..5]}...)"
       creatorId: classroom.creatorId
+      lastUpdate: new Date
+    ChatMessages.insert
+      chatroomId: chatroom
+      classroomId: classroom._id
+      userId: "system"
+      userAvatar: "http://photos1.meetupstatic.com/img/noPhoto_50.png"
+      userName: "System"
+      createdAt: new Date
+      type: "M"
+      text: "Chatroom Created"

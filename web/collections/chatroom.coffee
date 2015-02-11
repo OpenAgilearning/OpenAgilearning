@@ -60,6 +60,9 @@ Meteor.methods
       doc.classroomId = classroomId
 
     ChatMessages.insert doc
+    Chatrooms.update {_id: chatroomId}, 
+      $set:
+        lastUpdate: new Date
 
 
   createRoom: (name) ->
@@ -72,12 +75,22 @@ Meteor.methods
     chatroomId = Chatrooms.insert
       name: name
       creatorId: user._id
+      lastUpdate: new Date
 
     UserJoinsChatroom.insert
       userId: user._id
       userName: user.profile.name
       chatroomId: chatroomId
       chatroomName: name
+
+    ChatMessages.insert
+      userId: "system"
+      userAvatar: "http://photos1.meetupstatic.com/img/noPhoto_50.png"
+      userName: "System"
+      createdAt: new Date
+      chatroomId: chatroomId
+      type: "M"
+      text: "Chatroom Created"
 
   joinRoom: (chatroomId) ->
 
@@ -99,6 +112,19 @@ Meteor.methods
       chatroomId: chatroomId
       chatroomName: chatroom.name
 
+    ChatMessages.insert
+      userId: "system"
+      userAvatar: "http://photos1.meetupstatic.com/img/noPhoto_50.png"
+      userName: "System"
+      createdAt: new Date
+      chatroomId: chatroomId
+      type: "M"
+      text: "#{user.profile.name} joins the room"
+
+    Chatrooms.update {_id: chatroomId}, 
+      $set:
+        lastUpdate: new Date
+
   leaveRoom: (chatroomId) ->
 
     user = Meteor.user()
@@ -116,6 +142,15 @@ Meteor.methods
       throw new Meteor.Error 402, "Not in the chatroom"
 
     UserJoinsChatroom.remove(_id: joinInfo._id)
+
+    ChatMessages.insert
+      userId: "system"
+      userAvatar: "http://photos1.meetupstatic.com/img/noPhoto_50.png"
+      userName: "System"
+      createdAt: new Date
+      chatroomId: chatroomId
+      type: "M"
+      text: "#{user.profile.name} left the room"
 
 
   deleteRoom: (chatroomId) ->

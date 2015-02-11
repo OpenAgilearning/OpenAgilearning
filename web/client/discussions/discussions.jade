@@ -25,7 +25,7 @@ template(name="chatroomsPage")
         .row
           .col-md-4
             .list-group
-              a(href="#").list-group-item.list-group-item-success#create-room
+              a(href="#", data-toggle="modal", data-target="#create-room-modal").list-group-item.list-group-item-success#create-room
                 span.glyphicon.glyphicon-plus
                 | Create
               each myChatrooms
@@ -37,6 +37,20 @@ template(name="chatroomsPage")
                   a(href="#", roomid=_id).list-group-item.list-group-item-info.select-chatroom
                     span.glyphicon.glyphicon-comment
                     | {{name}}
+            .modal.fade#create-room-modal(role="dialog")
+              .modal-dialog
+                .modal-content
+                  .modal-header
+                    button(data-dismiss="modal").close
+                      span.glyphicon.glyphicon-remove
+                    h4.modal-title Create New Chatroom
+                  .modal-body
+                    .form-group#new-room-form
+                      label(for="new-room-text") New Chatroom Name:
+                      input(type="text", placeholder="Give it an awesome name...").form-control#new-room-text
+                  .modal-footer
+                    button(data-dismiss="modal").btn.btn-default Cancel
+                    button.btn.btn-primary#submit-creation Create
           .col-md-8
             .panel.panel-info
               .panel-heading
@@ -52,7 +66,7 @@ template(name="chatroomsPage")
                     li.list-group-item.green-background
                       .row
                         .col-lg-9.col-md-8.col-sm-10.col-xs-10
-                          strong= name
+                          strong= userName
                           p.message-content= text
                           small.text-muted
                             span.glyphicon.glyphicon-time
@@ -65,7 +79,7 @@ template(name="chatroomsPage")
                         .col-lg-2.col-md-3.col-sm-1.col-xs-2
                           img(src=userAvatar).img-circle.thumb
                         .col-lg-10.col-md-9.col-sm-11.col-xs-10
-                          strong= name
+                          strong= userName
                           p.message-content= text
                           small.text-muted
                             span.glyphicon.glyphicon-time
