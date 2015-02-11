@@ -39,13 +39,8 @@ Template.resourceNode.rendered = ->
 
   $conotianer = $(".resourcesList")
   
-  if $conotianer
-    $conotianer.masonry "appended", elem
-  else
-    $conotianer.masonry
-      columnWidth: ".col-md-3"
-      itemSelector: '.resourceNode'
-
+  $conotianer.masonry "appended", elem
+  
   $(".resourcesList").masonry()
     
 

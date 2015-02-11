@@ -45,13 +45,8 @@ Template.nodeInfo.rendered = ->
 
   $conotianer = $(".nodesList")
   
-  if $conotianer
-    $conotianer.masonry "appended", elem
-  else
-    $conotianer.masonry
-      columnWidth: ".col-md-3"
-      itemSelector: '.nodeInfo'
-
+  $conotianer.masonry "appended", elem
+ 
   $(".nodeList").masonry()
     # columnWidth: ".col-md-3"
     # itemSelector: '.nodeInfo'
