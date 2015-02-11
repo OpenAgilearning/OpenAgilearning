@@ -408,4 +408,6 @@ Meteor.startup ->
         if userId
           Router.go "index"
 
-    
+    @route "about",
+      path: "about/"
+      template: "aboutUs"
