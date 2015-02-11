@@ -271,7 +271,10 @@ Meteor.startup ->
           LearningResources.find()
 
         youtubeVideoId: ->
-          LearningResources.findOne().youtubeVideoId
+          if LearningResources.find().count() > 0
+            LearningResources.findOne().youtubeVideoId
+          else
+            "CdMzHLrmpi8"
 
       waitOn: ->
         # userId = Meteor.userId()
