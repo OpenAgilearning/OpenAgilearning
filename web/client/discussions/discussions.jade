@@ -57,7 +57,15 @@ template(name="chatroomsPage")
                 span.glyphicon.glyphicon-comment
                 | {{currentChatroomName}}
                 if currentChatroomIsntClassChat
-                  a(href="#").pull-right.glyphicon.glyphicon-log-out.leave-room
+                  a(href="#", data-toggle="modal", data-target="#leave-room-modal").pull-right.glyphicon.glyphicon-log-out.leave-room
+                  .modal.fade#leave-room-modal(role="dialog")
+                    .modal-dialog
+                      .modal-content
+                        .modal-body
+                          h2 Are you sure you want to leave {{currentChatroomName}} ?
+                        .modal-footer
+                          button(data-dismiss="modal").btn.btn-primary Cancel
+                          button.btn.btn-danger#leave-room-button Leave
               .panel-footer
                 form.form-group#new-message-form
                   textarea(placeholder="Type in some message...").form-control#new-message-text

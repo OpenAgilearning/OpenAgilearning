@@ -8,23 +8,22 @@ Template.chatroomsPage.helpers
     for key, value of Meteor.user().roles
       if key[0..9] is "classroom_"
         room = Chatrooms.findOne {classroomId: key[10..]}
-        res.push room if room
+        res.push room._id if room
     res = res.concat(UserJoinsChatroom.find
         userId: Meteor.userId()
-      .map (rel) ->
-        Chatrooms.findOne
-          _id: rel.chatroomId
-    )
+      .map (rel) -> rel.chatroomId)
+    if not res
+      return []
     chatrooms = Chatrooms.find({
-      $or: res.map (chatroom) ->
-        _id: chatroom._id
+      _id: 
+        $in: res
       }, {
         sort: 
           lastUpdate: -1
       }).fetch()
     if not Session.get "currentChatroom"
       Session.set "currentChatroom", chatrooms[0]?._id
-      Meteor.subscribe "chatMessages", chatrooms[0]?._id
+    Meteor.subscribe "chatMessages", chatrooms[0]?._id
     chatrooms
 
   otherChatrooms: ->
@@ -97,4 +96,9 @@ Template.chatroomsPage.events
     Meteor.call "joinRoom", chatroomId
     Session.set "currentChatroom", chatroomId
     Meteor.subscribe "chatMessages", chatroomId
+
+  "click #leave-room-button": (event, template) ->
+    Meteor.call "leaveRoom", Session.get "currentChatroom"
+    template.$("#leave-room-modal").modal "hide"
+    Session.set "currentChatroom", undefined
 
