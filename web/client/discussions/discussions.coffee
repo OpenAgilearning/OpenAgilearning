@@ -15,13 +15,16 @@ Template.chatroomsPage.helpers
         Chatrooms.findOne
           _id: rel.chatroomId
     )
-    Chatrooms.find({
+    chatrooms = Chatrooms.find({
       $or: res.map (chatroom) ->
         _id: chatroom._id
       }, {
         sort: 
           lastUpdate: -1
       }).fetch()
+    Session.set "currentChatroom", chatrooms[0]?._id
+    Meteor.subscribe "chatMessages", chatrooms[0]?._id
+    chatrooms
 
   otherChatrooms: ->
     res = []
