@@ -171,5 +171,5 @@ Meteor.methods
 
     UserJoinsChatroom.remove(chatroomId: chatroomId)
     Chatrooms.remove(_id: chatroomId)
-
+    ChatMessages.remove(chatroomId: chatroomId)
 

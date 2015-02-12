@@ -57,21 +57,28 @@ template(name="chatroomsPage")
                 span.glyphicon.glyphicon-comment
                 | {{currentChatroomName}}
                 if currentChatroomIsntClassChat
-                  a(href="#", data-toggle="modal", data-target="#leave-room-modal").pull-right.glyphicon.glyphicon-log-out.leave-room
-                  .modal.fade#leave-room-modal(role="dialog")
-                    .modal-dialog
-                      .modal-content
-                        if chatroomIsCreatedByCurrentUser
-                          .modal-body
-                            h2 Chatroom creator can't leave the chatroom
-                          .modal-footer
-                            button(data-dismiss="modal").btn.btn-primary Return
-                        else
+                  unless chatroomIsCreatedByCurrentUser
+                    a(href="#", data-toggle="modal", data-target="#leave-room-modal").pull-right.glyphicon.glyphicon-log-out.leave-room
+                    .modal.fade#leave-room-modal(role="dialog")
+                      .modal-dialog
+                        .modal-content
                           .modal-body
                             h2 Are you sure you want to leave {{currentChatroomName}} ?
                           .modal-footer
                             button(data-dismiss="modal").btn.btn-primary Cancel
                             button.btn.btn-danger#leave-room-button Leave
+                  if chatroomIsCreatedByCurrentUser
+                    a(href="#", data-toggle="modal", data-target="#delete-room-modal").pull-right.glyphicon.glyphicon-trash.delete-room
+                    .modal.fade#delete-room-modal(role="dialog")
+                      .modal-dialog
+                        .modal-content
+                          .modal-body
+                            h2 Are you sure you want to delete {{currentChatroomName}} ?
+                            p (Can't restore after deleting it)
+                          .modal-footer
+                            button(data-dismiss="modal").btn.btn-primary Cancel
+                            button.btn.btn-danger#remove-room-button Delete
+
               .panel-footer
                 form.form-group#new-message-form
                   textarea(placeholder="Type in some message...").form-control#new-message-text

@@ -10,3 +10,11 @@
 .leave-room:hover {
   text-decoration: none;
 }
+
+.delete-room:hover {
+  text-decoration: none;
+}
+
+html {
+  overflow: scroll;
+}

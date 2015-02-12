@@ -49,8 +49,12 @@ Template.chatroomsPage.helpers
       classroomId: 
         $exists: false
 
-  chatroomIsCreatedByCurrentUser: ->
-    Chatrooms.findOne(_id: Session.get "currentChatroom").creatorId is Meteor.userId()
+  chatroomIsCreatedByCurrentUser: (chatroom) ->
+    if not chatroom
+      Chatrooms.findOne(_id: Session.get "currentChatroom").creatorId is Meteor.userId()
+    else
+      Chatrooms.findOne(_id: chatroom._id).creatorId is Meteor.userId()
+
 
 
 
@@ -91,7 +95,11 @@ Template.chatroomsPage.events
     Meteor.subscribe "chatMessages", chatroomId
 
   "click #leave-room-button": (event, template) ->
+    # template.$("#leave-room-modal").modal "hide"
     Meteor.call "leaveRoom", Session.get "currentChatroom"
-    template.$("#leave-room-modal").modal "hide"
     Session.set "currentChatroom", undefined
 
+  "click #remove-room-button": (event, template) ->
+    # template.$("#delete-room-modal").modal "hide"
+    Meteor.call "deleteRoom", Session.get "currentChatroom"
+    Session.set "currentChatroom", undefined
