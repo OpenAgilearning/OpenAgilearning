@@ -2,6 +2,9 @@
 
 Meteor.methods
   "track":(url, target, description) ->
+    # Example:
+    # Meteor.call "track" ,window.location.pathname, "#slides", "mouseenter #slides"
+    
     userId = Meteor.userId() ? "Anonymous"
     UserBehaviorTracking.insert
       userId:userId
