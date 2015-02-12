@@ -17,7 +17,6 @@ Template.envIframe.events
     url = "http://"+ip+":"+port
 
     $("#envIframe").attr 'src', url
-    Meteor.call "track" ,window.location.pathname, ".connectEnvBtn", "click .connectEnvBtn"
 
 Template.classroomEnvIframe.helpers
   iframeIp: ->
