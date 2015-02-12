@@ -2,6 +2,15 @@ Template.classroom.rendered = ->
   $("video.video-js").map ->
     videojs @, JSON.parse($(@).attr("data-setup"))
 
+Template.classroom.events
+  "click .vjs-big-play-button":(e,t) ->
+    e.stopPropagation()
+    Meteor.call "track" ,window.location.pathname, ".vjs-big-play-button", "click .vjs-big-play-button"
+  "mouseenter #slides":(e,t) ->
+    e.stopPropagation()
+    Meteor.call "track" ,window.location.pathname, "#slides", "mouseenter #slides"
+    
+    
 Template.envIframe.events
   "click .connectEnvBtn": (e, t)->
     e.stopPropagation()
@@ -12,6 +21,7 @@ Template.envIframe.events
     url = "http://"+ip+":"+port
 
     $("#envIframe").attr 'src', url
+    Meteor.call "track" ,window.location.pathname, ".connectEnvBtn", "click .connectEnvBtn"
 
 Template.classroomEnvIframe.helpers
   iframeIp: ->
