@@ -121,7 +121,7 @@ Meteor.methods
       createdAt: new Date
       chatroomId: chatroomId
       type: "M"
-      text: "#{user.profile.name} joins the room"
+      text: "#{user.profile.name} joined the room"
 
     Chatrooms.update {_id: chatroomId}, 
       $set:
