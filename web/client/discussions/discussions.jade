@@ -61,11 +61,17 @@ template(name="chatroomsPage")
                   .modal.fade#leave-room-modal(role="dialog")
                     .modal-dialog
                       .modal-content
-                        .modal-body
-                          h2 Are you sure you want to leave {{currentChatroomName}} ?
-                        .modal-footer
-                          button(data-dismiss="modal").btn.btn-primary Cancel
-                          button.btn.btn-danger#leave-room-button Leave
+                        if chatroomIsCreatedByCurrentUser
+                          .modal-body
+                            h2 Chatroom creator can't leave the chatroom
+                          .modal-footer
+                            button(data-dismiss="modal").btn.btn-primary Return
+                        else
+                          .modal-body
+                            h2 Are you sure you want to leave {{currentChatroomName}} ?
+                          .modal-footer
+                            button(data-dismiss="modal").btn.btn-primary Cancel
+                            button.btn.btn-danger#leave-room-button Leave
               .panel-footer
                 form.form-group#new-message-form
                   textarea(placeholder="Type in some message...").form-control#new-message-text

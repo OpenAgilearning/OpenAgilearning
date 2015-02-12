@@ -5,26 +5,16 @@ Template.chatroomsPage.helpers
 
   myChatrooms: ->
     res = []
-    for key, value of Meteor.user().roles
-      if key[0..9] is "classroom_"
-        room = Chatrooms.findOne {classroomId: key[10..]}
-        res.push room._id if room
     res = res.concat(UserJoinsChatroom.find
         userId: Meteor.userId()
-      .map (rel) -> rel.chatroomId)
-    if not res
-      return []
-    chatrooms = Chatrooms.find({
-      _id: 
-        $in: res
-      }, {
-        sort: 
-          lastUpdate: -1
-      }).fetch()
+      .map (rel) ->
+        Chatrooms.findOne(_id: rel.chatroomId)
+    )
+    res = _.sortBy res, (chatroom) -> -chatroom.lastUpdate
     if not Session.get "currentChatroom"
-      Session.set "currentChatroom", chatrooms[0]?._id
-    Meteor.subscribe "chatMessages", chatrooms[0]?._id
-    chatrooms
+      Session.set "currentChatroom", res[0]?._id
+    Meteor.subscribe "chatMessages", res[0]?._id
+    res
 
   otherChatrooms: ->
     res = []
@@ -58,6 +48,9 @@ Template.chatroomsPage.helpers
       _id: Session.get "currentChatroom"
       classroomId: 
         $exists: false
+
+  chatroomIsCreatedByCurrentUser: ->
+    Chatrooms.findOne(_id: Session.get "currentChatroom").creatorId is Meteor.userId()
 
 
 
