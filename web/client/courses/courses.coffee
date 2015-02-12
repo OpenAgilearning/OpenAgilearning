@@ -56,6 +56,9 @@ Template.goToClassroomBtn.events
         console.log data
       else
         console.log err
+        if err.error is 401
+          Cookies.set "redirectAfterLogin", window.location.href
+          Router.go "pleaseLogin"
 
   
 Template.courseClassroomsTable.helpers
@@ -64,12 +67,13 @@ Template.courseClassroomsTable.helpers
       key: "_id"
       label: "Learning Now!"
       tmpl: Template.goToClassroomBtn
-
+      
     res =
       collection: Classrooms
       rowsPerPage: 5
-      showFilter: true
-      fields: [goToClassroomBtnField, "publicStatus"]
+      showFilter: false
+      showNavigation:'never'
+      fields: [goToClassroomBtnField, "name", "description"]
 
 
 

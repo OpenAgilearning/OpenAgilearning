@@ -16,10 +16,16 @@ Meteor.startup ->
           Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
       waitOn: ->
-          Meteor.subscribe "DevMileStone"
-          Meteor.subscribe "WantedFeature"
-          Meteor.subscribe "allPublicCourses"
-          Meteor.subscribe "allPublicCoursesDockerImages"
+        userId = Meteor.userId()
+        redirectAfterLogin = Cookies.get "redirectAfterLogin"
+        if redirectAfterLogin and userId
+          Cookies.expire "redirectAfterLogin"
+          window.location = redirectAfterLogin
+
+        Meteor.subscribe "DevMileStone"
+        Meteor.subscribe "WantedFeature"
+        Meteor.subscribe "allPublicCourses"
+        Meteor.subscribe "allPublicCoursesDockerImages"
 
     @route "envs",
       path: "envs/"
@@ -108,9 +114,9 @@ Meteor.startup ->
           Courses.find()
 
       waitOn: ->
-        userId = Meteor.userId()
-        if not userId
-          Router.go "pleaseLogin"
+        # userId = Meteor.userId()
+        # if not userId
+        #   Router.go "pleaseLogin"
 
         Meteor.subscribe "allPublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
@@ -134,9 +140,9 @@ Meteor.startup ->
         resData
 
       waitOn: ->
-        userId = Meteor.userId()
-        if not userId
-          Router.go "pleaseLogin"
+        # userId = Meteor.userId()
+        # if not userId
+        #   Router.go "pleaseLogin"
 
         Meteor.subscribe "course", @params.courseId
         Meteor.subscribe "allPublicClassrooms", @params.courseId
@@ -264,15 +270,18 @@ Meteor.startup ->
         resourceNodes: ->
           LearningResources.find()
 
+        youtubeVideoId: ->
+          if LearningResources.find().count() > 0
+            LearningResources.findOne().youtubeVideoId
+          else
+            "CdMzHLrmpi8"
 
       waitOn: ->
-        userId = Meteor.userId()
-        if not userId
-          Router.go "pleaseLogin"
+        # userId = Meteor.userId()
+        # if not userId
+        #   Router.go "pleaseLogin"
 
-        else
-          if Roles.userIsInRole(userId,"admin","system")
-            Meteor.subscribe "queryLearningResources"
+        Meteor.subscribe "allLearningResources"
 
     @route "admin",
       path: "admin/"
@@ -401,8 +410,9 @@ Meteor.startup ->
 
 
     @route "pleaseLogin",
-      path: "pleaseLogin/"
-      template: "pleaseLogin"
+      path: "becomeAgilearner/"
+      template: "becomeAgilearner"
+
       waitOn: ->
         userId = Meteor.userId()
         if userId

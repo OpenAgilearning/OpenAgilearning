@@ -1,3 +1,7 @@
+
+Meteor.publish "allLearningResources", ->
+  LearningResources.find({},{limit : 50})
+
 Meteor.publish "allPublicEnvConfigTypes", ->
   EnvConfigTypes.find publicStatus:"public"
 

@@ -1,29 +1,32 @@
 
 template(name="learningResourcesPage")
   .container
-    +reactiveTable settings=settings  
+    .row-fluid      
+      +resourcesList
+
+    //- +reactiveTable settings=settings  
     //- +resourcesList
 
-//- template(name="resourcesList")
-//-   .row-fluid
-//-     .clearfix
-//-     .resourcesList
-//-       each resourceNodes
-//-         +resourceNode
+template(name="resourcesList")
+  .resourcesList
+    +youtubeVideoPlayer youtubeVideoId=youtubeVideoId
 
-//- template(name="resourceNode")
-//-   .resourceNode
-//-     hr
-//-     h2 {{title}}    
-//-     //- if youtubeVideoId
-//-     //-   a(target="_blank",href="http://www.youtube.com//watch?v={{youtubeVideoId}}")
-//-     //-     h4 (Watch At New Tab)
-//-     //-   video.video-js.vjs-default-skin(id="{{youtubeVideoId}}",src="",controls,data-setup='{ "techOrder": ["youtube"], "src": "http://www.youtube.com/watch?v={{youtubeVideoId}}" }')
-//-     h2 {{description}}
-//-     hr    
+    each resourceNodes
+      +resourceNode
+
+template(name="resourceNode")
+  .resourceNode.col-md-3
+    .well
+      hr
+      img.play(youtubeVideoId="{{youtubeVideoId}}",width="100%",src="http://img.youtube.com/vi/{{youtubeVideoId}}/hqdefault.jpg")  
+      h3 {{ytTitle}}    
+      //- p {{ytDescription}}
+      hr    
 
 
 template(name="youtubeVideoPlayer")
-  if youtubeVideoId
-    video.video-js.vjs-default-skin(id="{{youtubeVideoId}}",src="",controls,data-setup='{ "techOrder": ["youtube"], "src": "http://www.youtube.com/embed/{{youtubeVideoId}}" }')
+  .resourceNode.col-md-6
+    .well
+      //- video.video-js.vjs-default-skin(width="100%",height="500px",src="",controls,data-setup='{ "techOrder": ["youtube"], "src": "http://www.youtube.com/embed/{{youtubeVideoId}}" }')
+      iframe#ytplayer(type="text/html",width="100%",height="400",src="http://www.youtube.com/embed/{{youtubeVideoId}}",frameborder="0",allowfullscreen, style="margin-bottom: -4px")
 

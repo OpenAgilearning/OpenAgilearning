@@ -28,14 +28,23 @@ template(name="nodesList")
       //-   hr
 
 template(name="nodeInfo")
-  .nodeInfo.col-md-3
-    .well
-      +courseImage courseDoc=this width="100%"
-      h3 {{courseName}}
-      p {{description}}
-      //- +aboutCoursesIcons
-      +nodeIcons
-      
+  if featured
+    .nodeInfo.col-md-6
+      .well
+        +courseImage courseDoc=this width="100%"
+        h3 {{courseName}}
+        p {{description}}
+        //- +aboutCoursesIcons
+        +nodeIcons
+   else
+    .nodeInfo.col-md-3
+      .well
+        +courseImage courseDoc=this width="100%"
+        h3 {{courseName}}
+        p {{description}}
+        //- +aboutCoursesIcons
+        +nodeIcons
+        
       
 template(name="nodeIcons")
   if video
