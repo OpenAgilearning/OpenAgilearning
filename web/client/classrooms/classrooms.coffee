@@ -3,13 +3,9 @@ Template.classroom.rendered = ->
     videojs @, JSON.parse($(@).attr("data-setup"))
 
 Template.classroom.events
-  "click .vjs-big-play-button":(e,t) ->
-    e.stopPropagation()
-    Meteor.call "track" ,window.location.pathname, ".vjs-big-play-button", "click .vjs-big-play-button"
-  "mouseenter #slides":(e,t) ->
-    e.stopPropagation()
-    Meteor.call "track" ,window.location.pathname, "#slides", "mouseenter #slides"
-    
+  'click a[data-toggle^="tab"]':(e,t) ->
+    target = $(e.target).attr 'href'
+    Meteor.call "track" ,window.location.pathname, target, ("switch to " + target )
     
 Template.envIframe.events
   "click .connectEnvBtn": (e, t)->
