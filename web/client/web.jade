@@ -48,7 +48,7 @@ template(name="navBar")
         ul.nav.navbar-nav.navbar-right
           li.nav.navbar-nav
             img.user-img.img-circle(src="{{user.profile.photo.thumb_link}}")
-          li
+          li.nav.navbar-nav
             +loginButtons
 
 
@@ -169,3 +169,8 @@ template(name="pleaseLogin")
   .container
     h2 Please Login !
 
+template(name='_loginButtonsAdditionalLoggedInDropdownActions')
+  a(href="{{pathFor 'profile'}}")
+    button#login-buttons-edit-profile.btn.btn-default.btn-block
+      span(aria-hidden="true").glyphicon.glyphicon-user
+        | Profile
