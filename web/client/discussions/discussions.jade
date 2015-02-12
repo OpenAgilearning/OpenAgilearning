@@ -56,6 +56,8 @@ template(name="chatroomsPage")
               .panel-heading
                 span.glyphicon.glyphicon-comment
                 | {{currentChatroomName}}
+                if currentChatroomIsntClassChat
+                  a(href="#").pull-right.glyphicon.glyphicon-log-out.leave-room
               .panel-footer
                 form.form-group#new-message-form
                   textarea(placeholder="Type in some message...").form-control#new-message-text

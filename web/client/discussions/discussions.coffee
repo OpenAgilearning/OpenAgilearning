@@ -22,8 +22,9 @@ Template.chatroomsPage.helpers
         sort: 
           lastUpdate: -1
       }).fetch()
-    Session.set "currentChatroom", chatrooms[0]?._id
-    Meteor.subscribe "chatMessages", chatrooms[0]?._id
+    if not Session.get "currentChatroom"
+      Session.set "currentChatroom", chatrooms[0]?._id
+      Meteor.subscribe "chatMessages", chatrooms[0]?._id
     chatrooms
 
   otherChatrooms: ->
@@ -52,6 +53,12 @@ Template.chatroomsPage.helpers
 
   messageIsSentByCurrentUser: (message) ->
     message.userId is Meteor.userId()
+
+  currentChatroomIsntClassChat: ->
+    Chatrooms.findOne
+      _id: Session.get "currentChatroom"
+      classroomId: 
+        $exists: false
 
 
 
@@ -90,3 +97,4 @@ Template.chatroomsPage.events
     Meteor.call "joinRoom", chatroomId
     Session.set "currentChatroom", chatroomId
     Meteor.subscribe "chatMessages", chatroomId
+

@@ -6,3 +6,7 @@
   white-space: pre;
   overflow: auto;
 }
+
+.leave-room:hover {
+  text-decoration: none;
+}
