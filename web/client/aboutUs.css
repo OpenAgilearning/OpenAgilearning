@@ -1,0 +1,13 @@
+.portrait {
+  height: 200px;
+  width: 200px;
+}
+
+.aboutus {
+  padding-top: 100px;
+}
+
+.aboutus,
+.h3 {
+  text-align: center
+}

@@ -418,4 +418,14 @@ Meteor.startup ->
         if userId
           Router.go "index"
 
-    
+    @route "about",
+      path: "about/"
+      template: "aboutUs"
+      
+      # Add these code so when admin route to about us,
+      # his/her admin nav won't disappear strangely.
+      data:
+        user: -> Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId, "admin", "system") or Roles.userIsInRole(userId, "admin", "dockers")
