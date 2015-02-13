@@ -42,59 +42,13 @@ Meteor.methods
 
 @Courses = new Mongo.Collection "courses"
 
-
-@getCoursesEditSchema = (courseId, dockerImagesArray=[], slidesArray=[], VideosArray=[]) ->
-  resSchema = new SimpleSchema
-    # id:
-    #   type: String
-    #   defaultValues: [courseId]
-
-    courseName:
-      type: String
-
-    publicStatus:
-      type: String
-      allowedValues: ["public","semiprivate","private"]
-
-    description:
-      type: String
-      optional: true
-      autoform:
-        rows: 5
-
-  if dockerImagesArray.length > 0
-    resSchema.dockerImage = 
-      type: String
-      allowedValues: dockerImagesArray
-      optional: true
   
-  if slidesArray.length > 0
-    resSchema.slides = 
-      type: String
-      allowedValues: slidesArray
-      optional: true
-
-  if VideosArray.length > 0
-    resSchema.video = 
-      type: String
-      allowedValues: VideosArray
-      optional: true
-
-  # resSchema.courseId = 
-  #   type: String
-  #   defaultValues: [courseId]
-    # autoform:
-    #   type: "hidden"
-
-
-  resSchema
-
 
 
 Meteor.methods
   "editCourseInfoByAdmin": (courseDoc) ->
-    console.log "courseDoc = "
-    console.log courseDoc
+    # console.log "courseDoc = "
+    # console.log courseDoc
 
     loggedInUserId = Meteor.userId()
 
@@ -104,12 +58,13 @@ Meteor.methods
     courseId = courseDoc._id
     courseAndId = "course_" + courseId
 
-    console.log "courseAndId = "
-    console.log courseAndId
+    # console.log "courseAndId = "
+    # console.log courseAndId
 
-    # if Roles.userIsInRole loggedInUserId, "admin", courseAndId
-    #   delete courseDoc._id
-    #   Courses.update {_id:courseId}, {$set:courseDoc}
+    if Roles.userIsInRole loggedInUserId, "admin", courseAndId
+      # console.log Meteor.user()
+      delete courseDoc._id
+      Courses.update {_id:courseId}, {$set:courseDoc}
     
 
 

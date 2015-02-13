@@ -59,13 +59,13 @@ template(name="course")
           //- hr
           //- button.btn.btn-info(href="#", data-toggle="modal", data-target="#courseInfoAdminEditorModal") Add Learning Resources
 
-          +courseInfoAdminEditor 
+          +courseInfoAdminEditorForm
           
       .col-md-9.column
         h2 Classrooms:
-        +courseClassroomsTable
+        +courseClassroomsTable 
 
-template(name="courseInfoAdminEditor")
+template(name="courseInfoAdminEditorForm")
   if coursesEditSchema
     .modal.fade#courseInfoAdminEditorModal(role="dialog")
       .modal-dialog

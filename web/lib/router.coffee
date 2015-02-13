@@ -140,8 +140,10 @@ Meteor.startup ->
           courseAndId: =>
             "course_" + @params.courseId
 
-          coursesEditSchema: =>
-            getCoursesEditSchema(@params.courseId)
+          # coursesEditSchema: =>
+          #   console.log "@params.courseId = "
+          #   console.log @params.courseId
+          #   getCoursesEditSchema(@params.courseId)
 
 
         resData

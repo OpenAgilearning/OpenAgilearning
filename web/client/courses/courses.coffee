@@ -1,4 +1,57 @@
 
+Template.courseInfoAdminEditorForm.helpers
+  coursesEditSchema: (dockerImagesArray=[], slidesArray=[], VideosArray=[]) ->
+    courseId = Router.current().params.courseId
+    if courseId
+      resSchema = new SimpleSchema
+        _id:
+          type: String
+          defaultValue: courseId
+          allowedValues: [courseId]
+          autoform:
+            type: "hidden"
+            label: false
+
+        courseName:
+          type: String
+
+        publicStatus:
+          type: String
+          allowedValues: ["public","semipublic","private"]
+
+        description:
+          type: String
+          optional: true
+          autoform:
+            rows: 5
+
+        if dockerImagesArray.length > 0
+          resSchema.dockerImage = 
+            type: String
+            allowedValues: dockerImagesArray
+            optional: true
+        
+        if slidesArray.length > 0
+          resSchema.slides = 
+            type: String
+            allowedValues: slidesArray
+            optional: true
+
+        if VideosArray.length > 0
+          resSchema.video = 
+            type: String
+            allowedValues: VideosArray
+            optional: true
+
+        # resSchema.courseId = 
+        #   type: String
+        #   defaultValues: [courseId]
+          # autoform:
+          #   type: "hidden"
+
+
+        resSchema
+
 Template.allPublicCoursesTable.helpers
   settings: ->
     goToCoursePageBtnsField =
