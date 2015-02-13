@@ -7,7 +7,6 @@ Template.feedback.helpers
 
 Template.feedback.events
   "submit #feedbackForm":(e,t)->
-    console.log "submit"
     Session.set "submitted", yes
   "click #send-another, show.bs.collapse #collapse-body":(e,t)->
     Session.set "submitted", no
