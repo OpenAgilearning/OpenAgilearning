@@ -83,9 +83,11 @@ template(name="courseInfoAdminEditorForm")
     
 
 template(name="courseImage")
-  a(href="{{pathFor 'course' courseId=courseDoc._id}}")
+  if bindingATag
+    a(href="{{pathFor 'course' courseId=courseDoc._id}}")
+      img(width="{{width}}",src="{{getCourseImageURL courseDoc}}")
+  else
     img(width="{{width}}",src="{{getCourseImageURL courseDoc}}")
-
 
 template(name="courseClassroomsTable")
   +reactiveTable settings=settings        

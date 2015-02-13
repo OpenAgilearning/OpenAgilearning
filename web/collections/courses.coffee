@@ -41,11 +41,35 @@ Meteor.methods
 
 
 @Courses = new Mongo.Collection "courses"
+@CourseRoles = new Mongo.Collection "courseRoles"
 
   
 
 
 Meteor.methods
+  "applyCourse": (courseId) ->
+    loggedInUserId = Meteor.userId()
+
+    if not loggedInUserId
+      throw new Meteor.Error(401, "You need to login")
+
+    if Courses.find({_id:courseId}).count() is 0
+      throw new Meteor.Error(1302, "[Admin Error] there is no course with id" + courseId)
+    
+    data = 
+      userId: loggedInUserId
+      courseId: courseId
+      role: "waitForCheck"
+
+    if CourseRoles.find(data).count() is 0
+      data.createdAt = new Date
+      CourseRoles.insert data
+
+
+
+
+
+
   "editCourseInfoByAdmin": (courseDoc) ->
     # console.log "courseDoc = "
     # console.log courseDoc

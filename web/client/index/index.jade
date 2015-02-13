@@ -32,20 +32,47 @@ template(name="nodeInfo")
   if featured
     .nodeInfo.col-md-6
       .well
-        +courseImage courseDoc=this width="100%"
-        h3 {{courseName}}
-        p {{description}}
-        //- +aboutCoursesIcons
+        .triggerBlock
+          if isPublic
+            +courseImage courseDoc=this width="100%" bindingATag=true
+          else
+            +courseImage courseDoc=this width="100%"
+          h3 {{courseName}}
+          p {{description}}
+          //- +aboutCoursesIcons
         +nodeIcons
+        if isSemiPublic
+          +applyCourseBtn
+        if isPrivate
+          i.fa.fa-user-secret.fa-2x.pull-right(style="margin:5px") 
+
+
    else
     .nodeInfo.col-md-3
       .well
-        +courseImage courseDoc=this width="100%"
-        h3 {{courseName}}
-        p {{description}}
-        //- +aboutCoursesIcons
-        +nodeIcons
+        .triggerBlock
         
+          if isPublic
+            +courseImage courseDoc=this width="100%" bindingATag=true
+          else
+            +courseImage courseDoc=this width="100%"
+
+          h3 {{courseName}}
+          p {{description}}
+          //- +aboutCoursesIcons
+        +nodeIcons
+
+        if isSemiPublic
+          +applyCourseBtn
+        if isPrivate
+          i.fa.fa-user-secret.fa-2x.pull-right(style="margin:5px") 
+
+template(name="applyCourseBtn")
+  unless applied
+    button.applyCourseBtn.btn.btn-info.pull-right(courseId="{{_id}}") Apply 
+  else
+    button.btn.btn-warning.pull-right Applying             
+
       
 template(name="nodeIcons")
   if video
@@ -54,6 +81,7 @@ template(name="nodeIcons")
     i.fa.fa-book.fa-2x(style="margin:5px")
   if dockerImage
     i.fa.fa-cube.fa-2x(style="margin:5px")
+
 
 
 template(name="index3")

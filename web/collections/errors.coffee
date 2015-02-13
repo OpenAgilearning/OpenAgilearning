@@ -1,0 +1,1 @@
+@Exceptions = new Mongo.Collection "exceptions"

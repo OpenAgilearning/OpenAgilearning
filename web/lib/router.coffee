@@ -17,6 +17,7 @@ Meteor.startup ->
 
       waitOn: ->
         userId = Meteor.userId()
+        
         redirectAfterLogin = Cookies.get "redirectAfterLogin"
         if redirectAfterLogin and userId
           Cookies.expire "redirectAfterLogin"
@@ -24,8 +25,12 @@ Meteor.startup ->
 
         Meteor.subscribe "DevMileStone"
         Meteor.subscribe "WantedFeature"
-        Meteor.subscribe "allPublicCourses"
+        # Meteor.subscribe "allPublicCourses"
+        Meteor.subscribe "allPublicAndSemipublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
+
+        Meteor.subscribe "userCourseRoles"
+
 
     @route "envs",
       path: "envs/"
@@ -68,7 +73,7 @@ Meteor.startup ->
         Meteor.subscribe "userEnvUserConfigs"
 
         Meteor.subscribe "allPublicEnvConfigTypes"
-        Meteor.subscribe "allPublicCourses"
+        Meteor.subscribe "allPublicAndSemipublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
 
 
@@ -118,7 +123,7 @@ Meteor.startup ->
         # if not userId
         #   Router.go "pleaseLogin"
 
-        Meteor.subscribe "allPublicCourses"
+        Meteor.subscribe "allPublicAndSemipublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
  
 

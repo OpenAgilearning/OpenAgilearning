@@ -18,6 +18,9 @@ Meteor.publish "allPublicCoursesDockerImages", ->
 Meteor.publish "allPublicCourses", ->
   Courses.find {"publicStatus" : "public"}
 
+Meteor.publish "allPublicAndSemipublicCourses", ->
+  Courses.find {"publicStatus" : {$in:["public","semipublic"]}}
+
 
 Meteor.publish "WantedFeature", ->
   WantedFeature.find()
