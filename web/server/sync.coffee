@@ -125,8 +125,11 @@ syncDockerServerContainer = ->
       containersFuture.return data
     containers = containersFuture.wait()
 
+    deleteUnusedContainer(dockerServerSettings, containers)
+
     # Check if there are containers running ?
     if containers.length > 0
+
       for containerData in containers
 
         containerObj = docker.getContainer containerData.Id
@@ -209,6 +212,28 @@ syncDockerServerContainer = ->
 
       console.log "containers = "
       console.log containers
+
+deleteUnusedContainer = (dockerServerSettings, containers) ->
+    # mongo server
+    filterContainers = []
+    DockerServerContainers.find({serverName:dockerServerSettings["dockerServerName"]}).fetch().map (xx)->
+      filterContainers.push xx.Id
+    # console.log "filterContainers [mongo server]"
+    # console.log filterContainers
+
+    # docker server
+    containerIdArr = []
+    containers.map (xxx)->
+      containerIdArr.push xxx.Id
+    # console.log "containerIdArr [docker server]"
+    # console.log containerIdArr
+
+    filteredContainers = filterContainers.filter (xx) -> xx not in containerIdArr
+    # console.log "filteredContainers = "
+    # console.log filteredContainers
+
+    filteredContainers.map (x) ->
+      DockerServerContainers.remove({"Id":x})
 
 
 Meteor.setInterval syncDockerServerInfo, 5000
