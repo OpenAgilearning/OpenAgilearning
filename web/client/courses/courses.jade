@@ -52,7 +52,13 @@ template(name="course")
         +courseImage courseDoc=course width="100%"
         +Template.dynamic template="courseNameAndDescription" data=course
         //- +courseNameAndDescription courseName=course.courseName description=course.description
+
+        
         if isInRole "admin" courseAndId
+          button.btn.btn-info(href="#", data-toggle="modal", data-target="#courseInfoAdminEditorModal") Edit
+          //- hr
+          //- button.btn.btn-info(href="#", data-toggle="modal", data-target="#courseInfoAdminEditorModal") Add Learning Resources
+
           +courseInfoAdminEditor 
           
       .col-md-9.column
@@ -61,8 +67,19 @@ template(name="course")
 
 template(name="courseInfoAdminEditor")
   if coursesEditSchema
-    hr
-    +quickForm id="courseInfoAdminEditor" doc=course schema=coursesEditSchema type="method" meteormethod="editCourseInfoByAdmin" 
+    .modal.fade#courseInfoAdminEditorModal(role="dialog")
+      .modal-dialog
+        .modal-content
+          //- .modal-header
+          //-   button(data-dismiss="modal").close
+          //-     span.glyphicon.glyphicon-remove
+          //-   h4.modal-title Create New Chatroom
+          .modal-body
+            +quickForm id="courseInfoAdminEditor" doc=course schema=coursesEditSchema type="method" meteormethod="editCourseInfoByAdmin" 
+          //- .modal-footer
+          //-   button(data-dismiss="modal").btn.btn-default Cancel
+          //-   button.btn.btn-primary#submit-creation Create
+    
     
 
 template(name="courseImage")

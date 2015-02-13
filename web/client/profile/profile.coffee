@@ -8,18 +8,6 @@ Template.profile.events
     $(".profile-editor").toggle()
     $(".show-profile").toggle()
 
-AutoForm.hooks profileUpdate:
-  onSuccess: (updateProfile, result, template) ->
-    $(".show-profile").toggle()
-    $(".profile-editor").toggle()
-
-
-AutoForm.hooks
-  setEnvUserConfigs: 
-    onSuccess: (operation, result, template)->
-      Session.set "userConfigId", ""
-      Session.set "envConfigTypeId", ""
-
 
 Template.profilePageEnvConfigsForm.helpers
   envConfigsSchema: ->
