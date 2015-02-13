@@ -95,11 +95,11 @@ Template.chatroomsPage.events
     Meteor.subscribe "chatMessages", chatroomId
 
   "click #leave-room-button": (event, template) ->
-    # template.$("#leave-room-modal").modal "hide"
     Meteor.call "leaveRoom", Session.get "currentChatroom"
+    template.$("#leave-room-modal").modal "hide"
     Session.set "currentChatroom", undefined
 
   "click #remove-room-button": (event, template) ->
-    # template.$("#delete-room-modal").modal "hide"
     Meteor.call "deleteRoom", Session.get "currentChatroom"
+    template.$("#delete-room-modal").modal "hide"
     Session.set "currentChatroom", undefined
