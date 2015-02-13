@@ -150,7 +150,7 @@ Meteor.startup ->
           #   console.log @params.courseId
           #   getCoursesEditSchema(@params.courseId)
 
-          
+
 
         resData
 
@@ -159,7 +159,13 @@ Meteor.startup ->
         # if not userId
         #   Router.go "pleaseLogin"
 
-        Meteor.subscribe "course", @params.courseId
+        CoursesSubHandler = Meteor.subscribe "course", @params.courseId
+        
+        Meteor.autorun =>
+          if CoursesSubHandler.ready()
+            if RoleTools.isNotRole(["admin","member"],"course",@params.courseId)
+              Router.go "index"            
+
         Meteor.subscribe "allPublicClassrooms", @params.courseId
         Meteor.subscribe "allPublicClassroomRoles", @params.courseId
         Meteor.subscribe "courseDockerImages", @params.courseId
