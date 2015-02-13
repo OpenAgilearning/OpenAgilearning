@@ -13,8 +13,18 @@ Template.nodesList.rendered = ->
     columnWidth: ".col-md-3"
     itemSelector: '.nodeInfo'
 
+  $conotianer = $(".nodeList").masonry()
+
+  $conotianer.imagesLoaded ->
+    $conotianer.masonry()
+
+
 Template.nodeIcons.rendered = -> 
-  $(".nodeList").masonry()
+  $conotianer = $(".nodeList").masonry()
+
+  $conotianer.imagesLoaded ->
+    $conotianer.masonry()
+
     # columnWidth: ".col-md-3"
     # itemSelector: '.nodeInfo'
 
@@ -25,10 +35,14 @@ Template.index.rendered = ->
   #   $container.masonry
   #     itemSelector: ".nodeInfo"
 
-  $(".nodeList").masonry()
+  # $(".nodeList").masonry()
     # columnWidth: ".col-md-3"
     # itemSelector: '.nodeInfo'
 
+  $conotianer = $(".nodeList").masonry()
+
+  $conotianer.imagesLoaded ->
+    $conotianer.masonry()
 
 
 Template.nodeInfo.rendered = ->
@@ -47,9 +61,9 @@ Template.nodeInfo.rendered = ->
   
   $conotianer.masonry "appended", elem
  
-  $(".nodeList").masonry()
-    # columnWidth: ".col-md-3"
-    # itemSelector: '.nodeInfo'
+  
+  $conotianer.imagesLoaded ->
+    $conotianer.masonry()
 
 
   # briefView = ->

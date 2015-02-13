@@ -5,6 +5,11 @@ Template.resourcesList.rendered = ->
     columnWidth: ".col-md-3"
     itemSelector: '.resourceNode'
 
+  $conotianer = $(".resourcesList").masonry()
+
+  $conotianer.imagesLoaded ->
+    $conotianer.masonry()
+
 
 Template.learningResourcesPage.rendered = ->
   # $container = $(".nodeList")
@@ -12,9 +17,10 @@ Template.learningResourcesPage.rendered = ->
   #   $container.masonry
   #     itemSelector: ".nodeInfo"
 
-  $(".resourcesList").masonry()
-    # columnWidth: ".col-md-3"
-    # itemSelector: '.resourceNode'
+  $conotianer = $(".resourcesList").masonry()
+
+  $conotianer.imagesLoaded ->
+    $conotianer.masonry()
 
 
 Template.resourceNode.events
@@ -41,13 +47,15 @@ Template.resourceNode.rendered = ->
   
   $conotianer.masonry "appended", elem
   
-  $(".resourcesList").masonry()
+  $conotianer.imagesLoaded ->
+    $conotianer.masonry()
     
 
 Template.learningResourcesPage.rendered = ->
   # $("video").map -> 
   #   videojs @, JSON.parse($(@).attr("data-setup"))
 
-  $(".resourcesList").masonry
-    columnWidth: ".col-md-3"
-    itemSelector: '.resourceNode'
+  $conotianer = $(".resourcesList").masonry()
+
+  $conotianer.imagesLoaded ->
+    $conotianer.masonry()
