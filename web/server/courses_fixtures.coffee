@@ -33,16 +33,29 @@ for oneCourse in demoCourses
 
       courseId = Courses.insert oneCourse
 
+      courseRoleGroupData = 
+        type: "course"
+        id: courseId
+        collection: "Courses" 
+        query:
+          _id: courseId
+
+      if Collections.RoleGroups.find(courseRoleGroupData).count() is 0
+        courseRoleGroupData.createdAt = new Date
+        courseRoleGroupId = Collections.RoleGroups.insert courseRoleGroupData
+      else
+        courseRoleGroupId = Collections.RoleGroups.findOne(courseRoleGroupData)._id
+
       courseRoleData = 
+        groupId: courseRoleGroupId
         userId: oneCourse.creatorId
-        courseId: courseId
         role: "admin"
         createdAt: new Date
 
-      CourseRoles.insert courseRoleData
+      Collections.Roles.insert courseRoleData
 
       # Roles.addUsersToRoles(oneCourse.creatorId, "admin", "course_" + courseId)
-      
+
   else
     oneCourse = Courses.findOne oneCourse
     courseId = oneCourse._id

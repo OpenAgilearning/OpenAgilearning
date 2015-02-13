@@ -11,16 +11,17 @@ Template.nodeInfo.helpers
   isSemiPublic: ->
     @publicStatus is "semipublic"
 
+ 
 Template.applyCourseBtn.helpers  
-  applied: ->
+  waitForCheck: ->
     userId = Meteor.userId()
     if userId
-      CourseRoles.find({courseId:@_id, userId: userId}).count() > 0
+      RoleTools.isRole "waitForCheck", "course", @_id 
 
 
 Template.applyCourseBtn.events
   "click button.applyCourseBtn": (e,t)->
-    console.log e
+    # console.log e
     e.stopPropagation()
     
     userId = Meteor.userId()

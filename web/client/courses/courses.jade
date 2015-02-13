@@ -54,16 +54,31 @@ template(name="course")
         //- +courseNameAndDescription courseName=course.courseName description=course.description
 
         
-        if isInRole "admin" courseAndId
+        if isRole "admin" "course" course._id
           button.btn.btn-info(href="#", data-toggle="modal", data-target="#courseInfoAdminEditorModal") Edit
           //- hr
           //- button.btn.btn-info(href="#", data-toggle="modal", data-target="#courseInfoAdminEditorModal") Add Learning Resources
 
           +courseInfoAdminEditorForm
-          
+        
+        //- +test123 xx=xx yy=yy
+
       .col-md-9.column
+        if isRole "admin" "course" course._id
+          h2 Applications:
+          +courseApplicationsTable
+
         h2 Classrooms:
         +courseClassroomsTable 
+
+
+template(name="courseApplicationsTable")
+  +reactiveTable settings=settings 
+//- template(name="test123")
+//-   h2 {{test xx yy}}
+
+template(name="courseApplicationsTableCheckBtnField")
+  a.btn.btn-warning.checkBtn(roleId="{{_id}}") Allow
 
 template(name="courseInfoAdminEditorForm")
   if coursesEditSchema

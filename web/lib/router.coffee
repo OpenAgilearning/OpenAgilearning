@@ -29,7 +29,7 @@ Meteor.startup ->
         Meteor.subscribe "allPublicAndSemipublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
 
-        Meteor.subscribe "userCourseRoles"
+        Meteor.subscribe "userRoles", ["course"]
 
 
     @route "envs",
@@ -150,6 +150,7 @@ Meteor.startup ->
           #   console.log @params.courseId
           #   getCoursesEditSchema(@params.courseId)
 
+          
 
         resData
 
@@ -163,6 +164,7 @@ Meteor.startup ->
         Meteor.subscribe "allPublicClassroomRoles", @params.courseId
         Meteor.subscribe "courseDockerImages", @params.courseId
 
+        Meteor.subscribe "userRoles", ["course"]
 
     @route "classroom",
       path: "classroom/:classroomId"

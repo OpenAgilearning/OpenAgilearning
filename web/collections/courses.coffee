@@ -1,6 +1,8 @@
 
 @LearningResources = new Mongo.Collection "learningResources"
 
+@Collections.LearningResources = @LearningResources
+
 # @learningResourceSchema = new SimpleSchema
 #   title:
 #     type: String
@@ -43,10 +45,24 @@ Meteor.methods
 @Courses = new Mongo.Collection "courses"
 @CourseRoles = new Mongo.Collection "courseRoles"
 
-  
+@Collections.Courses = @Courses
 
 
 Meteor.methods
+  "checkCourseApplication": (roleId) ->
+    loggedInUserId = Meteor.userId()
+
+    if not loggedInUserId
+      throw new Meteor.Error(401, "You need to login")
+
+    if Collections.Roles.find({_id:roleId}).count() is 0
+      throw new Meteor.Error(1402, "[Admin Error] there is no role with id" + roleId)
+    
+    groupId = Collections.Roles.findOne({_id:roleId}).groupId
+
+    if Collections.Roles.find({userId:loggedInUserId,role:"admin",groupId:groupId}).count() > 0
+      Collections.Roles.update({_id:roleId},{$set:{role:"member"}})
+
   "applyCourse": (courseId) ->
     loggedInUserId = Meteor.userId()
 
@@ -56,14 +72,20 @@ Meteor.methods
     if Courses.find({_id:courseId}).count() is 0
       throw new Meteor.Error(1302, "[Admin Error] there is no course with id" + courseId)
     
+    queryRoleGroup = 
+      type: "course"
+      id: courseId
+
+    roleGroupId = Collections.RoleGroups.findOne(queryRoleGroup)._id
+      
     data = 
+      groupId: roleGroupId
       userId: loggedInUserId
-      courseId: courseId
       role: "waitForCheck"
 
-    if CourseRoles.find(data).count() is 0
+    if Collections.Roles.find(data).count() is 0
       data.createdAt = new Date
-      CourseRoles.insert data
+      Collections.Roles.insert data
 
 
 
@@ -75,18 +97,15 @@ Meteor.methods
     # console.log courseDoc
 
     loggedInUserId = Meteor.userId()
+    courseId = courseDoc._id
 
     if not loggedInUserId
       throw new Meteor.Error(401, "You need to login")
 
-    courseId = courseDoc._id
-    courseAndId = "course_" + courseId
-
-    # console.log "courseAndId = "
-    # console.log courseAndId
-
-    if Roles.userIsInRole loggedInUserId, "admin", courseAndId
-      # console.log Meteor.user()
+    if Courses.find({_id:courseId}).count() is 0
+      throw new Meteor.Error(1302, "[Admin Error] there is no course with id" + courseId)
+    
+    if RoleTools.isRole loggedInUserId, "admin", "course", courseId
       delete courseDoc._id
       Courses.update {_id:courseId}, {$set:courseDoc}
     

@@ -1,11 +1,34 @@
 
 
 
-Meteor.publish "userCourseRoles", ->
+Meteor.publish "userRoles", (roleTypes=[])->
   userId = @userId
+  if typeof(roleTypes) is "string"
+    roleTypes = [roleTypes]
 
   if userId
-    CourseRoles.find userId:userId
+    roleGroups = Collections.RoleGroups.find({type:{$in:roleTypes}})
+    roleGroupsIds = roleGroups.fetch().map (xx) -> xx._id
+
+    queryConditions = []
+
+    console.log roleGroupsIds
+
+    for groupId in roleGroupsIds
+      if Collections.Roles.find({role:"admin",groupId:groupId,userId:userId}).count() > 0
+        queryCond = 
+          groupId: groupId
+        queryConditions.push queryCond
+      else
+        queryCond = 
+          groupId: groupId
+          userId:userId          
+        queryConditions.push queryCond
+
+    console.log queryConditions
+
+    roles = Collections.Roles.find({$or:queryConditions})
+    [roleGroups, roles]
   else
     Exceptions.find {_id:"ExpectionPermissionDeny"}
 

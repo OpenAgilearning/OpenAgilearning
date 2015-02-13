@@ -35,8 +35,12 @@ template(name="nodeInfo")
         .triggerBlock
           if isPublic
             +courseImage courseDoc=this width="100%" bindingATag=true
-          else
-            +courseImage courseDoc=this width="100%"
+          else 
+            if isNotRole "waitForCheck" "course" _id
+              +courseImage courseDoc=this width="100%" bindingATag=true
+            else
+              +courseImage courseDoc=this width="100%"
+          
           h3 {{courseName}}
           p {{description}}
           //- +aboutCoursesIcons
@@ -54,25 +58,32 @@ template(name="nodeInfo")
         
           if isPublic
             +courseImage courseDoc=this width="100%" bindingATag=true
-          else
-            +courseImage courseDoc=this width="100%"
-
+          else 
+            if isNotRole "waitForCheck" "course" _id
+              +courseImage courseDoc=this width="100%" bindingATag=true
+            else
+              +courseImage courseDoc=this width="100%"
+          
           h3 {{courseName}}
           p {{description}}
           //- +aboutCoursesIcons
         +nodeIcons
 
         if isSemiPublic
-          +applyCourseBtn
+          +applyCourseBtn courseId=_id
         if isPrivate
           i.fa.fa-user-secret.fa-2x.pull-right(style="margin:5px") 
 
 template(name="applyCourseBtn")
-  unless applied
-    button.applyCourseBtn.btn.btn-info.pull-right(courseId="{{_id}}") Apply 
-  else
+  if isRole "waitForCheck" "course" courseId
     button.btn.btn-warning.pull-right Applying             
-
+    
+  else
+    if isNotRole "waitForCheck" "course" courseId
+      i.fa.fa-user-secret.fa-2x.pull-right(style="margin:5px")
+    else
+      button.applyCourseBtn.btn.btn-info.pull-right(courseId="{{courseId}}") Apply     
+      
       
 template(name="nodeIcons")
   if video
