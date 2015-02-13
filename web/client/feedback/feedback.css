@@ -7,9 +7,13 @@
   visibility: visible;
   overflow-y: hidden;
   bottom: 0px;
-  left: 75%;
+  right: 30%;
 }
 
 #feedback-box > .panel {
   margin-bottom: 0px;
+}
+
+#feedbackForm {
+  min-width: 240px;
 }

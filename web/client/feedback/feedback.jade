@@ -4,10 +4,18 @@ template(name="feedback")
       .panel.panel-info
         .panel-heading
           a(data-toggle='collapse', href='#collapse-body', aria-expanded='false', aria-controls='collapse-body')
-            h3.panel-title 
+            h2.panel-title
               i.fa.fa-smile-o 
               | Feedback
 
         #collapse-body.panel-body.collapse
-          p would you like to give us some feedback?
-          
+          if submitted
+            .text-center
+              p Thank you for the feedback
+              h2
+                i.fa.fa-smile-o.fa-5x
+              button#send-another.btn.btn-success Send Another
+          else
+            +quickForm id="feedbackForm" schema="FeedbackSchema" type="method" meteormethod="sendFeedback" buttonClasses="btn btn-primary btn-lg"
+            
+            
