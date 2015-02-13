@@ -72,9 +72,14 @@ Meteor.startup ->
         Meteor.subscribe "allPublicCoursesDockerImages"
 
 
-    @route "profile",
-      path: "profile/"
-      template: "profile"
+#    @route "profile",
+#      path: "profile/"
+#      template: "profile"
+
+
+    @route "userSettings",
+      path: "userSettings/"
+      template: "userSettings"
       data:
         rootURL:rootURL
         user: ->
@@ -83,20 +88,37 @@ Meteor.startup ->
           userId = Meteor.userId()
           Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
+        envConfigTypeId: ->
+          if Session.get("envConfigTypeId") isnt ""
+            Session.get "envConfigTypeId"
+            
         userConfigId: ->
           if Session.get("userConfigId") isnt ""
             Session.get "userConfigId"
+
+        hasEnvUserConfigs: ->
+          EnvUserConfigs.find().count() > 0
+
+        hasUnsettingEnvUserConfigs: ->
+          (EnvConfigTypes.find().count() - EnvUserConfigs.find().count() )> 0
+
+        filteredEnvConfigTypes: ->
+          filteringConfigTypeIds = EnvUserConfigs.find().fetch().map (xx)-> xx.configTypeId
+          EnvConfigTypes.find _id:{$nin:filteringConfigTypeIds}
 
       waitOn: ->
         user = Meteor.user()
         if not user
           Router.go "pleaseLogin"
+        #TODO: no password! no envs!
         Meteor.subscribe "userEnvUserConfigs"
         Meteor.subscribe "userDockerInstances"
         Meteor.subscribe "userEnvUserConfigs"
 
         Meteor.subscribe "allPublicEnvConfigTypes"
-
+        Meteor.subscribe "allPublicCourses"
+        Meteor.subscribe "allPublicCoursesDockerImages"
+          
     @route "courses",
       path: "courses/"
       template: "courses"

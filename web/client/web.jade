@@ -170,7 +170,7 @@ template(name="pleaseLogin")
     h2 Please Login !
 
 template(name='_loginButtonsAdditionalLoggedInDropdownActions')
-  a(href="{{pathFor 'profile'}}")
+  a(href="{{pathFor 'userSettings'}}")
     button#login-buttons-edit-profile.btn.btn-default.btn-block
-      span(aria-hidden="true").glyphicon.glyphicon-user
-        | Profile
+      |#[span(aria-hidden="true").glyphicon.glyphicon-cog]
+      | Settings

@@ -1,0 +1,48 @@
+template(name="userSettings")
+  .container
+    .row.clearfix
+        ul.nav.nav-tabs
+          li.active
+            a(data-toggle="tab", href="#Env") 
+              |#[i.fa.fa-cube]
+              | Environment
+          li
+            a(data-toggle="tab", href="#Course") 
+              |#[span(aria-hidden="true").glyphicon.glyphicon-book]
+              | Course
+          li
+            a(data-toggle="tab", href="#Profile") 
+              |#[span(aria-hidden="true").glyphicon.glyphicon-user]
+              | Profile
+
+
+        .tab-content
+          .tab-pane.fade.in.active#Env
+            +envPageEnvUserConfigsBlock
+            +envsPageDockerInstancesBlock
+          
+          .tab-pane.fade.in#Course
+            h3 Enrolled Classrooms
+            p You can view all enrolled classrooms and courses.
+            h3 My Favorite
+            
+            h3 Watch List
+            p It would be awesome if these courses are ready!
+          
+          .tab-pane.fade.in#Profile
+            h2 General Settings
+            p Change my
+            ul
+              li email
+              li profile picture
+              
+            h2 Privacy Settings
+            h3 What shows up on my resume
+            ul
+              li Courses
+              li Slides
+              li videos
+              
+
+
+          
