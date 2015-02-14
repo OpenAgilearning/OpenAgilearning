@@ -16,6 +16,8 @@ template(name="feedback")
                 i.fa.fa-smile-o.fa-5x
               button#send-another.btn.btn-success Send Another
           else
-            +quickForm id="feedbackForm" schema="FeedbackSchema" type="method" meteormethod="sendFeedback" buttonClasses="btn btn-primary btn-lg"
-            
-            
+            +autoForm id="feedbackForm" schema="FeedbackSchema" type="method" meteormethod="sendFeedback"
+              +afQuickField name="type"
+              +afQuickField name="title"
+              +afQuickField name="description"
+              button(type="submit").btn.btn-primary.btn-lg Done!
