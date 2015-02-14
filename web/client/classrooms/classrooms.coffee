@@ -2,6 +2,11 @@ Template.classroom.rendered = ->
   $("video.video-js").map ->
     videojs @, JSON.parse($(@).attr("data-setup"))
 
+Template.classroom.events
+  'click a[data-toggle^="tab"]':(e,t) ->
+    target = $(e.target).attr 'href'
+    Meteor.call "track" ,window.location.pathname, target, ("switch to " + target )
+    
 Template.envIframe.events
   "click .connectEnvBtn": (e, t)->
     e.stopPropagation()
