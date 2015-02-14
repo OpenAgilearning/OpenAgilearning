@@ -2,6 +2,8 @@
 @LearningResources = new Mongo.Collection "learningResources"
 
 @Collections.LearningResources = @LearningResources
+@db.learningResources = @Collections.LearningResources
+
 
 # @learningResourceSchema = new SimpleSchema
 #   title:
@@ -43,9 +45,12 @@ Meteor.methods
 
 
 @Courses = new Mongo.Collection "courses"
-@CourseRoles = new Mongo.Collection "courseRoles"
+# @CourseRoles = new Mongo.Collection "courseRoles"
 
 @Collections.Courses = @Courses
+@db.courses = @Collections.Courses
+
+
 
 
 Meteor.methods

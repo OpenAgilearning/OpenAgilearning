@@ -160,17 +160,19 @@ Meteor.startup ->
         #   Router.go "pleaseLogin"
 
         CoursesSubHandler = Meteor.subscribe "course", @params.courseId
+        RolesHandler = Meteor.subscribe "userRoles", ["course"]
         
         Meteor.autorun =>
-          if CoursesSubHandler.ready()
-            if RoleTools.isNotRole(["admin","member"],"course",@params.courseId)
-              Router.go "index"            
+          if CoursesSubHandler.ready() and RolesHandler.ready()
+            if Courses.findOne().publicStatus isnt "public"
+              console.log 'RoleTools.isRole(["admin","member"],"course",@params.courseId)'
+              console.log RoleTools.isRole(["admin","member"],"course",@params.courseId)
+              if not RoleTools.isRole(["admin","member"],"course",@params.courseId)
+                Router.go "index"
 
         Meteor.subscribe "allPublicClassrooms", @params.courseId
         Meteor.subscribe "allPublicClassroomRoles", @params.courseId
         Meteor.subscribe "courseDockerImages", @params.courseId
-
-        Meteor.subscribe "userRoles", ["course"]
 
     @route "classroom",
       path: "classroom/:classroomId"
