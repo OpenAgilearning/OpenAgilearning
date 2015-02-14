@@ -1,6 +1,14 @@
 Template.classroom.rendered = ->
   $("video.video-js").map ->
     videojs @, JSON.parse($(@).attr("data-setup"))
+    
+  showFeedBack = -> $("#feedback").popover("show")
+  
+  if Meteor.settings.public.environment is "production"
+    # sleep 10 min in production
+    setTimeout showFeedBack , ( 10 * 60 * 1000 )
+  else
+    setTimeout showFeedBack , 3000
 
 Template.classroom.events
   'click a[data-toggle^="tab"]':(e,t) ->
