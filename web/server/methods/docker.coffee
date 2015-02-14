@@ -6,11 +6,11 @@ getFreePorts = (n, serverName) ->
     serverName = "localhost"
   ports = [basePort..topPort].map String
   filterPorts = []
-  DockerInstances.find({serverName:serverName}).fetch().map (x)-> 
+  DockerInstances.find({serverName:serverName}).fetch().map (x)->
     x.portDataArray.map (xx) ->
       filterPorts.push xx.hostPort
 
-  DockerServerContainers.find({serverName:serverName}).fetch().map (x)-> 
+  DockerServerContainers.find({serverName:serverName}).fetch().map (x)->
     x.Ports.map (xx) ->
       filterPorts.push String xx.PublicPort
 
@@ -21,7 +21,7 @@ getFreePorts = (n, serverName) ->
 getDockerServerConnectionSettings = (dockerServerName) ->
 
   dockerServerData = DockerServers.findOne name:dockerServerName
-  
+
   fs = Meteor.npmRequire 'fs'
 
   dockerServerSettings = {}
@@ -30,16 +30,16 @@ getDockerServerConnectionSettings = (dockerServerName) ->
     if dockerServerData.connect.protocol is "https"
       ["ca","cert","key"].map (xx) ->
         dockerServerSettings[xx] = fs.readFileSync(dockerServerData.security[xx+"Path"])
-  
+
   dockerServerSettings
 
 
-getFreeDockerServerName = (imageTag) -> "d3-agilearning"  
-# getFreeDockerServerName = (imageTag) -> "localhost"  
+getFreeDockerServerName = (imageTag) -> "d3-agilearning"
+# getFreeDockerServerName = (imageTag) -> "localhost"
 
 Meteor.methods
   "removeDockerInstance": (instanceId)->
-    #[TODOLIST: checking before running]    
+    #[TODOLIST: checking before running]
     #TODO: assert user logged in
     user = Meteor.user()
     if not user
@@ -89,12 +89,12 @@ Meteor.methods
 
       containerDoc.removeAt = new Date
       containerDoc.removeBy = "user"
-      containerDoc.removeByUid = user._id 
+      containerDoc.removeByUid = user._id
 
       DockerServerContainersLog.insert containerDoc
 
       #TODO: modift DockerInstances data
-      instanceQuery = 
+      instanceQuery =
         serverName: containerDoc.serverName
         containerId: containerId
 
@@ -104,13 +104,13 @@ Meteor.methods
 
         dockerInstanceDoc.removeAt = new Date
         dockerInstanceDoc.removeBy = "user"
-        dockerInstanceDoc.removeByUid = user._id 
+        dockerInstanceDoc.removeByUid = user._id
         DockerInstancesLog.insert dockerInstanceDoc
 
 
-    
+
   "removeDockerServerContainer": (dockerServerContainerId)->
-    #[TODOLIST: checking before running]    
+    #[TODOLIST: checking before running]
     #TODO: assert user logged in
     user = Meteor.user()
     if not user
@@ -151,12 +151,12 @@ Meteor.methods
 
       containerDoc.removeAt = new Date
       containerDoc.removeBy = "dockerAdmin"
-      containerDoc.removeByUid = user._id 
+      containerDoc.removeByUid = user._id
 
       DockerServerContainersLog.insert containerDoc
 
       #TODO: modift DockerInstances data
-      instanceQuery = 
+      instanceQuery =
         serverName: containerDoc.serverName
         containerId: containerId
 
@@ -166,21 +166,59 @@ Meteor.methods
 
         dockerInstanceDoc.removeAt = new Date
         dockerInstanceDoc.removeBy = "dockerAdmin"
-        dockerInstanceDoc.removeByUid = user._id 
+        dockerInstanceDoc.removeByUid = user._id
         DockerInstancesLog.insert dockerInstanceDoc
 
-    
-    
+  # [WARRNING] this containerId is different bellow method removeDockerServerContainer's containerId
+  # this containerId is the item-Id of DockerServerContainers. In another words, containerId
+  # `docker rm containerId`
+  "deleteDockerServerContainer":  (containerData, orderBy)->
+      # containerDoc = DockerServerContainers.findOne Id:containerData.Id
+      Docker = Meteor.npmRequire "dockerode"
+      dockerServerSettings = getDockerServerConnectionSettings(containerData.serverName)
+      docker = new Docker dockerServerSettings
 
-  
+      Future = Meteor.npmRequire 'fibers/future'
+
+      removeFuture = new Future
+      container = docker.getContainer containerData.Id
+
+      container.remove {}, (err,data)->
+        if err
+          console.log "[deleteDockerServerContainer] err ="
+          console.log err
+        removeFuture.return data
+
+      data = removeFuture.wait()
+
+      containerData.removeAt = new Date
+      containerData.removeBy = orderBy
+
+      DockerServerContainersLog.insert containerData
+      DockerServerContainers.remove _id: containerData._id
+
+      #TODO: modift DockerInstances data
+      instanceQuery =
+        serverName: containerData.serverName
+        containerId: containerData.Id
+            # console.log "DockerServerContainers.remove queryData is"
+      dockerInstanceDoc = DockerInstances.findOne instanceQuery
+      if dockerInstanceDoc
+        DockerInstances.remove _id: dockerInstanceDoc._id
+
+        dockerInstanceDoc.removeAt = new Date
+        dockerInstanceDoc.removeBy = orderBy
+        dockerInstanceDoc.removeByUid = user._id
+        DockerInstancesLog.insert dockerInstanceDoc
+
   "runDocker": (imageTag)->
-    
+
     if imageTag.split(":").length is 1
       fullImageTag = imageTag + ":latest"
     else
       fullImageTag = imageTag
 
-    #[TODOLIST: checking before running]    
+    #[TODOLIST: checking before running]
     #TODO: assert user logged in
     user = Meteor.user()
     if not user
@@ -200,13 +238,13 @@ Meteor.methods
     else
       configData = EnvUserConfigs.findOne({userId:user._id,configTypeId:configTypeId}).configData
       EnvsArray = configData.map (envData) -> envData["key"] + "=" + envData["value"]
-      
-  
-    #TODO: (if has config) getEnvUserConfigs 
+
+
+    #TODO: (if has config) getEnvUserConfigs
     #TODO: checkingRunningCondition
     #TODO: (if can run) choosing Running Limit
       dockerLimit = DockerLimits.findOne _id:"defaultLimit"
-      
+
     #TODO: use limit, EnvTypes' config => build containerData
       containerData = dockerLimit.limit
       containerData.Image = imageTag
@@ -220,15 +258,15 @@ Meteor.methods
       docker = new Docker dockerServerSettings
 
     #TODO: (if has server) get free ports in that server (include multiports)
-      
+
       servicePorts = EnvConfigTypes.findOne({_id:configTypeId}).configs.servicePorts
       fports = getFreePorts servicePorts.length, freeDockerServerName
 
-      portDataArray = [0..fports.length-1].map (i)-> 
-        portData = 
+      portDataArray = [0..fports.length-1].map (i)->
+        portData =
           guestPort: servicePorts[i].port
           hostPort: fports[i]
-          type: servicePorts[i].type 
+          type: servicePorts[i].type
 
       containerData.HostConfig = {}
       containerData.HostConfig.PortBindings = {}
@@ -287,6 +325,6 @@ Meteor.methods
 
       DockerInstances.insert dockerData
 
-    
+
 
     # TODO: different roles can access different images ...

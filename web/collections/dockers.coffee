@@ -2,8 +2,6 @@
 @DockerServerImages = new Meteor.Collection "dockerServerImages"
 @DockerServerContainers = new Meteor.Collection "dockerServerContainers"
 @DockerServerContainersLog = new Meteor.Collection "dockerServerContainersLog"
-
-
 @DockerServerPullImageLog = new Meteor.Collection "dockerServerPullImageLog"
 
 @DockerConfigTypes = new Meteor.Collection "dockerConfigTypes"
@@ -20,7 +18,6 @@
 @DockerTypeConfig = new Meteor.Collection "dockerTypeConfig"
 @DockerInstances = new Meteor.Collection "dockerInstances"
 @DockerInstancesLog = new Meteor.Collection "dockerInstancesLog"
-
 
 @DockerServerImagesSchema = new SimpleSchema
   _id:
@@ -43,7 +40,6 @@
     type: String
   serverName:
     type: String
-
 
 @DockerServerContainersSchema = new SimpleSchema
   _id:
@@ -101,11 +97,11 @@ getFreePort = ->
 #     serverName = "localhost"
 #   ports = [basePort..topPort].map String
 #   filterPorts = []
-#   DockerInstances.find({serverName:serverName}).fetch().map (x)-> 
+#   DockerInstances.find({serverName:serverName}).fetch().map (x)->
 #     x.portDataArray.map (xx) ->
 #       filterPorts.push xx.hostPort
 
-#   DockerServerContainers.find({serverName:serverName}).fetch().map (x)-> 
+#   DockerServerContainers.find({serverName:serverName}).fetch().map (x)->
 #     x.Ports.map (xx) ->
 #       filterPorts.push String xx.PublicPort
 
@@ -117,7 +113,7 @@ getFreePort = ->
 # getDockerServerConnectionSettings = (dockerServerName) ->
 
 #   dockerServerData = DockerServers.findOne name:dockerServerName
-  
+
 #   fs = Meteor.npmRequire 'fs'
 
 #   dockerServerSettings = {}
@@ -126,12 +122,12 @@ getFreePort = ->
 #     if dockerServerData.connect.protocol is "https"
 #       ["ca","cert","key"].map (xx) ->
 #         dockerServerSettings[xx] = fs.readFileSync(dockerServerData.security[xx+"Path"])
-  
+
 #   dockerServerSettings
 
 
-# getFreeDockerServerName = (imageTag) -> "d3-agilearning"  
-# # getFreeDockerServerName = (imageTag) -> "localhost"  
+# getFreeDockerServerName = (imageTag) -> "d3-agilearning"
+# # getFreeDockerServerName = (imageTag) -> "localhost"
 
 getDockerFreePort = (dockerServerId)->
   ports = [basePort..topPort]
@@ -159,12 +155,12 @@ Meteor.methods
 
       if courseData
         imageId = courseData.dockerImage
-        
+
         # imageType = DockerImages.findOne({_id:imageId}).type
         # if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
         #   #FIXME: write a checking function for env vars
         #   throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
-        
+
         Meteor.call "runDocker", imageId
 
 
@@ -245,7 +241,7 @@ Meteor.methods
 
   #     if courseData
   #       imageId = courseData.dockerImage
-        
+
   #       # imageType = DockerImages.findOne({_id:imageId}).type
   #       # if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
   #       #   #FIXME: write a checking function for env vars
@@ -276,7 +272,7 @@ Meteor.methods
 
       Docker = Meteor.npmRequire "dockerode"
       docker = new Docker Meteor.settings.public.dockerodeConfig
-      
+
       Future = Npm.require 'fibers/future'
 
       stopFuture = new Future
@@ -317,7 +313,7 @@ Meteor.methods
 
 
   # "runDocker": (imageTag)->
-    
+
   #   if imageTag.split(":").length is 1
   #     fullImageTag = imageTag + ":latest"
   #   else
@@ -326,7 +322,7 @@ Meteor.methods
   #   console.log "fullImageTag = "
   #   console.log fullImageTag
 
-  #   #[TODOLIST: checking before running]    
+  #   #[TODOLIST: checking before running]
   #   #TODO: assert user logged in
   #   user = Meteor.user()
   #   if not user
@@ -346,13 +342,13 @@ Meteor.methods
   #   else
   #     configData = EnvUserConfigs.findOne({userId:user._id,configTypeId:configTypeId}).configData
   #     EnvsArray = configData.map (envData) -> envData["key"] + "=" + envData["value"]
-      
-  
-  #   #TODO: (if has config) getEnvUserConfigs 
+
+
+  #   #TODO: (if has config) getEnvUserConfigs
   #   #TODO: checkingRunningCondition
   #   #TODO: (if can run) choosing Running Limit
   #     dockerLimit = DockerLimits.findOne _id:"defaultLimit"
-      
+
   #   #TODO: use limit, EnvTypes' config => build containerData
   #     containerData = dockerLimit.limit
   #     containerData.Image = imageTag
@@ -366,15 +362,15 @@ Meteor.methods
   #     docker = new Docker dockerServerSettings
 
   #   #TODO: (if has server) get free ports in that server (include multiports)
-      
+
   #     servicePorts = EnvConfigTypes.findOne({_id:configTypeId}).configs.servicePorts
   #     fports = getFreePorts servicePorts.length, freeDockerServerName
 
-  #     portDataArray = [0..fports.length-1].map (i)-> 
-  #       portData = 
+  #     portDataArray = [0..fports.length-1].map (i)->
+  #       portData =
   #         guestPort: servicePorts[i].port
   #         hostPort: fports[i]
-  #         type: servicePorts[i].type 
+  #         type: servicePorts[i].type
 
   #     containerData.HostConfig = {}
   #     containerData.HostConfig.PortBindings = {}
@@ -433,7 +429,7 @@ Meteor.methods
 
   #     DockerInstances.insert dockerData
 
-    
+
 
   #   # TODO: different roles can access different images ...
 
