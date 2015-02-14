@@ -1,0 +1,97 @@
+template(name="chatroomsPage")
+  .tab-pane.fade#chatrooms
+    .row
+      .col-md-9
+        h1 Your Chatrooms:
+        .row
+          .col-md-4
+            .list-group
+              a(href="#", data-toggle="modal", data-target="#create-room-modal").list-group-item.list-group-item-success#create-room
+                span.glyphicon.glyphicon-plus
+                | Create
+              each myChatrooms
+                if isCurrentChatroom this
+                  a(href="#", roomid=_id).list-group-item.list-group-item-info.select-chatroom.active
+                    span.glyphicon.glyphicon-comment
+                    | {{name}}
+                else
+                  a(href="#", roomid=_id).list-group-item.list-group-item-info.select-chatroom
+                    span.glyphicon.glyphicon-comment
+                    | {{name}}
+            .modal.fade#create-room-modal(role="dialog")
+              .modal-dialog
+                .modal-content
+                  .modal-header
+                    button(data-dismiss="modal").close
+                      span.glyphicon.glyphicon-remove
+                    h4.modal-title Create New Chatroom
+                  .modal-body
+                    .form-group#new-room-form
+                      label(for="new-room-text") New Chatroom Name:
+                      input(type="text", placeholder="Give it an awesome name...").form-control#new-room-text
+                  .modal-footer
+                    button(data-dismiss="modal").btn.btn-default Cancel
+                    button.btn.btn-primary#submit-creation Create
+          .col-md-8
+            .panel.panel-info
+              .panel-heading
+                span.glyphicon.glyphicon-comment
+                | {{currentChatroomName}}
+                if currentChatroomIsntClassChat
+                  unless chatroomIsCreatedByCurrentUser
+                    a(href="#", data-toggle="modal", data-target="#leave-room-modal").pull-right.glyphicon.glyphicon-log-out.leave-room
+                    .modal.fade#leave-room-modal(role="dialog")
+                      .modal-dialog
+                        .modal-content
+                          .modal-body
+                            h2 Are you sure you want to leave {{currentChatroomName}} ?
+                          .modal-footer
+                            button(data-dismiss="modal").btn.btn-primary Cancel
+                            button.btn.btn-danger#leave-room-button Leave
+                  if chatroomIsCreatedByCurrentUser
+                    a(href="#", data-toggle="modal", data-target="#delete-room-modal").pull-right.glyphicon.glyphicon-trash.delete-room
+                    .modal.fade#delete-room-modal(role="dialog")
+                      .modal-dialog
+                        .modal-content
+                          .modal-body
+                            h2 Are you sure you want to delete {{currentChatroomName}} ?
+                            p (Can't restore after deleting it)
+                          .modal-footer
+                            button(data-dismiss="modal").btn.btn-primary Cancel
+                            button.btn.btn-danger#remove-room-button Delete
+
+              .panel-footer
+                form.form-group#new-message-form
+                  textarea(placeholder="Type in some message...").form-control#new-message-text
+                  input(type="submit", value="Send").btn.btn-block.btn-primary
+              ul.list-group.chatroom-body
+                each messages
+                  if messageIsSentByCurrentUser this
+                    li.list-group-item.green-background
+                      .row
+                        .col-lg-9.col-md-8.col-sm-10.col-xs-10
+                          strong= userName
+                          p.message-content= text
+                          small.text-muted
+                            span.glyphicon.glyphicon-time
+                            | {{livestamp createdAt}}
+                        .col-lg-3.col-md-4.col-sm-2.col-xs-2
+                          img(src=userAvatar).img-circle.thumb
+                  else
+                    li.list-group-item
+                      .row
+                        .col-lg-2.col-md-3.col-sm-1.col-xs-2
+                          img(src=userAvatar).img-circle.thumb
+                        .col-lg-10.col-md-9.col-sm-11.col-xs-10
+                          strong= userName
+                          p.message-content= text
+                          small.text-muted
+                            span.glyphicon.glyphicon-time
+                            | {{livestamp createdAt}}
+      .col-md-3
+        h1 Join Others:
+        .list-group
+          each otherChatrooms
+            a(href="#", chatroomId=_id).list-group-item.list-group-item-warning.join-chat
+              i.fa.fa-user-plus
+              | {{name}}
