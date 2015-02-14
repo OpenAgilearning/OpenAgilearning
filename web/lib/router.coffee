@@ -26,10 +26,11 @@ Meteor.startup ->
         Meteor.subscribe "DevMileStone"
         Meteor.subscribe "WantedFeature"
         # Meteor.subscribe "allPublicCourses"
-        Meteor.subscribe "allPublicAndSemipublicCourses"
+        
         Meteor.subscribe "allPublicCoursesDockerImages"
 
-        Meteor.subscribe "userRoles", ["course"]
+        Meteor.subscribe "allPublicAndSemipublicCourses"
+        Meteor.subscribe "userRoles", ["course", "agilearning.io"]
 
 
     @route "envs",
@@ -76,6 +77,7 @@ Meteor.startup ->
         Meteor.subscribe "allPublicAndSemipublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
 
+        Meteor.subscribe "userRoles", ["agilearning.io"]
 
 #    @route "profile",
 #      path: "profile/"
@@ -124,6 +126,8 @@ Meteor.startup ->
         Meteor.subscribe "allPublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
           
+        Meteor.subscribe "userRoles", ["agilearning.io"]
+
     @route "courses",
       path: "courses/"
       template: "courses"
@@ -148,6 +152,7 @@ Meteor.startup ->
         Meteor.subscribe "allPublicAndSemipublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
  
+        Meteor.subscribe "userRoles", ["course", "agilearning.io"]
 
     @route "course",
       path: "course/:courseId"
@@ -182,7 +187,7 @@ Meteor.startup ->
         #   Router.go "pleaseLogin"
 
         CoursesSubHandler = Meteor.subscribe "course", @params.courseId
-        RolesHandler = Meteor.subscribe "userRoles", ["course"]
+        RolesHandler = Meteor.subscribe "userRoles", ["course", "agilearning.io"]
         
         Meteor.autorun =>
           if CoursesSubHandler.ready() and RolesHandler.ready()
@@ -301,6 +306,7 @@ Meteor.startup ->
         Meteor.subscribe "usersOfClassroom", @params.classroomId
         Meteor.subscribe "classExercises", @params.classroomId
 
+        Meteor.subscribe "userRoles", ["agilearning.io"]
 
     @route "learningResources",
       path: "learningResources/"
@@ -329,6 +335,8 @@ Meteor.startup ->
 
         Meteor.subscribe "allLearningResources"
 
+        Meteor.subscribe "userRoles", ["agilearning.io"]
+
     @route "admin",
       path: "admin/"
       template: "AdminPage"
@@ -354,10 +362,14 @@ Meteor.startup ->
           _.uniq(DockerServerImages.find().fetch().map((xx) -> xx["tag"]))
           
       waitOn: ->
+
+        Meteor.subscribe "userRoles", ["agilearning.io"]
+
         userId = Meteor.userId()
         if not userId
           Router.go "pleaseLogin"
 
+        
         else
           if Roles.userIsInRole(userId,"admin","system")
             Meteor.subscribe "allUsers"
@@ -454,6 +466,7 @@ Meteor.startup ->
         Meteor.subscribe "chatrooms"
         Meteor.subscribe "userJoinsChatroom"
 
+        Meteor.subscribe "userRoles", ["agilearning.io"]
 
     @route "pleaseLogin",
       path: "becomeAgilearner/"
@@ -463,6 +476,8 @@ Meteor.startup ->
         userId = Meteor.userId()
         if userId
           Router.go "index"
+
+        Meteor.subscribe "userRoles", ["agilearning.io"]
 
     @route "about",
       path: "about/"
@@ -475,3 +490,5 @@ Meteor.startup ->
         showAdminPage: ->
           userId = Meteor.userId()
           Roles.userIsInRole(userId, "admin", "system") or Roles.userIsInRole(userId, "admin", "dockers")
+
+          Meteor.subscribe "userRoles", ["agilearning.io"]

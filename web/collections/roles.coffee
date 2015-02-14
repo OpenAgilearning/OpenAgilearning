@@ -12,9 +12,12 @@
 @RoleTools.getGroupId = (type, id) ->
   if Collections.RoleGroups.find().count() is 0
     console.log "[Dev] forget to publish Collections.RoleGroups"   
+  
   groupQuery = 
     type: type
-    id: id
+
+  if id
+    groupQuery.id = id
 
   groupData = Collections.RoleGroups.findOne groupQuery
   if groupData
@@ -26,7 +29,9 @@
     console.log "[Dev] forget to publish Collections.RoleGroups"   
   groupQuery = 
     type: type
-    id: id
+
+  if id
+    groupQuery.id = id
 
   Collections.RoleGroups.findOne groupQuery
   
@@ -78,7 +83,10 @@ if Meteor.isServer
 if Meteor.isClient
 
   @RoleTools.isRole = (roles, groupType, groupId) ->
-  
+    
+    console.log "roles = "
+    console.log roles
+    
     if Collections.RoleGroups.find().count() is 0
       console.log "[Dev] forget to publish Collections.RoleGroups"   
 
@@ -96,11 +104,14 @@ if Meteor.isClient
       
       if groupData
 
-        {collection, query} = groupData
-        if Collections[collection].find(query).count() is 0
-          console.log "[Dev] cannot get the data with _id = " + query._id + " in " + collection
+        if groupData.collection and groupData.query
+          {collection, query} = groupData
+          if Collections[collection].find(query).count() is 0
+            console.log "[Dev] cannot get the data with _id = " + query._id + " in " + collection
 
         groupId = groupData._id
+        console.log groupData
+
         if typeof(roles) is "string"
           Collections.Roles.find({role:roles,groupId:groupId,userId:userId}).count() > 0
         else
@@ -125,9 +136,10 @@ if Meteor.isClient
       
       if groupData
 
-        {collection, query} = groupData
-        if Collections[collection].find(query).count() is 0
-          console.log "[Dev] cannot get the data with _id = " + query._id + " in " + collection
+        if groupData.collection and groupData.query
+          {collection, query} = groupData
+          if Collections[collection].find(query).count() is 0
+            console.log "[Dev] cannot get the data with _id = " + query._id + " in " + collection
 
         groupId = groupData._id
         if typeof(roles) is "string"
