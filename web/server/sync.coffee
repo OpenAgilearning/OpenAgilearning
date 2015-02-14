@@ -233,6 +233,10 @@ deleteUnusedContainer = (dockerServerSettings, containers) ->
     # console.log filteredContainers
 
     filteredContainers.map (x) ->
+      logData = DockerServerContainers.findOne({"Id":x})
+      logData.removeAt = new Date
+      logData.removeBy = "dockerServerMonitor"
+      DockerServerContainersLog.insert logData
       DockerServerContainers.remove({"Id":x})
 
 
