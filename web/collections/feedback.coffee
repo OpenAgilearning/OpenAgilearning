@@ -4,15 +4,14 @@
   type:
     type: String
     max:1
-    label: "Would you like to "
     defaultValue: "w"
     autoform:
-      type: "select-radio-inline"
-      options: ->
-        [
-          {label: "make a wish", value: "w"}
-          {label: "report a bug", value:  "b"}
-        ]
+      type: "select-radio-inline-custom"
+#      options: ->
+#        [
+#          {label: "make a wish", value: "w"}
+#          {label: "report a bug", value:  "b"}
+#        ]
   title:
     type: String
     label: "Which is ..."
