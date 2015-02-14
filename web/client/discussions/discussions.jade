@@ -56,6 +56,29 @@ template(name="chatroomsPage")
               .panel-heading
                 span.glyphicon.glyphicon-comment
                 | {{currentChatroomName}}
+                if currentChatroomIsntClassChat
+                  unless chatroomIsCreatedByCurrentUser
+                    a(href="#", data-toggle="modal", data-target="#leave-room-modal").pull-right.glyphicon.glyphicon-log-out.leave-room
+                    .modal.fade#leave-room-modal(role="dialog")
+                      .modal-dialog
+                        .modal-content
+                          .modal-body
+                            h2 Are you sure you want to leave {{currentChatroomName}} ?
+                          .modal-footer
+                            button(data-dismiss="modal").btn.btn-primary Cancel
+                            button.btn.btn-danger#leave-room-button Leave
+                  if chatroomIsCreatedByCurrentUser
+                    a(href="#", data-toggle="modal", data-target="#delete-room-modal").pull-right.glyphicon.glyphicon-trash.delete-room
+                    .modal.fade#delete-room-modal(role="dialog")
+                      .modal-dialog
+                        .modal-content
+                          .modal-body
+                            h2 Are you sure you want to delete {{currentChatroomName}} ?
+                            p (Can't restore after deleting it)
+                          .modal-footer
+                            button(data-dismiss="modal").btn.btn-primary Cancel
+                            button.btn.btn-danger#remove-room-button Delete
+
               .panel-footer
                 form.form-group#new-message-form
                   textarea(placeholder="Type in some message...").form-control#new-message-text
@@ -91,42 +114,3 @@ template(name="chatroomsPage")
             a(href="#", chatroomId=_id).list-group-item.list-group-item-warning.join-chat
               i.fa.fa-user-plus
               | {{name}}
-            //- ul.dropdown-menu
-            //-   li: a(href="#", chatroomId=_id).join-chat Join
-            //-   li: a Created By: {{chatroomCreatorName this}}
-        //- .row
-        //-   each otherChatrooms
-        //-     .col-md-12
-        //-       .btn-group.btn-block
-        //-         button(data-toggle="dropdown").btn.btn-primary.btn-lg.btn-block.dropdown-toggle
-        //-           | {{name}}
-        //-           span.caret
-        //-         ul.dropdown-menu
-        //-           li: a(href="#", chatroomId=_id).join-chat Join
-        //-           li: a Created By: {{chatroomCreatorName this}}
-          //- .col-md-12
-          //-   .btn-group.btn-block
-          //-     button(data-toggle="dropdown").btn.btn-primary.btn-lg.btn-block.dropdown-toggle
-          //-       | Python
-          //-       span.caret
-          //-     ul.dropdown-menu
-          //-       li: a(href="#") Join
-          //-       li: a Created By: Adrian Liaw
-
-          //- .col-md-12
-          //-   .btn-group.btn-block
-          //-     button(data-toggle="dropdown").btn.btn-success.btn-lg.btn-block.dropdown-toggle
-          //-       | R
-          //-       span.caret
-          //-     ul.dropdown-menu
-          //-       li: a(href="#") Join
-          //-       li: a Created By: Chia-Chi Chang
-
-          //- .col-md-12
-          //-   .btn-group.btn-block
-          //-     button(data-toggle="dropdown").btn.btn-info.btn-lg.btn-block.dropdown-toggle
-          //-       | Python Beginners
-          //-       span.caret
-          //-     ul.dropdown-menu
-          //-       li: a(href="#") Join
-          //-       li: a Created By: Chih-Cheng Liang

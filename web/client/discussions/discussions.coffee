@@ -5,23 +5,16 @@ Template.chatroomsPage.helpers
 
   myChatrooms: ->
     res = []
-    for key, value of Meteor.user().roles
-      if key[0..9] is "classroom_"
-        room = Chatrooms.findOne {classroomId: key[10..]}
-        res.push room if room
     res = res.concat(UserJoinsChatroom.find
         userId: Meteor.userId()
       .map (rel) ->
-        Chatrooms.findOne
-          _id: rel.chatroomId
+        Chatrooms.findOne(_id: rel.chatroomId)
     )
-    Chatrooms.find({
-      $or: res.map (chatroom) ->
-        _id: chatroom._id
-      }, {
-        sort: 
-          lastUpdate: -1
-      }).fetch()
+    res = _.sortBy res, (chatroom) -> -chatroom.lastUpdate
+    if not Session.get "currentChatroom"
+      Session.set "currentChatroom", res[0]?._id
+    Meteor.subscribe "chatMessages", res[0]?._id
+    res
 
   otherChatrooms: ->
     res = []
@@ -49,6 +42,19 @@ Template.chatroomsPage.helpers
 
   messageIsSentByCurrentUser: (message) ->
     message.userId is Meteor.userId()
+
+  currentChatroomIsntClassChat: ->
+    Chatrooms.findOne
+      _id: Session.get "currentChatroom"
+      classroomId: 
+        $exists: false
+
+  chatroomIsCreatedByCurrentUser: (chatroom) ->
+    if not chatroom
+      Chatrooms.findOne(_id: Session.get "currentChatroom").creatorId is Meteor.userId()
+    else
+      Chatrooms.findOne(_id: chatroom._id).creatorId is Meteor.userId()
+
 
 
 
@@ -87,3 +93,13 @@ Template.chatroomsPage.events
     Meteor.call "joinRoom", chatroomId
     Session.set "currentChatroom", chatroomId
     Meteor.subscribe "chatMessages", chatroomId
+
+  "click #leave-room-button": (event, template) ->
+    Meteor.call "leaveRoom", Session.get "currentChatroom"
+    template.$("#leave-room-modal").modal "hide"
+    Session.set "currentChatroom", undefined
+
+  "click #remove-room-button": (event, template) ->
+    Meteor.call "deleteRoom", Session.get "currentChatroom"
+    template.$("#delete-room-modal").modal "hide"
+    Session.set "currentChatroom", undefined
