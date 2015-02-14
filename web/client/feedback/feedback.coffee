@@ -12,3 +12,7 @@ Template.feedback.events
   "click #send-another, show.bs.collapse #collapse-body":(e,t)->
     e.stopPropagation()
     Session.set "submitted", no
+  "click .feedback-header":(e,t)->
+    $("#collapse-body").collapse "toggle"
+  "click #feedback":(e,t)->
+    $('#feedback').popover('destroy')

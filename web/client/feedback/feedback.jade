@@ -1,12 +1,12 @@
 template(name="feedback")
-  #feedback
+  #feedback(data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.")
     #feedback-box
       .panel.panel-info
-        .panel-heading
-          a(data-toggle='collapse', href='#collapse-body', aria-expanded='false', aria-controls='collapse-body')
-            h2.panel-title
-              i.fa.fa-smile-o 
-              | Feedback
+        .panel-heading.feedback-header
+          h2.panel-title
+            i.fa.fa-smile-o 
+            | Feedback
+          //a#feedback-pop(data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.") 12345
 
         #collapse-body.panel-body.collapse
           if submitted
@@ -21,3 +21,4 @@ template(name="feedback")
               +afQuickField name="title"
               +afQuickField name="description"
               button(type="submit").btn.btn-primary.btn-lg Done!
+
