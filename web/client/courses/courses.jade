@@ -52,16 +52,57 @@ template(name="course")
         +courseImage courseDoc=course width="100%"
         +Template.dynamic template="courseNameAndDescription" data=course
         //- +courseNameAndDescription courseName=course.courseName description=course.description
-        template(name="courseNameAndDescription")
-      .col-md-9.column
-        h2 Classrooms:
-        +courseClassroomsTable
 
+        
+        if isRole "admin" "course" course._id
+          button.btn.btn-info(href="#", data-toggle="modal", data-target="#courseInfoAdminEditorModal") Edit
+          //- hr
+          //- button.btn.btn-info(href="#", data-toggle="modal", data-target="#courseInfoAdminEditorModal") Add Learning Resources
+
+          +courseInfoAdminEditorForm
+        
+        //- +test123 xx=xx yy=yy
+
+      .col-md-9.column
+        if isRole "admin" "course" course._id
+          h2 Applications:
+          +courseApplicationsTable
+
+        h2 Classrooms:
+        +courseClassroomsTable 
+
+
+template(name="courseApplicationsTable")
+  +reactiveTable settings=settings 
+//- template(name="test123")
+//-   h2 {{test xx yy}}
+
+template(name="courseApplicationsTableCheckBtnField")
+  a.btn.btn-warning.checkBtn(roleId="{{_id}}") Allow
+
+template(name="courseInfoAdminEditorForm")
+  if coursesEditSchema
+    .modal.fade#courseInfoAdminEditorModal(role="dialog")
+      .modal-dialog
+        .modal-content
+          //- .modal-header
+          //-   button(data-dismiss="modal").close
+          //-     span.glyphicon.glyphicon-remove
+          //-   h4.modal-title Create New Chatroom
+          .modal-body
+            +quickForm id="courseInfoAdminEditor" doc=course schema=coursesEditSchema type="method" meteormethod="editCourseInfoByAdmin" 
+          //- .modal-footer
+          //-   button(data-dismiss="modal").btn.btn-default Cancel
+          //-   button.btn.btn-primary#submit-creation Create
+    
+    
 
 template(name="courseImage")
-  a(href="{{pathFor 'course' courseId=courseDoc._id}}")
+  if bindingATag
+    a(href="{{pathFor 'course' courseId=courseDoc._id}}")
+      img(width="{{width}}",src="{{getCourseImageURL courseDoc}}")
+  else
     img(width="{{width}}",src="{{getCourseImageURL courseDoc}}")
-
 
 template(name="courseClassroomsTable")
   +reactiveTable settings=settings        

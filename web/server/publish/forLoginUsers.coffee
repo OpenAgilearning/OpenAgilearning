@@ -1,3 +1,39 @@
+
+
+
+Meteor.publish "userRoles", (roleTypes=[])->
+  userId = @userId
+  if typeof(roleTypes) is "string"
+    roleTypes = [roleTypes]
+
+  if userId
+    roleGroups = Collections.RoleGroups.find({type:{$in:roleTypes}})
+    roleGroupsIds = roleGroups.fetch().map (xx) -> xx._id
+
+    queryConditions = []
+
+    console.log roleGroupsIds
+
+    for groupId in roleGroupsIds
+      if Collections.Roles.find({role:"admin",groupId:groupId,userId:userId}).count() > 0
+        queryCond = 
+          groupId: groupId
+        queryConditions.push queryCond
+      else
+        queryCond = 
+          groupId: groupId
+          userId:userId          
+        queryConditions.push queryCond
+
+    console.log queryConditions
+
+    roles = Collections.Roles.find({$or:queryConditions})
+    [roleGroups, roles]
+  else
+    Exceptions.find {_id:"ExpectionPermissionDeny"}
+
+
+
 Meteor.publish "userDockerServerContainers", ->
   userId = @userId
 
@@ -6,12 +42,18 @@ Meteor.publish "userDockerServerContainers", ->
     containerIds = dockerInstances.map (xx)-> xx.containerId
     DockerServerContainers.find Id:{"$in":containerIds}
 
+  else
+    Exceptions.find {_id:"ExpectionPermissionDeny"}
+
 
 Meteor.publish "userEnvUserConfigs", ->
   userId = @userId
 
   if userId
     EnvUserConfigs.find {userId:userId}
+
+  else
+    Exceptions.find {_id:"ExpectionPermissionDeny"}
 
 
 Meteor.publish "userDockerInstances", ->
@@ -20,12 +62,18 @@ Meteor.publish "userDockerInstances", ->
   if userId
     DockerInstances.find {userId:userId}
 
+  else
+    Exceptions.find {_id:"ExpectionPermissionDeny"}
+
 
 Meteor.publish "userDockerTypeConfig", ->
   userId = @userId
 
   if userId
     DockerTypeConfig.find {userId:userId}
+
+  else
+    Exceptions.find {_id:"ExpectionPermissionDeny"}
 
 
 Meteor.publish "userDockers", ->
@@ -34,10 +82,16 @@ Meteor.publish "userDockers", ->
   if userId
     Dockers.find userId:userId
 
+  else
+    Exceptions.find {_id:"ExpectionPermissionDeny"}
+
 
 Meteor.publish "dockers", ->
   userId = @userId
 
   if userId
     Dockers.findOnd userId:userId
+
+  else
+    Exceptions.find {_id:"ExpectionPermissionDeny"}
 

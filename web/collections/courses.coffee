@@ -1,28 +1,32 @@
 
 @LearningResources = new Mongo.Collection "learningResources"
 
-@learningResourceSchema = new SimpleSchema
-  title:
-    type: String
-  description:
-    type: String
-  image:
-    type: String
-    optional: true
-  type:
-    type: String
-    allowedValues: ["video","website","slide","youtube"]
-    optional: true
-  url:
-    type: String
-    optional: true
-    regEx: SimpleSchema.RegEx.Url
-  youtubeVideoId:
-    type: String
-    optional: true
-  youtubePlaylistId:
-    type: String
-    optional: true
+@Collections.LearningResources = @LearningResources
+@db.learningResources = @Collections.LearningResources
+
+
+# @learningResourceSchema = new SimpleSchema
+#   title:
+#     type: String
+#   description:
+#     type: String
+#   image:
+#     type: String
+#     optional: true
+#   type:
+#     type: String
+#     allowedValues: ["video","website","slide","youtube"]
+#     optional: true
+#   url:
+#     type: String
+#     optional: true
+#     regEx: SimpleSchema.RegEx.Url
+#   youtubeVideoId:
+#     type: String
+#     optional: true
+#   youtubePlaylistId:
+#     type: String
+#     optional: true
 
 
 
@@ -41,41 +45,77 @@ Meteor.methods
 
 
 @Courses = new Mongo.Collection "courses"
+# @CourseRoles = new Mongo.Collection "courseRoles"
 
-@coursesSchema = new SimpleSchema
-  courseName:
-    type: String
-
-  publicStatus:
-    type: String
-    allowedValues: ["public","semiprivate","private"]
-
-  dockerImage:
-    type: String
-
-  slides:
-    type: String
-    optional: true
-    regEx: SimpleSchema.RegEx.Url
-    autoform:
-      type: "url"
-
-  description:
-    type: String
-    optional: true
-
-  video:
-    type: String
-    optional: true
-    regEx: SimpleSchema.RegEx.Url
-    autoform:
-      type: "url"
-
+@Collections.Courses = @Courses
+@db.courses = @Collections.Courses
 
 
 
 
 Meteor.methods
+  "checkCourseApplication": (roleId) ->
+    loggedInUserId = Meteor.userId()
+
+    if not loggedInUserId
+      throw new Meteor.Error(401, "You need to login")
+
+    if Collections.Roles.find({_id:roleId}).count() is 0
+      throw new Meteor.Error(1402, "[Admin Error] there is no role with id" + roleId)
+    
+    groupId = Collections.Roles.findOne({_id:roleId}).groupId
+
+    if Collections.Roles.find({userId:loggedInUserId,role:"admin",groupId:groupId}).count() > 0
+      Collections.Roles.update({_id:roleId},{$set:{role:"member"}})
+
+  "applyCourse": (courseId) ->
+    loggedInUserId = Meteor.userId()
+
+    if not loggedInUserId
+      throw new Meteor.Error(401, "You need to login")
+
+    if Courses.find({_id:courseId}).count() is 0
+      throw new Meteor.Error(1302, "[Admin Error] there is no course with id" + courseId)
+    
+    queryRoleGroup = 
+      type: "course"
+      id: courseId
+
+    roleGroupId = Collections.RoleGroups.findOne(queryRoleGroup)._id
+      
+    data = 
+      groupId: roleGroupId
+      userId: loggedInUserId
+      role: "waitForCheck"
+
+    if Collections.Roles.find(data).count() is 0
+      data.createdAt = new Date
+      Collections.Roles.insert data
+
+
+
+
+
+
+  "editCourseInfoByAdmin": (courseDoc) ->
+    # console.log "courseDoc = "
+    # console.log courseDoc
+
+    loggedInUserId = Meteor.userId()
+    courseId = courseDoc._id
+
+    if not loggedInUserId
+      throw new Meteor.Error(401, "You need to login")
+
+    if Courses.find({_id:courseId}).count() is 0
+      throw new Meteor.Error(1302, "[Admin Error] there is no course with id" + courseId)
+    
+    if RoleTools.isRole loggedInUserId, "admin", "course", courseId
+      delete courseDoc._id
+      Courses.update {_id:courseId}, {$set:courseDoc}
+    
+
+
   "createCourse": (courseData) ->
 
     user = Meteor.user()

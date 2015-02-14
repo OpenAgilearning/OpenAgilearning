@@ -17,6 +17,7 @@ Meteor.startup ->
 
       waitOn: ->
         userId = Meteor.userId()
+        
         redirectAfterLogin = Cookies.get "redirectAfterLogin"
         if redirectAfterLogin and userId
           Cookies.expire "redirectAfterLogin"
@@ -24,8 +25,12 @@ Meteor.startup ->
 
         Meteor.subscribe "DevMileStone"
         Meteor.subscribe "WantedFeature"
-        Meteor.subscribe "allPublicCourses"
+        # Meteor.subscribe "allPublicCourses"
+        Meteor.subscribe "allPublicAndSemipublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
+
+        Meteor.subscribe "userRoles", ["course"]
+
 
     @route "envs",
       path: "envs/"
@@ -68,7 +73,7 @@ Meteor.startup ->
         Meteor.subscribe "userEnvUserConfigs"
 
         Meteor.subscribe "allPublicEnvConfigTypes"
-        Meteor.subscribe "allPublicCourses"
+        Meteor.subscribe "allPublicAndSemipublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
 
 
@@ -118,7 +123,7 @@ Meteor.startup ->
         # if not userId
         #   Router.go "pleaseLogin"
 
-        Meteor.subscribe "allPublicCourses"
+        Meteor.subscribe "allPublicAndSemipublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
  
 
@@ -137,6 +142,16 @@ Meteor.startup ->
           course: =>
             Courses.findOne _id: @params.courseId
 
+          courseAndId: =>
+            "course_" + @params.courseId
+
+          # coursesEditSchema: =>
+          #   console.log "@params.courseId = "
+          #   console.log @params.courseId
+          #   getCoursesEditSchema(@params.courseId)
+
+
+
         resData
 
       waitOn: ->
@@ -144,11 +159,20 @@ Meteor.startup ->
         # if not userId
         #   Router.go "pleaseLogin"
 
-        Meteor.subscribe "course", @params.courseId
+        CoursesSubHandler = Meteor.subscribe "course", @params.courseId
+        RolesHandler = Meteor.subscribe "userRoles", ["course"]
+        
+        Meteor.autorun =>
+          if CoursesSubHandler.ready() and RolesHandler.ready()
+            if Courses.findOne().publicStatus isnt "public"
+              console.log 'RoleTools.isRole(["admin","member"],"course",@params.courseId)'
+              console.log RoleTools.isRole(["admin","member"],"course",@params.courseId)
+              if not RoleTools.isRole(["admin","member"],"course",@params.courseId)
+                Router.go "index"
+
         Meteor.subscribe "allPublicClassrooms", @params.courseId
         Meteor.subscribe "allPublicClassroomRoles", @params.courseId
         Meteor.subscribe "courseDockerImages", @params.courseId
-
 
     @route "classroom",
       path: "classroom/:classroomId"
@@ -192,29 +216,29 @@ Meteor.startup ->
             configTypeId = getEnvConfigTypeIdFromClassroomId(@params.classroomId)
             EnvUserConfigs.find({userId:userId, configTypeId:configTypeId}).count() is 0            
 
-          envConfigsSchema: =>
-            userId = Meteor.userId()
-            # classroomDoc = Classrooms.findOne _id:@params.classroomId
-            # courseData = Courses.findOne _id:classroomDoc.courseId
-            # imageTag = courseData.dockerImage
+          # envConfigsSchema: =>
+          #   userId = Meteor.userId()
+          #   # classroomDoc = Classrooms.findOne _id:@params.classroomId
+          #   # courseData = Courses.findOne _id:classroomDoc.courseId
+          #   # imageTag = courseData.dockerImage
             
-            # configTypeId = DockerImages.findOne({_id:imageTag}).type
+          #   # configTypeId = DockerImages.findOne({_id:imageTag}).type
             
-            configTypeId = getEnvConfigTypeIdFromClassroomId(@params.classroomId)
+          #   configTypeId = getEnvConfigTypeIdFromClassroomId(@params.classroomId)
             
-            envConfigsData = EnvConfigTypes.findOne _id:configTypeId
-            schemaSettings = {}
+          #   envConfigsData = EnvConfigTypes.findOne _id:configTypeId
+          #   schemaSettings = {}
 
-            envConfigsData.configs.envs.map (env)->
-              schemaSettings[env.name] = {type: String}
+          #   envConfigsData.configs.envs.map (env)->
+          #     schemaSettings[env.name] = {type: String}
                 
-              if not env.mustHave
-                schemaSettings[env.name].optional = true
+          #     if not env.mustHave
+          #       schemaSettings[env.name].optional = true
 
-              if env.limitValues
-                schemaSettings[env.name].allowedValues = env.limitValues
+          #     if env.limitValues
+          #       schemaSettings[env.name].allowedValues = env.limitValues
 
-            new SimpleSchema schemaSettings
+          #   new SimpleSchema schemaSettings
 
           # chats: ->
           #   Chat.find {}, {sort: {createAt:-1}}

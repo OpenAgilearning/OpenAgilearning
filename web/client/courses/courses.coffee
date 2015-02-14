@@ -1,4 +1,57 @@
 
+Template.courseInfoAdminEditorForm.helpers
+  coursesEditSchema: (dockerImagesArray=[], slidesArray=[], VideosArray=[]) ->
+    courseId = Router.current().params.courseId
+    if courseId
+      resSchema = new SimpleSchema
+        _id:
+          type: String
+          defaultValue: courseId
+          allowedValues: [courseId]
+          autoform:
+            type: "hidden"
+            label: false
+
+        courseName:
+          type: String
+
+        publicStatus:
+          type: String
+          allowedValues: ["public","semipublic","private"]
+
+        description:
+          type: String
+          optional: true
+          autoform:
+            rows: 5
+
+        if dockerImagesArray.length > 0
+          resSchema.dockerImage = 
+            type: String
+            allowedValues: dockerImagesArray
+            optional: true
+        
+        if slidesArray.length > 0
+          resSchema.slides = 
+            type: String
+            allowedValues: slidesArray
+            optional: true
+
+        if VideosArray.length > 0
+          resSchema.video = 
+            type: String
+            allowedValues: VideosArray
+            optional: true
+
+        # resSchema.courseId = 
+        #   type: String
+        #   defaultValues: [courseId]
+          # autoform:
+          #   type: "hidden"
+
+
+        resSchema
+
 Template.allPublicCoursesTable.helpers
   settings: ->
     goToCoursePageBtnsField =
@@ -75,6 +128,41 @@ Template.courseClassroomsTable.helpers
       showNavigation:'never'
       fields: [goToClassroomBtnField, "name", "description"]
 
+Template.courseApplicationsTable.helpers
+  settings: ->
+    courseId = Router.current().params.courseId
+    # groupId = RoleTools.getGroupId "course", courseId
+    # waitForCheckRoles = Collections.Roles.find({groupId:groupId,role:"waitForCheck"})
+
+    waitForCheckRoles = RoleTools.getRoles("waitForCheck","course",courseId)
+
+    CheckBtnField =
+      key: "_id"
+      label: "Check"
+      tmpl: Template.courseApplicationsTableCheckBtnField
+      
+    res =
+      collection: waitForCheckRoles
+      rowsPerPage: 5
+      showFilter: false
+      showNavigation:'never'
+      fields: [CheckBtnField,"userId", "role"]
+
+Template.courseApplicationsTableCheckBtnField.events
+  "click .checkBtn": (e,t) ->
+    e.stopPropagation()
+    # console.log @
+    roleId = $(e.target).attr "roleId"
+
+    Meteor.call "checkCourseApplication", roleId, (err, data) ->
+      if not err
+        console.log data
+      else
+        console.log err
+        if err.error is 401
+          Cookies.set "redirectAfterLogin", window.location.href
+          Router.go "pleaseLogin"
+
 
 
 Template.courses.helpers
@@ -97,6 +185,21 @@ Template.courses.events
     courseId = this._id
     console.log "delete course: " + courseId
     Meteor.call "deleteCourse", courseId
+
+
+
+# Template.registerHelper "test", (xx, yy) ->
+#   xx.abc + " / " + yy.def
+
+# Template.registerHelper "test2", (xx) ->
+#   xx*2
+
+
+# Template.course.helpers
+#   xx: ->
+#     abc:"123"
+#   yy: ->
+#     def:"321"
 
 
 Template.course.rendered = ->

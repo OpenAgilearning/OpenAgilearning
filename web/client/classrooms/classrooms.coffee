@@ -68,5 +68,6 @@ Template.setEnvConfigsForm.helpers
         defaultValue: @classroomId
         autoform:
           type: "hidden"
+          label: false
 
       new SimpleSchema schemaSettings
