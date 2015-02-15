@@ -57,7 +57,7 @@ Template.feedbackVote.events
     Meteor.call "vote", data
   "click .deupvote":(e,t)->
     e.stopPropagation()
-    console.log "deupvote"
+    #console.log "deupvote"
     data =
       objectId: @_id
       degree: 0
