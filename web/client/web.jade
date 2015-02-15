@@ -48,6 +48,8 @@ template(name="navBar")
 
         ul.nav.navbar-nav.navbar-right
           li.nav.navbar-nav
+            +agileCountdown
+          li.nav.navbar-nav
             img.user-img.img-circle(src="{{user.profile.photo.thumb_link}}")
           li.nav.navbar-nav
             +loginButtons

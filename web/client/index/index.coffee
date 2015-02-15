@@ -72,6 +72,7 @@ Template.nodeIcons.rendered = ->
 
 
 Template.index.rendered = ->
+  
   # $container = $(".nodeList")
   # $container.imagesLoaded ->
   #   $container.masonry
