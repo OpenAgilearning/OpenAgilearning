@@ -20,6 +20,10 @@ Template.feedbackDiscussion.helpers
       label: "Created"
       fn: (value) -> moment(value).fromNow()
       sort: 'ascending'
+    voteField =
+      key:"vote.upvote"
+      label:"Like"
+      tmpl: Template.feedbackVote
       
     res =
       collection: Feedback.find()
@@ -31,7 +35,33 @@ Template.feedbackDiscussion.helpers
         titleField
         descriptionField
         createdAtField
+        voteField
       ]
 
 Template.feedbackType.helpers
   isWish:(type)-> type is "w"
+  
+Template.feedbackVote.helpers
+  upvoted:->
+    db.Votes.findOne(objectId:@_id)?.degree is 1
+
+Template.feedbackVote.events
+  "click .upvote":(e,t)->
+    #console.log "upvoting!!" + @_id + @title
+    e.stopPropagation()
+    data =
+      objectId: @_id
+      degree: 1
+      type: "upvote"
+      collection: "Feedback"
+    Meteor.call "vote", data
+  "click .deupvote":(e,t)->
+    e.stopPropagation()
+    console.log "deupvote"
+    data =
+      objectId: @_id
+      degree: 0
+      type: "upvote"
+      collection: "Feedback"
+    Meteor.call "vote", data
+    

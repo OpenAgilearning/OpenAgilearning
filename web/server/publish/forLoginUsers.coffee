@@ -102,3 +102,14 @@ Meteor.publish "feedback", ->
     Feedback.find()
   else
     Exceptions.find {_id:"ExpectionPermissionDeny"}
+
+Meteor.publish "votes", (collections)->
+  userId = @userId
+
+  if userId
+    db.Votes.find
+      userId:userId
+      collection:
+        $in: collections
+  else
+    Exceptions.find {_id:"ExpectionPermissionDeny"}

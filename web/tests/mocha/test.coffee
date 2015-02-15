@@ -23,3 +23,21 @@ if Meteor.isServer
       describe "Server can do simple arithmetics, too.", ->
         it "should be 2 when adding 1 to 1", ->
           chai.assert.equal 2, (1 + 1)
+          
+    describe "is_valid_vote function", ->
+      it "should return true when data is proper",->
+        chai.expect is_valid_vote(0, "upvote" ,"Feedback")
+        .to.equal true
+        chai.expect is_valid_vote(1, "upvote", "Feedback")
+        .to.equal true
+      it "should return false when data is in proper",->
+        chai.expect is_valid_vote(2, "upvote", "Feedback")
+        .to.equal false
+        chai.expect is_valid_vote(undefined, "upvote", "Feedback")
+        .to.equal false
+        chai.expect is_valid_vote(null, "upvote", "Feedback")
+        .to.equal false
+        chai.expect is_valid_vote(1, "upvote", "Foo")
+        .to.equal false
+        chai.expect is_valid_vote(1, "invalid_vote", "Feedback")
+        .to.equal false

@@ -1,5 +1,7 @@
 @Feedback = new Meteor.Collection "feedback"
 
+@db.Feedback = @Feedback
+
 @FeedbackSchema= new SimpleSchema
   type:
     type: String
