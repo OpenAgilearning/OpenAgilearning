@@ -21,10 +21,12 @@
 
 
 @Collections.DockerServers = @DockerServers
+@Collections.DockerServerImages = @DockerServerImages
 @Collections.DockerPullImageJob = new Mongo.Collection "dockerPullImageJob"
 @Collections.DockerPullImageStream = new Mongo.Collection "dockerPullImageStream"
 
 @db.dockerServers = @Collections.DockerServers 
+@db.dockerServerImages = @Collections.DockerServerImages 
 @db.dockerPullImageJob = @Collections.DockerPullImageJob
 @db.dockerPullImageStream = @Collections.DockerPullImageStream
 

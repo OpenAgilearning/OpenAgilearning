@@ -6,12 +6,42 @@
   dockerPullDoingJobs = db.dockerPullImageJob.find({serverName:{$in:dockerServerNames},status:"Doing"}).fetch()
   
   dockerPullDoingJobs.map (job) ->
+      
     if db.dockerPullImageStream.find({jobId:job._id,error:{"$exists":true}}).count() > 0
       updateData = 
         errorAt: new Date
+        updatedAt: new Date
         status: "Error"
 
       db.dockerPullImageJob.update {_id:job._id}, {$set:updateData}
+
+    else
+      updateData = 
+        updatedAt: new Date
+        streamCount: db.dockerPullImageStream.find({jobId:job._id}).count()
+      
+      if job.streamCount < updateData.streamCount
+        db.dockerPullImageJob.update {_id:job._id}, {$set:updateData}
+      
+      else
+        if db.dockerServerImages.find({serverName:job.serverName,tag:job.imageTag}).count() > 0
+          updateData = 
+            doneAt: new Date
+            updatedAt: new Date
+            status: "Done"
+          
+          db.dockerPullImageJob.update {_id:job._id}, {$set:updateData}
+
+        # else
+        #   updateData = 
+        #     errorAt: new Date
+        #     updatedAt: new Date
+        #     status: "Error:MaybeCallbackDisconnect"
+
+        #   db.dockerPullImageJob.update {_id:job._id}, {$set:updateData}
+
+
+
 
 
 
@@ -35,6 +65,7 @@
 
       updateData = 
         DoingAt: new Date
+        updatedAt: new Date
         status: "Doing"
       db.dockerPullImageJob.update {_id:jobId}, {$set:updateData}
 
@@ -53,7 +84,7 @@
       
         if not err
           addJobData = (data) ->
-            data["serverName"] = serverName
+            data["streamCount"] = 0
             data["jobId"] = jobId
             data
           stream.pipe(parser).on("data",addJobData).pipe(streamToMongo)
