@@ -1,0 +1,54 @@
+template(name="feedback")
+  #feedback(tabindex="0" data-trigger="focus" data-toggle="popover" data-placement="top" data-content="Enjoying your learning? Tell us your awesome idea.")
+    #feedback-box
+      .panel.panel-info
+        .panel-heading.feedback-header
+          h2.panel-title
+            i.fa.fa-smile-o 
+            | Feedback
+          //a#feedback-pop(data-toggle="popover" data-placement="top" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.") 12345
+
+        #collapse-body.panel-body.collapse
+          if submitted
+            .text-center
+              p Thank you for the feedback
+              h2
+                i.fa.fa-smile-o.fa-5x
+              button#send-another.btn.btn-success Send Another
+          else
+            +autoForm id="feedbackForm" schema="FeedbackSchema" type="method" meteormethod="sendFeedback"
+              
+              +afRadioGroupInline_custom name="type"
+              //+afQuickField name="type"
+              //.form-group
+                #wish-bug.af-radio-group.btn-group.btn-group-lg(data-toggle="buttons" data-schema-key="type")
+                  label.btn.btn-default.active
+                    //input(id="wish" type="radio" value="w" name="type" required)
+                    +afFieldInput type="radio" value="w" label=false
+                    i.fa.fa-birthday-cake.fa-5x
+                    p Make a wish
+                  label.btn.btn-default
+                    //input(id="bug" type="radio" value="b" name="type" required)
+                    +afFieldInput type="radio" value="b" label=false
+                    i.fa.fa-bug.fa-5x
+                    p Report a bug
+                span.help-block
+
+              
+              +afQuickField name="title"
+              +afQuickField name="description"
+              button(type="submit").btn.btn-primary.btn-lg Done!
+              
+template(name="afRadioGroupInline_custom")
+  .form-group
+    #wish-bug.af-radio-group.btn-group.btn-group-lg(data-toggle="buttons" data-schema-key="type")
+      label.control-label
+      label.btn.btn-default.active
+        input(id="wish" type="radio" value="w" name="type" atts checked)
+        i.fa.fa-birthday-cake.fa-5x
+        p Make a wish
+      label.btn.btn-default
+        input(id="bug" type="radio" value="b" name="type" atts)
+        i.fa.fa-bug.fa-5x
+        p Report a bug
+    span.help-block

@@ -1,0 +1,23 @@
+#feedback {
+  width: auto;
+  height: auto;
+  position: fixed;
+  z-index: 100000004;
+  display: block;
+  visibility: visible;
+  overflow-y: hidden;
+  bottom: 0px;
+  right: 10%;
+}
+
+#feedback-box > .panel {
+  margin-bottom: 0px;
+}
+
+#feedbackForm {
+  min-width: 240px;
+}
+
+.feedback-header:hover {
+  cursor: pointer;
+}
