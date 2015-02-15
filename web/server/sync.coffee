@@ -240,65 +240,11 @@ deleteUnusedContainer = (dockerServerSettings, containers) ->
       DockerServerContainers.remove({"Id":x})
 
 
-dockerPullImageWorker = () ->
-  dockerServerNames = db.dockerServers.find().fetch().map (xx) -> xx.name
-  dockerPullJobs = db.dockerPullImageJob.find({serverName:{$in:dockerServerNames},status:"ToDo"}).fetch()
-  
-  console.log "dockerPullJobs = "
-  console.log dockerPullJobs
-
-  MONGO_URL = process.env.MONGO_URL
-  # console.log "MONGO_URL = "
-  # console.log MONGO_URL
-
-  serverName = "localhost"
-  dockerServerSettings = getDockerServerConnectionSettings "localhost"
-
-  # console.log "dockerServerSettings = "
-  # console.log dockerServerSettings
-
-  Docker = Meteor.npmRequire "dockerode"
-  docker = new Docker dockerServerSettings
-
-  if MONGO_URL
-    dockerPullJobs.map (job) ->
-      serverName = job.serverName
-      jobId = job._id
-
-      updateData = 
-        DoingAt: new Date
-        status: "Doing"
-      db.dockerPullImageJob.update {_id:jobId}, {$set:updateData}
-
-      docker.pull job.imageTag, (err, stream) ->
-        Meteor.npmRequire "dockerode"
-
-        JSONStream = Meteor.npmRequire('JSONStream')
-        parser = JSONStream.parse()
-        
-        options = 
-          db: MONGO_URL
-          collection: 'dockerPullImageStream'
-
-        streamToMongo = Meteor.npmRequire('stream-to-mongo')(options)
-
-      
-        if not err
-          addJobData = (data) ->
-            data["serverName"] = serverName
-            data["jobId"] = jobId
-            data
-          stream.pipe(parser).on("data",addJobData).pipe(streamToMongo)
-        else
-          console.log err
-
-
-
-
 
 
 # Meteor.setInterval syncDockerServerInfo, 5000
 # Meteor.setInterval syncDockerServerImages, 5000
 # Meteor.setInterval syncDockerServerContainer, 10000
 
-Meteor.setInterval dockerPullImageWorker, 5000
+Meteor.setInterval dockerPull.ToDoJobHandler, 5000
+Meteor.setInterval dockerPull.DoingJobHandler, 5000
