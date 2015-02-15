@@ -4,14 +4,12 @@
 #Sample Usage:
 
 #    data =
-#      userId: Meteor.userId()
 #      objectId: @_id
 #      degree: 1
 #      type: "upvote"
 #      collection: "Feedback"
 #    Meteor.call "vote", data
 
-#    Note: The voted collection should be place under global variable @db
 #######
 
 @VoteSchema= new SimpleSchema
@@ -57,10 +55,10 @@ Meteor.methods
       data.userId = loggedInUserId
       data.createdAt = new Date()
 
-# These crash terribly
-#      check data, VoteSchema
-#    
-#      @unblock()
+
+      check data, VoteSchema
+    
+      @unblock()
       
       if is_valid_vote data.degree, data.type, data.collection
         
