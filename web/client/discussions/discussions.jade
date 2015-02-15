@@ -5,13 +5,17 @@ template(name="discussions")
 
         ul.nav.nav-tabs
           li.active
+            a(data-toggle="tab", href="#feedbackDiscussion") Wish & Bugs
+          li
             a(data-toggle="tab", href="#forums") Forums
           li
             a(data-toggle="tab", href="#chatrooms") Chatrooms
-        
+          
         .tab-content
+          +feedbackDiscussion
           +forums
           +chatroomsPage
+          
 
 template(name="forums")
   .tab-pane.fade.in.active#forums

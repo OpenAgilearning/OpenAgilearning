@@ -95,3 +95,10 @@ Meteor.publish "dockers", ->
   else
     Exceptions.find {_id:"ExpectionPermissionDeny"}
 
+Meteor.publish "feedback", ->
+  userId = @userId
+
+  if userId
+    Feedback.find()
+  else
+    Exceptions.find {_id:"ExpectionPermissionDeny"}
