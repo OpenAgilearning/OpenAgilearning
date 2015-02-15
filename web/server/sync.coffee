@@ -240,46 +240,13 @@ deleteUnusedContainer = (dockerServerSettings, containers) ->
       DockerServerContainers.remove({"Id":x})
 
 
-dockerPullImageWorker = ()->
-  # MongoClient = Meteor.npmRequire("mongodb").MongoClient
-  # Writable = Meteor.npmRequire('stream').Writable
-  # util = Meteor.npmRequire 'util'
+dockerPullImageWorker = () ->
+  dockerServerNames = db.dockerServers.find().fetch().map (xx) -> xx.name
+  dockerPullJobs = db.dockerPullImageJob.find({serverName:{$in:dockerServerNames},status:"ToDo"}).fetch()
   
-  # console.log "MongoClient = "
-  # console.log MongoClient
+  console.log "dockerPullJobs = "
+  console.log dockerPullJobs
 
-  
-
-
-
-  # StreamToMongo = (options) ->
-  #   if !(@ instanceof StreamToMongo)
-  #     new StreamToMongo(options)
-  #   else
-  #     Writable.call @, { objectMode: true }
-  #     this.options = options
-
-
-  # util.inherits(StreamToMongo, Writable)
-
-  # StreamToMongo::_write = (obj, encoding, done)->
-  #   self = @
-  #   if !@db 
-  #     MongoClient.connect @options.db, (err, db) ->
-  #       if err 
-  #         throw err
-  #       else
-  #         self.db = db
-  #         console.log "self = "
-  #         console.log self
-  #         self.on 'finish', ->
-  #           self.db.close()
-      
-  #       self.collection = db.collection @options.collection
-  #       self.collection.insert(obj, { w: 1 }, done)
-    
-  #   else 
-  #     self.collection.insert(obj, { w: 1 }, done)
   MONGO_URL = process.env.MONGO_URL
   # console.log "MONGO_URL = "
   # console.log MONGO_URL
@@ -287,37 +254,43 @@ dockerPullImageWorker = ()->
   serverName = "localhost"
   dockerServerSettings = getDockerServerConnectionSettings "localhost"
 
-  console.log "dockerServerSettings = "
-  console.log dockerServerSettings
+  # console.log "dockerServerSettings = "
+  # console.log dockerServerSettings
 
   Docker = Meteor.npmRequire "dockerode"
   docker = new Docker dockerServerSettings
 
   if MONGO_URL
-    docker.pull "abcdeasfsafeqpostgres:9.3", (err, stream) ->
-      Meteor.npmRequire "dockerode"
+    dockerPullJobs.map (job) ->
+      serverName = job.serverName
+      jobId = job._id
 
-      JSONStream = Meteor.npmRequire('JSONStream')
-      parser = JSONStream.parse()
+      updateData = 
+        DoingAt: new Date
+        status: "Doing"
+      db.dockerPullImageJob.update {_id:jobId}, {$set:updateData}
+
+      docker.pull job.imageTag, (err, stream) ->
+        Meteor.npmRequire "dockerode"
+
+        JSONStream = Meteor.npmRequire('JSONStream')
+        parser = JSONStream.parse()
+        
+        options = 
+          db: MONGO_URL
+          collection: 'dockerPullImageStream'
+
+        streamToMongo = Meteor.npmRequire('stream-to-mongo')(options)
+
       
-      options = 
-        db: MONGO_URL
-        collection: 'dockerPullImageStream'
-
-      streamToMongo = Meteor.npmRequire('stream-to-mongo')(options)
-
-      # streamToMongo = StreamToMongo(options)
-      # fs = require('fs')
-      # writeStream = fs.createWriteStream("/home/c3h3/my_file.txt")
-
-
-      if not err
-        addServerName = (data) ->
-          data["serverName"] = serverName
-          data
-        stream.pipe(parser).on("data",addServerName).pipe(streamToMongo)
-      else
-        console.log err
+        if not err
+          addJobData = (data) ->
+            data["serverName"] = serverName
+            data["jobId"] = jobId
+            data
+          stream.pipe(parser).on("data",addJobData).pipe(streamToMongo)
+        else
+          console.log err
 
 
 

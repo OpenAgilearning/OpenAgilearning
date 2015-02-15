@@ -20,9 +20,11 @@
 @DockerInstancesLog = new Meteor.Collection "dockerInstancesLog"
 
 
+@Collections.DockerServers = @DockerServers
 @Collections.DockerPullImageJob = new Mongo.Collection "dockerPullImageJob"
 @Collections.DockerPullImageStream = new Mongo.Collection "dockerPullImageStream"
 
+@db.dockerServers = @Collections.DockerServers 
 @db.dockerPullImageJob = @Collections.DockerPullImageJob
 @db.dockerPullImageStream = @Collections.DockerPullImageStream
 
