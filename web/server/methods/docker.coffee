@@ -38,6 +38,26 @@ getFreeDockerServerName = (imageTag) -> "d3-agilearning"
 # getFreeDockerServerName = (imageTag) -> "localhost"
 
 Meteor.methods
+  "submitPullImageJob": (pullImageData) ->
+    loggedInUserId = Meteor.userId()
+    
+    if not loggedInUserId
+      throw new Meteor.Error(401, "You need to login")
+
+    if db.dockerServers.find({name:pullImageData.serverName}).count() is 0
+      throw new Meteor.Error(1302, "[Admin Error] there is no serverName = " + serverName)
+        
+    if Roles.userIsInRole(loggedInUserId,"admin","dockers")
+      pullJob = 
+        status: "ToDo"  # ToDo / Doing / Done
+        imageTag: pullImageData.repoTag #"postgres:9.3"
+        serverName: pullImageData.serverName
+        createdAt: new Date
+      
+      db.dockerPullImageJob.insert pullJob
+
+
+
   "removeDockerInstance": (instanceId)->
     #[TODOLIST: checking before running]
     #TODO: assert user logged in
