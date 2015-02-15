@@ -6,6 +6,7 @@
 #     * syncDockerServerImages
 #     * syncDockerServerContainer
 #   setTimeInterval * 3
+
 getDockerServerSettings = (dockerServerData) ->
   fs = Meteor.npmRequire 'fs'
   dockerServerSettings = {}
@@ -41,24 +42,69 @@ syncDockerServerInfo = ->
       infoFuture.return data
 
     dockerInfo = infoFuture.wait()
+    lastUpdateAt = new Date
 
     # console.log "dockerInfo = "
     # console.log dockerInfo
 
-    if dockerInfo
+    if dockerInfo?
       updateData =
         active:true
         serverInfo:dockerInfo
-        lastUpdateAt: new Date
+        lastUpdateAt: lastUpdateAt
 
       DockerServers.update {_id:dockerServerData._id},{$set:updateData}
     else
       updateData =
         active:false
+        lastUpdateAt: lastUpdateAt
+
+      if DockerServersException.findOne({_id:dockerServerData._id})
+        DockerServers.remove {_id:dockerServerData._id}
+        throw new Meteor.Error 11000, "Duplicate data in dockerServers and DockerServersException"
+      else
+        DockerServersException.insert dockerServerData
+        DockerServersException.update {_id:dockerServerData._id}, {$set:updateData}
+        DockerServersException.update {_id:dockerServerData._id},{$unset:{serverInfo:""}}
+        DockerServers.remove {_id:dockerServerData._id}
+        DockerServerImages.remove {"serverName":dockerServerData.name}
+        # DockerServerContainers.remove {"serverName":dockerServerData.name}
+
+
+syncExceptionDockerServerInfo = ->
+  exceptionDockerServers = DockerServersException.find().fetch()
+  Docker = Meteor.npmRequire "dockerode"
+
+  for dockerServerData in exceptionDockerServers
+    dockerServerSettings = getDockerServerSettings dockerServerData
+
+    docker = new Docker dockerServerSettings
+    Future = Npm.require 'fibers/future'
+    infoFuture = new Future
+
+    docker.info (err, data) ->
+      if err
+        console.log "[sync server exception] err ="
+        console.log err
+      infoFuture.return data
+
+    dockerInfo = infoFuture.wait()
+
+    if dockerInfo? and not DockerServers.findOne({"_id":dockerServerData._id})?
+      updateData =
+        active:true
+        serverInfo:dockerInfo
         lastUpdateAt: new Date
 
-      DockerServers.update {_id:dockerServerData._id},{$set:updateData}
-      DockerServers.update {_id:dockerServerData._id},{$unset:{serverInfo:""}}
+      DockerServers.insert dockerServerData
+      DockerServers.update({_id:dockerServerData._id},{$set:updateData})
+      DockerServersException.remove {_id:dockerServerData._id}
+    else
+      updateData =
+        active:false
+        lastUpdateAt: new Date
+      DockerServersException.update({_id:dockerServerData._id},{$set:updateData})
+
 
 syncDockerServerImages = ->
   Docker = Meteor.npmRequire "dockerode"
@@ -249,3 +295,6 @@ Meteor.setInterval syncDockerServerContainer, 10000
 Meteor.setInterval dockerPull.ToDoJobHandler, 5000
 Meteor.setInterval dockerPull.DoingJobHandler, 60000
 # Meteor.setInterval dockerPull.progressMonitor, 5000
+
+
+Meteor.setInterval syncExceptionDockerServerInfo, 20000

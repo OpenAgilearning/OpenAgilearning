@@ -1,4 +1,5 @@
 @DockerServers = new Meteor.Collection "dockerServers"
+@DockerServersException = new Meteor.Collection "dockerServersException"
 @DockerServerImages = new Meteor.Collection "dockerServerImages"
 @DockerServerContainers = new Meteor.Collection "dockerServerContainers"
 @DockerServerContainersLog = new Meteor.Collection "dockerServerContainersLog"
