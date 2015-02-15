@@ -18,7 +18,7 @@ getFreePorts = (n, serverName) ->
   if filteredPorts.length >= n
     filteredPorts.slice(0,n)
 
-getDockerServerConnectionSettings = (dockerServerName) ->
+@getDockerServerConnectionSettings = (dockerServerName) ->
 
   dockerServerData = DockerServers.findOne name:dockerServerName
 
@@ -85,7 +85,7 @@ Meteor.methods
 
       data = removeFuture.wait()
 
-      DockerServerContainers.remove _id: dockerServerContainerId
+      DockerServerContainers.remove Id: dockerServerContainerId
 
       containerDoc.removeAt = new Date
       containerDoc.removeBy = "user"
