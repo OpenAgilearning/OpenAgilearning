@@ -140,5 +140,4 @@ Template.nodeInfo.rendered = ->
 
 Template.nodeInfo.events
   "click .nodeInfo":(e,t) ->
-    console.log t.data._id
     Meteor.call "track" ,window.location.pathname, t.data._id, ("click .nodeInfo to course " + t.data._id )
