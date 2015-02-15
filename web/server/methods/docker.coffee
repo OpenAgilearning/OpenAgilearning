@@ -189,48 +189,6 @@ Meteor.methods
         dockerInstanceDoc.removeByUid = user._id
         DockerInstancesLog.insert dockerInstanceDoc
 
-  # [WARRNING] this containerId is different bellow method removeDockerServerContainer's containerId
-  # this containerId is the item-Id of DockerServerContainers. In another words, containerId
-  # `docker rm containerId`
-  "deleteDockerServerContainer":  (containerData, orderBy)->
-      # containerDoc = DockerServerContainers.findOne Id:containerData.Id
-      Docker = Meteor.npmRequire "dockerode"
-      dockerServerSettings = getDockerServerConnectionSettings(containerData.serverName)
-      docker = new Docker dockerServerSettings
-
-      Future = Meteor.npmRequire 'fibers/future'
-
-      removeFuture = new Future
-      container = docker.getContainer containerData.Id
-
-      container.remove {}, (err,data)->
-        if err
-          console.log "[deleteDockerServerContainer] err ="
-          console.log err
-        removeFuture.return data
-
-      data = removeFuture.wait()
-
-      containerData.removeAt = new Date
-      containerData.removeBy = orderBy
-
-      DockerServerContainersLog.insert containerData
-      DockerServerContainers.remove _id: containerData._id
-
-      #TODO: modift DockerInstances data
-      instanceQuery =
-        serverName: containerData.serverName
-        containerId: containerData.Id
-            # console.log "DockerServerContainers.remove queryData is"
-      dockerInstanceDoc = DockerInstances.findOne instanceQuery
-      if dockerInstanceDoc
-        DockerInstances.remove _id: dockerInstanceDoc._id
-
-        dockerInstanceDoc.removeAt = new Date
-        dockerInstanceDoc.removeBy = orderBy
-        dockerInstanceDoc.removeByUid = user._id
-        DockerInstancesLog.insert dockerInstanceDoc
-
   "runDocker": (imageTag)->
 
     if imageTag.split(":").length is 1

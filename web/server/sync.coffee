@@ -123,34 +123,66 @@ syncDockerServerImages = ->
 
     images = imagesFuture.wait()
 
-    if images
+    if images?
+
       lastUpdateAt = new Date
+
+      deleteNothingnessImage dockerServerSettings, images
 
       for imageData in images
         # TODO: upsert new images
-        imageData.dockerServerId = dockerServerData._id
+        re = /none/g
+        if re.exec(imageData.RepoTags)
 
-        queryDataKeys = Object.keys imageData
-        imageTags = imageData.RepoTags
-        querytDataKeys = queryDataKeys.filter (key)-> key isnt "RepoTags"
-
-        queryImageData = {}
-        querytDataKeys.map (key) ->
-          queryImageData[key] = imageData[key]
-
-
-        for tag in imageTags
           setData =
-            lastUpdateAt:lastUpdateAt
-            tag:tag
+            lastUpdateAt: lastUpdateAt
+            tag:imageData.RepoTags
             serverName: dockerServerData.name
+          DockerServerPullImageScratch.upsert imageData, {$set:setData}
 
-          DockerServerImages.upsert queryImageData, {$set:setData}
+        else
+
+          imageData.dockerServerId = dockerServerData._id
+          queryDataKeys = Object.keys imageData
+          imageTags = imageData.RepoTags
+          querytDataKeys = queryDataKeys.filter (key)-> key isnt "RepoTags"
+          queryImageData = {}
+
+          querytDataKeys.map (key) ->
+            queryImageData[key] = imageData[key]
+
+          for tag in imageTags
+            setData =
+              lastUpdateAt:lastUpdateAt
+              tag:tag
+              serverName: dockerServerData.name
+
+            DockerServerImages.upsert queryImageData, {$set:setData}
+          # TODO: modify disappear images
+    else
+
+      DockerServerImages.remove {"serverName":dockerServerName}
+      # I think container sync let function *syncDockerServerContainer* to do such thing
+      # DockerServerContainers.remove({"serverName":dockerServerData.name})
+      throw new Meteor.Error 1104, "Docker server exception. can't find and docker images"
 
 
-        # TODO: modify disappear images
+deleteNothingnessImage = (dockerServerSettings, images) ->
+    # mongo server
+    filterImages = []
+    DockerServerImages.find({serverName:dockerServerSettings["dockerServerName"]}).fetch().map (xx)->
+      filterImages.push xx.Id
 
+    # docker server
+    exitImageIdArr = []
+    images.map (xxx)->
+      exitImageIdArr.push xxx.Id
 
+    filteredImages = filterImages .filter (xx) -> xx not in exitImageIdArr
+
+    filteredImages.map (x) ->
+      DockerServerImages.remove({"Id":x})
+      # FIXME Should I add image log if the image was removed from docker server ??
 
 syncDockerServerContainer = ->
   dockerServers = DockerServers.find().fetch()
@@ -171,13 +203,11 @@ syncDockerServerContainer = ->
       containersFuture.return data
     containers = containersFuture.wait()
 
-    deleteUnusedContainer(dockerServerSettings, containers)
-
-    # Check if there are containers running ?
     if containers.length > 0
 
-      for containerData in containers
+      deleteNothingnessContainer(dockerServerSettings, containers)
 
+      for containerData in containers
         containerObj = docker.getContainer containerData.Id
 
         containerInspectDataFuture = new Future
@@ -201,44 +231,38 @@ syncDockerServerContainer = ->
           serverName: dockerServerSettings.dockerServerName
           inspectData: containerInspectData
 
+        instanceQuery =
+          serverName: dockerServerSettings.dockerServerName
+          containerId: containerData.Id
+        setInstanceData =
+          "$set":
+            status: setData.Status
+            lastUpdateAt: lastUpdateAt
+
         setData = _.extend setData, containerData
 
         if DockerServerContainers.find(queryData).count() > 0
           re = /Exited/g
           if re.exec(DockerServerContainers.findOne(queryData).Status)
-            Meteor.call "deleteDockerServerContainer", DockerServerContainers.findOne(queryData), "dockerServerMonitor"
+            deleteDockerServerContainer DockerServerContainers.findOne(queryData), "dockerServerMonitor"
           else
             DockerServerContainers.upsert queryData, {$set:setData}
-            instanceQuery =
-              serverName: dockerServerSettings.dockerServerName
-              containerId: containerData.Id
-
-            setInstanceData =
-              "$set":
-                status: setData.Status
-                lastUpdateAt: lastUpdateAt
             DockerInstances.update instanceQuery, setInstanceData
         else
           setData.firstMonitorAt = new Date
           DockerServerContainers.upsert queryData, {$set:setData}
-
-          instanceQuery =
-            serverName: dockerServerSettings.dockerServerName
-            containerId: containerData.Id
-          setInstanceData =
-            "$set":
-              status: setData.Status
-              lastUpdateAt: lastUpdateAt
           DockerInstances.update instanceQuery, setInstanceData
 
     else
       # SYNC DockerServerContainers, check container is surive ? false, remove it from mongo
       # TODO if container's status is exited, call method to remove it
+
       containerArr = DockerServerContainers.find({dockerServerId:dockerServerSettings.dockerServerId}).fetch()
       for con in containerArr
         con.removeAt = new Date
         con.removeBy = "dockerServerMonitor"
         DockerServerContainersLog.insert con
+      DockerServerContainers.remove({dockerServerId:dockerServerSettings.dockerServerId})
 
       instanceArr = DockerInstances.find({"serverName":dockerServerSettings.dockerServerName}).fetch()
       for instance in instanceArr
@@ -246,9 +270,7 @@ syncDockerServerContainer = ->
         instance.removeAt = new Date
         DockerInstancesLog.insert instance
         DockerInstances.remove({"serverName":instance.serverName, "containerId":instance.containerId, "imageTag":instance.imageTag})
-
       DockerInstances.remove({"serverName":dockerServerSettings.dockerServerName})
-      DockerServerContainers.remove({dockerServerId:dockerServerSettings.dockerServerId})
 
       console.log "serverName = "
       console.log dockerServerSettings.dockerServerName
@@ -259,24 +281,17 @@ syncDockerServerContainer = ->
       console.log "containers = "
       console.log containers
 
-deleteUnusedContainer = (dockerServerSettings, containers) ->
+deleteNothingnessContainer = (dockerServerSettings, containers) ->
     # mongo server
     filterContainers = []
     DockerServerContainers.find({serverName:dockerServerSettings["dockerServerName"]}).fetch().map (xx)->
       filterContainers.push xx.Id
-    # console.log "filterContainers [mongo server]"
-    # console.log filterContainers
 
     # docker server
     containerIdArr = []
     containers.map (xxx)->
       containerIdArr.push xxx.Id
-    # console.log "containerIdArr [docker server]"
-    # console.log containerIdArr
-
     filteredContainers = filterContainers.filter (xx) -> xx not in containerIdArr
-    # console.log "filteredContainers = "
-    # console.log filteredContainers
 
     filteredContainers.map (x) ->
       logData = DockerServerContainers.findOne({"Id":x})
@@ -285,6 +300,47 @@ deleteUnusedContainer = (dockerServerSettings, containers) ->
       DockerServerContainersLog.insert logData
       DockerServerContainers.remove({"Id":x})
 
+  # [WARRNING] this containerId is different bellow method removeDockerServerContainer's containerId
+  # this containerId is the item-Id of DockerServerContainers. In another words, containerId
+  # `docker rm containerId`
+deleteDockerServerContainer = (containerData, orderBy)->
+    # containerDoc = DockerServerContainers.findOne Id:containerData.Id
+    Docker = Meteor.npmRequire "dockerode"
+    dockerServerSettings = getDockerServerConnectionSettings(containerData.serverName)
+    docker = new Docker dockerServerSettings
+
+    Future = Meteor.npmRequire 'fibers/future'
+
+    removeFuture = new Future
+    container = docker.getContainer containerData.Id
+
+    container.remove {}, (err,data)->
+      if err
+        console.log "[deleteDockerServerContainer] err ="
+        console.log err
+      removeFuture.return data
+
+    data = removeFuture.wait()
+
+    containerData.removeAt = new Date
+    containerData.removeBy = orderBy
+
+    DockerServerContainersLog.insert containerData
+    DockerServerContainers.remove _id: containerData._id
+
+    #TODO: modift DockerInstances data
+    instanceQuery =
+      serverName: containerData.serverName
+      containerId: containerData.Id
+          # console.log "DockerServerContainers.remove queryData is"
+    dockerInstanceDoc = DockerInstances.findOne instanceQuery
+    if dockerInstanceDoc
+      DockerInstances.remove _id: dockerInstanceDoc._id
+
+      dockerInstanceDoc.removeAt = new Date
+      dockerInstanceDoc.removeBy = orderBy
+      dockerInstanceDoc.removeByUid = user._id
+      DockerInstancesLog.insert dockerInstanceDoc
 
 
 
