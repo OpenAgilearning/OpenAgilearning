@@ -467,6 +467,8 @@ Meteor.startup ->
         Meteor.subscribe "userJoinsChatroom"
 
         Meteor.subscribe "userRoles", ["agilearning.io"]
+        Meteor.subscribe "feedback"
+        Meteor.subscribe "votes", ["Feedback"]
 
     @route "pleaseLogin",
       path: "becomeAgilearner/"

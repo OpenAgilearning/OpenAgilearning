@@ -1,0 +1,24 @@
+template(name="feedbackDiscussion")
+  h2 Rate your favorite feature
+
+  +reactiveTable settings=settings
+    
+template(name="feedbackType")
+  if isWish type
+    span.fa-stack.fa-lg
+      i.fa.fa-circle.fa-stack-2x
+      i.fa.fa-birthday-cake.fa-stack-1x.fa-inverse
+  else
+    span.fa-stack.fa-lg
+      i.fa.fa-circle.fa-stack-2x
+      i.fa.fa-bug.fa-stack-1x.fa-inverse
+      
+template(name="feedbackVote")
+  if upvoted
+    h2.deupvote.text-primary
+      span.glyphicon.glyphicon-thumbs-up
+      | {{this.vote.upvote}}
+  else
+    h2.upvote
+      span.glyphicon.glyphicon-thumbs-up
+      | {{this.vote.upvote}}
