@@ -1,6 +1,8 @@
 @dockerPull = {}
 
 
+
+
 @dockerPull.DoingJobHandler = ()->
   dockerServerNames = db.dockerServers.find().fetch().map (xx) -> xx.name
   dockerPullDoingJobs = db.dockerPullImageJob.find({serverName:{$in:dockerServerNames},status:"Doing"}).fetch()
@@ -42,11 +44,6 @@
 
 
 
-
-
-
-
-
 @dockerPull.ToDoJobHandler = () ->
   dockerServerNames = db.dockerServers.find().fetch().map (xx) -> xx.name
   dockerPullToDoJobs = db.dockerPullImageJob.find({serverName:{$in:dockerServerNames},status:"ToDo"}).fetch()
@@ -82,11 +79,46 @@
 
         streamToMongo = Meteor.npmRequire('stream-to-mongo')(options)
 
-      
+        
+        # MongoWritableStream = Meteor.npmRequire('mongo-writable-stream')
+
+        # streamToMongo = new MongoWritableStream
+        #   url: MONGO_URL
+        #   collection: 'dockerPullImageStream'
+        #   upsert: true
+        #   upsertFields: ['id',"jobId","status","error"] 
+
+
         if not err
-          addJobData = (data) ->
+          addJobInfo = (data) ->
             data["jobId"] = jobId
+            data["logAt"] = new Date
+            # console.log data
+            # db.dockerPullImageStream.upsert {id:data.id,jobId:jobId}, data
             data
-          stream.pipe(parser).on("data",addJobData).pipe(streamToMongo)
+          stream.pipe(parser).on("data",addJobInfo).pipe(streamToMongo)
         else
           console.log err
+
+
+@dockerPull.progressMonitor = ->
+  agg1 = 
+    $group:
+      _id:
+        id:"$id",
+        jobId:"$jobId",
+      status:
+        $addToSet:"$status"
+
+      progress:
+        $max:
+          $divide:["$progressDetail.current","$progressDetail.total"]
+
+  agg2 = 
+    $sort:
+      progress:1
+
+  pipeline = [agg1, agg2]
+
+  console.log db.dockerPullImageStream.aggregate(pipeline)
+
