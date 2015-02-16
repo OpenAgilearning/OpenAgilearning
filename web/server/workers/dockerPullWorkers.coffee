@@ -66,6 +66,7 @@
       updateData = 
         DoingAt: new Date
         updatedAt: new Date
+        streamCount: 0
         status: "Doing"
       db.dockerPullImageJob.update {_id:jobId}, {$set:updateData}
 
@@ -84,7 +85,6 @@
       
         if not err
           addJobData = (data) ->
-            data["streamCount"] = 0
             data["jobId"] = jobId
             data
           stream.pipe(parser).on("data",addJobData).pipe(streamToMongo)
