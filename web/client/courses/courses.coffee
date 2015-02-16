@@ -18,6 +18,17 @@ Template.courseInfoAdminEditorForm.helpers
         publicStatus:
           type: String
           allowedValues: ["public","semipublic","private"]
+          autoform:
+            type:"select"
+            options: "allowed"
+
+        languages:
+          type: [String]
+          optional: true
+          autoform:
+            type: "tags"
+            afFieldInput:
+              maxChars: 2
 
         description:
           type: String

@@ -19,6 +19,9 @@ template(name="allPublicCoursesTable")
 
 template(name="courseNameAndDescription")
   h2 {{courseName}}
+  .languageIcons
+    each languages
+      span.label.label-default.fa {{this}}
   p {{description}}
   if video
     //- h2 TODO: add video icon
@@ -90,7 +93,14 @@ template(name="courseInfoAdminEditorForm")
           //-     span.glyphicon.glyphicon-remove
           //-   h4.modal-title Create New Chatroom
           .modal-body
-            +quickForm id="courseInfoAdminEditor" doc=course schema=coursesEditSchema type="method" meteormethod="editCourseInfoByAdmin" 
+            +autoForm id="courseInfoAdminEditor" doc=course schema=coursesEditSchema type="method" meteormethod="editCourseInfoByAdmin"
+              +afQuickField name="_id"
+              +afQuickField name="courseName"
+              +afQuickField name="publicStatus"
+              +afQuickField name="languages"
+              +afQuickField name="description"
+              button(type="submit").btn.btn-primary.btn-lg Done!
+
           //- .modal-footer
           //-   button(data-dismiss="modal").btn.btn-default Cancel
           //-   button.btn.btn-primary#submit-creation Create
