@@ -465,7 +465,6 @@ Meteor.startup ->
 
         Meteor.subscribe "chatrooms"
         Meteor.subscribe "userJoinsChatroom"
-        Meteor.subscribe "forumQuestions"
 
         Meteor.subscribe "userRoles", ["agilearning.io"]
         Meteor.subscribe "feedback"

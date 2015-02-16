@@ -1,20 +1,15 @@
-Template.forums.helpers
-  
-  rtSettings: ->
-    questionField =
-      key: "title"
-      label: "Question"
-      tmpl: Template.questionRow
-
-    res =
-      fields: [questionField]
-      collection: db.forumPosts
+forumPostsFilter = new Meteor.FilterCollections db.forumPosts, 
+  name: "forumPostsFilter"
+  template: "postsFilter"
+  sort:
+    defaults: [
+      ["createdAt", "desc"]
+    ]
 
 
-Template.questionRow.helpers
-  
+Template.postsFilter.helpers
   partOf: (content) ->
-    if content.length < 300
+    if content.length < 500
       content
     else
       content[..300] + "....."

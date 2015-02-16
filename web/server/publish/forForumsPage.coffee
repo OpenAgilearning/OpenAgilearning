@@ -1,2 +1,3 @@
-Meteor.publish "forumQuestions", ->
-  return db.forumPosts.find()
+
+Meteor.FilterCollections.publish db.forumPosts, 
+  name: "forumPostsFilter"

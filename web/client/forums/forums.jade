@@ -1,9 +1,17 @@
 template(name="forums")
   .tab-pane.fade.in.active#forums
-    .row
-      +reactiveTable settings=rtSettings
+    +postsFilter
 
 
-template(name="questionRow")
-  h1= title
-  p {{partOf content}}
+template(name="postsFilter")
+  .list-group
+    each fcResults
+      a(href="#").list-group-item.list-group-item-info
+        .row
+          .col-md-9
+            h3= title
+            | {{partOf content}}
+          .col-md-3.bottom-aligned
+            img(src=userAvatar).img-circle.thumb
+            small {{livestamp createdAt}} by
+            | {{userName}}
