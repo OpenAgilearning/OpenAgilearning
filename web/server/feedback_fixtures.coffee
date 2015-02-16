@@ -1,4 +1,4 @@
-if Feedback.find().count() is 0
+if Feedback.find().count() is 0 and Meteor.settings.public.environment isnt "production"
   feedbacks_fixture =[
     { "type" : "w", "title" : "I wish the platform serve cakes", "description" : "cake like giant castle", "createdBy" : "MjSZYPJm6YMevQAW9", "createdAt" : new Date() }
     { "type" : "b", "title" : "A bugggggg!!!!!", "description" : "burn it with fireee!!", "createdBy" : "MjSZYPJm6YMevQAW9", "createdAt" : new Date() }
