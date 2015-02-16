@@ -33,9 +33,28 @@ getFreePorts = (n, serverName) ->
 
   dockerServerSettings
 
+getFreeDockerServerName = (imageTag) ->
 
-getFreeDockerServerName = (imageTag) -> "d3-agilearning"
-# getFreeDockerServerName = (imageTag) -> "localhost"
+  serverArr = DockerServerImages.find({"tag":imageTag}).fetch()
+  if serverArr.length is 0
+    throw new Meteor.Error 666, "No such docker image"
+
+  #TODO list avaliable server object
+  arrOfServerObj = serverArr.map (xx) ->
+    res =
+      "serverName": xx.serverName
+      "numOfContainers":DockerServerContainers.find({"serverName":xx.serverName}).count()
+    res
+
+  #TODO return minimun item of array
+  numOfContainersArr = arrOfServerObj.map (xx)->
+    xx.numOfContainers
+  # If you don't understand return what, check following answer
+  # https://stackoverflow.com/questions/11301438/return-index-of-greatest-value-in-an-array
+  console.log "getFreeDockerServerName ===== ???"
+  console.log arrOfServerObj[ numOfContainersArr.indexOf  Math.min.apply Math ,numOfContainersArr]["serverName"]
+
+  arrOfServerObj[ numOfContainersArr.indexOf  Math.min.apply Math ,numOfContainersArr]["serverName"]
 
 Meteor.methods
   "submitPullImageJob": (pullImageData) ->
@@ -191,6 +210,7 @@ Meteor.methods
 
   "runDocker": (imageTag)->
 
+    # FIXME refactor dockerImage collection, image with full tag
     if imageTag.split(":").length is 1
       fullImageTag = imageTag + ":latest"
     else
@@ -231,7 +251,8 @@ Meteor.methods
     #[TODOLIST: get free server & ports]
     #TODO: get free server has the image
       Docker = Meteor.npmRequire "dockerode"
-      freeDockerServerName = getFreeDockerServerName(imageTag)
+
+      freeDockerServerName = getFreeDockerServerName fullImageTag
       dockerServerSettings = getDockerServerConnectionSettings(freeDockerServerName)
       docker = new Docker dockerServerSettings
 
