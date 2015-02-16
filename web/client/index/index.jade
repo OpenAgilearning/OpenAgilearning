@@ -63,8 +63,13 @@ template(name="nodeInfo")
             else
               +courseImage courseDoc=this width="100%"
           
-          h3 {{courseName}}
-          p {{description}}
+          .courseTitle
+            h3 {{courseName}}
+          .languageIcons
+            each languages
+              span.label.label-default.fa {{this}}
+          .courseDescription
+            p {{description}}
           //- +aboutCoursesIcons
         +nodeIcons
 
@@ -91,8 +96,8 @@ template(name="nodeIcons")
     i.fa.fa-book.fa-2x(style="margin:5px")
   if dockerImage
     i.fa.fa-cube.fa-2x(style="margin:5px")
-
-
+  
+  
 
 template(name="index3")
   .container
