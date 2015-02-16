@@ -1,3 +1,3 @@
 
-Exceptions.upsert {_id:"ExpectionPermissionDeny"},{_id:"ExpectionPermissionDeny"} 
-Exceptions.upsert {_id:"ExpectionPublishEmpty"},{_id:"ExpectionPublishEmpty"}
+Exceptions.upsert {_id:"ExceptionPermissionDeny"},{_id:"ExceptionPermissionDeny"} 
+Exceptions.upsert {_id:"ExceptionPublishEmpty"},{_id:"ExceptionPublishEmpty"}
