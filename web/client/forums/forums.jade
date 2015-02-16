@@ -1,4 +1,9 @@
 template(name="forums")
   .tab-pane.fade.in.active#forums
-    h1 TODO: Forums
+    .row
+      +reactiveTable settings=rtSettings
 
+
+template(name="questionRow")
+  h1= title
+  p {{partOf content}}
