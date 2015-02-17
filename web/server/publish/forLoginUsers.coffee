@@ -30,7 +30,7 @@ Meteor.publish "userRoles", (roleTypes=[])->
     roles = Collections.Roles.find({$or:queryConditions})
     [roleGroups, roles]
   else
-    Exceptions.find {_id:"ExpectionPermissionDeny"}
+    Exceptions.find {_id:"ExceptionPermissionDeny"}
 
 
 
@@ -43,7 +43,7 @@ Meteor.publish "userDockerServerContainers", ->
     DockerServerContainers.find Id:{"$in":containerIds}
 
   else
-    Exceptions.find {_id:"ExpectionPermissionDeny"}
+    Exceptions.find {_id:"ExceptionPermissionDeny"}
 
 
 Meteor.publish "userEnvUserConfigs", ->
@@ -53,7 +53,7 @@ Meteor.publish "userEnvUserConfigs", ->
     EnvUserConfigs.find {userId:userId}
 
   else
-    Exceptions.find {_id:"ExpectionPermissionDeny"}
+    Exceptions.find {_id:"ExceptionPermissionDeny"}
 
 
 Meteor.publish "userDockerInstances", ->
@@ -63,7 +63,7 @@ Meteor.publish "userDockerInstances", ->
     DockerInstances.find {userId:userId}
 
   else
-    Exceptions.find {_id:"ExpectionPermissionDeny"}
+    Exceptions.find {_id:"ExceptionPermissionDeny"}
 
 
 Meteor.publish "userDockerTypeConfig", ->
@@ -73,7 +73,7 @@ Meteor.publish "userDockerTypeConfig", ->
     DockerTypeConfig.find {userId:userId}
 
   else
-    Exceptions.find {_id:"ExpectionPermissionDeny"}
+    Exceptions.find {_id:"ExceptionPermissionDeny"}
 
 
 Meteor.publish "userDockers", ->
@@ -83,7 +83,7 @@ Meteor.publish "userDockers", ->
     Dockers.find userId:userId
 
   else
-    Exceptions.find {_id:"ExpectionPermissionDeny"}
+    Exceptions.find {_id:"ExceptionPermissionDeny"}
 
 
 Meteor.publish "dockers", ->
@@ -93,7 +93,7 @@ Meteor.publish "dockers", ->
     Dockers.findOnd userId:userId
 
   else
-    Exceptions.find {_id:"ExpectionPermissionDeny"}
+    Exceptions.find {_id:"ExceptionPermissionDeny"}
 
 Meteor.publish "feedback", ->
   userId = @userId
@@ -101,7 +101,7 @@ Meteor.publish "feedback", ->
   if userId
     Feedback.find()
   else
-    Exceptions.find {_id:"ExpectionPermissionDeny"}
+    Exceptions.find {_id:"ExceptionPermissionDeny"}
 
 Meteor.publish "votes", (collections)->
   userId = @userId
@@ -112,4 +112,4 @@ Meteor.publish "votes", (collections)->
       collection:
         $in: collections
   else
-    Exceptions.find {_id:"ExpectionPermissionDeny"}
+    Exceptions.find {_id:"ExceptionPermissionDeny"}
