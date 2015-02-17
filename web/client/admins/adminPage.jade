@@ -8,6 +8,8 @@ template(name="AdminPage")
         li
           a(data-toggle="tab", href="#dockerServersMonitor") Docker Servers Monitor
         li
+          a(data-toggle="tab", href="#dockerJobs") Docker Jobs
+        li
           a(data-toggle="tab", href="#envsSettings") Envs Settings
       if isInRole "admin" "system"
         li
@@ -37,6 +39,18 @@ template(name="AdminPage")
           +adminPageDockerServerContainersTable
 
           hr
+
+
+        .tab-pane.fade#dockerJobs
+          .col-md-3.column
+          .col-md-6.column
+            hr
+            h2 pull Images
+            +pullImageForm
+            
+          .col-md-3.column
+
+
         .tab-pane.fade#envsSettings
           .col-md-6.column
             h2 EnvTypes
@@ -77,3 +91,28 @@ template(name="AdminPage")
       //-     h2 User Status:
       //-     +userStatus
 
+template(name="pullImageForm")
+  //- +autoForm id="envCreator" schema="EnvsSchema" type="method" meteormethod="createEnv" 
+  //-   +afQuickField name="imageTag" options=uniqueDockerImageTagsForAutoForm
+  hr
+  h2 test
+  if DockerServerPullImageSchema
+    +autoForm id="pullImage" schema=DockerServerPullImageSchema type="method" meteormethod="submitPullImageJob"
+      fieldset
+        +afQuickField name="serverName" options=allowServerNames
+        +afQuickField name="repoTag" options=allowImageTags
+        //- label.control-label {{afFieldLabelText name="serverName"}}
+        //- +afFieldInput name="serverName"
+        //- strong {{{afFieldMessage name="serverName"}}}
+        
+        //- label.control-label {{afFieldLabelText name="dockerHubIp"}}
+        //- +afFieldInput name="dockerHubIp" placeholder="dockerhub" type="text"
+        //- strong {{{afFieldMessage name="dockerHubIp"}}}
+        //- label.control-label {{afFieldLabelText name="imageName"}}
+        //- +afFieldInput name="imageName"
+        //- strong {{{afFieldMessage name="imageName"}}}
+        //- label.control-label {{afFieldLabelText name="imageVersion"}}
+        //- +afFieldInput name="imageVersion" type="text" placeholder="latest"
+        //- strong {{{afFieldMessage name="imageVersion"}}}
+      br
+      button.btn.btn-primary(type='submit') submit

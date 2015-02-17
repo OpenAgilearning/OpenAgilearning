@@ -1,6 +1,6 @@
 @SettingSchema = new SimpleSchema
   email: 
-    type: String,
+    type: String
     regEx: SimpleSchema.RegEx.Email
     autoform:
       afFieldInput:

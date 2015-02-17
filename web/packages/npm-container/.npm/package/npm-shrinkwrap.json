@@ -1,5 +1,16 @@
 {
   "dependencies": {
+    "JSONStream": {
+      "version": "0.10.0",
+      "dependencies": {
+        "jsonparse": {
+          "version": "0.0.5"
+        },
+        "through": {
+          "version": "2.3.6"
+        }
+      }
+    },
     "dockerode": {
       "version": "2.0.4",
       "dependencies": {
@@ -41,6 +52,65 @@
     },
     "fibers": {
       "version": "1.0.2"
+    },
+    "mongo-writable-stream": {
+      "version": "0.1.2",
+      "dependencies": {
+        "mongodb": {
+          "version": "1.4.30",
+          "dependencies": {
+            "bson": {
+              "version": "0.2.18",
+              "dependencies": {
+                "nan": {
+                  "version": "1.5.1"
+                }
+              }
+            },
+            "kerberos": {
+              "version": "0.0.8",
+              "dependencies": {
+                "nan": {
+                  "version": "1.5.1"
+                }
+              }
+            },
+            "readable-stream": {
+              "version": "1.0.33",
+              "dependencies": {
+                "core-util-is": {
+                  "version": "1.0.1"
+                },
+                "isarray": {
+                  "version": "0.0.1"
+                },
+                "string_decoder": {
+                  "version": "0.10.31"
+                },
+                "inherits": {
+                  "version": "2.0.1"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "stream-to-mongo": {
+      "version": "0.1.4",
+      "dependencies": {
+        "mongodb": {
+          "version": "1.3.23",
+          "dependencies": {
+            "bson": {
+              "version": "0.2.5"
+            },
+            "kerberos": {
+              "version": "0.0.3"
+            }
+          }
+        }
+      }
     }
   }
 }

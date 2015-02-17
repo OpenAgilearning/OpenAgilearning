@@ -240,6 +240,12 @@ deleteUnusedContainer = (dockerServerSettings, containers) ->
       DockerServerContainers.remove({"Id":x})
 
 
+
+
 Meteor.setInterval syncDockerServerInfo, 5000
 Meteor.setInterval syncDockerServerImages, 5000
 Meteor.setInterval syncDockerServerContainer, 10000
+
+Meteor.setInterval dockerPull.ToDoJobHandler, 5000
+Meteor.setInterval dockerPull.DoingJobHandler, 60000
+# Meteor.setInterval dockerPull.progressMonitor, 5000
