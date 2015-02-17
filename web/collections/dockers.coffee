@@ -1,8 +1,10 @@
 @DockerServers = new Meteor.Collection "dockerServers"
+@DockerServersException = new Meteor.Collection "dockerServersException"
 @DockerServerImages = new Meteor.Collection "dockerServerImages"
 @DockerServerContainers = new Meteor.Collection "dockerServerContainers"
 @DockerServerContainersLog = new Meteor.Collection "dockerServerContainersLog"
 @DockerServerPullImageLog = new Meteor.Collection "dockerServerPullImageLog"
+@DockerServerPullImageScratch = new Meteor.Collection "dockerServerPullImageSratch"
 
 @DockerConfigTypes = new Meteor.Collection "dockerConfigTypes"
 @DockerImageIsConfigTypes = new Meteor.Collection "dockerImageIsConfigTypes"

@@ -33,9 +33,28 @@ getFreePorts = (n, serverName) ->
 
   dockerServerSettings
 
+getFreeDockerServerName = (imageTag) ->
 
-getFreeDockerServerName = (imageTag) -> "d3-agilearning"
-# getFreeDockerServerName = (imageTag) -> "localhost"
+  serverArr = DockerServerImages.find({"tag":imageTag}).fetch()
+  if serverArr.length is 0
+    throw new Meteor.Error 666, "No such docker image"
+
+  #TODO list avaliable server object
+  arrOfServerObj = serverArr.map (xx) ->
+    res =
+      "serverName": xx.serverName
+      "numOfContainers":DockerServerContainers.find({"serverName":xx.serverName}).count()
+    res
+
+  #TODO return minimun item of array
+  numOfContainersArr = arrOfServerObj.map (xx)->
+    xx.numOfContainers
+  # If you don't understand return what, check following answer
+  # https://stackoverflow.com/questions/11301438/return-index-of-greatest-value-in-an-array
+  console.log "getFreeDockerServerName ===== ???"
+  console.log arrOfServerObj[ numOfContainersArr.indexOf  Math.min.apply Math ,numOfContainersArr]["serverName"]
+
+  arrOfServerObj[ numOfContainersArr.indexOf  Math.min.apply Math ,numOfContainersArr]["serverName"]
 
 Meteor.methods
   "submitPullImageJob": (pullImageData) ->
@@ -189,50 +208,9 @@ Meteor.methods
         dockerInstanceDoc.removeByUid = user._id
         DockerInstancesLog.insert dockerInstanceDoc
 
-  # [WARRNING] this containerId is different bellow method removeDockerServerContainer's containerId
-  # this containerId is the item-Id of DockerServerContainers. In another words, containerId
-  # `docker rm containerId`
-  "deleteDockerServerContainer":  (containerData, orderBy)->
-      # containerDoc = DockerServerContainers.findOne Id:containerData.Id
-      Docker = Meteor.npmRequire "dockerode"
-      dockerServerSettings = getDockerServerConnectionSettings(containerData.serverName)
-      docker = new Docker dockerServerSettings
-
-      Future = Meteor.npmRequire 'fibers/future'
-
-      removeFuture = new Future
-      container = docker.getContainer containerData.Id
-
-      container.remove {}, (err,data)->
-        if err
-          console.log "[deleteDockerServerContainer] err ="
-          console.log err
-        removeFuture.return data
-
-      data = removeFuture.wait()
-
-      containerData.removeAt = new Date
-      containerData.removeBy = orderBy
-
-      DockerServerContainersLog.insert containerData
-      DockerServerContainers.remove _id: containerData._id
-
-      #TODO: modift DockerInstances data
-      instanceQuery =
-        serverName: containerData.serverName
-        containerId: containerData.Id
-            # console.log "DockerServerContainers.remove queryData is"
-      dockerInstanceDoc = DockerInstances.findOne instanceQuery
-      if dockerInstanceDoc
-        DockerInstances.remove _id: dockerInstanceDoc._id
-
-        dockerInstanceDoc.removeAt = new Date
-        dockerInstanceDoc.removeBy = orderBy
-        dockerInstanceDoc.removeByUid = user._id
-        DockerInstancesLog.insert dockerInstanceDoc
-
   "runDocker": (imageTag)->
 
+    # FIXME refactor dockerImage collection, image with full tag
     if imageTag.split(":").length is 1
       fullImageTag = imageTag + ":latest"
     else
@@ -273,7 +251,8 @@ Meteor.methods
     #[TODOLIST: get free server & ports]
     #TODO: get free server has the image
       Docker = Meteor.npmRequire "dockerode"
-      freeDockerServerName = getFreeDockerServerName(imageTag)
+
+      freeDockerServerName = getFreeDockerServerName fullImageTag
       dockerServerSettings = getDockerServerConnectionSettings(freeDockerServerName)
       docker = new Docker dockerServerSettings
 

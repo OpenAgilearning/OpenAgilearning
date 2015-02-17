@@ -110,7 +110,7 @@ defaultDockerServerData2 =
 defaultDockerServers = [defaultLocalDockerServerData, defaultDockerServerData,defaultDockerServerData2]
 
 for dockerServerData in defaultDockerServers
-  if DockerServers.find(dockerServerData).count() is 0
+  if DockerServers.find(dockerServerData).count() is 0 and DockerServersException.find(dockerServerData).count() is 0
     dockerServerData.active = false
     dockerServerData.createAt = new Date
     DockerServers.insert dockerServerData
