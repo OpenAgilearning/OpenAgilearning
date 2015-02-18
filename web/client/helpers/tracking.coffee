@@ -27,7 +27,7 @@
 
 Template.nodeInfo.events
   "click .nodeInfo":(e,t) ->
-    Track ".nodeInfo"
+    Track t.data._id, ".nodeInfo"
 
 Template.classroom.events
   'click a[data-toggle^="tab"]':(e,t) ->
