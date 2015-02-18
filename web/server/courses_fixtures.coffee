@@ -20,7 +20,7 @@ demoCourses = [
   # { "courseName" : "TOSSUG DS 20141209 BigO", "dockerImage" : "dboyliao/docker-tossug", "slides" : "http://interactivepython.org/runestone/static/pythonds/index.html", "description" : ""},
 ]
 
-adminMeetupIds = Meteor.settings.public.adminMeetupIds
+adminMeetupIds = Meteor.settings.adminMeetupIds
 
 for oneCourse in demoCourses
   if Courses.find(oneCourse).count() is 0
