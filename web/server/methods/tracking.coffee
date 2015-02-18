@@ -1,7 +1,5 @@
 Meteor.methods
   "track":(where, action) ->
-    # Example:
-    # Meteor.call "track" ,window.location.pathname, "#slides", "mouseenter #slides"
     
     loggedInUserId = Meteor.userId()
     if loggedInUserId
