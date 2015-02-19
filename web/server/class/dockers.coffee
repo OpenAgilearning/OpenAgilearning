@@ -13,6 +13,16 @@ DockerServerCallbacks =
 
     resData
 
+  ping: (self, resData)->
+    if not resData.error
+      self._docker_ping = true
+    else
+      self._docker_ping = false
+    
+    resData
+
+
+
 
 @Class.DockerServer = class DockerServer
 
@@ -34,6 +44,7 @@ DockerServerCallbacks =
             @_configs[xx] = fs.readFileSync(@_data.security[xx+"Path"])
 
         catch err
+
           @_configs_errors.push err
     
     if @_configs_errors.length is 0
@@ -76,31 +87,53 @@ DockerServerCallbacks =
     if callback
       callback self=@, resData=resData
     else
-      @_callbacks.default self=@, resData=resData
+      if @_callbacks.default
+        resData = @_callbacks.default @, resData
+
+      if @_callbacks[apiName]
+        resData = @_callbacks[apiName] @, resData
+      
+      resData
       
 
-  ping: ->
+  ping: (callback) ->
+    apiName = "ping"
+
     if @_docker
-      pingRes = @_futureCallDockerode "ping" 
-
-      if not pingRes.error
-        @_docker_ping = true
-      else
-        @_docker_ping = false
+      resData = @_futureCallDockerode apiName
       
-      pingRes      
-
-
-  info: ->
-    if @_docker and @_docker_ping
-      infoRes = @_futureCallDockerode "info" 
-      infoRes
-
+      if callback
+        resData = callback @, resData
+      else
+        if @_callbacks.ping
+          resData = @_callbacks.ping @, resData
+        else
+          resData
     
-  listImages: (opts)->
+
+  info: (callback) ->
+    apiName = "info"
+
     if @_docker and @_docker_ping
-      listImagesRes = @_futureCallDockerode "listImages", opts
-      listImagesRes
+      resData = @_futureCallDockerode apiName
+      
+      if callback
+        resData = callback @, resData
+      else
+        resData
+      
+
+  listImages: (opts, callback)->
+    apiName = "listImages"
+
+    if @_docker and @_docker_ping
+      resData = @_futureCallDockerode apiName, opts
+      
+      if callback
+        resData = callback @, resData
+      else
+        resData
+      
 
 
 
