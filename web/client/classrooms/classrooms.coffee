@@ -2,7 +2,9 @@ Template.classroom.rendered = ->
   $("video.video-js").map ->
     videojs @, JSON.parse($(@).attr("data-setup"))
     
-  showFeedBack = -> $("#feedback").popover("show")
+  showFeedBack = ->
+    if Router.current().route.getName() is "classroom"
+      $("#feedback").popover("show")
   
   if Meteor.settings.public.environment is "production"
     # sleep 10 min in production
