@@ -4,13 +4,15 @@ AutoForm.hooks
       $(".show-profile").toggle()
       $(".profile-editor").toggle()
 
-AutoForm.hooks
   setEnvUserConfigs: 
     onSuccess: (operation, result, template)->
       Session.set "userConfigId", ""
       Session.set "envConfigTypeId", ""
 
-AutoForm.hooks
   courseInfoAdminEditor:
     onSuccess: (operation, result, template)->
       $("#courseInfoAdminEditorModal").modal "hide"
+
+  feedbackForm:
+    onSuccess: (operation, result, template)->
+      Session.set "feedbackFormSubmitted", yes

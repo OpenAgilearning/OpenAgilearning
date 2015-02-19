@@ -2,7 +2,9 @@ Template.classroom.rendered = ->
   $("video.video-js").map ->
     videojs @, JSON.parse($(@).attr("data-setup"))
     
-  showFeedBack = -> $("#feedback").popover("show")
+  showFeedBack = ->
+    if Router.current().route.getName() is "classroom"
+      $("#feedback").popover("show")
   
   if Meteor.settings.public.environment is "production"
     # sleep 10 min in production
@@ -10,11 +12,6 @@ Template.classroom.rendered = ->
   else
     setTimeout showFeedBack , 3000
 
-Template.classroom.events
-  'click a[data-toggle^="tab"]':(e,t) ->
-    target = $(e.target).attr 'href'
-    Meteor.call "track" ,window.location.pathname, target, ("switch to " + target )
-    
 Template.envIframe.events
   "click .connectEnvBtn": (e, t)->
     e.stopPropagation()
