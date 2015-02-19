@@ -25,7 +25,7 @@ getDockerServerSettings = (dockerServerData) ->
 
 
 syncDockerServerInfo = ->
-  dockerServers = DockerServers.find().fetch()
+  dockerServers = DockerServers.find({active:true}).fetch()
   Docker = Meteor.npmRequire "dockerode"
 
   for dockerServerData in dockerServers
@@ -96,8 +96,6 @@ syncExceptionDockerServerInfo = ->
 
 
 syncDockerServerImages = ->
-  Docker = Meteor.npmRequire "dockerode"
-  fs = Meteor.npmRequire 'fs'
   dockerServers = DockerServers.find().fetch()
 
   for dockerServerData in dockerServers

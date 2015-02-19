@@ -1,8 +1,22 @@
 
+DockerServerCallbacks = 
+  default: (self, resData)->
+    if resData.error
+      resData.error["errorInfo"] = 
+        errorAt: new Date
+        fn: "_futureCallDockerode"
+        args:
+          apiName: apiName
+          opts: opts
+
+      self._docker_errors.push resData.error
+
+    resData
+
 
 @Class.DockerServer = class DockerServer
 
-  constructor: (@_data) ->
+  constructor: (@_data, @_callbacks=DockerServerCallbacks) ->
     
     @_configs = _.extend {}, @_data.connect
     @_configs_ok = false
@@ -60,20 +74,10 @@
 
 
     if callback
-      callback resData.error, resData.data
+      callback self=@, resData=resData
     else
-      if resData.error
-        resData.error["errorInfo"] = 
-          errorAt: new Date
-          fn: "_futureCallDockerode"
-          args:
-            apiName: apiName
-            opts: opts
-
-        @_docker_errors.push resData.error
-
-      resData
-
+      @_callbacks.default self=@, resData=resData
+      
 
   ping: ->
     if @_docker
