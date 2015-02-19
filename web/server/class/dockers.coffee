@@ -1,4 +1,5 @@
 
+
 @Class.DockerServer = class DockerServer
 
   constructor: (@_data) ->
@@ -15,7 +16,7 @@
         try
 
           #TODO: need a error path testing case
-          ["ca","cert","key"].map (xx) ->
+          ["ca","cert","key"].map (xx) =>
             @_configs[xx] = fs.readFileSync(@_data.security[xx+"Path"])
 
         catch err
