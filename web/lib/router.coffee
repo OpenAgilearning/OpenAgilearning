@@ -474,6 +474,18 @@ Meteor.startup ->
       path: "forums/:postId"
       template: "forumPost"
 
+      data:
+        user: -> Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId, "admin", "system") or Roles.userIsInRole(userId, "admin", "dockers")
+        post: =>
+          db.forumPosts.findOne(_id: @current().params.postId)
+
+
+      waitOn: ->
+        Meteor.subscribe "forumPost", @params.postId
+
     @route "pleaseLogin",
       path: "becomeAgilearner/"
       template: "becomeAgilearner"
