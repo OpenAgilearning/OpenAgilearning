@@ -70,51 +70,6 @@ if DockerImages.find().count() is 0
 #   DockerImages.insert {_id:"dboyliao/docker-tossug",type:"ipynb"}
 
 
-if Meteor.settings.public.DOCKER_CERT_PATH isnt ""
-  DOCKER_CERT_PATH = Meteor.settings.public.DOCKER_CERT_PATH
-else
-  if process.env["DOCKER_CERT_PATH"]
-    DOCKER_CERT_PATH = process.env["DOCKER_CERT_PATH"]
-  else
-    DOCKER_CERT_PATH = ""
-
-
-defaultLocalDockerServerData =
-  name:"localhost"
-  connect: Meteor.settings.public.dockerodeConfig
-
-
-defaultDockerServerData =
-  name:"d3-agilearning"
-  connect:
-    protocol: 'https'
-    host:"130.211.244.66"
-    port:2376
-  security:
-    caPath: DOCKER_CERT_PATH + 'ca.pem'
-    certPath: DOCKER_CERT_PATH + 'cert.pem'
-    keyPath: DOCKER_CERT_PATH + 'key.pem'
-
-defaultDockerServerData2 =
-  name:"d1-agilearning"
-  connect:
-    protocol: 'https'
-    host:"107.167.180.118"
-    port:2376
-  security:
-    caPath: DOCKER_CERT_PATH + 'ca.pem'
-    certPath: DOCKER_CERT_PATH + 'cert.pem'
-    keyPath: DOCKER_CERT_PATH + 'key.pem'
-
-
-defaultDockerServers = [defaultLocalDockerServerData, defaultDockerServerData,defaultDockerServerData2]
-
-for dockerServerData in defaultDockerServers
-  if DockerServers.find(dockerServerData).count() is 0 and DockerServersException.find(dockerServerData).count() is 0
-    dockerServerData.active = false
-    dockerServerData.createAt = new Date
-    DockerServers.insert dockerServerData
-
 
 Classrooms.find().forEach (classroom) ->
   # console.log classroom

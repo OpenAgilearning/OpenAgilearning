@@ -1,12 +1,13 @@
 {
   "public": {
     "redirectTo": "0.0.0.0:3000",
-    "DOCKER_CERT_PATH": "",
     "rootURL": "0.0.0.0",
-    "dockerodeConfig": {
-      "socketPath": "/var/run/docker.sock"
-    },
     "environment": "development",
-    "adminMeetupIds":[59393362, 173080282, 129433302,114542292]
-  }
+  },
+  "DOCKER_CERT_PATH": "",
+  "dockerodeConfig": {
+      "socketPath": "/var/run/docker.sock"
+  },
+  "adminMeetupIds":[59393362, 173080282, 129433302,114542292]
+
 }

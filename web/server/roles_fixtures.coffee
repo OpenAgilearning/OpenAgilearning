@@ -1,4 +1,4 @@
-adminMeetupIds = Meteor.settings.public.adminMeetupIds
+adminMeetupIds = Meteor.settings.adminMeetupIds
 
 defaultAdminUidArray = Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).fetch().map (xx)-> xx._id
 
