@@ -6,7 +6,7 @@ template(name="forums")
 template(name="postsFilter")
   .list-group
     each fcResults
-      a(href="#").list-group-item.list-group-item-info
+      a(href="{{pathFor 'forumPost' postId=_id}}").list-group-item.list-group-item-info
         .row
           .col-md-9
             h3= title

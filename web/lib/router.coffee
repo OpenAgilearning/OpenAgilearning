@@ -470,6 +470,10 @@ Meteor.startup ->
         Meteor.subscribe "feedback"
         Meteor.subscribe "votes", ["Feedback"]
 
+    @route "forumPost", 
+      path: "forums/:postId"
+      template: "forumPost"
+
     @route "pleaseLogin",
       path: "becomeAgilearner/"
       template: "becomeAgilearner"
