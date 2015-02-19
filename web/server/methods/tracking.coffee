@@ -4,11 +4,11 @@ Meteor.methods
     loggedInUserId = Meteor.userId()
     if loggedInUserId
       who =
-        t:"l" # l stands for logged in
+        type:"l" # l stands for logged in
         id: loggedInUserId
     else
       who =
-        t:"a" # a stands for anonymous
+        type:"a" # a stands for anonymous
         id: @connection.clientAddress ? ""
 
 
@@ -31,14 +31,14 @@ Meteor.methods
     # TODO: write in check & match approach
 
       UserBehaviorTracking.insert
-        u: who
-        r: 
-          n: where.name
-          p: where.params
-        d: new Date()
-        a: 
-          t: action.type
-          tt:
-            t: action.target.type
+        who: who
+        where:
+          name: where.name
+          params: where.params
+        time: new Date()
+        action:
+          type: action.type
+          target:
+            type: action.target.type
             id: action.target.id
-        c: @connection.id
+        connection: @connection.id
