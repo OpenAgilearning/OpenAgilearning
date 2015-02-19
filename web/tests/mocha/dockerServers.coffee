@@ -10,3 +10,8 @@ if Meteor.isServer
           localhostServer = db.dockerServers.findOne _id:"localhost"
           localDocker = new Class.DockerServer localhostServer
           chai.expect(localDocker.ping().data).to.equal("OK")
+
+        it "can get localhost info!", ->
+          localhostServer = db.dockerServers.findOne _id:"localhost"
+          localDocker = new Class.DockerServer localhostServer
+          chai.expect(localDocker.info().data).not.to.be.null

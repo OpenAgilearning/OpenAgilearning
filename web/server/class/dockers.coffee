@@ -30,7 +30,7 @@
     
 
   _futureCallDockerode: (apiName, opts, callback) ->
-    
+
     Future = Meteor.npmRequire 'fibers/future'
     introspect = Meteor.npmRequire 'introspect'
     resFuture = new Future
@@ -81,6 +81,12 @@
       @_docker_ping = false
     
     pingRes      
+
+
+  info: ->
+    if @_docker_ping
+      infoRes = @_futureCallDockerode("info")
+      infoRes
 
     
 
