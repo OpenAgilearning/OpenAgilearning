@@ -27,7 +27,7 @@ DockerServerCallbacks =
 @Class.DockerServer = class DockerServer
 
   constructor: (@_data, @_callbacks=DockerServerCallbacks) ->
-    
+
     @_configs = _.extend {}, @_data.connect
     @_configs_ok = false
     @_configs_errors = []
@@ -39,7 +39,7 @@ DockerServerCallbacks =
 
         try
 
-          #TODO: need a error path testing case
+          #TODO[finished]: need a error path testing case
           ["ca","cert","key"].map (xx) =>
             @_configs[xx] = fs.readFileSync(@_data.security[xx+"Path"])
 
@@ -87,6 +87,7 @@ DockerServerCallbacks =
     if callback
       callback self=@, resData=resData
     else
+
       if @_callbacks.default
         resData = @_callbacks.default @, resData
 
@@ -100,39 +101,31 @@ DockerServerCallbacks =
     apiName = "ping"
 
     if @_docker
-      resData = @_futureCallDockerode apiName
-      
       if callback
-        resData = callback @, resData
+        resData = @_futureCallDockerode apiName, {}, callback      
       else
-        if @_callbacks.ping
-          resData = @_callbacks.ping @, resData
-        else
-          resData
+        resData = @_futureCallDockerode apiName
+      
     
 
   info: (callback) ->
     apiName = "info"
 
     if @_docker and @_docker_ping
-      resData = @_futureCallDockerode apiName
-      
       if callback
-        resData = callback @, resData
+        resData = @_futureCallDockerode apiName, {}, callback      
       else
-        resData
+        resData = @_futureCallDockerode apiName
       
 
   listImages: (opts, callback)->
     apiName = "listImages"
 
     if @_docker and @_docker_ping
-      resData = @_futureCallDockerode apiName, opts
-      
       if callback
-        resData = callback @, resData
+        resData = @_futureCallDockerode apiName, opts, callback      
       else
-        resData
+        resData = @_futureCallDockerode apiName, opts
       
 
 

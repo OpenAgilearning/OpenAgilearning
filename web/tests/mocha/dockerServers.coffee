@@ -1,7 +1,71 @@
 if Meteor.isServer
   MochaWeb?.testOnly ->
+    
+    mocha.timeout(5000)
+
     describe "Docker", ->
-      describe "localhost Docker Server", ->
+      
+      describe "Servers", ->
+        # db.dockerServers.remove({})
+        dockerServersData = db.dockerServers.find().fetch()
+
+        it "db.dockerServers have data", ->
+          chai.assert dockerServersData.length > 0, "db.dockerServers have data"
+
+        for dockerServer in dockerServersData
+          # do (dockerServer) ->
+          #   it "ping " + dockerServer._id + " should be successful!", ->                
+          #     console.log "dockerServer._id = "
+          #     console.log dockerServer._id
+
+
+          #     docker = new Class.DockerServer dockerServer
+             
+          #     resData = docker.ping()
+
+          #     chai.expect(docker._configs_ok).to.be.true
+          #     chai.expect(resData.data).not.to.be.null
+          #     chai.expect(resData.error).to.be.null
+
+          do (dockerServer) ->
+            docker = new Class.DockerServer dockerServer
+
+            do (docker) ->
+              if dockerServer._id is "errorCaPathServer"                
+                it "ping " + dockerServer._id + " should be failed!", ->
+                  resData = docker.ping()
+
+                  chai.expect(docker._configs_ok).to.be.false
+                  chai.expect(resData).to.be.undefined                
+
+              else
+                it "ping " + dockerServer._id + " should be successful!", ->                
+                  resData = docker.ping()
+
+                  chai.expect(docker._configs_ok).to.be.true
+                  chai.expect(resData.data).not.to.be.null
+                  chai.expect(resData.error).to.be.null
+
+
+                it "get info from " + dockerServer._id + " should be successful!", ->                
+                  resInfo = docker.info()
+          
+                  chai.expect(resInfo.data).not.to.be.null
+                  chai.expect(resInfo.error).to.be.null
+
+                it "listImages from " + dockerServer._id + " should be successful!", ->                
+                  reslistImages = docker.listImages()
+                  
+                  chai.expect(reslistImages.data).not.to.be.null
+                  chai.expect(reslistImages.error).to.be.null
+
+                
+
+
+
+
+
+      describe "localhost", ->
 
         it "db.dockerServers should have localhost", ->
           chai.assert db.dockerServers.find({_id:"localhost"}).count() > 0, "db.dockerServers have a data with _id is localhost"
