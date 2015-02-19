@@ -25,18 +25,18 @@ getDockerServerSettings = (dockerServerData) ->
 
 
 syncDockerServerInfo = ->
-  dockerServers = DockerServers.find({active:true}).fetch()
+  dockerServers = DockerServers.find().fetch()
 
   for dockerServerData in dockerServers
-    docker = Class.DockerServer dockerServerData
+    docker = new Class.DockerServer dockerServerData
 
-    dockerInfo = docker.info().data
+    dockerInfo = docker.info()
     lastUpdateAt = new Date
 
-    if dockerInfo?
+    if dockerInfo?.data?
       updateData =
         active:true
-        serverInfo:dockerInfo
+        serverInfo: dockerInfo.data
         lastUpdateAt: lastUpdateAt
 
       DockerServers.update {_id:dockerServerData._id},{$set:updateData}
@@ -98,59 +98,53 @@ syncDockerServerImages = ->
   dockerServers = DockerServers.find({active:true}).fetch()
 
   for dockerServerData in dockerServers
-    dockerServerSettings = getDockerServerSettings dockerServerData
+    docker = new Class.DockerServer dockerServerData
 
-    docker = new Docker dockerServerSettings
-    Future = Npm.require 'fibers/future'
-    imagesFuture = new Future
+    listImages = docker.listImages()
 
-    docker.listImages {}, (err, data) ->
-      imagesFuture.return data
-
-    images = imagesFuture.wait()
-
-    if images?
+    if listImages?.data?
 
       lastUpdateAt = new Date
 
-      deleteNothingnessImage dockerServerSettings, images
+      # deleteNothingnessImage dockerServerSettings, images
 
-      for imageData in images
+      for imageData in listImages.data
         # TODO: upsert new images
-        re = /none/g
-        if re.exec(imageData.RepoTags)
+        # re = /none/g
+        # if re.exec(imageData.RepoTags)
 
+        #   setData =
+        #     lastUpdateAt: lastUpdateAt
+        #     tag:imageData.RepoTags
+        #     serverName: dockerServerData.name
+        #   DockerServerPullImageScratch.upsert imageData, {$set:setData}
+
+        # else
+
+        imageData.dockerServerId = dockerServerData._id
+        queryDataKeys = Object.keys imageData
+        imageTags = imageData.RepoTags
+        querytDataKeys = queryDataKeys.filter (key)-> key isnt "RepoTags"
+        queryImageData = {}
+
+        querytDataKeys.map (key) ->
+          queryImageData[key] = imageData[key]
+
+        for tag in imageTags
           setData =
-            lastUpdateAt: lastUpdateAt
-            tag:imageData.RepoTags
+            lastUpdateAt:lastUpdateAt
+            tag:tag
             serverName: dockerServerData.name
-          DockerServerPullImageScratch.upsert imageData, {$set:setData}
 
-        else
-
-          imageData.dockerServerId = dockerServerData._id
-          queryDataKeys = Object.keys imageData
-          imageTags = imageData.RepoTags
-          querytDataKeys = queryDataKeys.filter (key)-> key isnt "RepoTags"
-          queryImageData = {}
-
-          querytDataKeys.map (key) ->
-            queryImageData[key] = imageData[key]
-
-          for tag in imageTags
-            setData =
-              lastUpdateAt:lastUpdateAt
-              tag:tag
-              serverName: dockerServerData.name
-
-            DockerServerImages.upsert queryImageData, {$set:setData}
+          DockerServerImages.upsert queryImageData, {$set:setData}
           # TODO: modify disappear images
-    else
 
-      DockerServerImages.remove {"serverName":dockerServerName}
-      # I think container sync let function *syncDockerServerContainer* to do such thing
-      # DockerServerContainers.remove({"serverName":dockerServerData.name})
-      throw new Meteor.Error 1104, "Docker server exception. can't find and docker images"
+    # else
+
+    #   DockerServerImages.remove {"serverName":dockerServerName}
+    #   # I think container sync let function *syncDockerServerContainer* to do such thing
+    #   # DockerServerContainers.remove({"serverName":dockerServerData.name})
+    #   throw new Meteor.Error 1104, "Docker server exception. can't find and docker images"
 
 
 deleteNothingnessImage = (dockerServerSettings, images) ->
@@ -330,8 +324,8 @@ deleteDockerServerContainer = (containerData, orderBy)->
 
 
 
-# Meteor.setInterval syncDockerServerInfo, 5000
-# Meteor.setInterval syncDockerServerImages, 5000
+Meteor.setInterval syncDockerServerInfo, 5000
+Meteor.setInterval syncDockerServerImages, 5000
 # Meteor.setInterval syncDockerServerContainer, 10000
 
 # Meteor.setInterval dockerPull.ToDoJobHandler, 5000
