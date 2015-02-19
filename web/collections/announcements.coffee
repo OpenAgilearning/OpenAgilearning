@@ -1,1 +1,1 @@
-@Announcements = new Meteor.Collection "announcements"
+@Announcements = new Mongo.Collection "announcements"

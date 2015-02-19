@@ -29,23 +29,10 @@ syncDockerServerInfo = ->
   Docker = Meteor.npmRequire "dockerode"
 
   for dockerServerData in dockerServers
-    dockerServerSettings = getDockerServerSettings dockerServerData
+    docker = Class.DockerServer dockerServerData
 
-    docker = new Docker dockerServerSettings
-    Future = Npm.require 'fibers/future'
-    infoFuture = new Future
-
-    docker.info (err, data) ->
-      if err
-        console.log "err ="
-        console.log err
-      infoFuture.return data
-
-    dockerInfo = infoFuture.wait()
+    dockerInfo = docker.info().data
     lastUpdateAt = new Date
-
-    # console.log "dockerInfo = "
-    # console.log dockerInfo
 
     if dockerInfo?
       updateData =
@@ -54,21 +41,23 @@ syncDockerServerInfo = ->
         lastUpdateAt: lastUpdateAt
 
       DockerServers.update {_id:dockerServerData._id},{$set:updateData}
-    else
-      updateData =
-        active:false
-        lastUpdateAt: lastUpdateAt
+    
 
-      if DockerServersException.findOne({_id:dockerServerData._id})
-        DockerServers.remove {_id:dockerServerData._id}
-        throw new Meteor.Error 11000, "Duplicate data in dockerServers and DockerServersException"
-      else
-        DockerServersException.insert dockerServerData
-        DockerServersException.update {_id:dockerServerData._id}, {$set:updateData}
-        DockerServersException.update {_id:dockerServerData._id},{$unset:{serverInfo:""}}
-        DockerServers.remove {_id:dockerServerData._id}
-        DockerServerImages.remove {"serverName":dockerServerData.name}
-        # DockerServerContainers.remove {"serverName":dockerServerData.name}
+    # else
+    #   updateData =
+    #     active:false
+    #     lastUpdateAt: lastUpdateAt
+
+    #   if DockerServersException.findOne({_id:dockerServerData._id})
+    #     DockerServers.remove {_id:dockerServerData._id}
+    #     throw new Meteor.Error 11000, "Duplicate data in dockerServers and DockerServersException"
+    #   else
+    #     DockerServersException.insert dockerServerData
+    #     DockerServersException.update {_id:dockerServerData._id}, {$set:updateData}
+    #     DockerServersException.update {_id:dockerServerData._id},{$unset:{serverInfo:""}}
+    #     DockerServers.remove {_id:dockerServerData._id}
+    #     DockerServerImages.remove {"serverName":dockerServerData.name}
+    #     # DockerServerContainers.remove {"serverName":dockerServerData.name}
 
 
 syncExceptionDockerServerInfo = ->

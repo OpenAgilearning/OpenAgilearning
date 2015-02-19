@@ -1,29 +1,31 @@
-@DockerServers = new Meteor.Collection "dockerServers"
-@DockerServersException = new Meteor.Collection "dockerServersException"
-@DockerServerImages = new Meteor.Collection "dockerServerImages"
-@DockerServerContainers = new Meteor.Collection "dockerServerContainers"
-@DockerServerContainersLog = new Meteor.Collection "dockerServerContainersLog"
-@DockerServerPullImageLog = new Meteor.Collection "dockerServerPullImageLog"
-@DockerServerPullImageScratch = new Meteor.Collection "dockerServerPullImageSratch"
+@DockerServers = new Mongo.Collection "dockerServers"
+@DockerServersException = new Mongo.Collection "dockerServersException"
+@DockerServerImages = new Mongo.Collection "dockerServerImages"
+@DockerServerContainers = new Mongo.Collection "dockerServerContainers"
+@DockerServerContainersLog = new Mongo.Collection "dockerServerContainersLog"
+@DockerServerPullImageLog = new Mongo.Collection "dockerServerPullImageLog"
+@DockerServerPullImageScratch = new Mongo.Collection "dockerServerPullImageSratch"
 
-@DockerConfigTypes = new Meteor.Collection "dockerConfigTypes"
-@DockerImageIsConfigTypes = new Meteor.Collection "dockerImageIsConfigTypes"
+@DockerConfigTypes = new Mongo.Collection "dockerConfigTypes"
+@DockerImageIsConfigTypes = new Mongo.Collection "dockerImageIsConfigTypes"
 
-@DockerUsageLimits = new Meteor.Collection "dockerUsageLimits"
+@DockerUsageLimits = new Mongo.Collection "dockerUsageLimits"
 
-@DockersUsedInEnvs = new Meteor.Collection "dockersUsedInEnvs"
+@DockersUsedInEnvs = new Mongo.Collection "dockersUsedInEnvs"
 
 
-@DockerImages = new Meteor.Collection "dockerImages"
-@DockerTypes = new Meteor.Collection "dockerTypes"
-@DockerLimits = new Meteor.Collection "dockerLimits"
-@DockerTypeConfig = new Meteor.Collection "dockerTypeConfig"
-@DockerInstances = new Meteor.Collection "dockerInstances"
-@DockerInstancesLog = new Meteor.Collection "dockerInstancesLog"
+@DockerImages = new Mongo.Collection "dockerImages"
+@DockerTypes = new Mongo.Collection "dockerTypes"
+@DockerLimits = new Mongo.Collection "dockerLimits"
+@DockerTypeConfig = new Mongo.Collection "dockerTypeConfig"
+@DockerInstances = new Mongo.Collection "dockerInstances"
+@DockerInstancesLog = new Mongo.Collection "dockerInstancesLog"
 
 
 @Collections.DockerServers = @DockerServers
 @Collections.DockerServerImages = @DockerServerImages
+@Collections.DockerServerExceptionTypes = new Mongo.Collection "dockerServerExceptionTypes"
+@Collections.DockerServerExceptions = new Mongo.Collection "dockerServerExceptions"
 
 @Collections.DockerPullImageJob = new Mongo.Collection "dockerPullImageJob"
 @Collections.DockerPullImageStream = new Mongo.Collection "dockerPullImageStream"
@@ -32,6 +34,8 @@
 
 @db.dockerServers = @Collections.DockerServers 
 @db.dockerServerImages = @Collections.DockerServerImages 
+@db.dockerServerExceptionTypes = @Collections.DockerServerExceptionTypes 
+@db.dockerServerExceptions = @Collections.DockerServerExceptions 
 
 @db.dockerPullImageJob = @Collections.DockerPullImageJob
 @db.dockerPullImageStream = @Collections.DockerPullImageStream

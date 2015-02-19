@@ -9,8 +9,9 @@
     @_docker_errors = []
 
     if not @_configs.socketPath
-      if @_configs.connect.protocol is "https"
+      if @_data.connect.protocol is "https"
         fs = Meteor.npmRequire 'fs'
+
         try
 
           #TODO: need a error path testing case
@@ -72,23 +73,29 @@
 
       resData
 
-  ping: ->
-    pingRes = @_futureCallDockerode("ping")
 
-    if not pingRes.error
-      @_docker_ping = true
-    else
-      @_docker_ping = false
-    
-    pingRes      
+  ping: ->
+    if @_docker
+      pingRes = @_futureCallDockerode "ping" 
+
+      if not pingRes.error
+        @_docker_ping = true
+      else
+        @_docker_ping = false
+      
+      pingRes      
 
 
   info: ->
-    if @_docker_ping
-      infoRes = @_futureCallDockerode("info")
+    if @_docker and @_docker_ping
+      infoRes = @_futureCallDockerode "info" 
       infoRes
 
     
+  listImages: (opts)->
+    if @_docker and @_docker_ping
+      listImagesRes = @_futureCallDockerode "listImages", opts
+      listImagesRes
 
 
 

@@ -1,19 +1,19 @@
 
-@EnvConfigTypes = new Meteor.Collection "envConfigTypes"
-# @EnvTypePorts = new Meteor.Collection "envTypePorts"
-# @EnvTypeVars = new Meteor.Collection "envTypeVars"
+@EnvConfigTypes = new Mongo.Collection "envConfigTypes"
+# @EnvTypePorts = new Mongo.Collection "envTypePorts"
+# @EnvTypeVars = new Mongo.Collection "envTypeVars"
 
-@EnvUserConfigs = new Meteor.Collection "envUserConfigs"
-
-
-@Envs = new Meteor.Collection "envs"
-@EnvCreateLog = new Meteor.Collection "envCreateLog"
-
-@EnvUsageLimits = new Meteor.Collection "envUsageLimits"
+@EnvUserConfigs = new Mongo.Collection "envUserConfigs"
 
 
-@EnvInstances = new Meteor.Collection "envInstances"
-@EnvInstancesLog = new Meteor.Collection "envInstancesLog"
+@Envs = new Mongo.Collection "envs"
+@EnvCreateLog = new Mongo.Collection "envCreateLog"
+
+@EnvUsageLimits = new Mongo.Collection "envUsageLimits"
+
+
+@EnvInstances = new Mongo.Collection "envInstances"
+@EnvInstancesLog = new Mongo.Collection "envInstancesLog"
 
 @EnvsSchema = new SimpleSchema
   name:
