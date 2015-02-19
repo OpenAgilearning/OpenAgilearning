@@ -53,6 +53,9 @@
     "fibers": {
       "version": "1.0.2"
     },
+    "introspect": {
+      "version": "0.0.3"
+    },
     "mongo-writable-stream": {
       "version": "0.1.2",
       "dependencies": {

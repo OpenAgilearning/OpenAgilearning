@@ -29,26 +29,58 @@
       @ping()
     
 
-  ping: ->
+  _futureCallDockerode: (apiName, opts, callback) ->
+    
     Future = Meteor.npmRequire 'fibers/future'
-    pingFuture = new Future
+    introspect = Meteor.npmRequire 'introspect'
+    resFuture = new Future
 
-    @_docker.ping (err,data)->
-      if not err
-        console.log data
-        pingFuture.return data
-      else
-        console.log err
-        pingFuture.return err
+    dockerMethodArgs = introspect @_docker[apiName]
 
-    ping = pingFuture.wait()
+    if "opts" in dockerMethodArgs
+      @_docker[apiName] opts, (err,data)->
+        res = 
+          error: err
+          data: data
 
-    if ping is "OK"
+        resFuture.return res
+
+      resData = resFuture.wait()
+    else
+      @_docker[apiName] (err,data)->
+        res = 
+          error: err
+          data: data
+
+        resFuture.return res
+
+      resData = resFuture.wait()
+
+
+    if callback
+      callback resData.error, resData.data
+    else
+      if resData.error
+        resData.error["errorInfo"] = 
+          errorAt: new Date
+          fn: "_futureCallDockerode"
+          args:
+            apiName: apiName
+            opts: opts
+
+        @_docker_errors.push resData.error
+
+      resData
+
+  ping: ->
+    pingRes = @_futureCallDockerode("ping")
+
+    if not pingRes.error
       @_docker_ping = true
     else
       @_docker_ping = false
-      @_docker_errors.push ping 
-
+    
+    pingRes      
 
     
 
