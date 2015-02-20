@@ -1,5 +1,8 @@
 
 DockerServerCallbacks = 
+  configError: (self)->
+    self
+
   default: (self, resData)->
     if resData.error
       resData.error["errorInfo"] = 
@@ -55,6 +58,11 @@ DockerServerCallbacks =
       @_docker = new Docker @_configs
       @ping()
     
+    else
+      if @_callbacks.configError
+        @_callbacks.configError @
+
+
 
   _futureCallDockerode: (apiName, opts, callback) ->
 
@@ -105,30 +113,30 @@ DockerServerCallbacks =
         resData = @_futureCallDockerode apiName, {}, callback      
       else
         resData = @_futureCallDockerode apiName
+
       
-    
-
-  info: (callback) ->
-    apiName = "info"
-
+  _dockerodeApiWrapper: (apiName, callback)->
     if @_docker and @_docker_ping
       if callback
         resData = @_futureCallDockerode apiName, {}, callback      
       else
         resData = @_futureCallDockerode apiName
-      
 
+
+  info: (callback) ->
+    apiName = "info"
+    @_dockerodeApiWrapper(apiName, callback)
+
+      
   listImages: (opts, callback)->
     apiName = "listImages"
-
-    if @_docker and @_docker_ping
-      if callback
-        resData = @_futureCallDockerode apiName, opts, callback      
-      else
-        resData = @_futureCallDockerode apiName, opts
-      
+    @_dockerodeApiWrapper(apiName, callback)
 
 
+  listContainers: (opts, callback)->
+    apiName = "listContainers"
+    @_dockerodeApiWrapper(apiName, callback)
+    
 
 
 
