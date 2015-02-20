@@ -1,7 +1,18 @@
 
 DockerServerCallbacks =
   onAfterInit: (self) ->
-    self
+    if not self._configs_ok
+      query = 
+        serverId: self._id
+        type: "configError"
+        handlingStatus: "todo"
+        
+      updateData =
+        error: self._configs_errors
+        updatedAt: new Date
+
+      db.dockerServersException.update query, {$set:updateData}, {upsert:true}
+      
 
   configError: (self)->
     self
