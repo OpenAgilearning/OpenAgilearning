@@ -1,7 +1,7 @@
 if Meteor.isServer
   MochaWeb?.testOnly ->
     
-    mocha.timeout(5000)
+    mocha.timeout(10000)
 
     describe "Docker", ->
       
@@ -61,6 +61,7 @@ if Meteor.isServer
 
                 it "listContainers from " + dockerServer._id + " should be successful!", ->                
                   resData = docker.listContainers({all:1})
+                  # resData = docker.listContainers()
                   
                   chai.expect(resData.data).not.to.be.null
                   chai.expect(resData.error).to.be.null

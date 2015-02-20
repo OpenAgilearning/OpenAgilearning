@@ -29,17 +29,17 @@ syncDockerServerInfo = ->
 
   for dockerServerData in dockerServers
     docker = new Class.DockerServer dockerServerData
+    
+    # dockerInfo = docker.info()
+    # lastUpdateAt = new Date
 
-    dockerInfo = docker.info()
-    lastUpdateAt = new Date
+    # if dockerInfo?.data?
+    #   updateData =
+    #     active:true
+    #     serverInfo: dockerInfo.data
+    #     lastUpdateAt: lastUpdateAt
 
-    if dockerInfo?.data?
-      updateData =
-        active:true
-        serverInfo: dockerInfo.data
-        lastUpdateAt: lastUpdateAt
-
-      DockerServers.update {_id:dockerServerData._id},{$set:updateData}
+    #   DockerServers.update {_id:dockerServerData._id},{$set:updateData}
     
 
     # else
@@ -325,7 +325,7 @@ deleteDockerServerContainer = (containerData, orderBy)->
 
 
 Meteor.setInterval syncDockerServerInfo, 5000
-Meteor.setInterval syncDockerServerImages, 5000
+# Meteor.setInterval syncDockerServerImages, 5000
 # Meteor.setInterval syncDockerServerContainer, 10000
 
 # Meteor.setInterval dockerPull.ToDoJobHandler, 5000

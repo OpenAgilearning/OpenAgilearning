@@ -5,13 +5,6 @@ DockerServerCallbacks =
 
   default: (self, resData)->
     if resData.error
-      resData.error["errorInfo"] = 
-        errorAt: new Date
-        fn: "_futureCallDockerode"
-        args:
-          apiName: apiName
-          opts: opts
-
       self._docker_errors.push resData.error
 
     resData
@@ -31,6 +24,7 @@ DockerServerCallbacks =
 
   constructor: (@_data, @_callbacks=DockerServerCallbacks) ->
 
+    @_id = @_data._id
     @_configs = _.extend {}, @_data.connect
     @_configs_ok = false
     @_configs_errors = []
@@ -91,6 +85,13 @@ DockerServerCallbacks =
 
       resData = resFuture.wait()
 
+    if resData.error
+      resData.error["errorInfo"] = 
+        errorAt: new Date
+        fn: "_futureCallDockerode"
+        args:
+          apiName: apiName
+          opts: opts
 
     if callback
       callback self=@, resData=resData
@@ -115,32 +116,39 @@ DockerServerCallbacks =
         resData = @_futureCallDockerode apiName
 
       
-  _dockerodeApiWrapper: (apiName, callback)->
+  _dockerodeApiWrapper: (apiName, opts, callback)->
     if @_docker and @_docker_ping
+      if not opts
+        opts = {}
+
       if callback
-        resData = @_futureCallDockerode apiName, {}, callback      
+        resData = @_futureCallDockerode apiName, opts, callback      
       else
-        resData = @_futureCallDockerode apiName
+        resData = @_futureCallDockerode apiName, opts
 
 
   info: (callback) ->
     apiName = "info"
-    @_dockerodeApiWrapper(apiName, callback)
+    @_dockerodeApiWrapper(apiName, {}, callback)
 
       
   listImages: (opts, callback)->
     apiName = "listImages"
-    @_dockerodeApiWrapper(apiName, callback)
+    @_dockerodeApiWrapper(apiName, opts, callback)
 
 
   listContainers: (opts, callback)->
     apiName = "listContainers"
-    @_dockerodeApiWrapper(apiName, callback)
+    @_dockerodeApiWrapper(apiName, opts, callback)
     
 
+  getContainer: (containerId)->
+    if @_docker and @_docker_ping
+      container = @_docker.getContainer containerId
 
 
+  createContainer: (opts, callback)->
+    if @_docker and @_docker_ping
+      apiName = "createContainer"
+      container = @_dockerodeApiWrapper(apiName, opts, callback)
 
-
-
-        
