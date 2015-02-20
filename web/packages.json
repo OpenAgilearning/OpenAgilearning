@@ -3,5 +3,6 @@
   "fibers": "1.0.2",
   "stream-to-mongo": "0.1.4",
   "JSONStream":"0.10.0",
-  "mongo-writable-stream":"0.1.2"
+  "mongo-writable-stream":"0.1.2",
+  "introspect":"0.0.3"
 }
