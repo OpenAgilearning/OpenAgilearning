@@ -1,5 +1,24 @@
 
-DockerServerCallbacks =
+@DockerServerCallbacks =
+  default: (self, resData)->
+    if resData
+      if resData.error
+        self._docker_errors.push resData.error
+
+    resData
+
+  ping: (self, resData)->
+    if resData 
+      if not resData.error
+        self._docker_ping = true
+        
+      else
+        self._docker_ping = false
+
+    resData
+
+
+@DockerMonitorCallbacks =
   onAfterInit: (self) ->
     if not self._configs_ok
       query = 
@@ -12,18 +31,7 @@ DockerServerCallbacks =
         updatedAt: new Date
 
       db.dockerServersException.update query, {$set:updateData}, {upsert:true}
-      
-
-  configError: (self)->
-    self
-
-  default: (self, resData)->
-    if resData
-      if resData.error
-        self._docker_errors.push resData.error
-
-    resData
-
+        
   ping: (self, resData)->
     serverQuery = 
       serverId: self._id
@@ -80,6 +88,13 @@ DockerServerCallbacks =
       db.dockerServersMonitor.update serverQuery, {$set:updateData}, {upsert:true}
 
     resData
+
+  listImages: (self, resData)->
+    # if resData
+    #   if not resData.error
+    #   else
+    
+    resData  
 
 
 

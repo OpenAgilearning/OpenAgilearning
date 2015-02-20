@@ -28,7 +28,8 @@ if Meteor.isServer
           #     chai.expect(resData.error).to.be.null
 
           do (dockerServer) ->
-            docker = new Class.DockerServer dockerServer
+            UseCallbacks = _.extend DockerServerCallbacks, DockerMonitorCallbacks
+            docker = new Class.DockerServer dockerServer, UseCallbacks
 
             do (docker) ->
               if dockerServer.name is "errorCaPathServer"                
@@ -48,6 +49,7 @@ if Meteor.isServer
 
 
                 it "get and sync info from " + dockerServer._id + " should be successful!", ->                
+
                   query = 
                     serverId: docker._id
                   

@@ -7,27 +7,13 @@
 #     * syncDockerServerContainer
 #   setTimeInterval * 3
 
-getDockerServerSettings = (dockerServerData) ->
-  fs = Meteor.npmRequire 'fs'
-  dockerServerSettings = {}
-  _.extend dockerServerSettings, dockerServerData.connect
-
-  if not dockerServerSettings.socketPath
-    if dockerServerData.connect.protocol is "https"
-      ["ca","cert","key"].map (xx) ->
-        dockerServerSettings[xx] = fs.readFileSync(dockerServerData.security[xx+"Path"])
-
-  dockerServerSettings["dockerServerId"] = dockerServerData._id
-  dockerServerSettings["dockerServerName"] = dockerServerData.name
-
-  dockerServerSettings
-
 
 syncDockerServerInfo = ->
+  UseCallbacks = _.extend DockerServerCallbacks, DockerMonitorCallbacks
   dockerServers = DockerServers.find().fetch()
 
   for dockerServerData in dockerServers
-    docker = new Class.DockerServer dockerServerData
+    docker = new Class.DockerServer dockerServerData, UseCallbacks
     dockerInfo = docker.info()
 
 
@@ -296,7 +282,7 @@ deleteDockerServerContainer = (containerData, orderBy)->
 
 
 
-Meteor.setInterval syncDockerServerInfo, 5000
+# Meteor.setInterval syncDockerServerInfo, 5000
 # Meteor.setInterval syncDockerServerImages, 5000
 # Meteor.setInterval syncDockerServerContainer, 10000
 
