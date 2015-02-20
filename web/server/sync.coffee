@@ -282,7 +282,7 @@ deleteDockerServerContainer = (containerData, orderBy)->
 
 
 
-# Meteor.setInterval syncDockerServerInfo, 5000
+Meteor.setInterval syncDockerServerInfo, 5000
 # Meteor.setInterval syncDockerServerImages, 5000
 # Meteor.setInterval syncDockerServerContainer, 10000
 

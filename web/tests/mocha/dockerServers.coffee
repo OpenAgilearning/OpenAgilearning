@@ -48,7 +48,14 @@ if Meteor.isServer
                   chai.expect(resData.error).to.be.null
 
 
-                it "get and sync info from " + dockerServer._id + " should be successful!", ->                
+                it "get info from " + dockerServer._id + " should be successful!", ->                
+
+                  resData = docker.info()
+                  
+                  chai.expect(resData.data).not.to.be.null
+                  chai.expect(resData.error).to.be.null
+                  
+                it "sync info from " + dockerServer._id + " should be successful!", ->                
 
                   query = 
                     serverId: docker._id
@@ -62,19 +69,56 @@ if Meteor.isServer
                   chai.expect(resData.error).to.be.null
                   chai.expect(db.dockerServersMonitor.find(query).fetch()).not.to.be.empty
 
-                it "listImages from " + dockerServer._id + " should be successful!", ->                
+
+                it "get listImages from " + dockerServer._id + " should be successful!", ->                
                   resData = docker.listImages()
                   
                   chai.expect(resData.data).not.to.be.null
                   chai.expect(resData.error).to.be.null
 
-                it "listContainers from " + dockerServer._id + " should be successful!", ->                
+                it "sync listImages from " + dockerServer._id + " should be successful!", ->                
+
+                  query = 
+                    serverId: docker._id
+                  
+                  db.dockerImagesMonitor.remove query
+
+                  chai.expect(db.dockerImagesMonitor.find(query).fetch()).to.be.empty
+                  resData = docker.listImages()
+                  
+                  chai.expect(resData.data).not.to.be.null
+                  chai.expect(resData.error).to.be.null
+                  chai.expect(db.dockerImagesMonitor.find(query).fetch()).not.to.be.empty
+
+                it "no active < none > : < none > tag image in dockerImagesMonitor in " + dockerServer._id, ->                
+
+                  query = 
+                    serverId: docker._id
+                    tag: '<none>:<none>'
+                  
+                  chai.expect(db.dockerImagesMonitor.find(query).fetch()).to.be.empty
+
+
+                it "get listContainers from " + dockerServer._id + " should be successful!", ->                
                   resData = docker.listContainers({all:1})
                   # resData = docker.listContainers()
                   
                   chai.expect(resData.data).not.to.be.null
                   chai.expect(resData.error).to.be.null
 
+                it "sync listContainers from " + dockerServer._id + " should be successful!", ->                
+
+                  query = 
+                    serverId: docker._id
+                  
+                  db.dockerContainersMonitor.remove query
+
+                  chai.expect(db.dockerContainersMonitor.find(query).fetch()).to.be.empty
+                  resData = docker.listContainers({all:1})
+                  
+                  chai.expect(resData.data).not.to.be.null
+                  chai.expect(resData.error).to.be.null
+                  chai.expect(db.dockerContainersMonitor.find(query).fetch()).not.to.be.empty
 
 
       # describe "localhost", ->
