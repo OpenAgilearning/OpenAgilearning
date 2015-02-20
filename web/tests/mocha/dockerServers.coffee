@@ -31,13 +31,13 @@ if Meteor.isServer
             docker = new Class.DockerServer dockerServer
 
             do (docker) ->
-              if dockerServer._id is "errorCaPathServer"                
+              if dockerServer.name is "errorCaPathServer"                
                 it "ping " + dockerServer._id + " should be failed!", ->
                   resData = docker.ping()
 
                   chai.expect(docker._configs_ok).to.be.false
                   chai.expect(resData).to.be.undefined                
-              
+
               else
                 it "ping " + dockerServer._id + " should be successful!", ->                
                   resData = docker.ping()
