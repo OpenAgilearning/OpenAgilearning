@@ -48,16 +48,23 @@ if Meteor.isServer
 
 
                 it "get info from " + dockerServer._id + " should be successful!", ->                
-                  resInfo = docker.info()
+                  resData = docker.info()
           
-                  chai.expect(resInfo.data).not.to.be.null
-                  chai.expect(resInfo.error).to.be.null
+                  chai.expect(resData.data).not.to.be.null
+                  chai.expect(resData.error).to.be.null
 
                 it "listImages from " + dockerServer._id + " should be successful!", ->                
-                  reslistImages = docker.listImages()
+                  resData = docker.listImages()
                   
-                  chai.expect(reslistImages.data).not.to.be.null
-                  chai.expect(reslistImages.error).to.be.null
+                  chai.expect(resData.data).not.to.be.null
+                  chai.expect(resData.error).to.be.null
+
+                it "listContainers from " + dockerServer._id + " should be successful!", ->                
+                  resData = docker.listContainers({all:1})
+                  
+                  chai.expect(resData.data).not.to.be.null
+                  chai.expect(resData.error).to.be.null
+
 
 
       # describe "localhost", ->
