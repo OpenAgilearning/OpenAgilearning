@@ -47,11 +47,18 @@ if Meteor.isServer
                   chai.expect(resData.error).to.be.null
 
 
-                it "get info from " + dockerServer._id + " should be successful!", ->                
+                it "get and sync info from " + dockerServer._id + " should be successful!", ->                
+                  query = 
+                    serverId: docker._id
+                  
+                  db.dockerServerInfo.remove query
+
+                  chai.expect(db.dockerServerInfo.find(query).fetch()).to.be.empty
                   resData = docker.info()
-          
+                  
                   chai.expect(resData.data).not.to.be.null
                   chai.expect(resData.error).to.be.null
+                  chai.expect(db.dockerServerInfo.find(query).fetch()).not.to.be.empty
 
                 it "listImages from " + dockerServer._id + " should be successful!", ->                
                   resData = docker.listImages()
