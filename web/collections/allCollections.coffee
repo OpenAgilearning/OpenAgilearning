@@ -48,10 +48,11 @@ Object.defineProperty add, "collection", addCollectionDes
 
 OldCollection = Mongo.Collection
 NewCollection = class NewCollection extends OldCollection
-  constructor: (name,options)->
+  constructor: (name, options)->
     
     if name not in Object.keys db
       super name, options
+      
       if options?.maskName
         db[options.maskName] = @
       else
@@ -72,8 +73,27 @@ NewCollection = class NewCollection extends OldCollection
         else
           collectionData.where = "both"
 
-        db._AllCollections.upsert collectionData
+        db._AllCollections.insert collectionData
 
+    #   else
+    #     query = 
+    #       _id: "Collection:"+name
+    #       name: name
+
+    #     collectionData = {}
+            
+    #     if options
+    #       collectionData.options = options
+
+    #     if options?.where
+    #       collectionData.where = options.where
+
+    #     else
+    #       collectionData.where = "both"
+
+    #     db._AllCollections.update query, {$set:collectionData}
+
+  
     
 
 @Mongo.Collection = NewCollection

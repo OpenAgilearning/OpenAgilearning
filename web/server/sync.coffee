@@ -23,40 +23,12 @@ getDockerServerSettings = (dockerServerData) ->
   dockerServerSettings
 
 
-
 syncDockerServerInfo = ->
   dockerServers = DockerServers.find().fetch()
 
   for dockerServerData in dockerServers
     docker = new Class.DockerServer dockerServerData
-    
-    # dockerInfo = docker.info()
-    # lastUpdateAt = new Date
-
-    # if dockerInfo?.data?
-    #   updateData =
-    #     active:true
-    #     serverInfo: dockerInfo.data
-    #     lastUpdateAt: lastUpdateAt
-
-    #   DockerServers.update {_id:dockerServerData._id},{$set:updateData}
-    
-
-    # else
-    #   updateData =
-    #     active:false
-    #     lastUpdateAt: lastUpdateAt
-
-    #   if DockerServersException.findOne({_id:dockerServerData._id})
-    #     DockerServers.remove {_id:dockerServerData._id}
-    #     throw new Meteor.Error 11000, "Duplicate data in dockerServers and DockerServersException"
-    #   else
-    #     DockerServersException.insert dockerServerData
-    #     DockerServersException.update {_id:dockerServerData._id}, {$set:updateData}
-    #     DockerServersException.update {_id:dockerServerData._id},{$unset:{serverInfo:""}}
-    #     DockerServers.remove {_id:dockerServerData._id}
-    #     DockerServerImages.remove {"serverName":dockerServerData.name}
-    #     # DockerServerContainers.remove {"serverName":dockerServerData.name}
+    dockerInfo = docker.info()
 
 
 syncExceptionDockerServerInfo = ->

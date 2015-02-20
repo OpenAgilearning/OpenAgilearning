@@ -4,19 +4,42 @@ DockerServerCallbacks =
     self
 
   default: (self, resData)->
-    if resData.error
-      self._docker_errors.push resData.error
+    if resData
+      if resData.error
+        self._docker_errors.push resData.error
 
     resData
 
   ping: (self, resData)->
-    if not resData.error
-      self._docker_ping = true
-    else
-      self._docker_ping = false
-    
+    if resData 
+      if not resData.error
+        self._docker_ping = true
+      else
+        self._docker_ping = false
+      
     resData
 
+  info: (self, resData)->
+    if resData 
+      if not resData.error
+        updateData = 
+          serverId: self._id
+          active: true
+          info: resData.data
+          error: {}
+          lastUpdatedAt: new Date
+
+      else
+        updateData = 
+          serverId: self._id
+          active: false
+          info: {}
+          error: resData.error
+          lastUpdatedAt: new Date
+
+      db.dockerServerInfo.update {serverId:self._id}, {$set:updateData}, {upsert:true}
+
+    resData
 
 
 
