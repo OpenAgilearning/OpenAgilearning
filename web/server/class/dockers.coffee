@@ -150,5 +150,5 @@ DockerServerCallbacks =
   createContainer: (opts, callback)->
     if @_docker and @_docker_ping
       apiName = "createContainer"
-      container = @_dockerodeApiWrapper(apiName, opts, callback)
+      containerRes = @_dockerodeApiWrapper(apiName, opts, callback)
 
