@@ -460,11 +460,10 @@ Meteor.startup ->
 
       waitOn: ->
         userId = Meteor.userId()
-        if not userId
-          Router.go "pleaseLogin"
 
-        Meteor.subscribe "chatrooms"
-        Meteor.subscribe "userJoinsChatroom"
+        if userId
+          Meteor.subscribe "chatrooms"
+          Meteor.subscribe "userJoinsChatroom"
 
         Meteor.subscribe "userRoles", ["agilearning.io"]
         Meteor.subscribe "feedback"

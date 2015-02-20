@@ -8,15 +8,17 @@ template(name="discussions")
             a(data-toggle="tab", href="#feedbackDiscussion") Wish & Bugs
           li
             a(data-toggle="tab", href="#forums") Forums
-          li
-            a(data-toggle="tab", href="#chatrooms") Chatrooms
+          if user
+            li
+              a(data-toggle="tab", href="#chatrooms") Chatrooms
           
         .tab-content
           .tab-pane.fade.in.active#feedbackDiscussion
             +feedbackDiscussion
           .tab-pane.fade#forums
             +forums
-          .tab-pane.fade#chatrooms
-            +chatroomsPage
+          if user
+            .tab-pane.fade#chatrooms
+              +chatroomsPage
           
 
