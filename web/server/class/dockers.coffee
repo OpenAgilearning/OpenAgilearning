@@ -1,5 +1,8 @@
 
-DockerServerCallbacks = 
+DockerServerCallbacks =
+  onAfterInit: (self) ->
+    self
+
   configError: (self)->
     self
 
@@ -11,33 +14,59 @@ DockerServerCallbacks =
     resData
 
   ping: (self, resData)->
+    serverQuery = 
+      serverId: self._id
+
     if resData 
       if not resData.error
         self._docker_ping = true
+        
+        updateData = 
+          pingStatus: resData.data 
+          pingError: null
+          active: true
+          lastPingAt: new Date
+
+        db.dockerServersMonitor.update serverQuery, {$set:updateData}, {upsert:true}
+      
       else
         self._docker_ping = false
+
+        updateData = 
+          pingStatus: null
+          pingError: resData.error
+          active: false
+          lastPingAt: new Date
+
+        db.dockerServersMonitor.update serverQuery, {$set:updateData}, {upsert:true}
+      
+    else
+      updateData = 
+        active: false        
+        lastPingAt: new Date
+
+      db.dockerServersMonitor.update serverQuery, {$set:updateData}, {upsert:true}
       
     resData
 
   info: (self, resData)->
+    serverQuery = 
+      serverId: self._id
+
     if resData 
       if not resData.error
         updateData = 
-          serverId: self._id
-          active: true
           info: resData.data
-          error: {}
-          lastUpdatedAt: new Date
+          error: null
+          lastInfoMoonitorAt: new Date
 
       else
         updateData = 
-          serverId: self._id
-          active: false
-          info: {}
+          info: null
           error: resData.error
-          lastUpdatedAt: new Date
+          lastInfoMoonitorAt: new Date
 
-      db.dockerServerInfo.update {serverId:self._id}, {$set:updateData}, {upsert:true}
+      db.dockerServersMonitor.update serverQuery, {$set:updateData}, {upsert:true}
 
     resData
 
@@ -75,9 +104,9 @@ DockerServerCallbacks =
       @_docker = new Docker @_configs
       @ping()
     
-    else
-      if @_callbacks.configError
-        @_callbacks.configError @
+    
+    if @_callbacks.onAfterInit
+      @_callbacks.onAfterInit @
 
 
 

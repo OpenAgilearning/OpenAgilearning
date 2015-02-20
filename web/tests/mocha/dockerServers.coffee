@@ -37,7 +37,7 @@ if Meteor.isServer
 
                   chai.expect(docker._configs_ok).to.be.false
                   chai.expect(resData).to.be.undefined                
-
+              
               else
                 it "ping " + dockerServer._id + " should be successful!", ->                
                   resData = docker.ping()
@@ -51,14 +51,14 @@ if Meteor.isServer
                   query = 
                     serverId: docker._id
                   
-                  db.dockerServerInfo.remove query
+                  db.dockerServersMonitor.remove query
 
-                  chai.expect(db.dockerServerInfo.find(query).fetch()).to.be.empty
+                  chai.expect(db.dockerServersMonitor.find(query).fetch()).to.be.empty
                   resData = docker.info()
                   
                   chai.expect(resData.data).not.to.be.null
                   chai.expect(resData.error).to.be.null
-                  chai.expect(db.dockerServerInfo.find(query).fetch()).not.to.be.empty
+                  chai.expect(db.dockerServersMonitor.find(query).fetch()).not.to.be.empty
 
                 it "listImages from " + dockerServer._id + " should be successful!", ->                
                   resData = docker.listImages()

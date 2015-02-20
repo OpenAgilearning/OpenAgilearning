@@ -1,4 +1,4 @@
-new Mongo.Collection "dockerServerInfo", {where:"server"}
+new Mongo.Collection "dockerServersMonitor"
 
 @DockerServers = new Mongo.Collection "dockerServers"
 @DockerServersException = new Mongo.Collection "dockerServersException"
