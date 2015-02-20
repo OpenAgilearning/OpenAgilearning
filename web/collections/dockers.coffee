@@ -32,15 +32,6 @@
 @Collections.DockerRunJob = new Mongo.Collection "dockerRunJob"
 
 
-@db.dockerServers = @Collections.DockerServers 
-@db.dockerServerImages = @Collections.DockerServerImages 
-@db.dockerServerExceptionTypes = @Collections.DockerServerExceptionTypes 
-@db.dockerServerExceptions = @Collections.DockerServerExceptions 
-
-@db.dockerPullImageJob = @Collections.DockerPullImageJob
-@db.dockerPullImageStream = @Collections.DockerPullImageStream
-@db.dockerRunJob = @Collections.DockerRunJob
-
 
 getDockerFreePort = (dockerServerId)->
   ports = [basePort..topPort]

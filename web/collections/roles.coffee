@@ -1,10 +1,7 @@
 
 
-@Collections.Roles = new Meteor.Collection "agileaningRoles"
-@Collections.RoleGroups = new Meteor.Collection "agileaningRoleGroups"
-
-@db.roles = @Collections.Roles
-@db.roleGroups = @Collections.RoleGroups
+@Collections.Roles = new Meteor.Collection "agileaningRoles", {maskName:"roles"}
+@Collections.RoleGroups = new Meteor.Collection "agileaningRoleGroups", {maskName:"roleGroups"}
 
 
 @RoleTools = {}
