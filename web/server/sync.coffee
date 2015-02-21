@@ -9,11 +9,11 @@
 
 
 syncDockerServerInfo = ->
-  UseCallbacks = _.extend DockerServerCallbacks, DockerMonitorCallbacks
+  
   dockerServers = DockerServers.find().fetch()
 
   for dockerServerData in dockerServers
-    docker = new Class.DockerServer dockerServerData, UseCallbacks
+    docker = new Class.DockerServer dockerServerData, UsefulCallbacks
     dockerInfo = docker.info()
 
 syncExceptionDockerServerInfo = ->
