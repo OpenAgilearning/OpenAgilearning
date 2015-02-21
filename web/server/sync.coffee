@@ -8,122 +8,21 @@
 #   setTimeInterval * 3
 
 
-syncDockerServerInfo = ->
-  
+syncDockerServerInfo = ->  
   dockerServers = DockerServers.find().fetch()
 
   for dockerServerData in dockerServers
     docker = new Class.DockerServer dockerServerData, UsefulCallbacks
     dockerInfo = docker.info()
 
-syncExceptionDockerServerInfo = ->
-  exceptionDockerServers = DockerServersException.find().fetch()
-  Docker = Meteor.npmRequire "dockerode"
-
-  for dockerServerData in exceptionDockerServers
-    dockerServerSettings = getDockerServerSettings dockerServerData
-
-    docker = new Docker dockerServerSettings
-    Future = Npm.require 'fibers/future'
-    infoFuture = new Future
-
-    docker.info (err, data) ->
-      if err
-        console.log "[sync server exception] err ="
-        console.log err
-      infoFuture.return data
-
-    dockerInfo = infoFuture.wait()
-
-    if dockerInfo? and not DockerServers.findOne({"_id":dockerServerData._id})?
-      if dockerInfo.RegistryConfig?
-        dockerInfo.RegistryConfig.IndexConfigs["docker_io"] = dockerInfo.RegistryConfig.IndexConfigs["docker.io"]
-        delete dockerInfo.RegistryConfig.IndexConfigs["docker.io"]
-      updateData =
-        active:true
-        serverInfo:dockerInfo
-        lastUpdateAt: new Date
-
-      DockerServers.insert dockerServerData
-      DockerServers.update({_id:dockerServerData._id},{$set:updateData})
-      DockerServersException.remove {_id:dockerServerData._id}
-    else
-      updateData =
-        active:false
-        lastUpdateAt: new Date
-      DockerServersException.update({_id:dockerServerData._id},{$set:updateData})
-
-
-syncDockerServerImages = ->
-  dockerServers = DockerServers.find({active:true}).fetch()
+syncDockerServerImageTags = ->
+  dockerServers = DockerServers.find().fetch()
 
   for dockerServerData in dockerServers
-    docker = new Class.DockerServer dockerServerData
+    docker = new Class.DockerServer dockerServerData, UsefulCallbacks
+    dockerInfo = docker.listImageTags()
 
-    listImages = docker.listImages()
-
-    if listImages?.data?
-
-      lastUpdateAt = new Date
-
-      # deleteNothingnessImage dockerServerSettings, images
-
-      for imageData in listImages.data
-        # TODO: upsert new images
-        # re = /none/g
-        # if re.exec(imageData.RepoTags)
-
-        #   setData =
-        #     lastUpdateAt: lastUpdateAt
-        #     tag:imageData.RepoTags
-        #     serverName: dockerServerData.name
-        #   DockerServerPullImageScratch.upsert imageData, {$set:setData}
-
-        # else
-
-        imageData.dockerServerId = dockerServerData._id
-        queryDataKeys = Object.keys imageData
-        imageTags = imageData.RepoTags
-        querytDataKeys = queryDataKeys.filter (key)-> key isnt "RepoTags"
-        queryImageData = {}
-
-        querytDataKeys.map (key) ->
-          queryImageData[key] = imageData[key]
-
-        for tag in imageTags
-          setData =
-            lastUpdateAt:lastUpdateAt
-            tag:tag
-            serverName: dockerServerData.name
-
-          DockerServerImages.upsert queryImageData, {$set:setData}
-          # TODO: modify disappear images
-
-    # else
-
-    #   DockerServerImages.remove {"serverName":dockerServerName}
-    #   # I think container sync let function *syncDockerServerContainer* to do such thing
-    #   # DockerServerContainers.remove({"serverName":dockerServerData.name})
-    #   throw new Meteor.Error 1104, "Docker server exception. can't find and docker images"
-
-
-deleteNothingnessImage = (dockerServerSettings, images) ->
-    # mongo server
-    filterImages = []
-    DockerServerImages.find({serverName:dockerServerSettings["dockerServerName"]}).fetch().map (xx)->
-      filterImages.push xx.Id
-
-    # docker server
-    exitImageIdArr = []
-    images.map (xxx)->
-      exitImageIdArr.push xxx.Id
-
-    filteredImages = filterImages .filter (xx) -> xx not in exitImageIdArr
-
-    filteredImages.map (x) ->
-      DockerServerImages.remove({"Id":x})
-      # FIXME Should I add image log if the image was removed from docker server ??
-
+    
 syncDockerServerContainer = ->
   dockerServers = DockerServers.find().fetch()
   Docker = Meteor.npmRequire "dockerode"
@@ -285,7 +184,7 @@ deleteDockerServerContainer = (containerData, orderBy)->
 
 
 Meteor.setInterval syncDockerServerInfo, 5000
-# Meteor.setInterval syncDockerServerImages, 5000
+Meteor.setInterval syncDockerServerImageTags, 5000
 # Meteor.setInterval syncDockerServerContainer, 10000
 
 # Meteor.setInterval dockerPull.ToDoJobHandler, 5000

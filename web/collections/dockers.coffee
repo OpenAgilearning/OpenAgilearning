@@ -1,5 +1,5 @@
 new Mongo.Collection "dockerServersMonitor"
-new Mongo.Collection "dockerImagesMonitor"
+new Mongo.Collection "dockerImageTagsMonitor"
 new Mongo.Collection "dockerContainersMonitor"
 
 @DockerServers = new Mongo.Collection "dockerServers"

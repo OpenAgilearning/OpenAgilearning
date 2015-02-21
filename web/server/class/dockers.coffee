@@ -105,6 +105,63 @@
     
     resData  
 
+  listImageTags: (self, resData) ->
+    if resData 
+      if not resData.error
+
+        # handling data in db.dockerImageTagsMonitor but not in resData.data
+        resImageIds = []
+        resData.data.map (imageData)->
+          if imageData.Id not in resImageIds
+            resImageIds.push imageData.Id
+
+        updateSelector = 
+          serverId: self._id
+          Id:
+            $nin: resImageIds
+
+        updateData =
+          active: false
+          lastUpdatedAt: new Date
+
+        db.dockerImageTagsMonitor.update updateSelector, {$set:updateData}, {multi:true}
+
+        # handling data in resData.data
+        for data in resData.data
+          if data.tag is '<none>:<none>'
+
+            # data.tag is '<none>:<none>' but data.Id in db
+            updateSelector = 
+              serverId: self._id
+              Id: data.Id
+
+            updateData = 
+              active: false
+              lastUpdatedAt: new Date
+
+
+            db.dockerImageTagsMonitor.update updateSelector, {$set:updateData}, {multi:true}
+
+          else
+            updateSelector = 
+              serverId: self._id
+              Id: data.Id
+              tag: data.tag
+
+            updateData = 
+              serverId: self._id
+              active: true
+              lastUpdatedAt: new Date
+
+            updateData = _.extend updateData, data
+
+            db.dockerImageTagsMonitor.update updateSelector, {$set:updateData}, {upsert:true}          
+
+        
+
+
+    resData
+
 
 @UsefulCallbacks = {}
 _.extend UsefulCallbacks, DockerServerCallbacks
@@ -245,3 +302,21 @@ _.extend UsefulCallbacks, DockerMonitorCallbacks
       apiName = "createContainer"
       containerRes = @_dockerodeApiWrapper(apiName, opts, callback)
 
+  listImageTags: ->
+    methodName = "listImageTags"
+    resData = @listImages({})
+    if resData.data
+      newData = []
+      for data in resData.data
+        tags = data.RepoTags
+        delete data.RepoTags
+        for tag in tags
+          newData.push _.extend {tag:tag}, data
+
+      if newData.length > 0
+        resData.data = newData
+
+    if @_callbacks[methodName]
+      resData = @_callbacks[methodName] @, resData
+
+    resData

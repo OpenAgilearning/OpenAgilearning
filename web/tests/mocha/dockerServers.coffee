@@ -7,7 +7,10 @@ if Meteor.isServer
       
       describe "Servers", ->
         before ->
+          db.dockerServersMonitor.remove {}
+          db.dockerImageTagsMonitor.remove {}
           Fixture.DockerServers.reset()
+
 
         # db.dockerServers.remove({})
         dockerServersData = db.dockerServers.find().fetch()
@@ -93,27 +96,34 @@ if Meteor.isServer
                   chai.expect(resData.data).not.to.be.null
                   chai.expect(resData.error).to.be.null
 
-                it "sync listImages from " + dockerServer._id + " should be successful!", ->                
+                it "get listImageTags from " + dockerServer._id + " should be successful!", ->                
+                  resData = docker.listImageTags()
+                  
+                  chai.expect(resData.data).not.to.be.null
+                  chai.expect(resData.error).to.be.null
+
+                
+                it "sync listImageTags from " + dockerServer._id + " should be successful!", ->                
 
                   query = 
                     serverId: docker._id
                   
-                  db.dockerImagesMonitor.remove query
+                  db.dockerImageTagsMonitor.remove query
 
-                  chai.expect(db.dockerImagesMonitor.find(query).fetch()).to.be.empty
-                  resData = docker.listImages()
+                  chai.expect(db.dockerImageTagsMonitor.find(query).fetch()).to.be.empty
+                  resData = docker.listImageTags()
                   
                   chai.expect(resData.data).not.to.be.null
                   chai.expect(resData.error).to.be.null
-                  chai.expect(db.dockerImagesMonitor.find(query).fetch()).not.to.be.empty
+                  chai.expect(db.dockerImageTagsMonitor.find(query).fetch()).not.to.be.empty
 
-                it "no active < none > : < none > tag image in dockerImagesMonitor in " + dockerServer._id, ->                
+                it "no active < none > : < none > tag image in dockerImageTagsMonitor in " + dockerServer._id, ->                
 
                   query = 
                     serverId: docker._id
                     tag: '<none>:<none>'
                   
-                  chai.expect(db.dockerImagesMonitor.find(query).fetch()).to.be.empty
+                  chai.expect(db.dockerImageTagsMonitor.find(query).fetch()).to.be.empty
 
 
                 it "get listContainers from " + dockerServer._id + " should be successful!", ->                
