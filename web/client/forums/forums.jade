@@ -1,0 +1,43 @@
+template(name="forums")
+  .tab-pane.fade.in.active#forums
+    if user
+      h1 
+        | Any Problems?
+        a(href="#", data-toggle="modal", data-target="#post-question-modal").btn.btn-primary.btn-lg
+          span.glyphicon.glyphicon-pencil
+          | Ask a question!
+    +postsFilter
+    +postQuestionModal
+
+
+template(name="postsFilter")
+  .list-group
+    each fcResults
+      a(href="{{pathFor 'forumPost' postId=_id}}").list-group-item.list-group-item-info
+        .row
+          .col-md-9
+            h3= title
+            | {{partOf content}}
+          .col-md-3.bottom-aligned
+            img(src=userAvatar).img-circle.thumb
+            small {{livestamp createdAt}} by
+            | {{userName}}
+
+
+template(name="postQuestionModal")
+  .modal.fade#post-question-modal(role="dialog")
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button(data-dismiss="modal").close
+            span.glyphicon.glyphicon-remove
+          h4.modal-title Post A Question
+        .modal-body
+          .form-group#new-question-form
+            label(for="new-question-title") Title
+            input(type="text", placeholder="The title of your question...").form-control#new-question-title
+            label(for="new-question-content") Content
+            textarea(rows="15", placeholder="The content of your question...", style="resize: vertical").form-control#new-question-content
+        .modal-footer
+          button(data-dismiss="modal").btn.btn-default Cancel
+          button.btn.btn-primary#submit-question Post
