@@ -16,7 +16,6 @@ syncDockerServerInfo = ->
     docker = new Class.DockerServer dockerServerData, UseCallbacks
     dockerInfo = docker.info()
 
-
 syncExceptionDockerServerInfo = ->
   exceptionDockerServers = DockerServersException.find().fetch()
   Docker = Meteor.npmRequire "dockerode"
@@ -37,6 +36,9 @@ syncExceptionDockerServerInfo = ->
     dockerInfo = infoFuture.wait()
 
     if dockerInfo? and not DockerServers.findOne({"_id":dockerServerData._id})?
+      if dockerInfo.RegistryConfig?
+        dockerInfo.RegistryConfig.IndexConfigs["docker_io"] = dockerInfo.RegistryConfig.IndexConfigs["docker.io"]
+        delete dockerInfo.RegistryConfig.IndexConfigs["docker.io"]
       updateData =
         active:true
         serverInfo:dockerInfo
