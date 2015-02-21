@@ -70,7 +70,6 @@ if DockerImages.find().count() is 0
 #   DockerImages.insert {_id:"dboyliao/docker-tossug",type:"ipynb"}
 
 
-
 Classrooms.find().forEach (classroom) ->
   # console.log classroom
   createCondition = Chatrooms.find( classroomId: classroom._id ).count() is 0
