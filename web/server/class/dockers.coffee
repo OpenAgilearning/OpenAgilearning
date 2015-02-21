@@ -74,6 +74,15 @@
 
     if resData 
       if not resData.error
+        if resData.data.RegistryConfig?.IndexConfigs?
+          target = resData.data.RegistryConfig.IndexConfigs
+          keys = Object.keys target
+          keys.map (k) ->
+            if k.split(".").length > 1
+              newKey = k.replace(".","!")
+              target[newKey] = target[k]
+              delete target[k]
+
         updateData = 
           info: resData.data
           error: null
@@ -95,6 +104,12 @@
     #   else
     
     resData  
+
+
+@UsefulCallbacks = {}
+_.extend UsefulCallbacks, DockerServerCallbacks
+_.extend UsefulCallbacks, DockerMonitorCallbacks
+
 
 
 

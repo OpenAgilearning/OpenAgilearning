@@ -28,8 +28,22 @@ if Meteor.isServer
           #     chai.expect(resData.error).to.be.null
 
           do (dockerServer) ->
-            UseCallbacks = _.extend DockerServerCallbacks, DockerMonitorCallbacks
-            docker = new Class.DockerServer dockerServer, UseCallbacks
+            
+            i=0
+            if i < 1
+              if dockerServer.name is "errorCaPathServer"                
+                it "DockerServerCallbacks has no info callback. So does docker._callbacks", ->
+                  docker = new Class.DockerServer dockerServer, DockerServerCallbacks
+                  chai.expect(docker._callbacks.info).to.be.null
+                  
+                i = i+1
+
+            # FIXED Above  Bug (DockerServerCallbacks has no info callback. So does docker._callbacks)!
+            UsefulCallbacks = {}
+            _.extend UsefulCallbacks, DockerServerCallbacks
+            _.extend UsefulCallbacks, DockerMonitorCallbacks
+            
+            docker = new Class.DockerServer dockerServer, UsefulCallbacks
 
             do (docker) ->
               if dockerServer.name is "errorCaPathServer"                
