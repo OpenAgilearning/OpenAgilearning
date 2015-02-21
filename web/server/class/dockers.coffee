@@ -98,11 +98,22 @@
 
     resData
 
-  listImages: (self, resData)->
-    # if resData
-    #   if not resData.error
-    #   else
-    
+  listContainers: (self, resData)->
+    if resData
+      if not resData.error
+        for data in resData.data
+          updateSelector = 
+            serverId: self._id
+            Id:data.Id
+
+          updateData =
+            serverId: self._id
+            lastUpdatedAt: new Date
+
+          updateData = _.extend updateData, data
+
+          db.dockerContainersMonitor.update updateSelector, {$set:updateData}, {upsert:true}          
+
     resData  
 
   listImageTags: (self, resData) ->
@@ -156,9 +167,6 @@
             updateData = _.extend updateData, data
 
             db.dockerImageTagsMonitor.update updateSelector, {$set:updateData}, {upsert:true}          
-
-        
-
 
     resData
 

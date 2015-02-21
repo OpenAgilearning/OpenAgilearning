@@ -145,7 +145,8 @@ if Meteor.isServer
                   
                   chai.expect(resData.data).not.to.be.null
                   chai.expect(resData.error).to.be.null
-                  chai.expect(db.dockerContainersMonitor.find(query).fetch()).not.to.be.empty
+                  chai.assert db.dockerContainersMonitor.find(query).count() is resData.data.length
+                  
 
 
       # describe "localhost", ->
