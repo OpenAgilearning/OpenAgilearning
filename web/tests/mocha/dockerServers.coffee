@@ -6,6 +6,9 @@ if Meteor.isServer
     describe "Docker", ->
       
       describe "Servers", ->
+        before ->
+          Fixture.DockerServers.reset()
+
         # db.dockerServers.remove({})
         dockerServersData = db.dockerServers.find().fetch()
 
