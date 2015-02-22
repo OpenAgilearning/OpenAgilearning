@@ -38,7 +38,8 @@ template(name="userSettings")
             ul
               li email
               li profile picture
-              
+            each resume
+              p {{key}},{{value}},{{isPublic}}
             h2 Privacy Settings
             h3 What shows up on my resume
             ul

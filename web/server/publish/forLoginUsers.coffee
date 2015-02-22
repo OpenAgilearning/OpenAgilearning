@@ -113,3 +113,12 @@ Meteor.publish "votes", (collections)->
         $in: collections
   else
     Exceptions.find {_id:"ExceptionPermissionDeny"}
+
+
+Meteor.publish "userResume", ->
+  userId = @userId
+
+  if userId
+    db.publicResume.find userId:userId
+  else
+    Exceptions.find {_id:"ExceptionPermissionDeny"}

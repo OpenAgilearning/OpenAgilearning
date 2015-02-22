@@ -91,6 +91,8 @@ Meteor.startup ->
         rootURL:rootURL
         user: ->
           Meteor.user()
+        resume: ->
+          db.publicResume.find()
         showAdminPage: ->
           userId = Meteor.userId()
           Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
@@ -127,6 +129,7 @@ Meteor.startup ->
         Meteor.subscribe "allPublicCoursesDockerImages"
           
         Meteor.subscribe "userRoles", ["agilearning.io"]
+        Meteor.subscribe "userResume"
 
     @route "courses",
       path: "courses/"
