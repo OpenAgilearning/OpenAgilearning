@@ -107,6 +107,8 @@
             Id:data.Id
 
           updateData =
+            alive: true
+            running: true
             serverId: self._id
             lastUpdatedAt: new Date
 
@@ -313,7 +315,8 @@ _.extend UsefulCallbacks, DockerMonitorCallbacks
   listImageTags: ->
     methodName = "listImageTags"
     resData = @listImages({})
-    if resData.data
+        
+    if resData?.data
       newData = []
       for data in resData.data
         tags = data.RepoTags

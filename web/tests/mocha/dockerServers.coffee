@@ -146,7 +146,40 @@ if Meteor.isServer
                   chai.expect(resData.data).not.to.be.null
                   chai.expect(resData.error).to.be.null
                   chai.assert db.dockerContainersMonitor.find(query).count() is resData.data.length
-                  
+
+                describe "run (image), stop & remove (contianer)", ->
+                  it "ensure debian:jessie image in " + dockerServer._id, -> 
+                    console.log "TODO"
+
+                  it "run and check debian:jessie's container in " + dockerServer._id, ->
+                    console.log "TODO"
+
+                  it "stop and check debian:jessie's container in " + dockerServer._id, ->
+                    console.log "TODO"
+
+                  it "remove and check debian:jessie's container in " + dockerServer._id, ->
+                    console.log "TODO"
+
+                  it "sync run->stop with debian:jessie in " + dockerServer._id, ->
+                    console.log "TODO"
+
+                  it "sync run->stop->remove with debian:jessie in " + dockerServer._id, ->
+                    console.log "TODO"
+
+
+
+      # describe "run, stop, remove", ->
+      #   # "sync run->stop & run->stop->remove listContainers from " + dockerServer._id + " should be successful!", ->                                
+      #   dockerServersData = db.dockerServers.find().fetch()
+
+      #   for dockerServer in dockerServersData
+      #     do (dockerServer) ->
+      #       docker = new Class.DockerServer dockerServer, UsefulCallbacks
+
+      #       do (docker) ->
+          
+      #         testImageTag = "debian:jessie"
+
 
 
       # describe "localhost", ->
