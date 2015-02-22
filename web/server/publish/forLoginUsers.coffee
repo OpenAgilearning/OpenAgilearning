@@ -12,7 +12,7 @@ Meteor.publish "userRoles", (roleTypes=[])->
 
     queryConditions = []
 
-    console.log roleGroupsIds
+    # console.log roleGroupsIds
 
     for groupId in roleGroupsIds
       if Collections.Roles.find({role:"admin",groupId:groupId,userId:userId}).count() > 0
@@ -25,7 +25,7 @@ Meteor.publish "userRoles", (roleTypes=[])->
           userId:userId          
         queryConditions.push queryCond
 
-    console.log queryConditions
+    # console.log queryConditions
 
     roles = Collections.Roles.find({$or:queryConditions})
     [roleGroups, roles]

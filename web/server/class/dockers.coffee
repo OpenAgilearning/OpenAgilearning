@@ -249,6 +249,7 @@ _.extend ImageCallbacks, DockerImageCallbacks
       @ping()
 
 
+
     if @_callbacks.onAfterInit
       @_callbacks.onAfterInit @
 

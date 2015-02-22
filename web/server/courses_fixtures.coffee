@@ -78,6 +78,12 @@
           Roles.addUsersToRoles(oneCourse.creatorId, "admin", "classroom_" + classroomId)
           #Roles.addUsersToRoles(demoUser, "teacher", "classroom_" + classroomId)
 
+  forceClear: ->
+    db.courses.remove {}
+    db.classrooms.remove {}
+    db.roles.remove {}
+    db.roleGroups.remove {}
+
 
 
 

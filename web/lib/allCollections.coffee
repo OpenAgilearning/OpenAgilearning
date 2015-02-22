@@ -58,22 +58,22 @@ NewCollection = class NewCollection extends OldCollection
       else
         db[name] = @
     
-    if Meteor.isServer
-      if db._AllCollections.find({name:name}).count() is 0
-        collectionData = 
-          _id: "Collection:"+name
-          name: name
+    # if Meteor.isServer
+    #   if db._AllCollections.find({name:name}).count() is 0
+    #     collectionData = 
+    #       _id: "Collection:"+name
+    #       name: name
             
-        if options
-          collectionData.options = options
+    #     if options
+    #       collectionData.options = options
 
-        if options?.where
-          collectionData.where = options.where
+    #     if options?.where
+    #       collectionData.where = options.where
 
-        else
-          collectionData.where = "both"
+    #     else
+    #       collectionData.where = "both"
 
-        db._AllCollections.insert collectionData
+    #     db._AllCollections.insert collectionData
 
     #   else
     #     query = 
