@@ -147,6 +147,11 @@ if Meteor.isServer
                   chai.expect(resData.error).to.be.null
                   chai.assert db.dockerContainersMonitor.find(query).count() is resData.data.length
 
+                describe "tag & untag (image)", ->
+                  it "ensure sync listImageTags consistent when untagging image in " + dockerServer._id, -> 
+                    console.log "TODO"
+
+
                 describe "run (image), stop & remove (contianer)", ->
                   it "ensure debian:jessie image in " + dockerServer._id, -> 
                     console.log "TODO"
