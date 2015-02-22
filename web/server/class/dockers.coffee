@@ -214,6 +214,13 @@ _.extend ImageCallbacks, DockerServerCallbacks
 _.extend ImageCallbacks, DockerImageCallbacks
 
 
+needStreamingCallback = (fn, streamingFns=[])->
+  if streamingFns.length is 0
+    /isStream: true|stream: true/.exec(fn) isnt null
+  else
+    pat = new RegExp "isStream: true|stream: true|" + streamingFns.join("|")
+    pat.exec(fn) isnt null
+
 
 
 @Class.DockerServer = class DockerServer
@@ -248,6 +255,9 @@ _.extend ImageCallbacks, DockerImageCallbacks
       @_docker = new Docker @_configs
       @ping()
 
+      @_dockerApis = Object.keys Docker.prototype
+      @_dockerStreamingApis = @_dockerApis.filter (api) -> needStreamingCallback Docker::[api]
+      @_dockerStreamingApis = @_dockerApis.filter (api) => needStreamingCallback Docker::[api], @_dockerStreamingApis
 
 
     if @_callbacks.onAfterInit
@@ -256,51 +266,53 @@ _.extend ImageCallbacks, DockerImageCallbacks
 
 
   _futureCallDockerode: (apiName, opts, callback) ->
+    
+    if apiName in @_dockerStreamingApis
 
-    Future = Meteor.npmRequire 'fibers/future'
-    introspect = Meteor.npmRequire 'introspect'
-    resFuture = new Future
+      Future = Meteor.npmRequire 'fibers/future'
+      introspect = Meteor.npmRequire 'introspect'
+      resFuture = new Future
 
-    dockerMethodArgs = introspect @_docker[apiName]
+      dockerMethodArgs = introspect @_docker[apiName]
 
-    if "opts" in dockerMethodArgs
-      @_docker[apiName] opts, (err,data)->
-        res =
-          error: err
-          data: data
+      if "opts" in dockerMethodArgs
+        @_docker[apiName] opts, (err,data)->
+          res =
+            error: err
+            data: data
 
-        resFuture.return res
+          resFuture.return res
 
-      resData = resFuture.wait()
-    else
-      @_docker[apiName] (err,data)->
-        res =
-          error: err
-          data: data
+        resData = resFuture.wait()
+      else
+        @_docker[apiName] (err,data)->
+          res =
+            error: err
+            data: data
 
-        resFuture.return res
+          resFuture.return res
 
-      resData = resFuture.wait()
+        resData = resFuture.wait()
 
-    if resData.error
-      resData.error["errorInfo"] =
-        errorAt: new Date
-        fn: "_futureCallDockerode"
-        args:
-          apiName: apiName
-          opts: opts
+      if resData.error
+        resData.error["errorInfo"] =
+          errorAt: new Date
+          fn: "_futureCallDockerode"
+          args:
+            apiName: apiName
+            opts: opts
 
-    if callback
-      callback self=@, resData=resData
-    else
+      if callback
+        callback self=@, resData=resData
+      else
 
-      if @_callbacks.default
-        resData = @_callbacks.default @, resData
+        if @_callbacks.default
+          resData = @_callbacks.default @, resData
 
-      if @_callbacks[apiName]
-        resData = @_callbacks[apiName] @, resData
+        if @_callbacks[apiName]
+          resData = @_callbacks[apiName] @, resData
 
-      resData
+        resData
 
 
   ping: (callback) ->
