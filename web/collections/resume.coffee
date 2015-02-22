@@ -1,0 +1,2 @@
+new Meteor.Collection "publicResume"
+
