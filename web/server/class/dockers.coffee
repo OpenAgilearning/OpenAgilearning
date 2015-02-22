@@ -46,6 +46,9 @@
           active: true
           lastPingAt: new Date
 
+        console.log "updateData = "
+        console.log updateData
+
         db.dockerServersMonitor.update serverQuery, {$set:updateData}, {upsert:true}
 
       else
@@ -214,6 +217,17 @@ _.extend ImageCallbacks, DockerServerCallbacks
 _.extend ImageCallbacks, DockerImageCallbacks
 
 
+StreamingCallBacks = 
+  default: (err,stream) ->
+    JSONStream = Meteor.npmRequire('JSONStream')
+    parser = JSONStream.parse()
+    if not err
+      stream.pipe(parser).on("data",console.log)#.pipe(streamToMongo)
+    else
+      console.log err
+
+
+
 needStreamingCallback = (fn, streamingFns=[])->
   if streamingFns.length is 0
     /isStream: true|stream: true/.exec(fn) isnt null
@@ -225,7 +239,7 @@ needStreamingCallback = (fn, streamingFns=[])->
 
 @Class.DockerServer = class DockerServer
 
-  constructor: (@_data, @_callbacks=DockerServerCallbacks) ->
+  constructor: (@_data, @_callbacks=DockerServerCallbacks, @_streamingCallbacks=StreamingCallBacks) ->
 
     @_id = @_data._id
     @_configs = _.extend {}, @_data.connect
@@ -314,30 +328,34 @@ needStreamingCallback = (fn, streamingFns=[])->
 
 
   _streamingCallDockerode: (apiName, kwargs, callback) ->
+    if @_docker and @_docker_ping
 
-    #PASSED: docker._streamingCallDockerode("pull", ["debian:jessie",{}])
-    #FIXME: docker._streamingCallDockerode("pull", ["debian:jessie"])
+      #PASSED: docker._streamingCallDockerode("pull", ["debian:jessie",{}])
+      #FIXME: docker._streamingCallDockerode("pull", ["debian:jessie"])
 
-    introspect = Meteor.npmRequire 'introspect'
-    kws = introspect @_docker[apiName]
+      introspect = Meteor.npmRequire 'introspect'
+      kws = introspect @_docker[apiName]
 
-    if kwargs instanceof Array and kws.length >= kwargs.length
-      args = kwargs
-    else
-      args = kws.map (k) -> kwargs[k]
-
-    callbackIndex = kws.indexOf "callback"
-
-    args[callbackIndex] = (err,stream) ->
-
-      JSONStream = Meteor.npmRequire('JSONStream')
-      parser = JSONStream.parse()
-      if not err
-        stream.pipe(parser).on("data",console.log)#.pipe(streamToMongo)
+      if kwargs instanceof Array and kws.length >= kwargs.length
+        args = kwargs
       else
-        console.log err
+        args = kws.map (k) -> kwargs[k]
 
-    @_docker[apiName].apply @_docker, args
+      callbackIndex = kws.indexOf "callback"
+
+      if args.length < callbackIndex
+        for i in [args.length..callbackIndex]
+          args.push {}
+      
+      if callback
+        args[callbackIndex] = callback
+      else
+        if @_streamingCallbacks[apiName]
+          args[callbackIndex] = @_streamingCallbacks[apiName]
+        else
+          args[callbackIndex] = @_streamingCallbacks.default
+
+      @_docker[apiName].apply @_docker, args
 
 
   ping: (callback) -> 
@@ -418,3 +436,148 @@ needStreamingCallback = (fn, streamingFns=[])->
   getImage: (imageTag)->
     if @_docker and @_docker_ping
       image = @_docker.getImage imageTag
+      new Class.DockerImage @_id, image
+
+
+  pull: (imageTag, opts, callback)->
+    if not callback
+      if not opts
+        @_streamingCallDockerode "pull", [imageTag]
+      else
+        @_streamingCallDockerode "pull", [imageTag, opts]
+    else
+      @_streamingCallDockerode "pull", [imageTag, opts, callback]
+
+
+  rm: (imageTag)->
+    if @_docker and @_docker_ping
+      image = @_docker.getImage imageTag
+      imageObj = new Class.DockerImage @_id, image
+      imageObj.remove()
+
+
+
+@Class.DockerodeType = class DockerodeType
+  
+  constructor: (@_Class, @_initData, @_callbacks) ->
+    @_apis = Object.keys @_Class::
+
+    @_streamingApis = @_apis.filter (api) => needStreamingCallback @_Class::[api]
+    @_streamingApis = @_apis.filter (api) => needStreamingCallback @_Class::[api], @_streamingApis
+
+    @_apiArgs = {}
+
+    @_apis.map (api) => 
+      introspect = Meteor.npmRequire 'introspect'
+      @_apiArgs[api] = introspect @_Class::[api]
+
+    if @_initData instanceof @_Class
+      @_instance = @_initData
+      delete @_initData
+    else 
+      if @_initData  
+        @_instance = new @_Class @_initData
+
+    _futureApis = @_apis.filter (api)=> api not in @_streamingApis
+
+    for api in _futureApis
+
+      apiDes = do (api) ->
+          res = 
+            get: ->
+              (args...) -> this._futureCall(api,args...)
+
+      # console.log "apiDes = "
+      # console.log apiDes
+
+      Object.defineProperty @.constructor::, api, apiDes
+
+  _futureCall: (apiName, args..., callback) ->
+    unless typeof callback is "function"
+      args.push callback
+
+    if apiName in @_apis and @_instance
+      unless apiName in @_streamingApis
+        Future = Meteor.npmRequire 'fibers/future'
+        resFuture = new Future
+
+        futureCallback = (err,data)->
+          res =
+            error: err
+            data: data
+
+          resFuture.return res
+
+        callbackIndex = @_apiArgs[apiName].indexOf "callback"
+
+        if args.length < callbackIndex
+          for i in [args.length..callbackIndex]
+            args.push {}
+        
+        args[callbackIndex] = futureCallback
+
+        @_instance[apiName].apply @_instance, args 
+        
+        resData = resFuture.wait()
+
+        if resData.error
+          resData.error["errorInfo"] =
+            errorAt: new Date
+            fn: "_futureCall"
+            args:
+              apiName: apiName
+              args: args
+
+
+        if typeof callback is "function"
+          callback self=@, resData=resData
+        else
+
+          if @_callbacks?.default
+            resData = @_callbacks.default @, resData
+
+          if @_callbacks?[apiName]
+            resData = @_callbacks[apiName] @, resData
+
+          resData
+
+
+
+@Class.DockerImage = class DockerImage extends Class.DockerodeType
+
+  constructor: (@_serverId, @_image) ->
+    super @_image.constructor, @_image
+    
+
+
+@Class.NewDockerServer = class NewDockerServer extends Class.DockerodeType
+
+  constructor: (@_data, @_callbacks=DockerServerCallbacks, @_streamingCallbacks=StreamingCallBacks) ->
+
+    @_id = @_data._id
+    @_configs = _.extend {}, @_data.connect
+    @_configs_ok = false
+    @_configs_errors = []
+    @_docker_errors = []
+
+    if not @_configs.socketPath
+      if @_data.connect.protocol is "https"
+        fs = Meteor.npmRequire 'fs'
+
+        try
+
+          #TODO[finished]: need a error path testing case
+          ["ca","cert","key"].map (xx) =>
+            @_configs[xx] = fs.readFileSync(@_data.security[xx+"Path"])
+
+        catch err
+
+          @_configs_errors.push err
+
+    if @_configs_errors.length is 0
+      @_configs_ok = true
+
+      Docker = Meteor.npmRequire "dockerode"
+
+      super Docker, @_configs, @_callbacks
+      
