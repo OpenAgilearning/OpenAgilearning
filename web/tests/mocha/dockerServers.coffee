@@ -167,6 +167,21 @@ if Meteor.isServer
                     console.log "TODO"
 
 
+                describe "pull & push from public docker hub", ->
+                  it "ensure redis:2.8.18 image not in " + dockerServer._id, -> 
+                    console.log "TODO"
+
+                  it "docker pull redis:2.8.18 image in " + dockerServer._id, -> 
+                    console.log "TODO"
+
+                describe "pull & push from private docker hub", ->
+
+                  it "ensure redis:2.8.18 image not in private docker repo (test " + dockerServer._id + ")", -> 
+                    console.log "TODO"
+
+                  it "docker push redis:2.8.18 image to private docker repo from " + dockerServer._id, -> 
+                    console.log "TODO"
+
 
       # describe "run, stop, remove", ->
       #   # "sync run->stop & run->stop->remove listContainers from " + dockerServer._id + " should be successful!", ->                                
