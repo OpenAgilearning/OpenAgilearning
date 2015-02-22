@@ -171,11 +171,15 @@ if Meteor.isServer
 
 
                 describe "run (image), stop & remove (contianer)", ->
-                  it "ensure debian:jessie image in " + dockerServer._id, -> 
-                    console.log "TODO"
+                  before ->
+                    if not docker.isImageTagInServer("debian:jessie")
+                      console.log "pulling debian:jessie in " + dockerServer._id
 
-                  it "run and check debian:jessie's container in " + dockerServer._id, ->
+                  it "ensure debian:jessie image in " + dockerServer._id, -> 
                     chai.expect(docker.isImageTagInServer("debian:jessie")).to.be.true
+                    
+                  it "run and check debian:jessie's container in " + dockerServer._id, ->
+                    console.log "TODO"
 
                   it "stop and check debian:jessie's container in " + dockerServer._id, ->
                     console.log "TODO"
