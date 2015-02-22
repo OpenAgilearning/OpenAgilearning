@@ -266,56 +266,81 @@ needStreamingCallback = (fn, streamingFns=[])->
 
 
   _futureCallDockerode: (apiName, opts, callback) ->
-    
-    if apiName in @_dockerStreamingApis
 
-      Future = Meteor.npmRequire 'fibers/future'
-      introspect = Meteor.npmRequire 'introspect'
-      resFuture = new Future
+    Future = Meteor.npmRequire 'fibers/future'
+    introspect = Meteor.npmRequire 'introspect'
+    resFuture = new Future
 
-      dockerMethodArgs = introspect @_docker[apiName]
+    dockerMethodArgs = introspect @_docker[apiName]
 
-      if "opts" in dockerMethodArgs
-        @_docker[apiName] opts, (err,data)->
-          res =
-            error: err
-            data: data
+    if "opts" in dockerMethodArgs
+      @_docker[apiName] opts, (err,data)->
+        res =
+          error: err
+          data: data
 
-          resFuture.return res
+        resFuture.return res
 
-        resData = resFuture.wait()
+      resData = resFuture.wait()
+    else
+      @_docker[apiName] (err,data)->
+        res =
+          error: err
+          data: data
+
+        resFuture.return res
+
+      resData = resFuture.wait()
+
+    if resData.error
+      resData.error["errorInfo"] =
+        errorAt: new Date
+        fn: "_futureCallDockerode"
+        args:
+          apiName: apiName
+          opts: opts
+
+    if callback
+      callback self=@, resData=resData
+    else
+
+      if @_callbacks.default
+        resData = @_callbacks.default @, resData
+
+      if @_callbacks[apiName]
+        resData = @_callbacks[apiName] @, resData
+
+      resData
+
+
+  _streamingCallDockerode: (apiName, kwargs, callback) ->
+
+    #PASSED: docker._streamingCallDockerode("pull", ["debian:jessie",{}])
+    #FIXME: docker._streamingCallDockerode("pull", ["debian:jessie"])
+
+    introspect = Meteor.npmRequire 'introspect'
+    kws = introspect @_docker[apiName]
+
+    if kwargs instanceof Array and kws.length >= kwargs.length
+      args = kwargs
+    else
+      args = kws.map (k) -> kwargs[k]
+
+    callbackIndex = kws.indexOf "callback"
+
+    args[callbackIndex] = (err,stream) ->
+
+      JSONStream = Meteor.npmRequire('JSONStream')
+      parser = JSONStream.parse()
+      if not err
+        stream.pipe(parser).on("data",console.log)#.pipe(streamToMongo)
       else
-        @_docker[apiName] (err,data)->
-          res =
-            error: err
-            data: data
+        console.log err
 
-          resFuture.return res
-
-        resData = resFuture.wait()
-
-      if resData.error
-        resData.error["errorInfo"] =
-          errorAt: new Date
-          fn: "_futureCallDockerode"
-          args:
-            apiName: apiName
-            opts: opts
-
-      if callback
-        callback self=@, resData=resData
-      else
-
-        if @_callbacks.default
-          resData = @_callbacks.default @, resData
-
-        if @_callbacks[apiName]
-          resData = @_callbacks[apiName] @, resData
-
-        resData
+    @_docker[apiName].apply @_docker, args
 
 
-  ping: (callback) ->
+  ping: (callback) -> 
     apiName = "ping"
 
     if @_docker
