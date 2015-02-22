@@ -124,3 +124,8 @@ Template.profilePageDockerInstancesTableRemoveBtnField.events
         console.log data
       else
         console.log err
+
+
+Template.public_profile.helpers
+  user: ->
+    Meteor.user()
