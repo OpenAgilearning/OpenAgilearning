@@ -7,7 +7,10 @@ if Meteor.isServer
       
       describe "Servers", ->
         before ->
+          db.dockerServersMonitor.remove {}
+          db.dockerImageTagsMonitor.remove {}
           Fixture.DockerServers.reset()
+
 
         # db.dockerServers.remove({})
         dockerServersData = db.dockerServers.find().fetch()
@@ -86,35 +89,39 @@ if Meteor.isServer
                   chai.expect(resData.error).to.be.null
                   chai.expect(db.dockerServersMonitor.find(query).fetch()).not.to.be.empty
 
-
                 it "get listImages from " + dockerServer._id + " should be successful!", ->                
                   resData = docker.listImages()
                   
                   chai.expect(resData.data).not.to.be.null
                   chai.expect(resData.error).to.be.null
 
-                it "sync listImages from " + dockerServer._id + " should be successful!", ->                
+                it "get listImageTags from " + dockerServer._id + " should be successful!", ->                
+                  resData = docker.listImageTags()
+                  
+                  chai.expect(resData.data).not.to.be.null
+                  chai.expect(resData.error).to.be.null
+          
+                it "sync listImageTags from " + dockerServer._id + " should be successful!", ->                
 
                   query = 
                     serverId: docker._id
                   
-                  db.dockerImagesMonitor.remove query
+                  db.dockerImageTagsMonitor.remove query
 
-                  chai.expect(db.dockerImagesMonitor.find(query).fetch()).to.be.empty
-                  resData = docker.listImages()
+                  chai.expect(db.dockerImageTagsMonitor.find(query).fetch()).to.be.empty
+                  resData = docker.listImageTags()
                   
                   chai.expect(resData.data).not.to.be.null
                   chai.expect(resData.error).to.be.null
-                  chai.expect(db.dockerImagesMonitor.find(query).fetch()).not.to.be.empty
+                  chai.expect(db.dockerImageTagsMonitor.find(query).fetch()).not.to.be.empty
 
-                it "no active < none > : < none > tag image in dockerImagesMonitor in " + dockerServer._id, ->                
+                it "no active < none > : < none > tag image in dockerImageTagsMonitor in " + dockerServer._id, ->                
 
                   query = 
                     serverId: docker._id
                     tag: '<none>:<none>'
                   
-                  chai.expect(db.dockerImagesMonitor.find(query).fetch()).to.be.empty
-
+                  chai.expect(db.dockerImageTagsMonitor.find(query).fetch()).to.be.empty
 
                 it "get listContainers from " + dockerServer._id + " should be successful!", ->                
                   resData = docker.listContainers({all:1})
@@ -135,7 +142,82 @@ if Meteor.isServer
                   
                   chai.expect(resData.data).not.to.be.null
                   chai.expect(resData.error).to.be.null
-                  chai.expect(db.dockerContainersMonitor.find(query).fetch()).not.to.be.empty
+                  chai.assert db.dockerContainersMonitor.find(query).count() is resData.data.length
+
+
+                describe "Class.DockerServer's IO", ->
+                  it "test Class.DockerServer::isImageTagInServer & listImageTags(tagOnly=true) with " + dockerServer._id, -> 
+                    resData = docker.listImageTags(tagOnly=true)
+                    chai.expect(resData.data).not.to.be.null
+                    chai.expect(resData.error).to.be.null
+
+                    serverImageTags = resData.data
+                    chai.assert serverImageTags.length>1, dockerServer._id + " has at least one image!"       
+                    
+                    testImage = serverImageTags[0]
+                    chai.expect(docker.isImageTagInServer(testImage)).to.be.true
+                    # chai.assert  is true, "test docker.isImageTagInServer on " + dockerServer._id + " with itself image: " + testImage       
+
+                    randomImage = Random.id(30)
+                    chai.expect(randomImage in serverImageTags).to.be.false
+                    chai.expect(docker.isImageTagInServer(randomImage)).to.be.false
+                    # chai.assert randomImage not in serverImageTags, randomImage + " not in serverImageTags in " + dockerServer._id
+                    # chai.assert docker.isImageTagInServer randomImage is false, "docker.isImageTagInServer " + randomImage + " is false in " + dockerServer._id
+
+
+                describe "tag & untag (image)", ->
+                  it "ensure sync listImageTags consistent when untagging image in " + dockerServer._id, -> 
+                    console.log "TODO"
+
+
+                describe "run (image), stop & remove (contianer)", ->
+                  it "ensure debian:jessie image in " + dockerServer._id, -> 
+                    console.log "TODO"
+
+                  it "run and check debian:jessie's container in " + dockerServer._id, ->
+                    chai.expect(docker.isImageTagInServer("debian:jessie")).to.be.true
+
+                  it "stop and check debian:jessie's container in " + dockerServer._id, ->
+                    console.log "TODO"
+
+                  it "remove and check debian:jessie's container in " + dockerServer._id, ->
+                    console.log "TODO"
+
+                  it "sync run->stop with debian:jessie in " + dockerServer._id, ->
+                    console.log "TODO"
+
+                  it "sync run->stop->remove with debian:jessie in " + dockerServer._id, ->
+                    console.log "TODO"
+
+
+                describe "pull & push from public docker hub", ->
+                  it "ensure redis:2.8.18 image not in " + dockerServer._id, -> 
+                    console.log "TODO"
+
+                  it "docker pull redis:2.8.18 image in " + dockerServer._id, -> 
+                    console.log "TODO"
+
+                describe "pull & push from private docker hub", ->
+
+                  it "ensure redis:2.8.18 image not in private docker repo (test " + dockerServer._id + ")", -> 
+                    console.log "TODO"
+
+                  it "docker push redis:2.8.18 image to private docker repo from " + dockerServer._id, -> 
+                    console.log "TODO"
+
+
+      # describe "run, stop, remove", ->
+      #   # "sync run->stop & run->stop->remove listContainers from " + dockerServer._id + " should be successful!", ->                                
+      #   dockerServersData = db.dockerServers.find().fetch()
+
+      #   for dockerServer in dockerServersData
+      #     do (dockerServer) ->
+      #       docker = new Class.DockerServer dockerServer, UsefulCallbacks
+
+      #       do (docker) ->
+          
+      #         testImageTag = "debian:jessie"
+
 
 
       # describe "localhost", ->

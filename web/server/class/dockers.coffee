@@ -8,10 +8,10 @@
     resData
 
   ping: (self, resData)->
-    if resData 
+    if resData
       if not resData.error
         self._docker_ping = true
-        
+
       else
         self._docker_ping = false
 
@@ -21,58 +21,58 @@
 @DockerMonitorCallbacks =
   onAfterInit: (self) ->
     if not self._configs_ok
-      query = 
+      query =
         serverId: self._id
         type: "configError"
         handlingStatus: "todo"
-        
+
       updateData =
         error: self._configs_errors
         updatedAt: new Date
 
       db.dockerServersException.update query, {$set:updateData}, {upsert:true}
-        
+
   ping: (self, resData)->
-    serverQuery = 
+    serverQuery =
       serverId: self._id
 
-    if resData 
+    if resData
       if not resData.error
         self._docker_ping = true
-        
-        updateData = 
-          pingStatus: resData.data 
+
+        updateData =
+          pingStatus: resData.data
           pingError: null
           active: true
           lastPingAt: new Date
 
         db.dockerServersMonitor.update serverQuery, {$set:updateData}, {upsert:true}
-      
+
       else
         self._docker_ping = false
 
-        updateData = 
+        updateData =
           pingStatus: null
           pingError: resData.error
           active: false
           lastPingAt: new Date
 
         db.dockerServersMonitor.update serverQuery, {$set:updateData}, {upsert:true}
-      
+
     else
-      updateData = 
-        active: false        
+      updateData =
+        active: false
         lastPingAt: new Date
 
       db.dockerServersMonitor.update serverQuery, {$set:updateData}, {upsert:true}
-      
+
     resData
 
   info: (self, resData)->
-    serverQuery = 
+    serverQuery =
       serverId: self._id
 
-    if resData 
+    if resData
       if not resData.error
         if resData.data.RegistryConfig?.IndexConfigs?
           target = resData.data.RegistryConfig.IndexConfigs
@@ -83,13 +83,13 @@
               target[newKey] = target[k]
               delete target[k]
 
-        updateData = 
+        updateData =
           info: resData.data
           error: null
           lastInfoMoonitorAt: new Date
 
       else
-        updateData = 
+        updateData =
           info: null
           error: resData.error
           lastInfoMoonitorAt: new Date
@@ -98,17 +98,120 @@
 
     resData
 
-  listImages: (self, resData)->
+
+  listContainers: (self, resData)->
+    if resData
+      if not resData.error
+        for data in resData.data
+          updateSelector =
+            serverId: self._id
+            Id:data.Id
+
+          updateData =
+            alive: true
+            running: true
+            serverId: self._id
+            lastUpdatedAt: new Date
+
+          updateData = _.extend updateData, data
+
+          db.dockerContainersMonitor.update updateSelector, {$set:updateData}, {upsert:true}
+
+    resData
+
+  listImageTags: (self, resData) ->
+    if resData
+      if not resData.error
+
+        # handling data in db.dockerImageTagsMonitor but not in resData.data
+        resImageIds = []
+        resData.data.map (imageData)->
+          if imageData.Id not in resImageIds
+            resImageIds.push imageData.Id
+
+        updateSelector =
+          serverId: self._id
+          Id:
+            $nin: resImageIds
+
+        updateData =
+          active: false
+          lastUpdatedAt: new Date
+
+        db.dockerImageTagsMonitor.update updateSelector, {$set:updateData}, {multi:true}
+
+        # handling data in resData.data
+        for data in resData.data
+          if data.tag is '<none>:<none>'
+
+            # data.tag is '<none>:<none>' but data.Id in db
+            updateSelector =
+              serverId: self._id
+              Id: data.Id
+
+            updateData =
+              active: false
+              lastUpdatedAt: new Date
+
+
+            db.dockerImageTagsMonitor.update updateSelector, {$set:updateData}, {multi:true}
+
+          else
+            updateSelector =
+              serverId: self._id
+              Id: data.Id
+              tag: data.tag
+
+            updateData =
+              serverId: self._id
+              active: true
+              lastUpdatedAt: new Date
+
+            updateData = _.extend updateData, data
+
+            db.dockerImageTagsMonitor.update updateSelector, {$set:updateData}, {upsert:true}
+
+    resData
+
+
+@DockerImageCallbacks =
+  onAfterInit: (self) ->
+    if not self._configs_ok
+      query =
+        serverId: self._id
+        type: "configError"
+        handlingStatus: "todo"
+
+      updateData =
+        error: self._configs_errors
+        updatedAt: new Date
+
+      db.dockerServersException.update query, {$set:updateData}, {upsert:true}
+
+  pullImage: (self, resData)->
     # if resData
     #   if not resData.error
     #   else
-    
-    resData  
+    resData
 
+  tagImage: (self, resData)->
+    # if resData
+    #   if not resData.error
+    #   else
+    resData
+  pushImage: (self, resData)->
+    # if resData
+    #   if not resData.error
+    #   else
+    resData
 
 @UsefulCallbacks = {}
 _.extend UsefulCallbacks, DockerServerCallbacks
 _.extend UsefulCallbacks, DockerMonitorCallbacks
+
+@ImageCallbacks = {}
+_.extend ImageCallbacks, DockerServerCallbacks
+_.extend ImageCallbacks, DockerImageCallbacks
 
 
 
@@ -136,7 +239,7 @@ _.extend UsefulCallbacks, DockerMonitorCallbacks
         catch err
 
           @_configs_errors.push err
-    
+
     if @_configs_errors.length is 0
       @_configs_ok = true
 
@@ -144,8 +247,8 @@ _.extend UsefulCallbacks, DockerMonitorCallbacks
 
       @_docker = new Docker @_configs
       @ping()
-    
-    
+
+
     if @_callbacks.onAfterInit
       @_callbacks.onAfterInit @
 
@@ -161,7 +264,7 @@ _.extend UsefulCallbacks, DockerMonitorCallbacks
 
     if "opts" in dockerMethodArgs
       @_docker[apiName] opts, (err,data)->
-        res = 
+        res =
           error: err
           data: data
 
@@ -170,7 +273,7 @@ _.extend UsefulCallbacks, DockerMonitorCallbacks
       resData = resFuture.wait()
     else
       @_docker[apiName] (err,data)->
-        res = 
+        res =
           error: err
           data: data
 
@@ -179,7 +282,7 @@ _.extend UsefulCallbacks, DockerMonitorCallbacks
       resData = resFuture.wait()
 
     if resData.error
-      resData.error["errorInfo"] = 
+      resData.error["errorInfo"] =
         errorAt: new Date
         fn: "_futureCallDockerode"
         args:
@@ -195,27 +298,27 @@ _.extend UsefulCallbacks, DockerMonitorCallbacks
 
       if @_callbacks[apiName]
         resData = @_callbacks[apiName] @, resData
-      
+
       resData
-      
+
 
   ping: (callback) ->
     apiName = "ping"
 
     if @_docker
       if callback
-        resData = @_futureCallDockerode apiName, {}, callback      
+        resData = @_futureCallDockerode apiName, {}, callback
       else
         resData = @_futureCallDockerode apiName
 
-      
+
   _dockerodeApiWrapper: (apiName, opts, callback)->
     if @_docker and @_docker_ping
       if not opts
         opts = {}
 
       if callback
-        resData = @_futureCallDockerode apiName, opts, callback      
+        resData = @_futureCallDockerode apiName, opts, callback
       else
         resData = @_futureCallDockerode apiName, opts
 
@@ -224,7 +327,7 @@ _.extend UsefulCallbacks, DockerMonitorCallbacks
     apiName = "info"
     @_dockerodeApiWrapper(apiName, {}, callback)
 
-      
+
   listImages: (opts, callback)->
     apiName = "listImages"
     @_dockerodeApiWrapper(apiName, opts, callback)
@@ -233,15 +336,47 @@ _.extend UsefulCallbacks, DockerMonitorCallbacks
   listContainers: (opts, callback)->
     apiName = "listContainers"
     @_dockerodeApiWrapper(apiName, opts, callback)
-    
+
 
   getContainer: (containerId)->
     if @_docker and @_docker_ping
       container = @_docker.getContainer containerId
-
 
   createContainer: (opts, callback)->
     if @_docker and @_docker_ping
       apiName = "createContainer"
       containerRes = @_dockerodeApiWrapper(apiName, opts, callback)
 
+
+  listImageTags: (tagOnly=false)->
+    methodName = "listImageTags"
+    resData = @listImages({})
+
+    if resData?.data
+      newData = []
+      for data in resData.data
+        tags = data.RepoTags
+        delete data.RepoTags
+        for tag in tags
+          newData.push _.extend {tag:tag}, data
+
+      if newData.length > 0
+        resData.data = newData
+
+    if @_callbacks[methodName]
+      resData = @_callbacks[methodName] @, resData
+
+    if tagOnly
+      resData.data = resData.data.map (data)-> data.tag      
+
+    resData
+
+
+  isImageTagInServer: (imageTag) ->
+    serverImageTags = @listImageTags(tagOnly=true)?.data
+    imageTag in serverImageTags
+
+
+  getImage: (imageTag)->
+    if @_docker and @_docker_ping
+      image = @_docker.getImage imageTag

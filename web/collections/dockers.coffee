@@ -1,5 +1,5 @@
 new Mongo.Collection "dockerServersMonitor"
-new Mongo.Collection "dockerImagesMonitor"
+new Mongo.Collection "dockerImageTagsMonitor"
 new Mongo.Collection "dockerContainersMonitor"
 
 @DockerServers = new Mongo.Collection "dockerServers"
@@ -35,6 +35,8 @@ new Mongo.Collection "dockerContainersMonitor"
 @Collections.DockerPullImageStream = new Mongo.Collection "dockerPullImageStream"
 @Collections.DockerRunJob = new Mongo.Collection "dockerRunJob"
 
+@Collections.DockerPushImageJob = new Mongo.Collection "dockerPushImageJob"
+@Collections.DockerPushImageJobStream = new Mongo.Collection "dockerPushImageJobStream"
 
 
 getDockerFreePort = (dockerServerId)->
@@ -95,4 +97,3 @@ Meteor.methods
       throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
 
     Meteor.call "runDocker", imageId
-
