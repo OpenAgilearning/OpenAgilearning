@@ -213,6 +213,9 @@ _.extend UsefulCallbacks, DockerMonitorCallbacks
 _.extend ImageCallbacks, DockerServerCallbacks
 _.extend ImageCallbacks, DockerImageCallbacks
 
+
+
+
 @Class.DockerServer = class DockerServer
 
   constructor: (@_data, @_callbacks=DockerServerCallbacks) ->
@@ -345,7 +348,7 @@ _.extend ImageCallbacks, DockerImageCallbacks
       containerRes = @_dockerodeApiWrapper(apiName, opts, callback)
 
 
-  listImageTags: ->
+  listImageTags: (tagOnly=false)->
     methodName = "listImageTags"
     resData = @listImages({})
 
@@ -363,7 +366,15 @@ _.extend ImageCallbacks, DockerImageCallbacks
     if @_callbacks[methodName]
       resData = @_callbacks[methodName] @, resData
 
+    if tagOnly
+      resData.data = resData.data.map (data)-> data.tag      
+
     resData
+
+
+  isImageTagInServer: (imageTag) ->
+    serverImageTags = @listImageTags(tagOnly=true)?.data
+    imageTag in serverImageTags
 
 
   getImage: (imageTag)->
