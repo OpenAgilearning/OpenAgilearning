@@ -17,7 +17,7 @@ Meteor.startup ->
 
       waitOn: ->
         userId = Meteor.userId()
-        
+
         redirectAfterLogin = Cookies.get "redirectAfterLogin"
         if redirectAfterLogin and userId
           Cookies.expire "redirectAfterLogin"
@@ -26,7 +26,7 @@ Meteor.startup ->
         Meteor.subscribe "DevMileStone"
         Meteor.subscribe "WantedFeature"
         # Meteor.subscribe "allPublicCourses"
-        
+
         Meteor.subscribe "allPublicCoursesDockerImages"
 
         Meteor.subscribe "allPublicAndSemipublicCourses"
@@ -56,12 +56,12 @@ Meteor.startup ->
           hasEnvUserConfigs: ->
             EnvUserConfigs.find().count() > 0
 
-          hasUnsettingEnvUserConfigs: -> 
+          hasUnsettingEnvUserConfigs: ->
             (EnvConfigTypes.find().count() - EnvUserConfigs.find().count() )> 0
 
           filteredEnvConfigTypes: ->
-            filteringConfigTypeIds = EnvUserConfigs.find().fetch().map (xx)-> xx.configTypeId            
-            EnvConfigTypes.find _id:{$nin:filteringConfigTypeIds}            
+            filteringConfigTypeIds = EnvUserConfigs.find().fetch().map (xx)-> xx.configTypeId
+            EnvConfigTypes.find _id:{$nin:filteringConfigTypeIds}
 
       waitOn: ->
         userId = Meteor.userId()
@@ -100,7 +100,7 @@ Meteor.startup ->
         envConfigTypeId: ->
           if Session.get("envConfigTypeId") isnt ""
             Session.get "envConfigTypeId"
-            
+
         userConfigId: ->
           if Session.get("userConfigId") isnt ""
             Session.get "userConfigId"
@@ -127,7 +127,7 @@ Meteor.startup ->
         Meteor.subscribe "allPublicEnvConfigTypes"
         Meteor.subscribe "allPublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
-          
+
         Meteor.subscribe "userRoles", ["agilearning.io"]
         Meteor.subscribe "userResume"
 
@@ -154,7 +154,7 @@ Meteor.startup ->
 
         Meteor.subscribe "allPublicAndSemipublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
- 
+
         Meteor.subscribe "userRoles", ["course", "agilearning.io"]
 
     @route "course",
@@ -191,7 +191,7 @@ Meteor.startup ->
 
         CoursesSubHandler = Meteor.subscribe "course", @params.courseId
         RolesHandler = Meteor.subscribe "userRoles", ["course", "agilearning.io"]
-        
+
         Meteor.autorun =>
           if CoursesSubHandler.ready() and RolesHandler.ready()
             if Courses.findOne().publicStatus isnt "public"
@@ -240,28 +240,28 @@ Meteor.startup ->
             # classroomDoc = Classrooms.findOne _id:@params.classroomId
             # courseData = Courses.findOne _id:classroomDoc.courseId
             # imageTag = courseData.dockerImage
-            
+
             # configTypeId = DockerImages.findOne({_id:imageTag}).type
-            
+
             configTypeId = getEnvConfigTypeIdFromClassroomId(@params.classroomId)
-            EnvUserConfigs.find({userId:userId, configTypeId:configTypeId}).count() is 0            
+            EnvUserConfigs.find({userId:userId, configTypeId:configTypeId}).count() is 0
 
           # envConfigsSchema: =>
           #   userId = Meteor.userId()
           #   # classroomDoc = Classrooms.findOne _id:@params.classroomId
           #   # courseData = Courses.findOne _id:classroomDoc.courseId
           #   # imageTag = courseData.dockerImage
-            
+
           #   # configTypeId = DockerImages.findOne({_id:imageTag}).type
-            
+
           #   configTypeId = getEnvConfigTypeIdFromClassroomId(@params.classroomId)
-            
+
           #   envConfigsData = EnvConfigTypes.findOne _id:configTypeId
           #   schemaSettings = {}
 
           #   envConfigsData.configs.envs.map (env)->
           #     schemaSettings[env.name] = {type: String}
-                
+
           #     if not env.mustHave
           #       schemaSettings[env.name].optional = true
 
@@ -287,7 +287,7 @@ Meteor.startup ->
         redirectToIndex = redirectToIndex  and not Roles.userIsInRole(userId,"student",classroomAndId)
 
         if redirectToIndex
-          Router.go "index"          
+          Router.go "index"
 
         Meteor.subscribe "allPublicEnvConfigTypes"
         Meteor.subscribe "userEnvUserConfigs"
@@ -363,7 +363,7 @@ Meteor.startup ->
 
         uniqueDockerImageTags: ->
           _.uniq(DockerServerImages.find().fetch().map((xx) -> xx["tag"]))
-          
+
       waitOn: ->
 
         Meteor.subscribe "userRoles", ["agilearning.io"]
@@ -372,7 +372,7 @@ Meteor.startup ->
         if not userId
           Router.go "pleaseLogin"
 
-        
+
         else
           if Roles.userIsInRole(userId,"admin","system")
             Meteor.subscribe "allUsers"
@@ -380,7 +380,7 @@ Meteor.startup ->
             # Meteor.subscribe "allDockerImages"
             # Meteor.subscribe "DevMileStone"
             # Meteor.subscribe "WantedFeature"
-            
+
             Meteor.subscribe "allDockerServers"
             Meteor.subscribe "allDockerServerImages"
             Meteor.subscribe "allDockerServerContainers"
@@ -392,11 +392,11 @@ Meteor.startup ->
             if Roles.userIsInRole(userId,"admin","dockers")
               # Meteor.subscribe "allDockerInstances"
               # Meteor.subscribe "allDockerImages"
-              
+
               Meteor.subscribe "allDockerServers"
               Meteor.subscribe "allDockerServerImages"
               Meteor.subscribe "allDockerServerContainers"
-            
+
               # Meteor.subscribe "allEnvTypes"
               Meteor.subscribe "allEnvs"
             else
@@ -452,7 +452,7 @@ Meteor.startup ->
     #     Session.set "courseId", "wishFeatures"
 
 
-    @route "discussions", 
+    @route "discussions",
       path: "discuss/"
       template: "discussions"
       data:
@@ -472,7 +472,7 @@ Meteor.startup ->
         Meteor.subscribe "feedback"
         Meteor.subscribe "votes", ["Feedback"]
 
-    @route "forumPost", 
+    @route "forumPost",
       path: "forums/:postId"
       template: "forumPost"
 
@@ -488,6 +488,24 @@ Meteor.startup ->
       waitOn: ->
         Meteor.subscribe "forumPost", @params.postId
 
+
+    @route "resume",
+      path: "resume/:userId"
+      template: "resume"
+
+      data:
+        user: -> Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId, "admin", "system") or Roles.userIsInRole(userId, "admin", "dockers")
+        resume: ->
+          db.publicResume.find()
+
+      waitOn: ->
+        Meteor.subscribe "userResume"
+
+
+
     @route "pleaseLogin",
       path: "becomeAgilearner/"
       template: "becomeAgilearner"
@@ -502,7 +520,7 @@ Meteor.startup ->
     @route "about",
       path: "about/"
       template: "aboutUs"
-      
+
       # Add these code so when admin route to about us,
       # his/her admin nav won't disappear strangely.
       data:

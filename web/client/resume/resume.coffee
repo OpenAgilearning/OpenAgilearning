@@ -4,6 +4,11 @@ Template.resume.helpers
     if pair?.isPublic
       pair.value
 
+Template.resume_profile.helpers
+  field: (key)->
+    pair = db.publicResume.findOne key:key
+    if pair?.isPublic
+      pair.value
 
 Template.resume_setting.helpers
 
