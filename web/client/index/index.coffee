@@ -45,44 +45,44 @@ Template.applyCourseBtn.events
 #     @publicStatus is "semipublic"
 
 
-Template.nodesList.rendered = ->
-  # $container = $(".nodeList")
-  # $container.imagesLoaded ->
-  #   $container.masonry
-  #     itemSelector: ".nodeInfo"
+# Template.nodesList.rendered = ->
+#   # $container = $(".nodeList")
+#   # $container.imagesLoaded ->
+#   #   $container.masonry
+#   #     itemSelector: ".nodeInfo"
           
-  $('.nodesList').masonry
-    columnWidth: ".col-md-3"
-    itemSelector: '.nodeInfo'
+#   $('.nodesList').masonry
+#     columnWidth: ".col-md-3"
+#     itemSelector: '.nodeInfo'
 
-  $conotianer = $(".nodeList").masonry()
+#   $conotianer = $(".nodeList").masonry()
 
-  $conotianer.imagesLoaded ->
-    $conotianer.masonry()
+#   $conotianer.imagesLoaded ->
+#     $conotianer.masonry()
 
 
-Template.nodeIcons.rendered = -> 
-  $conotianer = $(".nodeList").masonry()
+# Template.nodeIcons.rendered = -> 
+#   $conotianer = $(".nodeList").masonry()
 
-  $conotianer.imagesLoaded ->
-    $conotianer.masonry()
+#   $conotianer.imagesLoaded ->
+#     $conotianer.masonry()
 
-    # columnWidth: ".col-md-3"
-    # itemSelector: '.nodeInfo'
+#     # columnWidth: ".col-md-3"
+#     # itemSelector: '.nodeInfo'
 
 
 Template.index.rendered = ->
   
-  # $container = $(".nodeList")
-  # $container.imagesLoaded ->
-  #   $container.masonry
-  #     itemSelector: ".nodeInfo"
+#   # $container = $(".nodeList")
+#   # $container.imagesLoaded ->
+#   #   $container.masonry
+#   #     itemSelector: ".nodeInfo"
 
-  # $(".nodeList").masonry()
-    # columnWidth: ".col-md-3"
-    # itemSelector: '.nodeInfo'
+  $(".nodesList").masonry
+    columnWidth: ".col-md-3"
+    itemSelector: '.nodeInfo'
 
-  $conotianer = $(".nodeList").masonry()
+  $conotianer = $(".nodesList").masonry()
 
   $conotianer.imagesLoaded ->
     $conotianer.masonry()
@@ -101,13 +101,16 @@ Template.nodeInfo.rendered = ->
     $(elem).toggleClass "col-md-6"
     $(".nodesList").masonry()
 
-  $conotianer = $(".nodesList")
+  $conotianer = $(".nodesList").masonry()
   
-  $conotianer.masonry "appended", elem
- 
+  # $conotianer.masonry "appended", elem
   
   $conotianer.imagesLoaded ->
     $conotianer.masonry()
+ 
+  
+#   $conotianer.imagesLoaded ->
+#     $conotianer.masonry()
 
 
   # briefView = ->
