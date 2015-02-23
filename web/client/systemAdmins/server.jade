@@ -11,20 +11,3 @@ template(name="serverPage")
         //- h2 Docker Server Images
         //- +adminPageDockerServerImagesTabel
       .col-md-3.column
-template(name="pullImageForm")
-  +autoForm id="pullImage" doc=pullImageData schema="DockerServerPullImageLogSchema" type="method" meteormethod="pullImage"
-    fieldset
-      label.control-label {{afFieldLabelText name="dockerHubIp"}}
-      +afFieldInput name="dockerHubIp" placeholder="dockerhub" type="text"
-      strong {{{afFieldMessage name="dockerHubIp"}}}
-      label.control-label {{afFieldLabelText name="imageName"}}
-      +afFieldInput name="imageName"
-      strong {{{afFieldMessage name="imageName"}}}
-      label.control-label {{afFieldLabelText name="imageVersion"}}
-      +afFieldInput name="imageVersion" type="text" placeholder="latest"
-      strong {{{afFieldMessage name="imageVersion"}}}
-      label.control-label {{afFieldLabelText name="dockerServerId"}}
-      +afFieldInput name="dockerServerId"
-      strong {{{afFieldMessage name="dockerServerId"}}}
-    br
-    button.btn.btn-primary(type='submit') submit
