@@ -218,7 +218,7 @@ _.extend ImageCallbacks, DockerServerCallbacks
 _.extend ImageCallbacks, DockerImageCallbacks
 
 
-StreamingCallBacks = 
+StreamingCallBacks =
   default: (err,stream) ->
     JSONStream = Meteor.npmRequire('JSONStream')
     parser = JSONStream.parse()
@@ -347,7 +347,7 @@ needStreamingCallback = (fn, streamingFns=[])->
       if args.length < callbackIndex
         for i in [args.length..callbackIndex]
           args.push {}
-      
+
       if callback
         args[callbackIndex] = callback
       else
@@ -359,7 +359,7 @@ needStreamingCallback = (fn, streamingFns=[])->
       @_docker[apiName].apply @_docker, args
 
 
-  ping: (callback) -> 
+  ping: (callback) ->
     apiName = "ping"
 
     if @_docker
@@ -424,7 +424,7 @@ needStreamingCallback = (fn, streamingFns=[])->
       resData = @_callbacks[methodName] @, resData
 
     if tagOnly
-      resData.data = resData.data.map (data)-> data.tag      
+      resData.data = resData.data.map (data)-> data.tag
 
     resData
 
@@ -458,8 +458,8 @@ needStreamingCallback = (fn, streamingFns=[])->
 
 
 
-@Class.DockerodeType = class DockerodeType
-  
+@Class.DockerodeClass = class DockerodeClass
+
   constructor: (@_Class, @_initData, @_callbacks) ->
     @_apis = Object.keys @_Class::
 
@@ -468,37 +468,42 @@ needStreamingCallback = (fn, streamingFns=[])->
 
     @_apiArgs = {}
 
-    @_apis.map (api) => 
+    @_apis.map (api) =>
       introspect = Meteor.npmRequire 'introspect'
       @_apiArgs[api] = introspect @_Class::[api]
+
+    @_callbackApis = @_apis.filter (api)=> "callback" in @_apiArgs[api]
+
 
     if @_initData instanceof @_Class
       @_instance = @_initData
       delete @_initData
-    else 
-      if @_initData  
+    else
+      if @_initData
         @_instance = new @_Class @_initData
 
-    _futureApis = @_apis.filter (api)=> api not in @_streamingApis
+    @_syncApis = @_apis.filter (api)=> api not in @_streamingApis
 
-    for api in _futureApis
+    for api in @_syncApis
 
       apiDes = do (api) ->
-          res = 
-            get: ->
-              (args...) -> this._futureCall(api,args...)
+        res =
+          get: ->
+            (args...) -> this._syncCall(api,args...)
+            # (args...) -> this._syncCall.call this, args.unshift(api)
 
-      # console.log "apiDes = "
-      # console.log apiDes
 
-      Object.defineProperty @.constructor::, api, apiDes
+      # Object.defineProperty @.constructor::, api, apiDes
+      Object.defineProperty @, api, apiDes
 
-  _futureCall: (apiName, args..., callback) ->
+
+  _syncCall: (apiName, args..., callback) ->
     unless typeof callback is "function"
       args.push callback
 
     if apiName in @_apis and @_instance
       unless apiName in @_streamingApis
+
         Future = Meteor.npmRequire 'fibers/future'
         resFuture = new Future
 
@@ -509,22 +514,37 @@ needStreamingCallback = (fn, streamingFns=[])->
 
           resFuture.return res
 
-        callbackIndex = @_apiArgs[apiName].indexOf "callback"
 
-        if args.length < callbackIndex
-          for i in [args.length..callbackIndex]
-            args.push {}
-        
-        args[callbackIndex] = futureCallback
 
-        @_instance[apiName].apply @_instance, args 
-        
-        resData = resFuture.wait()
+        if apiName in @_callbackApis
+          callbackIndex = @_apiArgs[apiName].indexOf "callback"
+
+          if args.length < callbackIndex
+            for i in [args.length..callbackIndex]
+              args.push {}
+
+          args[callbackIndex] = futureCallback
+
+
+          @_instance[apiName].apply @_instance, args
+          resData = resFuture.wait()
+
+        else
+
+          try
+            resData =
+              data: @_instance[apiName].apply @_instance, args
+              error: null
+          catch e
+            resData =
+              data: null
+              error: e
+
 
         if resData.error
           resData.error["errorInfo"] =
             errorAt: new Date
-            fn: "_futureCall"
+            fn: "_syncCall"
             args:
               apiName: apiName
               args: args
@@ -544,14 +564,14 @@ needStreamingCallback = (fn, streamingFns=[])->
 
 
 
-@Class.DockerImage = class DockerImage extends Class.DockerodeType
+@Class.DockerImage = class DockerImage extends Class.DockerodeClass
 
   constructor: (@_serverId, @_image) ->
     super @_image.constructor, @_image
-    
 
 
-@Class.NewDockerServer = class NewDockerServer extends Class.DockerodeType
+
+@Class.NewDockerServer = class NewDockerServer extends Class.DockerodeClass
 
   constructor: (@_data, @_callbacks=DockerServerCallbacks, @_streamingCallbacks=StreamingCallBacks) ->
 
@@ -581,4 +601,4 @@ needStreamingCallback = (fn, streamingFns=[])->
       Docker = Meteor.npmRequire "dockerode"
 
       super Docker, @_configs, @_callbacks
-      
+
