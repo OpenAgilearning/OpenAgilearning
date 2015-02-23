@@ -186,6 +186,9 @@ if Meteor.isServer
                     #   console.log "pulling c3h3/learning-shogun:agilearning in " + dockerServer._id
                     #   docker.pull "c3h3/learning-shogun:agilearning"
 
+                    if not docker.isImageTagInServer("redis:2.8.18")
+                      console.log "pulling redis:2.8.18 in " + dockerServer._id
+                      docker.pull "redis:2.8.18"
 
 
                   it "ensure debian:jessie image in " + dockerServer._id, ->
@@ -214,10 +217,10 @@ if Meteor.isServer
                 describe "pull & push from public docker hub", ->
                   before ->
                     if docker.isImageTagInServer("redis:2.8.18")
-                      console.log "pulling debian:jessie in " + dockerServer._id
-                      docker.getImage("redis:2.8.18")._image.remove (err,data)->
-                        if not err
-                          console.log data
+                      console.log "redis:2.8.18 in " + dockerServer._id
+                      # docker.getImage("redis:2.8.18")._image.remove (err,data)->
+                      #   if not err
+                      #     console.log data
 
                   it "ensure redis:2.8.18 image not in " + dockerServer._id, ->
                     chai.expect(docker.isImageTagInServer("redis:2.8.18")).to.be.false

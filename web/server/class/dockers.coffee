@@ -647,3 +647,20 @@ needStreamingCallback = (fn, streamingFns=[])->
   isImageTagInServer: (imageTag) ->
     serverImageTags = @listImageTags(tagOnly=true)?.data
     imageTag in serverImageTags
+
+
+  _getImage: (imageTag) ->
+    resData = @getImage imageTag
+    if resData
+      if not resData.error
+        new Class.DockerImage @_id, resData.data
+      else
+        resData
+    else
+      resData
+
+
+  rm: (imageTag)->
+    if imageTag in @listImageTags(tagOnly=true)
+      imageObj = @_getImage imageTag
+      imageObj.remove()
