@@ -25,7 +25,16 @@
     else
       console.log err
 
-  pull: (err,stream) ->
+@DockerImageCallbacks =
+  defaultStreamingCallback: (err,stream) ->
+    JSONStream = Meteor.npmRequire('JSONStream')
+    parser = JSONStream.parse()
+    if not err
+      stream.pipe(parser).on("data",console.log)#.pipe(streamToMongo)
+    else
+      console.log err
+
+  push: (err,stream) ->
     JSONStream = Meteor.npmRequire('JSONStream')
     parser = JSONStream.parse()
     if not err
@@ -194,44 +203,44 @@
     resData
 
 
-@DockerImageCallbacks =
-  onAfterInit: (self) ->
-    if not self._configs_ok
-      query =
-        serverId: self._id
-        type: "configError"
-        handlingStatus: "todo"
+# @DockerImageCallbacks =
+#   onAfterInit: (self) ->
+#     if not self._configs_ok
+#       query =
+#         serverId: self._id
+#         type: "configError"
+#         handlingStatus: "todo"
 
-      updateData =
-        error: self._configs_errors
-        updatedAt: new Date
+#       updateData =
+#         error: self._configs_errors
+#         updatedAt: new Date
 
-      db.dockerServersException.update query, {$set:updateData}, {upsert:true}
+#       db.dockerServersException.update query, {$set:updateData}, {upsert:true}
 
-  pullImage: (self, resData)->
-    # if resData
-    #   if not resData.error
-    #   else
-    resData
+#   pullImage: (self, resData)->
+#     # if resData
+#     #   if not resData.error
+#     #   else
+#     resData
 
-  tagImage: (self, resData)->
-    # if resData
-    #   if not resData.error
-    #   else
-    resData
-  pushImage: (self, resData)->
-    # if resData
-    #   if not resData.error
-    #   else
-    resData
+#   tagImage: (self, resData)->
+#     # if resData
+#     #   if not resData.error
+#     #   else
+#     resData
+#   pushImage: (self, resData)->
+#     # if resData
+#     #   if not resData.error
+#     #   else
+#     resData
 
 @UsefulCallbacks = {}
 _.extend UsefulCallbacks, DockerServerCallbacks
 _.extend UsefulCallbacks, DockerMonitorCallbacks
 
-@ImageCallbacks = {}
-_.extend ImageCallbacks, DockerServerCallbacks
-_.extend ImageCallbacks, DockerImageCallbacks
+# @ImageCallbacks = {}
+# _.extend ImageCallbacks, DockerServerCallbacks
+# _.extend ImageCallbacks, DockerImageCallbacks
 
 
 StreamingCallBacks =
@@ -505,7 +514,7 @@ needStreamingCallback = (fn, streamingFns=[])->
       apiDes = do (api) ->
         res =
           get: ->
-            (args...) -> this._syncCall(api,args...)
+            (args...) -> this._syncCall(api,args)
             # (args...) -> this._syncCall.call this, args.unshift(api)
 
 
@@ -529,13 +538,21 @@ needStreamingCallback = (fn, streamingFns=[])->
     @_canSyncCall = @_canSyncCall and (apiName not in @_streamingApis)
 
 
-  _syncCall: (apiName, args..., callback) ->
-    unless typeof callback is "function"
-      args.push callback
+  _syncCall: (apiName, kwargs, callback) ->
+    # unless typeof callback is "function"
+    #   args.push callback
 
     @_syncCallCheck apiName
 
     if @_canSyncCall
+
+      kws = @_apiArgs[apiName]
+
+      if kwargs instanceof Array and kws.length >= kwargs.length
+        args = kwargs
+      else
+        args = kws.map (k) -> kwargs[k]
+
 
       Future = Meteor.npmRequire 'fibers/future'
       resFuture = new Future
@@ -639,8 +656,8 @@ needStreamingCallback = (fn, streamingFns=[])->
 
 @Class.DockerImage = class DockerImage extends Class.DockerodeClass
 
-  constructor: (@_serverId, @_image) ->
-    super @_image.constructor, @_image
+  constructor: (@_serverId, @_image, @_callbacks=DockerImageCallbacks) ->
+    super @_image.constructor, @_image, @_callbacks
 
 
 
