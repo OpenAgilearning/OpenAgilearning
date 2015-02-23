@@ -8,24 +8,16 @@ template(name="resume")
 
 template(name="resume_setting")
   h2 Resume Setting
-  //- +reactiveTable settings=settings
+
   +quickForm id="profileUpdate" schema="profileSchema" type="method" meteormethod="updateResume" doc=doc
 
 template(name="privacy_setting")
   h2 Privacy Settings
     |#[small What shows up on my resume]
 
-  //- h2 {{privacyDoc}}
   +quickForm id="privacyUpdate" schema="privacySchema" type="method" meteormethod="updatePrivacy" doc=privacyDoc
 
   ul
     li Courses
     li Slides
     li videos
-
-  //- each resume
-  //-   p {{key}},{{value}},{{isPublic}}
-//- template(name="edit_value")
-//-   +autoForm id=this.key type="update" collection="db.publicResume" doc=this autosave=true schema=schema
-//-     +afFormGroup name="value" label=false
-
