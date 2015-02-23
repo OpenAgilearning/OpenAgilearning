@@ -46,8 +46,9 @@
           active: true
           lastPingAt: new Date
 
-        console.log "updateData = "
-        console.log updateData
+        # FIXME: #315
+        # console.log "updateData = "
+        # console.log updateData
 
         db.dockerServersMonitor.update serverQuery, {$set:updateData}, {upsert:true}
 
