@@ -1,12 +1,22 @@
 
-@DockerServerCallbacks =
+@DockerDefaultCallbacks =
   default: (self, resData)->
     if resData
       if resData.error
-        self._docker_errors.push resData.error
+        self._docker_errors?.push resData.error
 
     resData
 
+  defaultStreamingCallback: (err,stream) ->
+    JSONStream = Meteor.npmRequire('JSONStream')
+    parser = JSONStream.parse()
+    if not err
+      stream.pipe(parser).on("data",console.log)#.pipe(streamToMongo)
+    else
+      console.log err
+
+
+@DockerServerCallbacks =
   ping: (self, resData)->
     if resData
       if not resData.error
@@ -17,23 +27,10 @@
 
     resData
 
-  defaultStreamingCallback: (err,stream) ->
-    JSONStream = Meteor.npmRequire('JSONStream')
-    parser = JSONStream.parse()
-    if not err
-      stream.pipe(parser).on("data",console.log)#.pipe(streamToMongo)
-    else
-      console.log err
+@DockerServerCallbacks = _.extend @DockerServerCallbacks, DockerDefaultCallbacks
+
 
 @DockerImageCallbacks =
-  defaultStreamingCallback: (err,stream) ->
-    JSONStream = Meteor.npmRequire('JSONStream')
-    parser = JSONStream.parse()
-    if not err
-      stream.pipe(parser).on("data",console.log)#.pipe(streamToMongo)
-    else
-      console.log err
-
   push: (err,stream) ->
     JSONStream = Meteor.npmRequire('JSONStream')
     parser = JSONStream.parse()
@@ -41,6 +38,13 @@
       stream.pipe(parser).on("data",console.log)#.pipe(streamToMongo)
     else
       console.log err
+
+@DockerImageCallbacks = _.extend @DockerImageCallbacks, DockerDefaultCallbacks
+
+
+@DockerContainerCallbacks = {}
+@DockerContainerCallbacks = _.extend @DockerContainerCallbacks, DockerDefaultCallbacks
+
 
 
 @DockerMonitorCallbacks =
@@ -660,6 +664,11 @@ needStreamingCallback = (fn, streamingFns=[])->
     super @_image.constructor, @_image, @_callbacks
 
 
+@Class.DockerContainer = class DockerContainer extends Class.DockerodeClass
+
+  constructor: (@_serverId, @_container, @_callbacks=DockerContainerCallbacks) ->
+    super @_container.constructor, @_container, @_callbacks
+
 
 @Class.NewDockerServer = class NewDockerServer extends Class.DockerodeClass
 
@@ -694,6 +703,8 @@ needStreamingCallback = (fn, streamingFns=[])->
 
       @ping()
 
+
+
     else
       @ping = ->
 
@@ -727,6 +738,19 @@ needStreamingCallback = (fn, streamingFns=[])->
 
     resData
 
+  listContainerIds: (opts={all:1})->
+    methodName = "listContainerIds"
+    resData = @listContainers(opts)
+
+    if resData?.data
+      resData.data = resData.data.map (data)-> data.Id
+
+
+    if @_callbacks[methodName]
+      resData = @_callbacks[methodName] @, resData
+
+    resData
+
 
   isImageTagInServer: (imageTag) ->
     serverImageTags = @listImageTags(tagOnly=true)?.data
@@ -744,6 +768,135 @@ needStreamingCallback = (fn, streamingFns=[])->
       resData
 
 
-  rm: (imageTag)->
+  rmi: (imageTag)->
     @_getImage(imageTag).remove()
 
+
+  allImages: ()->
+    @listImageTags(tagOnly=true)?.data.map (imageTag)=>
+      @_getImage imageTag
+
+
+  _getContainer: (containerId)->
+    resData = @getContainer containerId
+    if resData
+      if not resData.error
+        new Class.DockerContainer @_id, resData.data
+      else
+        resData
+    else
+      resData
+
+
+  stop: (containerId)->
+    @_getContainer(containerId).stop()
+
+
+  rm: (containerId)->
+    @_getContainer(containerId).remove()
+
+
+  start: (containerId)->
+    @_getContainer(containerId).start()
+
+
+  stopAll: ()->
+    @listContainerIds().data.map (containerId)=>
+      @stop containerId
+
+
+  rmAll: ()->
+    @stopAll()
+    @listContainerIds().data.map (containerId)=>
+      @rm containerId
+
+
+  startAll: ()->
+    @listContainerIds().data.map (containerId)=>
+      @start containerId
+
+
+  allContainers: ()->
+    @listContainerIds().data.map (containerId)=>
+      @_getContainer containerId
+
+
+  commit: (containerId, repo, tag, comment, author)->
+    container = @_getContainer containerId
+
+    if not repo
+      repo = "AgilearningIO/"+Random.id(20)
+
+    if not tag
+      tag = "latest"
+
+    if not comment
+      comment = "agilearning.io awesome!"
+
+    if not author
+      author = "agilearning.io"
+
+    commitData =
+      repo: repo
+      tag: tag
+      comment: comment
+      author: author
+
+    container.commit(commitData)
+
+
+  allUsedPorts: ->
+    usedPorts = []
+    @listContainers({all:1}).data.map (xx)->
+      xx.Ports.map (yy)->
+        usedPorts.push yy.PublicPort
+
+    usedPorts.map String
+
+  getFreePorts: (n, start=8000, end=9000)->
+    allPorts = [start..end].map String
+    allUsedPorts = @allUsedPorts()
+    allFreePorts = allPorts.filter (port)=> port not in allUsedPorts
+    allFreePorts[0..n-1]
+
+
+  _runTest:(imageTag) ->
+    # con.commit({repo:"ClassDockerImage",tag:"firstCommit",comment:"agilearning awesome!",author:"agilearning.io"})
+    # imageTag = "ClassDockerImage:firstCommit"
+
+    if not imageTag
+      imageTag = "c3h3/ipython:agilearning"
+
+
+    configData = db.envUserConfigs.findOne({configTypeId:"ipynb"}).configData
+    EnvsArray = configData.map (envData) -> envData["key"] + "=" + envData["value"]
+    dockerLimit = db.dockerLimits.findOne()
+
+    containerData = _.extend {}, dockerLimit.limit
+    containerData.Image = imageTag
+    containerData.Env = EnvsArray
+
+    configTypeId = 'ipynb'
+    servicePorts = db.envConfigTypes.findOne({_id:configTypeId}).configs.servicePorts
+    fports = docker.getFreePorts(servicePorts.length)
+
+    portDataArray = [0..fports.length-1].map (i)->
+      portData =
+        guestPort: servicePorts[i].port
+        hostPort: fports[i]
+        type: servicePorts[i].type
+
+    containerData.HostConfig = {}
+    containerData.HostConfig.PortBindings = {}
+
+    for portData in portDataArray
+      servicePort = portData.guestPort + "/tcp"
+      containerData.HostConfig.PortBindings[servicePort] = [{"HostPort": portData.hostPort}]
+
+
+    containerResData = @createContainer containerData
+
+    if not containerResData.error
+      new Class.DockerContainer @_id, containerResData.data
+    else
+      containerResData

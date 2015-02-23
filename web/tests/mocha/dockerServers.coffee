@@ -171,7 +171,7 @@ if Meteor.isServer
                 #     console.log "TODO"
 
 
-                describe "docker.pull & docker.rm (image) / image.tag", ->
+                describe "docker.pull & docker.rmi (image) / image.tag", ->
                   before ->
                     if not docker.isImageTagInServer("redis:2.8.18")
                       console.log "pulling redis:2.8.18 in " + dockerServer._id
@@ -182,7 +182,7 @@ if Meteor.isServer
 
                   it "ensure no testingTag:testingTag image in " + dockerServer._id, ->
                     if docker.isImageTagInServer "testingTag:testingTag"
-                      docker.rm "testingTag:testingTag"
+                      docker.rmi "testingTag:testingTag"
 
                     chai.expect(docker.isImageTagInServer("testingTag:testingTag")).to.be.false
 
@@ -201,9 +201,9 @@ if Meteor.isServer
 
 
 
-                  # it "docker.rm redis:2.8.18 image in " + dockerServer._id, ->
+                  # it "docker.rmi redis:2.8.18 image in " + dockerServer._id, ->
                   #   chai.expect(docker.isImageTagInServer("redis:2.8.18")).to.be.true
-                  #   docker.rm("redis:2.8.18")
+                  #   docker.rmi("redis:2.8.18")
                   #   chai.expect(docker.isImageTagInServer("redis:2.8.18")).to.be.false
 
 
@@ -249,7 +249,7 @@ if Meteor.isServer
                 #   before ->
                 #     if docker.isImageTagInServer("redis:2.8.18")
                 #       console.log "redis:2.8.18 in " + dockerServer._id
-                #       docker.rm "redis:2.8.18"
+                #       docker.rmi "redis:2.8.18"
 
                 #   it "ensure redis:2.8.18 image not in " + dockerServer._id, ->
                 #     chai.expect(docker.isImageTagInServer("redis:2.8.18")).to.be.false
