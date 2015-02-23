@@ -17,6 +17,22 @@
 
     resData
 
+  defaultStreamingCallback: (err,stream) ->
+    JSONStream = Meteor.npmRequire('JSONStream')
+    parser = JSONStream.parse()
+    if not err
+      stream.pipe(parser).on("data",console.log)#.pipe(streamToMongo)
+    else
+      console.log err
+
+  pull: (err,stream) ->
+    JSONStream = Meteor.npmRequire('JSONStream')
+    parser = JSONStream.parse()
+    if not err
+      stream.pipe(parser).on("data",console.log)#.pipe(streamToMongo)
+    else
+      console.log err
+
 
 @DockerMonitorCallbacks =
   onAfterInit: (self) ->
@@ -496,6 +512,16 @@ needStreamingCallback = (fn, streamingFns=[])->
       # Object.defineProperty @.constructor::, api, apiDes
       Object.defineProperty @, api, apiDes
 
+    for api in @_streamingApis
+
+      apiDes = do (api) ->
+        res =
+          get: ->
+            (args...) -> this._streamingCall(api,args)
+            # (args...) -> this._syncCall.call this, args.unshift(api)
+
+      Object.defineProperty @, api, apiDes
+
 
   _syncCallCheck: (apiName) ->
     @_canSyncCall = apiName in @_apis
@@ -568,6 +594,47 @@ needStreamingCallback = (fn, streamingFns=[])->
           resData = @_callbacks[apiName] @, resData
 
         resData
+
+  _streamingCallCheck: (apiName) ->
+    @_canStreamingCall = apiName in @_streamingApis
+    @_canStreamingCall = @_canStreamingCall and @_instance
+
+
+
+  _streamingCall: (apiName, kwargs , callback) ->
+    # unless typeof callback is "function"
+    #   if callback
+    #     args.push callback
+
+    @_streamingCallCheck apiName
+
+    if @_canStreamingCall
+
+      #PASSED: docker._streamingCallDockerode("pull", ["debian:jessie",{}])
+      #FIXME: docker._streamingCallDockerode("pull", ["debian:jessie"])
+
+      kws = @_apiArgs[apiName]
+
+      if kwargs instanceof Array and kws.length >= kwargs.length
+        args = kwargs
+      else
+        args = kws.map (k) -> kwargs[k]
+
+      callbackIndex = kws.indexOf "callback"
+
+      if args.length < callbackIndex
+        for i in [args.length..callbackIndex]
+          args.push {}
+
+      if callback
+        args[callbackIndex] = callback
+      else
+        if @_callbacks[apiName]
+          args[callbackIndex] = @_callbacks[apiName]
+        else
+          args[callbackIndex] = @_callbacks.defaultStreamingCallback
+
+      @_instance[apiName].apply @_instance, args
 
 
 @Class.DockerImage = class DockerImage extends Class.DockerodeClass
@@ -661,6 +728,5 @@ needStreamingCallback = (fn, streamingFns=[])->
 
 
   rm: (imageTag)->
-    if imageTag in @listImageTags(tagOnly=true)
-      imageObj = @_getImage imageTag
-      imageObj.remove()
+    @_getImage(imageTag).remove()
+

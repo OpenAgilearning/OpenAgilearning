@@ -218,9 +218,7 @@ if Meteor.isServer
                   before ->
                     if docker.isImageTagInServer("redis:2.8.18")
                       console.log "redis:2.8.18 in " + dockerServer._id
-                      # docker.getImage("redis:2.8.18")._image.remove (err,data)->
-                      #   if not err
-                      #     console.log data
+                      docker.rm "redis:2.8.18"
 
                   it "ensure redis:2.8.18 image not in " + dockerServer._id, ->
                     chai.expect(docker.isImageTagInServer("redis:2.8.18")).to.be.false
