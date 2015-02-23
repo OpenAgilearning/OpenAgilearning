@@ -8,7 +8,6 @@ Meteor.startup ->
       path: "/"
       template: "index"
       data:
-        rootURL:rootURL
         user: ->
           Meteor.user()
         showAdminPage: ->
