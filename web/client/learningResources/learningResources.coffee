@@ -43,9 +43,9 @@ Template.resourceNode.rendered = ->
   #   $(@).toggleClass "col-md-6"
   #   $(".resourceNode").masonry()
 
-  $conotianer = $(".resourcesList")
+  $conotianer = $(".resourcesList").masonry()
   
-  $conotianer.masonry "appended", elem
+  # $conotianer.masonry "appended", elem
   
   $conotianer.imagesLoaded ->
     $conotianer.masonry()
