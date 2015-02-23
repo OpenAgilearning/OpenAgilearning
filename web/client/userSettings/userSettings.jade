@@ -17,6 +17,10 @@ template(name="userSettings")
             a(data-toggle="tab", href="#Profile")
               |#[span(aria-hidden="true").glyphicon.glyphicon-user]
               | Profile
+          li
+            a(data-toggle="tab", href="#Privacy")
+              i.fa.fa-user-secret
+              | Privacy
 
 
         .tab-content
@@ -33,16 +37,12 @@ template(name="userSettings")
             p It would be awesome if these courses are ready!
 
           .tab-pane.fade.in#Profile
-            h2 General Settings
 
             +resume_setting
 
-            h2 Privacy Settings
-            h3 What shows up on my resume
-            ul
-              li Courses
-              li Slides
-              li videos
+          .tab-pane.fade.in#Privacy
+
+            +privacy_setting
 
 
 

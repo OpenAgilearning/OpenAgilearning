@@ -1,4 +1,4 @@
-@Fixture.publicResume = 
+@Fixture.publicResume =
   data: ->
     data = []
     for user in Meteor.users.find().fetch()
@@ -7,6 +7,7 @@
         switch typeof value
           when "string" then data.push
             userId: user._id
+            type: "profile"
             key: key
             value: value
             isPublic: true
@@ -14,7 +15,7 @@
     data
   set: ->
     if db.publicResume.find().count() is 0 and Meteor.settings.public.environment isnt "production"
-      
+
       db.publicResume.insert resume for resume in @data()
 
   clear: ->
