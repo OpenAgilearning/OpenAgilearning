@@ -610,9 +610,40 @@ needStreamingCallback = (fn, streamingFns=[])->
 
       @ping()
 
+    else
+      @ping = ->
+
   _syncCallCheck: (apiName) ->
     super apiName
 
     if apiName isnt "ping"
       @_canSyncCall = @_canSyncCall and (@ping().error is null)
 
+
+  listImageTags: (tagOnly=false)->
+    methodName = "listImageTags"
+    resData = @listImages({})
+
+    if resData?.data
+      newData = []
+      for data in resData.data
+        tags = data.RepoTags
+        delete data.RepoTags
+        for tag in tags
+          newData.push _.extend {tag:tag}, data
+
+      if newData.length > 0
+        resData.data = newData
+
+    if @_callbacks[methodName]
+      resData = @_callbacks[methodName] @, resData
+
+    if tagOnly
+      resData.data = resData.data.map (data)-> data.tag
+
+    resData
+
+
+  isImageTagInServer: (imageTag) ->
+    serverImageTags = @listImageTags(tagOnly=true)?.data
+    imageTag in serverImageTags
