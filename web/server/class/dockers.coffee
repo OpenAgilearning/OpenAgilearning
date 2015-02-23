@@ -497,71 +497,77 @@ needStreamingCallback = (fn, streamingFns=[])->
       Object.defineProperty @, api, apiDes
 
 
+  _syncCallCheck: (apiName) ->
+    @_canSyncCall = apiName in @_apis
+    @_canSyncCall = @_canSyncCall and @_instance
+    @_canSyncCall = @_canSyncCall and (apiName not in @_streamingApis)
+
+
   _syncCall: (apiName, args..., callback) ->
     unless typeof callback is "function"
       args.push callback
 
-    if apiName in @_apis and @_instance
-      unless apiName in @_streamingApis
+    @_syncCallCheck apiName
 
-        Future = Meteor.npmRequire 'fibers/future'
-        resFuture = new Future
+    if @_canSyncCall
 
-        futureCallback = (err,data)->
-          res =
-            error: err
-            data: data
+      Future = Meteor.npmRequire 'fibers/future'
+      resFuture = new Future
 
-          resFuture.return res
+      futureCallback = (err,data)->
+        res =
+          error: err
+          data: data
 
-
-
-        if apiName in @_callbackApis
-          callbackIndex = @_apiArgs[apiName].indexOf "callback"
-
-          if args.length < callbackIndex
-            for i in [args.length..callbackIndex]
-              args.push {}
-
-          args[callbackIndex] = futureCallback
+        resFuture.return res
 
 
-          @_instance[apiName].apply @_instance, args
-          resData = resFuture.wait()
 
-        else
+      if apiName in @_callbackApis
+        callbackIndex = @_apiArgs[apiName].indexOf "callback"
 
-          try
-            resData =
-              data: @_instance[apiName].apply @_instance, args
-              error: null
-          catch e
-            resData =
-              data: null
-              error: e
+        if args.length < callbackIndex
+          for i in [args.length..callbackIndex]
+            args.push {}
+
+        args[callbackIndex] = futureCallback
 
 
-        if resData.error
-          resData.error["errorInfo"] =
-            errorAt: new Date
-            fn: "_syncCall"
-            args:
-              apiName: apiName
-              args: args
+        @_instance[apiName].apply @_instance, args
+        resData = resFuture.wait()
+
+      else
+
+        try
+          resData =
+            data: @_instance[apiName].apply @_instance, args
+            error: null
+        catch e
+          resData =
+            data: null
+            error: e
 
 
-        if typeof callback is "function"
-          callback self=@, resData=resData
-        else
+      if resData.error
+        resData.error["errorInfo"] =
+          errorAt: new Date
+          fn: "_syncCall"
+          args:
+            apiName: apiName
+            args: args
 
-          if @_callbacks?.default
-            resData = @_callbacks.default @, resData
 
-          if @_callbacks?[apiName]
-            resData = @_callbacks[apiName] @, resData
+      if typeof callback is "function"
+        callback self=@, resData=resData
+      else
 
-          resData
+        if @_callbacks?.default
+          resData = @_callbacks.default @, resData
 
+        if @_callbacks?[apiName]
+          resData = @_callbacks[apiName] @, resData
+
+        resData
 
 
 @Class.DockerImage = class DockerImage extends Class.DockerodeClass
@@ -601,4 +607,12 @@ needStreamingCallback = (fn, streamingFns=[])->
       Docker = Meteor.npmRequire "dockerode"
 
       super Docker, @_configs, @_callbacks
+
+      @ping()
+
+  _syncCallCheck: (apiName) ->
+    super apiName
+
+    if apiName isnt "ping"
+      @_canSyncCall = @_canSyncCall and (@ping().error is null)
 
