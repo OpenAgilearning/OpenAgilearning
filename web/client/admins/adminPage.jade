@@ -2,7 +2,7 @@
 template(name="AdminPage")
   .container
     ul.nav.nav-tabs
-      li.active 
+      li.active
         a(data-toggle="tab", href="#info") Info
       if isInRole "admin" "dockers"
         li
@@ -14,7 +14,7 @@ template(name="AdminPage")
       if isInRole "admin" "system"
         li
           a(data-toggle="tab", href="#rolesSetting") Roles Setting
-        
+
         //- li
         //-   a(data-toggle="tab", href="#editMsgBoard") Message Board
         //- li
@@ -29,12 +29,12 @@ template(name="AdminPage")
 
           h2 Docker Servers
           +adminPageDockerServersTable
-          
+
           hr
-          
+
           h2 Docker Server Images
           +adminPageDockerServerImagesTable
-          
+
           h2 Docker Server Containers
           +adminPageDockerServerContainersTable
 
@@ -47,7 +47,7 @@ template(name="AdminPage")
             hr
             h2 pull Images
             +pullImageForm
-            
+
           .col-md-3.column
 
 
@@ -56,13 +56,13 @@ template(name="AdminPage")
             h2 EnvTypes
             +envTypesTable
             //- h2 EnvTypes Creator
-            //- +quickForm id="envTypeCreator" schema="EnvTypesSchema" type="method" meteormethod="createEnvType" 
+            //- +quickForm id="envTypeCreator" schema="EnvTypesSchema" type="method" meteormethod="createEnvType"
           .col-md-6.column
             h2 Envs
             +envsTableAdminPage
             h2 Envs Creator
-    
-            +autoForm id="envCreator" schema="EnvsSchema" type="method" meteormethod="createEnv" 
+
+            +autoForm id="envCreator" schema="EnvsSchema" type="method" meteormethod="createEnv"
               +afQuickField name="imageTag" options=uniqueDockerImageTagsForAutoForm
 
 
@@ -92,7 +92,7 @@ template(name="AdminPage")
       //-     +userStatus
 
 template(name="pullImageForm")
-  //- +autoForm id="envCreator" schema="EnvsSchema" type="method" meteormethod="createEnv" 
+  //- +autoForm id="envCreator" schema="EnvsSchema" type="method" meteormethod="createEnv"
   //-   +afQuickField name="imageTag" options=uniqueDockerImageTagsForAutoForm
   hr
   h2 test
@@ -104,7 +104,7 @@ template(name="pullImageForm")
         //- label.control-label {{afFieldLabelText name="serverName"}}
         //- +afFieldInput name="serverName"
         //- strong {{{afFieldMessage name="serverName"}}}
-        
+
         //- label.control-label {{afFieldLabelText name="dockerHubIp"}}
         //- +afFieldInput name="dockerHubIp" placeholder="dockerhub" type="text"
         //- strong {{{afFieldMessage name="dockerHubIp"}}}

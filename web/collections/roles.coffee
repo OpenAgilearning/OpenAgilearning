@@ -10,10 +10,10 @@
 @RoleTools = {}
 
 @RoleTools.getGroupId = (type, id) ->
-  if Collections.RoleGroups.find().count() is 0
-    console.log "[Dev] forget to publish Collections.RoleGroups"   
-  
-  groupQuery = 
+  # if Collections.RoleGroups.find().count() is 0
+  #   console.log "[Dev] forget to publish Collections.RoleGroups"
+
+  groupQuery =
     type: type
 
   if id
@@ -25,23 +25,23 @@
 
 
 @RoleTools.getGroupData = (type, id) ->
-  if Collections.RoleGroups.find().count() is 0
-    console.log "[Dev] forget to publish Collections.RoleGroups"   
-  groupQuery = 
+  # if Collections.RoleGroups.find().count() is 0
+  #   console.log "[Dev] forget to publish Collections.RoleGroups"
+  groupQuery =
     type: type
 
   if id
     groupQuery.id = id
 
   Collections.RoleGroups.findOne groupQuery
-  
+
 @RoleTools.getRoles = (roles, groupType, groupId) ->
-  
-  if Collections.RoleGroups.find().count() is 0
-    console.log "[Dev] forget to publish Collections.RoleGroups"   
+
+  # if Collections.RoleGroups.find().count() is 0
+  #   console.log "[Dev] forget to publish Collections.RoleGroups"
 
   groupData = RoleTools.getGroupData(groupType, groupId)
-  
+
   if groupData
 
     {collection, query} = groupData
@@ -62,8 +62,8 @@ if Meteor.isServer
   @RoleTools.isRole = (userId, roles, groupType, groupId) ->
 
     if userId
-      
-      # groupQuery = 
+
+      # groupQuery =
       #   type: groupType
       #   id: groupId
 
@@ -83,17 +83,17 @@ if Meteor.isServer
 if Meteor.isClient
 
   @RoleTools.isRole = (roles, groupType, groupId) ->
-    
-    console.log "roles = "
-    console.log roles
-    
-    if Collections.RoleGroups.find().count() is 0
-      console.log "[Dev] forget to publish Collections.RoleGroups"   
+
+    # console.log "roles = "
+    # console.log roles
+
+    # if Collections.RoleGroups.find().count() is 0
+    #   console.log "[Dev] forget to publish Collections.RoleGroups"
 
     userId = Meteor.userId()
-      
+
     if userId
-      # groupQuery = 
+      # groupQuery =
       #   type: groupType
       #   id: groupId
 
@@ -101,7 +101,7 @@ if Meteor.isClient
       # groupData = Collections.RoleGroups.findOne groupQuery
 
       groupData = RoleTools.getGroupData(groupType, groupId)
-      
+
       if groupData
 
         if groupData.collection and groupData.query
@@ -110,7 +110,7 @@ if Meteor.isClient
             console.log "[Dev] cannot get the data with _id = " + query._id + " in " + collection
 
         groupId = groupData._id
-        console.log groupData
+        # console.log groupData
 
         if typeof(roles) is "string"
           Collections.Roles.find({role:roles,groupId:groupId,userId:userId}).count() > 0
@@ -118,14 +118,14 @@ if Meteor.isClient
           Collections.Roles.find({role:{$in:roles},groupId:groupId,userId:userId}).count() > 0
 
   @RoleTools.isNotRole = (roles, groupType, groupId) ->
-  
-    if Collections.RoleGroups.find().count() is 0
-      console.log "[Dev] forget to publish Collections.RoleGroups"   
+
+    # if Collections.RoleGroups.find().count() is 0
+    #   console.log "[Dev] forget to publish Collections.RoleGroups"
 
     userId = Meteor.userId()
-      
+
     if userId
-      # groupQuery = 
+      # groupQuery =
       #   type: groupType
       #   id: groupId
 
@@ -133,7 +133,7 @@ if Meteor.isClient
       # groupData = Collections.RoleGroups.findOne groupQuery
 
       groupData = RoleTools.getGroupData(groupType, groupId)
-      
+
       if groupData
 
         if groupData.collection and groupData.query
@@ -157,5 +157,5 @@ if Meteor.isClient
 #     user = Meteor.user()
 #     if not user
 #       throw new Meteor.Error(401, "You need to login")
-  
+
 #     Roles.find({userId:user._id, role:"admin"}).count() > 0
