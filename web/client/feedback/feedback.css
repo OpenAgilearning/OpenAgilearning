@@ -25,3 +25,7 @@
 .feedback-header:hover {
   cursor: pointer;
 }
+
+#wish-bug > .active {
+  background-color: #004d40;
+}
