@@ -13,56 +13,56 @@ template(name="adminPageUsersTable")
 
 
 template(name="setDockerInstanceBtns")
-  a.removeDockerInstanceBtn.btn.btn-default(href="#",containerId="{{containerId}}") Remove
+  a.removeDockerInstanceBtn.btn.btn-primary(href="#",containerId="{{containerId}}") Remove
 
 
 
 template(name="setSystemAdminBtns")
   ul
     li
-      a.setSystemAdminBtn.btn.btn-default(href="#",userId="{{_id}}") Set As System Admin
+      a.setSystemAdminBtn.btn.btn-primary(href="#",userId="{{_id}}") Set As System Admin
     li
-      a.removeSystemAdminBtn.btn.btn-default(href="#",userId="{{_id}}") Remove System Admin
+      a.removeSystemAdminBtn.btn.btn-primary(href="#",userId="{{_id}}") Remove System Admin
 
 template(name="setCourseManagerBtns")
   ul
     li
-      a.setCourseManagerBtn.btn.btn-default(href="#",userId="{{_id}}") Set As Course Manager
+      a.setCourseManagerBtn.btn.btn-primary(href="#",userId="{{_id}}") Set As Course Manager
     li
-      a.removeCourseManagerBtn.btn.btn-default(href="#",userId="{{_id}}") Remove Course Manager
+      a.removeCourseManagerBtn.btn.btn-primary(href="#",userId="{{_id}}") Remove Course Manager
 
 
 
 template(name="setTeacherBtns")
   ul
     li
-      a.setTeacherBtn.btn.btn-default(href="#",userId="{{_id}}") Set As Teacher
+      a.setTeacherBtn.btn.btn-primary(href="#",userId="{{_id}}") Set As Teacher
     li
-      a.removeTeacherBtn.btn.btn-default(href="#",userId="{{_id}}") Remove Teacher
+      a.removeTeacherBtn.btn.btn-primary(href="#",userId="{{_id}}") Remove Teacher
 
 
 template(name="setStudentBtns")
   ul
     li
-      a.setStudentBtn.btn.btn-default(href="#",userId="{{_id}}") Set As Student
+      a.setStudentBtn.btn.btn-primary(href="#",userId="{{_id}}") Set As Student
     li
-      a.removeStudentBtn.btn.btn-default(href="#",userId="{{_id}}") Remove Student
+      a.removeStudentBtn.btn.btn-primary(href="#",userId="{{_id}}") Remove Student
 
 
 
 template(name="setDockerAdminBtns")
   ul
     li
-      a.setDockerAdminBtn.btn.btn-default(href="#",userId="{{_id}}") Set As Docker Admin
+      a.setDockerAdminBtn.btn.btn-primary(href="#",userId="{{_id}}") Set As Docker Admin
     li
-      a.removeDockerAdminBtn.btn.btn-default(href="#",userId="{{_id}}") Remove Docker Admin
+      a.removeDockerAdminBtn.btn.btn-primary(href="#",userId="{{_id}}") Remove Docker Admin
 
 
 template(name="dockerServerStatusBtns")
-  a.dockerServerStatusBtn.btn.btn-default(href="{{pathFor 'server' dockerServerId=_id }}", dockerServerId="{{_id}}") More Detail
+  a.dockerServerStatusBtn.btn.btn-primary(href="{{pathFor 'server' dockerServerId=_id }}", dockerServerId="{{_id}}") More Detail
 
 template(name="setDockerContainerBtns")
-  a.removeDockerContainerBtn.btn.btn-default(href="#", containerId="{{Id}}") Remove Container
+  a.removeDockerContainerBtn.btn.btn-primary(href="#", containerId="{{Id}}") Remove Container
 
 
 
