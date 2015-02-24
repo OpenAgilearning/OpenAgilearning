@@ -4,8 +4,8 @@ from pymongo import MongoClient
 import os
 
 YT_CHANNEL_ID = os.environ.get("YT_CHANNEL_ID", "TWuseRGroup")
-MONGO_URI = os.environ.get("MONGO_URI","mongodb://localhost:27017/dockerdata")
-DB_NAME = os.environ.get("DB_NAME","dockerdata")
+MONGO_URI = os.environ.get("MONGO_URI","mongodb://localhost:27017/agilearning")
+DB_NAME = os.environ.get("DB_NAME","agilearning")
 LEARNING_RESOURCE_COLLECTION_NAME = os.environ.get("LEARNING_RESOURCE_COLLECTION_NAME","learningResources")
 
 
