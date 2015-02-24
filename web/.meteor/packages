@@ -8,7 +8,6 @@ coffeescript
 meteorhacks:npm
 iron:router
 npm-container
-mizzao:bootstrap-3
 accounts-meetup
 http
 mizzao:user-status
