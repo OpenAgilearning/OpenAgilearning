@@ -39,7 +39,7 @@ if Meteor.isServer
             if i < 1
               if dockerServer.name is "errorCaPathServer"
                 it "DockerServerCallbacks has no info callback. So does docker._callbacks", ->
-                  docker = new Class.NewDockerServer dockerServer, DockerServerCallbacks
+                  docker = new Class.DockerServer dockerServer, DockerServerCallbacks
                   chai.expect(docker._callbacks.info).to.be.undefined
 
                 i = i+1
@@ -49,7 +49,7 @@ if Meteor.isServer
             _.extend UsefulCallbacks, DockerServerCallbacks
             _.extend UsefulCallbacks, DockerMonitorCallbacks
 
-            docker = new Class.NewDockerServer dockerServer, UsefulCallbacks
+            docker = new Class.DockerServer dockerServer, UsefulCallbacks
 
             do (docker) ->
               if dockerServer.name is "errorCaPathServer"
