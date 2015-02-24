@@ -54,6 +54,7 @@ Template.resourceNode.events
     $("iframe#ytplayer").attr "height", imgh
     $("iframe#ytplayer").prependTo($(e.target).closest(".triggerBlock"))
     $("iframe#ytplayer").css("margin-bottom", "-"+imgh)
+    $("iframe#ytplayer").css("position", "relative")
     # $("iframe#ytplayer").css("z-index", 100)
     # $(e.target).hide()
     # $(e.target).css("display","none")
