@@ -402,15 +402,95 @@ needStreamingCallback = (fn, streamingFns=[])->
       @_instance[apiName].apply @_instance, args
 
 
+
+@parseRepoString = (repoString)->
+  lastColonIdx = repoString.lastIndexOf ':'
+
+  if lastColonIdx < 0
+    res =
+      repo: repoString
+
+  tag = repoString.slice lastColonIdx + 1
+
+  if  tag.indexOf('/') is -1
+    res =
+      repo: repoString.slice(0, lastColonIdx)
+      tag: tag
+
+  res
+
+
 @Class.DockerImage = class DockerImage extends Class.DockerodeClass
 
-  constructor: (@_serverId, @_image, @_callbacks=DockerImageCallbacks) ->
+  constructor: (@_docker, @_image, @_callbacks=DockerImageCallbacks) ->
+    @_serverId = @_docker._id
     super @_image.constructor, @_image, @_callbacks
+
+
+  TAG: (repoString)->
+    @.tag parseRepoString repoString
+
+
+  PUSH: (callback)->
+
+    if not callback
+      if @_callbacks.push
+        callback = @_callbacks.push
+      else
+        callback = DockerImageCallbacks.push
+
+    dockerConfig = _.extend {}, @_docker._configs
+    dockerConfig.hostname = dockerConfig.host
+    delete dockerConfig.protocol
+    delete dockerConfig.host
+
+    repoData = parseRepoString @_image["name"]
+
+    https = Meteor.npmRequire "https"
+    headers =
+      "X-Registry-Auth": "eyJ1c2VybmFtZSI6ICJzdHJpbmciLCAicGFzc3dvcmQiOiAic3RyaW5nIiwgImVtYWlsIjogInN0cmluZyIsICJzZXJ2ZXJhZGRyZXNzIiA6ICJzdHJpbmciLCAiYXV0aCI6ICIifQ=="
+
+    apiPath = '/images/' + repoData.repo + "/push"
+    if repoData.tag
+      apiPath = apiPath + "?tag=" + encodeURIComponent(repoData.tag)
+
+    options = _.extend dockerConfig,
+      rejectUnauthorized: false
+      headers: headers
+      path: apiPath
+      method: 'POST'
+
+    # console.log "options = ",options
+
+    resData =
+      data: null
+      error: null
+
+    req = https.request options, (res)->
+      # resData.data = res
+
+      callback(null, res)
+
+      # handleFn = (data)->
+      #   process.stdout.write(data)
+      #   data
+
+      # res.on('data', handleFn)#.on('data', handleFn)
+
+    req.on 'error', (e)->
+      callback(e, null)
+      # resData.error = res
+
+      # console.error e
+
+    req.end()
+    undefined
 
 
 @Class.DockerContainer = class DockerContainer extends Class.DockerodeClass
 
-  constructor: (@_serverId, @_container, @_callbacks=DockerContainerCallbacks) ->
+  constructor: (@_docker, @_container, @_callbacks=DockerContainerCallbacks) ->
+    @_serverId = @_docker._id
     super @_container.constructor, @_container, @_callbacks
 
 
@@ -458,6 +538,10 @@ needStreamingCallback = (fn, streamingFns=[])->
       images:
         desc:
           get: -> @listImages()
+
+      imageTags:
+        desc:
+          get: -> @listImageTags(tagOnly=true)
 
       stopAll:
         desc:
@@ -555,7 +639,18 @@ needStreamingCallback = (fn, streamingFns=[])->
     resData = @getImage imageTag
     if resData
       if not resData.error
-        new Class.DockerImage @_id, resData.data
+        new Class.DockerImage @, resData.data
+      else
+        resData
+    else
+      resData
+
+
+  Image: (imageTag) ->
+    resData = @getImage imageTag
+    if resData
+      if not resData.error
+        new Class.DockerImage @, resData.data
       else
         resData
     else
@@ -570,7 +665,18 @@ needStreamingCallback = (fn, streamingFns=[])->
     resData = @getContainer containerId
     if resData
       if not resData.error
-        new Class.DockerContainer @_id, resData.data
+        new Class.DockerContainer @, resData.data
+      else
+        resData
+    else
+      resData
+
+
+  Container: (containerId)->
+    resData = @getContainer containerId
+    if resData
+      if not resData.error
+        new Class.DockerContainer @, resData.data
       else
         resData
     else
@@ -588,14 +694,19 @@ needStreamingCallback = (fn, streamingFns=[])->
   start: (containerId)->
     @_getContainer(containerId).start()
 
+
   commit: (containerId, repo, tag, comment, author)->
     container = @_getContainer containerId
 
     if not repo
-      repo = "AgilearningIO/"+Random.id(20)
+      commitData =
+        repo: "AgilearningIO/"+Random.id(20)
+        tag: "latest"
 
     if not tag
-      tag = "latest"
+      commitData = parseRepoString repo
+      if not commitData.tag
+        commitData.tag = "latest"
 
     if not comment
       comment = "agilearning.io awesome!"
@@ -603,9 +714,7 @@ needStreamingCallback = (fn, streamingFns=[])->
     if not author
       author = "agilearning.io"
 
-    commitData =
-      repo: repo
-      tag: tag
+    commitData = _.extend commitData,
       comment: comment
       author: author
 

@@ -56,114 +56,119 @@ if Meteor.isServer
                 it "ping " + dockerServer._id + " should be failed!", ->
                   resData = docker.ping()
 
+                  # console.log "ping " + dockerServer._id + " should be failed!"
+                  # console.log "resData = ",resData
+
                   chai.expect(docker._configs_ok).to.be.false
-                  chai.expect(resData).to.be.undefined
+                  chai.expect(resData.data).to.be.null
+                  chai.expect(resData.error).not.to.be.null
+
 
               else
 
-                it "ping " + dockerServer._id + " should be successful!", ->
-                  resData = docker.ping()
+                # it "ping " + dockerServer._id + " should be successful!", ->
+                #   resData = docker.ping()
 
-                  chai.expect(docker._configs_ok).to.be.true
-                  chai.expect(resData.data).not.to.be.null
-                  chai.expect(resData.error).to.be.null
+                #   chai.expect(docker._configs_ok).to.be.true
+                #   chai.expect(resData.data).not.to.be.null
+                #   chai.expect(resData.error).to.be.null
 
-                it "get info from " + dockerServer._id + " should be successful!", ->
+                # it "get info from " + dockerServer._id + " should be successful!", ->
 
-                  resData = docker.info()
+                #   resData = docker.info()
 
-                  chai.expect(resData.data).not.to.be.null
-                  chai.expect(resData.error).to.be.null
+                #   chai.expect(resData.data).not.to.be.null
+                #   chai.expect(resData.error).to.be.null
 
-                it "sync info from " + dockerServer._id + " should be successful!", ->
+                # it "sync info from " + dockerServer._id + " should be successful!", ->
 
-                  query =
-                    serverId: docker._id
+                #   query =
+                #     serverId: docker._id
 
-                  db.dockerServersMonitor.remove query
+                #   db.dockerServersMonitor.remove query
 
-                  chai.expect(db.dockerServersMonitor.find(query).fetch()).to.be.empty
-                  resData = docker.info()
+                #   chai.expect(db.dockerServersMonitor.find(query).fetch()).to.be.empty
+                #   resData = docker.info()
 
-                  chai.expect(resData.data).not.to.be.null
-                  chai.expect(resData.error).to.be.null
-                  chai.expect(db.dockerServersMonitor.find(query).fetch()).not.to.be.empty
+                #   chai.expect(resData.data).not.to.be.null
+                #   chai.expect(resData.error).to.be.null
+                #   chai.expect(db.dockerServersMonitor.find(query).fetch()).not.to.be.empty
 
-                it "get listImages from " + dockerServer._id + " should be successful!", ->
-                  resData = docker.listImages()
+                # it "get listImages from " + dockerServer._id + " should be successful!", ->
+                #   resData = docker.listImages()
 
-                  chai.expect(resData.data).not.to.be.null
-                  chai.expect(resData.error).to.be.null
+                #   chai.expect(resData.data).not.to.be.null
+                #   chai.expect(resData.error).to.be.null
 
-                it "get listImageTags from " + dockerServer._id + " should be successful!", ->
-                  resData = docker.listImageTags()
+                # it "get listImageTags from " + dockerServer._id + " should be successful!", ->
+                #   resData = docker.listImageTags()
 
-                  chai.expect(resData.data).not.to.be.null
-                  chai.expect(resData.error).to.be.null
+                #   chai.expect(resData.data).not.to.be.null
+                #   chai.expect(resData.error).to.be.null
 
-                it "sync listImageTags from " + dockerServer._id + " should be successful!", ->
+                # it "sync listImageTags from " + dockerServer._id + " should be successful!", ->
 
-                  query =
-                    serverId: docker._id
+                #   query =
+                #     serverId: docker._id
 
-                  db.dockerImageTagsMonitor.remove query
+                #   db.dockerImageTagsMonitor.remove query
 
-                  chai.expect(db.dockerImageTagsMonitor.find(query).fetch()).to.be.empty
-                  resData = docker.listImageTags()
+                #   chai.expect(db.dockerImageTagsMonitor.find(query).fetch()).to.be.empty
+                #   resData = docker.listImageTags()
 
-                  chai.expect(resData.data).not.to.be.null
-                  chai.expect(resData.error).to.be.null
-                  chai.expect(db.dockerImageTagsMonitor.find(query).fetch()).not.to.be.empty
+                #   chai.expect(resData.data).not.to.be.null
+                #   chai.expect(resData.error).to.be.null
+                #   chai.expect(db.dockerImageTagsMonitor.find(query).fetch()).not.to.be.empty
 
-                it "no active < none > : < none > tag image in dockerImageTagsMonitor in " + dockerServer._id, ->
+                # it "no active < none > : < none > tag image in dockerImageTagsMonitor in " + dockerServer._id, ->
 
-                  query =
-                    serverId: docker._id
-                    tag: '<none>:<none>'
+                #   query =
+                #     serverId: docker._id
+                #     tag: '<none>:<none>'
 
-                  chai.expect(db.dockerImageTagsMonitor.find(query).fetch()).to.be.empty
+                #   chai.expect(db.dockerImageTagsMonitor.find(query).fetch()).to.be.empty
 
-                it "get listContainers from " + dockerServer._id + " should be successful!", ->
-                  resData = docker.listContainers({all:1})
-                  # resData = docker.listContainers()
+                # it "get listContainers from " + dockerServer._id + " should be successful!", ->
+                #   resData = docker.listContainers({all:1})
+                #   # resData = docker.listContainers()
 
-                  chai.expect(resData.data).not.to.be.null
-                  chai.expect(resData.error).to.be.null
+                #   chai.expect(resData.data).not.to.be.null
+                #   chai.expect(resData.error).to.be.null
 
-                it "sync listContainers from " + dockerServer._id + " should be successful!", ->
+                # it "sync listContainers from " + dockerServer._id + " should be successful!", ->
 
-                  query =
-                    serverId: docker._id
+                #   query =
+                #     serverId: docker._id
 
-                  db.dockerContainersMonitor.remove query
+                #   db.dockerContainersMonitor.remove query
 
-                  chai.expect(db.dockerContainersMonitor.find(query).fetch()).to.be.empty
-                  resData = docker.listContainers({all:1})
+                #   chai.expect(db.dockerContainersMonitor.find(query).fetch()).to.be.empty
+                #   resData = docker.listContainers({all:1})
 
-                  chai.expect(resData.data).not.to.be.null
-                  chai.expect(resData.error).to.be.null
-                  chai.assert db.dockerContainersMonitor.find(query).count() is resData.data.length
+                #   chai.expect(resData.data).not.to.be.null
+                #   chai.expect(resData.error).to.be.null
+                #   chai.assert db.dockerContainersMonitor.find(query).count() is resData.data.length
 
 
-                describe "Class.DockerServer's IO", ->
+                # describe "Class.DockerServer's IO", ->
 
-                  it "test Class.DockerServer::isImageTagInServer & listImageTags(tagOnly=true) with " + dockerServer._id, ->
-                    resData = docker.listImageTags(tagOnly=true)
-                    chai.expect(resData.data).not.to.be.null
-                    chai.expect(resData.error).to.be.null
+                #   it "test Class.DockerServer::isImageTagInServer & listImageTags(tagOnly=true) with " + dockerServer._id, ->
+                #     resData = docker.listImageTags(tagOnly=true)
+                #     chai.expect(resData.data).not.to.be.null
+                #     chai.expect(resData.error).to.be.null
 
-                    serverImageTags = resData.data
-                    chai.assert serverImageTags.length>1, dockerServer._id + " has at least one image!"
+                #     serverImageTags = resData.data
+                #     chai.assert serverImageTags.length>1, dockerServer._id + " has at least one image!"
 
-                    testImage = serverImageTags[0]
-                    chai.expect(docker.isImageTagInServer(testImage)).to.be.true
-                    # chai.assert  is true, "test docker.isImageTagInServer on " + dockerServer._id + " with itself image: " + testImage
+                #     testImage = serverImageTags[0]
+                #     chai.expect(docker.isImageTagInServer(testImage)).to.be.true
+                #     # chai.assert  is true, "test docker.isImageTagInServer on " + dockerServer._id + " with itself image: " + testImage
 
-                    randomImage = Random.id(30)
-                    chai.expect(randomImage in serverImageTags).to.be.false
-                    chai.expect(docker.isImageTagInServer(randomImage)).to.be.false
-                    # chai.assert randomImage not in serverImageTags, randomImage + " not in serverImageTags in " + dockerServer._id
-                    # chai.assert docker.isImageTagInServer randomImage is false, "docker.isImageTagInServer " + randomImage + " is false in " + dockerServer._id
+                #     randomImage = Random.id(30)
+                #     chai.expect(randomImage in serverImageTags).to.be.false
+                #     chai.expect(docker.isImageTagInServer(randomImage)).to.be.false
+                #     # chai.assert randomImage not in serverImageTags, randomImage + " not in serverImageTags in " + dockerServer._id
+                #     # chai.assert docker.isImageTagInServer randomImage is false, "docker.isImageTagInServer " + randomImage + " is false in " + dockerServer._id
 
 
                 describe "tag & untag (image)", ->
