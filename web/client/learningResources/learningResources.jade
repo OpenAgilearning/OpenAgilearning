@@ -2,7 +2,7 @@
 template(name="learningResourcesPage")
   .container
     .row-fluid
-      iframe#ytplayer(type="text/html",width="100%",height="400",src="http://www.youtube.com/embed/CdMzHLrmpi8",frameborder="0",allowfullscreen, style="margin-bottom: -4px")
+      iframe#ytplayer(type="text/html",width="100%",height="400",src="http://www.youtube.com/embed/CdMzHLrmpi8",frameborder="0",allowfullscreen,allowTransparency="true",style="z-index:100000")
       +resourcesList
 
     //- +reactiveTable settings=settings
@@ -19,7 +19,8 @@ template(name="resourceNode")
   .resourceNode.col-md-3
     .well
       .triggerBlock
-        img.play(youtubeVideoId="{{youtubeVideoId}}",width="100%",src="http://img.youtube.com/vi/{{youtubeVideoId}}/hqdefault.jpg")
+        .ytImg
+          img.play(youtubeVideoId="{{youtubeVideoId}}",width="100%",src="http://img.youtube.com/vi/{{youtubeVideoId}}/hqdefault.jpg",style="z-index:-10000")
         h4 {{showPlayer}}
         h4 {{ytTitle}}
         //- p {{ytDescription}}
