@@ -1,4 +1,3 @@
-
 @DockerDefaultCallbacks =
   default: (self, resData)->
     if resData
@@ -16,7 +15,8 @@
       console.log err
 
 
-@DockerServerCallbacks =
+@DockerServerCallbacks = _.extend {}, DockerDefaultCallbacks
+@DockerServerCallbacks = _.extend @DockerServerCallbacks,
   ping: (self, resData)->
     if resData
       if not resData.error
@@ -27,10 +27,13 @@
 
     resData
 
-@DockerServerCallbacks = _.extend @DockerServerCallbacks, DockerDefaultCallbacks
+  getFreePorts: (self, resData)->
+    # reserve the free ports & read and write dbs
 
+    resData
 
-@DockerImageCallbacks =
+@DockerImageCallbacks = _.extend {}, DockerDefaultCallbacks
+@DockerImageCallbacks = _.extend @DockerImageCallbacks,
   push: (err,stream) ->
     JSONStream = Meteor.npmRequire('JSONStream')
     parser = JSONStream.parse()
@@ -39,12 +42,9 @@
     else
       console.log err
 
-@DockerImageCallbacks = _.extend @DockerImageCallbacks, DockerDefaultCallbacks
 
-
-@DockerContainerCallbacks = {}
-@DockerContainerCallbacks = _.extend @DockerContainerCallbacks, DockerDefaultCallbacks
-
+@DockerContainerCallbacks = _.extend {}, DockerDefaultCallbacks
+# @DockerContainerCallbacks = _.extend @DockerContainerCallbacks,
 
 
 @DockerMonitorCallbacks =
@@ -207,44 +207,10 @@
     resData
 
 
-# @DockerImageCallbacks =
-#   onAfterInit: (self) ->
-#     if not self._configs_ok
-#       query =
-#         serverId: self._id
-#         type: "configError"
-#         handlingStatus: "todo"
-
-#       updateData =
-#         error: self._configs_errors
-#         updatedAt: new Date
-
-#       db.dockerServersException.update query, {$set:updateData}, {upsert:true}
-
-#   pullImage: (self, resData)->
-#     # if resData
-#     #   if not resData.error
-#     #   else
-#     resData
-
-#   tagImage: (self, resData)->
-#     # if resData
-#     #   if not resData.error
-#     #   else
-#     resData
-#   pushImage: (self, resData)->
-#     # if resData
-#     #   if not resData.error
-#     #   else
-#     resData
-
 @UsefulCallbacks = {}
 _.extend UsefulCallbacks, DockerServerCallbacks
 _.extend UsefulCallbacks, DockerMonitorCallbacks
 
-# @ImageCallbacks = {}
-# _.extend ImageCallbacks, DockerServerCallbacks
-# _.extend ImageCallbacks, DockerImageCallbacks
 
 
 StreamingCallBacks =
@@ -256,235 +222,12 @@ StreamingCallBacks =
     else
       console.log err
 
-
-
 needStreamingCallback = (fn, streamingFns=[])->
   if streamingFns.length is 0
     /isStream: true|stream: true/.exec(fn) isnt null
   else
     pat = new RegExp "isStream: true|stream: true|" + streamingFns.join("|")
     pat.exec(fn) isnt null
-
-
-
-@Class.DockerServer = class DockerServer
-
-  constructor: (@_data, @_callbacks=DockerServerCallbacks, @_streamingCallbacks=StreamingCallBacks) ->
-
-    @_id = @_data._id
-    @_configs = _.extend {}, @_data.connect
-    @_configs_ok = false
-    @_configs_errors = []
-    @_docker_errors = []
-
-    if not @_configs.socketPath
-      if @_data.connect.protocol is "https"
-        fs = Meteor.npmRequire 'fs'
-
-        try
-
-          #TODO[finished]: need a error path testing case
-          ["ca","cert","key"].map (xx) =>
-            @_configs[xx] = fs.readFileSync(@_data.security[xx+"Path"])
-
-        catch err
-
-          @_configs_errors.push err
-
-    if @_configs_errors.length is 0
-      @_configs_ok = true
-
-      Docker = Meteor.npmRequire "dockerode"
-
-      @_docker = new Docker @_configs
-      @ping()
-
-      @_dockerApis = Object.keys Docker.prototype
-      @_dockerStreamingApis = @_dockerApis.filter (api) -> needStreamingCallback Docker::[api]
-      @_dockerStreamingApis = @_dockerApis.filter (api) => needStreamingCallback Docker::[api], @_dockerStreamingApis
-
-
-    if @_callbacks.onAfterInit
-      @_callbacks.onAfterInit @
-
-
-
-  _futureCallDockerode: (apiName, opts, callback) ->
-
-    Future = Meteor.npmRequire 'fibers/future'
-    introspect = Meteor.npmRequire 'introspect'
-    resFuture = new Future
-
-    dockerMethodArgs = introspect @_docker[apiName]
-
-    if "opts" in dockerMethodArgs
-      @_docker[apiName] opts, (err,data)->
-        res =
-          error: err
-          data: data
-
-        resFuture.return res
-
-      resData = resFuture.wait()
-    else
-      @_docker[apiName] (err,data)->
-        res =
-          error: err
-          data: data
-
-        resFuture.return res
-
-      resData = resFuture.wait()
-
-    if resData.error
-      resData.error["errorInfo"] =
-        errorAt: new Date
-        fn: "_futureCallDockerode"
-        args:
-          apiName: apiName
-          opts: opts
-
-    if callback
-      callback self=@, resData=resData
-    else
-
-      if @_callbacks.default
-        resData = @_callbacks.default @, resData
-
-      if @_callbacks[apiName]
-        resData = @_callbacks[apiName] @, resData
-
-      resData
-
-
-  _streamingCallDockerode: (apiName, kwargs, callback) ->
-    if @_docker and @_docker_ping
-
-      #PASSED: docker._streamingCallDockerode("pull", ["debian:jessie",{}])
-      #FIXME: docker._streamingCallDockerode("pull", ["debian:jessie"])
-
-      introspect = Meteor.npmRequire 'introspect'
-      kws = introspect @_docker[apiName]
-
-      if kwargs instanceof Array and kws.length >= kwargs.length
-        args = kwargs
-      else
-        args = kws.map (k) -> kwargs[k]
-
-      callbackIndex = kws.indexOf "callback"
-
-      if args.length < callbackIndex
-        for i in [args.length..callbackIndex]
-          args.push {}
-
-      if callback
-        args[callbackIndex] = callback
-      else
-        if @_streamingCallbacks[apiName]
-          args[callbackIndex] = @_streamingCallbacks[apiName]
-        else
-          args[callbackIndex] = @_streamingCallbacks.default
-
-      @_docker[apiName].apply @_docker, args
-
-
-  ping: (callback) ->
-    apiName = "ping"
-
-    if @_docker
-      if callback
-        resData = @_futureCallDockerode apiName, {}, callback
-      else
-        resData = @_futureCallDockerode apiName
-
-
-  _dockerodeApiWrapper: (apiName, opts, callback)->
-    if @_docker and @_docker_ping
-      if not opts
-        opts = {}
-
-      if callback
-        resData = @_futureCallDockerode apiName, opts, callback
-      else
-        resData = @_futureCallDockerode apiName, opts
-
-
-  info: (callback) ->
-    apiName = "info"
-    @_dockerodeApiWrapper(apiName, {}, callback)
-
-
-  listImages: (opts, callback)->
-    apiName = "listImages"
-    @_dockerodeApiWrapper(apiName, opts, callback)
-
-
-  listContainers: (opts, callback)->
-    apiName = "listContainers"
-    @_dockerodeApiWrapper(apiName, opts, callback)
-
-
-  getContainer: (containerId)->
-    if @_docker and @_docker_ping
-      container = @_docker.getContainer containerId
-
-  createContainer: (opts, callback)->
-    if @_docker and @_docker_ping
-      apiName = "createContainer"
-      containerRes = @_dockerodeApiWrapper(apiName, opts, callback)
-
-
-  listImageTags: (tagOnly=false)->
-    methodName = "listImageTags"
-    resData = @listImages({})
-
-    if resData?.data
-      newData = []
-      for data in resData.data
-        tags = data.RepoTags
-        delete data.RepoTags
-        for tag in tags
-          newData.push _.extend {tag:tag}, data
-
-      if newData.length > 0
-        resData.data = newData
-
-    if @_callbacks[methodName]
-      resData = @_callbacks[methodName] @, resData
-
-    if tagOnly
-      resData.data = resData.data.map (data)-> data.tag
-
-    resData
-
-
-  isImageTagInServer: (imageTag) ->
-    serverImageTags = @listImageTags(tagOnly=true)?.data
-    imageTag in serverImageTags
-
-
-  getImage: (imageTag)->
-    if @_docker and @_docker_ping
-      image = @_docker.getImage imageTag
-      new Class.DockerImage @_id, image
-
-
-  pull: (imageTag, opts, callback)->
-    if not callback
-      if not opts
-        @_streamingCallDockerode "pull", [imageTag]
-      else
-        @_streamingCallDockerode "pull", [imageTag, opts]
-    else
-      @_streamingCallDockerode "pull", [imageTag, opts, callback]
-
-
-  rm: (imageTag)->
-    if @_docker and @_docker_ping
-      image = @_docker.getImage imageTag
-      imageObj = new Class.DockerImage @_id, image
-      imageObj.remove()
-
 
 
 @Class.DockerodeClass = class DockerodeClass
@@ -538,6 +281,7 @@ needStreamingCallback = (fn, streamingFns=[])->
 
   _syncCallCheck: (apiName) ->
     @_canSyncCall = apiName in @_apis
+    # @_canSyncCall = @_canSyncCall and @[apiName]?
     @_canSyncCall = @_canSyncCall and @_instance
     @_canSyncCall = @_canSyncCall and (apiName not in @_streamingApis)
 
@@ -658,19 +402,99 @@ needStreamingCallback = (fn, streamingFns=[])->
       @_instance[apiName].apply @_instance, args
 
 
+
+@parseRepoString = (repoString)->
+  lastColonIdx = repoString.lastIndexOf ':'
+
+  if lastColonIdx < 0
+    res =
+      repo: repoString
+
+  tag = repoString.slice lastColonIdx + 1
+
+  if  tag.indexOf('/') is -1
+    res =
+      repo: repoString.slice(0, lastColonIdx)
+      tag: tag
+
+  res
+
+
 @Class.DockerImage = class DockerImage extends Class.DockerodeClass
 
-  constructor: (@_serverId, @_image, @_callbacks=DockerImageCallbacks) ->
+  constructor: (@_docker, @_image, @_callbacks=DockerImageCallbacks) ->
+    @_serverId = @_docker._id
     super @_image.constructor, @_image, @_callbacks
+
+
+  TAG: (repoString)->
+    @.tag parseRepoString repoString
+
+
+  PUSH: (callback)->
+
+    if not callback
+      if @_callbacks.push
+        callback = @_callbacks.push
+      else
+        callback = DockerImageCallbacks.push
+
+    dockerConfig = _.extend {}, @_docker._configs
+    dockerConfig.hostname = dockerConfig.host
+    delete dockerConfig.protocol
+    delete dockerConfig.host
+
+    repoData = parseRepoString @_image["name"]
+
+    https = Meteor.npmRequire "https"
+    headers =
+      "X-Registry-Auth": "eyJ1c2VybmFtZSI6ICJzdHJpbmciLCAicGFzc3dvcmQiOiAic3RyaW5nIiwgImVtYWlsIjogInN0cmluZyIsICJzZXJ2ZXJhZGRyZXNzIiA6ICJzdHJpbmciLCAiYXV0aCI6ICIifQ=="
+
+    apiPath = '/images/' + repoData.repo + "/push"
+    if repoData.tag
+      apiPath = apiPath + "?tag=" + encodeURIComponent(repoData.tag)
+
+    options = _.extend dockerConfig,
+      rejectUnauthorized: false
+      headers: headers
+      path: apiPath
+      method: 'POST'
+
+    # console.log "options = ",options
+
+    resData =
+      data: null
+      error: null
+
+    req = https.request options, (res)->
+      # resData.data = res
+
+      callback(null, res)
+
+      # handleFn = (data)->
+      #   process.stdout.write(data)
+      #   data
+
+      # res.on('data', handleFn)#.on('data', handleFn)
+
+    req.on 'error', (e)->
+      callback(e, null)
+      # resData.error = res
+
+      # console.error e
+
+    req.end()
+    undefined
 
 
 @Class.DockerContainer = class DockerContainer extends Class.DockerodeClass
 
-  constructor: (@_serverId, @_container, @_callbacks=DockerContainerCallbacks) ->
+  constructor: (@_docker, @_container, @_callbacks=DockerContainerCallbacks) ->
+    @_serverId = @_docker._id
     super @_container.constructor, @_container, @_callbacks
 
 
-@Class.NewDockerServer = class NewDockerServer extends Class.DockerodeClass
+@Class.DockerServer = class DockerServer extends Class.DockerodeClass
 
   constructor: (@_data, @_callbacks=DockerServerCallbacks, @_streamingCallbacks=StreamingCallBacks) ->
 
@@ -694,22 +518,76 @@ needStreamingCallback = (fn, streamingFns=[])->
 
           @_configs_errors.push err
 
+
+    Docker = Meteor.npmRequire "dockerode"
+
+    super Docker, @_configs, @_callbacks
+
+    @ping()
+
+
+    moreDockerApis =
+      ps:
+        desc:
+          get: -> @listContainers()
+
+      ps_a:
+        desc:
+          get: -> @listContainers({all:1})
+
+      images:
+        desc:
+          get: -> @listImages()
+
+      imageTags:
+        desc:
+          get: -> @listImageTags(tagOnly=true)
+
+      stopAll:
+        desc:
+          get: ->
+            @listContainerIds().data.map (containerId)=>
+              @stop containerId
+
+      rmAll:
+        desc:
+          get: ->
+            @stopAll
+            @listContainerIds().data.map (containerId)=>
+              @rm containerId
+
+      startAll:
+        desc:
+          get: ->
+            @listContainerIds().data.map (containerId)=>
+              @start containerId
+
+      allContainers:
+        desc:
+          get: ->
+            @listContainerIds().data.map (containerId)=>
+              @_getContainer containerId
+
+      allImages:
+        desc:
+          get: ->
+            @listImageTags(tagOnly=true)?.data.map (imageTag)=>
+              @_getImage imageTag
+
+    for api in Object.keys(moreDockerApis)
+      Object.defineProperty @, api, moreDockerApis[api].desc
+
+
+
     if @_configs_errors.length is 0
       @_configs_ok = true
-
-      Docker = Meteor.npmRequire "dockerode"
-
-      super Docker, @_configs, @_callbacks
-
       @ping()
-
-
-
-    else
-      @ping = ->
 
   _syncCallCheck: (apiName) ->
     super apiName
+
+    @_canSyncCall = apiName in @_apis
+    @_canSyncCall
 
     if apiName isnt "ping"
       @_canSyncCall = @_canSyncCall and (@ping().error is null)
@@ -761,7 +639,18 @@ needStreamingCallback = (fn, streamingFns=[])->
     resData = @getImage imageTag
     if resData
       if not resData.error
-        new Class.DockerImage @_id, resData.data
+        new Class.DockerImage @, resData.data
+      else
+        resData
+    else
+      resData
+
+
+  Image: (imageTag) ->
+    resData = @getImage imageTag
+    if resData
+      if not resData.error
+        new Class.DockerImage @, resData.data
       else
         resData
     else
@@ -772,16 +661,22 @@ needStreamingCallback = (fn, streamingFns=[])->
     @_getImage(imageTag).remove()
 
 
-  allImages: ()->
-    @listImageTags(tagOnly=true)?.data.map (imageTag)=>
-      @_getImage imageTag
-
-
   _getContainer: (containerId)->
     resData = @getContainer containerId
     if resData
       if not resData.error
-        new Class.DockerContainer @_id, resData.data
+        new Class.DockerContainer @, resData.data
+      else
+        resData
+    else
+      resData
+
+
+  Container: (containerId)->
+    resData = @getContainer containerId
+    if resData
+      if not resData.error
+        new Class.DockerContainer @, resData.data
       else
         resData
     else
@@ -800,35 +695,18 @@ needStreamingCallback = (fn, streamingFns=[])->
     @_getContainer(containerId).start()
 
 
-  stopAll: ()->
-    @listContainerIds().data.map (containerId)=>
-      @stop containerId
-
-
-  rmAll: ()->
-    @stopAll()
-    @listContainerIds().data.map (containerId)=>
-      @rm containerId
-
-
-  startAll: ()->
-    @listContainerIds().data.map (containerId)=>
-      @start containerId
-
-
-  allContainers: ()->
-    @listContainerIds().data.map (containerId)=>
-      @_getContainer containerId
-
-
   commit: (containerId, repo, tag, comment, author)->
     container = @_getContainer containerId
 
     if not repo
-      repo = "AgilearningIO/"+Random.id(20)
+      commitData =
+        repo: "AgilearningIO/"+Random.id(20)
+        tag: "latest"
 
     if not tag
-      tag = "latest"
+      commitData = parseRepoString repo
+      if not commitData.tag
+        commitData.tag = "latest"
 
     if not comment
       comment = "agilearning.io awesome!"
@@ -836,9 +714,7 @@ needStreamingCallback = (fn, streamingFns=[])->
     if not author
       author = "agilearning.io"
 
-    commitData =
-      repo: repo
-      tag: tag
+    commitData = _.extend commitData,
       comment: comment
       author: author
 
@@ -858,6 +734,24 @@ needStreamingCallback = (fn, streamingFns=[])->
     allUsedPorts = @allUsedPorts()
     allFreePorts = allPorts.filter (port)=> port not in allUsedPorts
     allFreePorts[0..n-1]
+
+    # if allFreePorts.length >= n
+    #   resData =
+    #     error: null
+    #     data: allFreePorts
+
+    #   if @_callbacks.getFreePorts
+    #     resData = @_callbacks.getFreePorts @, resData
+
+    #   else
+    #     resData.data = resData.data[0..n-1]
+
+    # else
+    #   resData =
+    #     error: "port not enough"
+    #     data: null
+
+    # resData
 
 
   _runTest:(imageTag) ->
@@ -880,6 +774,11 @@ needStreamingCallback = (fn, streamingFns=[])->
     servicePorts = db.envConfigTypes.findOne({_id:configTypeId}).configs.servicePorts
     fports = docker.getFreePorts(servicePorts.length)
 
+    # if not fports.error
+    #   fports = fports.data
+    # else
+    #   fports = []
+
     portDataArray = [0..fports.length-1].map (i)->
       portData =
         guestPort: servicePorts[i].port
@@ -900,3 +799,9 @@ needStreamingCallback = (fn, streamingFns=[])->
       new Class.DockerContainer @_id, containerResData.data
     else
       containerResData
+
+
+
+@Class.DockersManager = new class DockersManager
+  constructor: ->
+

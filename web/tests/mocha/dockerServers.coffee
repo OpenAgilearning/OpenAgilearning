@@ -39,7 +39,7 @@ if Meteor.isServer
             if i < 1
               if dockerServer.name is "errorCaPathServer"
                 it "DockerServerCallbacks has no info callback. So does docker._callbacks", ->
-                  docker = new Class.NewDockerServer dockerServer, DockerServerCallbacks
+                  docker = new Class.DockerServer dockerServer, DockerServerCallbacks
                   chai.expect(docker._callbacks.info).to.be.undefined
 
                 i = i+1
@@ -49,15 +49,20 @@ if Meteor.isServer
             _.extend UsefulCallbacks, DockerServerCallbacks
             _.extend UsefulCallbacks, DockerMonitorCallbacks
 
-            docker = new Class.NewDockerServer dockerServer, UsefulCallbacks
+            docker = new Class.DockerServer dockerServer, UsefulCallbacks
 
             do (docker) ->
               if dockerServer.name is "errorCaPathServer"
                 it "ping " + dockerServer._id + " should be failed!", ->
                   resData = docker.ping()
 
+                  # console.log "ping " + dockerServer._id + " should be failed!"
+                  # console.log "resData = ",resData
+
                   chai.expect(docker._configs_ok).to.be.false
-                  chai.expect(resData).to.be.undefined
+                  chai.expect(resData.data).to.be.null
+                  chai.expect(resData.error).not.to.be.null
+
 
               else
 
@@ -166,9 +171,9 @@ if Meteor.isServer
                 #     # chai.assert docker.isImageTagInServer randomImage is false, "docker.isImageTagInServer " + randomImage + " is false in " + dockerServer._id
 
 
-                # describe "tag & untag (image)", ->
-                #   it "ensure sync listImageTags consistent when untagging image in " + dockerServer._id, ->
-                #     console.log "TODO"
+                describe "tag & untag (image)", ->
+                  it "ensure sync listImageTags consistent when untagging image in " + dockerServer._id, ->
+                    console.log "TODO"
 
 
                 describe "docker.pull & docker.rmi (image) / image.tag", ->
