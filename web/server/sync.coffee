@@ -8,27 +8,42 @@
 #   setTimeInterval * 3
 
 
-syncDockerServerInfo = ->  
+syncDockerServerInfo = ->
   dockerServers = DockerServers.find().fetch()
 
   for dockerServerData in dockerServers
-    docker = new Class.DockerServer dockerServerData, UsefulCallbacks
-    dockerInfo = docker.info()
+    docker = new Class.DockerServer(dockerServerData, UsefulCallbacks)
+    resData = docker.info()
+
+    # try
+    #   resData = docker.info()
+    # catch e
+    #   console.log "error = ", e
 
 syncDockerServerImageTags = ->
   dockerServers = DockerServers.find().fetch()
 
   for dockerServerData in dockerServers
-    docker = new Class.DockerServer dockerServerData, UsefulCallbacks
-    dockerInfo = docker.listImageTags()
+    docker = new Class.DockerServer(dockerServerData, UsefulCallbacks)
+    resData = docker.listImageTags()
 
-    
+    # try
+    #   resData = docker.listImageTags()
+    # catch e
+    #   console.log "error = ", e
+
+
 syncDockerServerContainer = ->
   dockerServers = DockerServers.find().fetch()
 
   for dockerServerData in dockerServers
-    docker = new Class.DockerServer dockerServerData, UsefulCallbacks
-    dockerInfo = docker.listContainers()
+    docker = new Class.DockerServer(dockerServerData, UsefulCallbacks)
+    resData = docker.listContainers()
+
+    # try
+    #   resData = docker.listContainers()
+    # catch e
+    #   console.log "error = ", e
 
   # dockerServers = DockerServers.find().fetch()
   # Docker = Meteor.npmRequire "dockerode"
@@ -189,9 +204,9 @@ syncDockerServerContainer = ->
 
 
 
-Meteor.setInterval syncDockerServerInfo, 30000
-Meteor.setInterval syncDockerServerImageTags, 30000
-Meteor.setInterval syncDockerServerContainer, 30000
+Meteor.setInterval syncDockerServerInfo, 10000
+Meteor.setInterval syncDockerServerImageTags, 10000
+Meteor.setInterval syncDockerServerContainer, 10000
 
 # Meteor.setInterval dockerPull.ToDoJobHandler, 5000
 # Meteor.setInterval dockerPull.DoingJobHandler, 60000

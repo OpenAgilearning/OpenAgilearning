@@ -281,6 +281,7 @@ needStreamingCallback = (fn, streamingFns=[])->
 
   _syncCallCheck: (apiName) ->
     @_canSyncCall = apiName in @_apis
+    # @_canSyncCall = @_canSyncCall and @[apiName]?
     @_canSyncCall = @_canSyncCall and @_instance
     @_canSyncCall = @_canSyncCall and (apiName not in @_streamingApis)
 
@@ -437,69 +438,72 @@ needStreamingCallback = (fn, streamingFns=[])->
 
           @_configs_errors.push err
 
+
+    Docker = Meteor.npmRequire "dockerode"
+
+    super Docker, @_configs, @_callbacks
+
+    @ping()
+
+
+    moreDockerApis =
+      ps:
+        desc:
+          get: -> @listContainers()
+
+      ps_a:
+        desc:
+          get: -> @listContainers({all:1})
+
+      images:
+        desc:
+          get: -> @listImages()
+
+      stopAll:
+        desc:
+          get: ->
+            @listContainerIds().data.map (containerId)=>
+              @stop containerId
+
+      rmAll:
+        desc:
+          get: ->
+            @stopAll
+            @listContainerIds().data.map (containerId)=>
+              @rm containerId
+
+      startAll:
+        desc:
+          get: ->
+            @listContainerIds().data.map (containerId)=>
+              @start containerId
+
+      allContainers:
+        desc:
+          get: ->
+            @listContainerIds().data.map (containerId)=>
+              @_getContainer containerId
+
+      allImages:
+        desc:
+          get: ->
+            @listImageTags(tagOnly=true)?.data.map (imageTag)=>
+              @_getImage imageTag
+
+    for api in Object.keys(moreDockerApis)
+      Object.defineProperty @, api, moreDockerApis[api].desc
+
+
+
     if @_configs_errors.length is 0
       @_configs_ok = true
-
-      Docker = Meteor.npmRequire "dockerode"
-
-      super Docker, @_configs, @_callbacks
-
       @ping()
-
-
-      moreDockerApis =
-        ps:
-          desc:
-            get: -> @listContainers()
-
-        ps_a:
-          desc:
-            get: -> @listContainers({all:1})
-
-        images:
-          desc:
-            get: -> @listImages()
-
-        stopAll:
-          desc:
-            get: ->
-              @listContainerIds().data.map (containerId)=>
-                @stop containerId
-
-        rmAll:
-          desc:
-            get: ->
-              @stopAll
-              @listContainerIds().data.map (containerId)=>
-                @rm containerId
-
-        startAll:
-          desc:
-            get: ->
-              @listContainerIds().data.map (containerId)=>
-                @start containerId
-
-        allContainers:
-          desc:
-            get: ->
-              @listContainerIds().data.map (containerId)=>
-                @_getContainer containerId
-
-        allImages:
-          desc:
-            get: ->
-              @listImageTags(tagOnly=true)?.data.map (imageTag)=>
-                @_getImage imageTag
-
-      for api in Object.keys(moreDockerApis)
-        Object.defineProperty @, api, moreDockerApis[api].desc
-
-
-    else
-      @ping = ->
 
   _syncCallCheck: (apiName) ->
     super apiName
+
+    @_canSyncCall = apiName in @_apis
+    @_canSyncCall
 
     if apiName isnt "ping"
       @_canSyncCall = @_canSyncCall and (@ping().error is null)
@@ -620,24 +624,25 @@ needStreamingCallback = (fn, streamingFns=[])->
     allPorts = [start..end].map String
     allUsedPorts = @allUsedPorts()
     allFreePorts = allPorts.filter (port)=> port not in allUsedPorts
+    allFreePorts[0..n-1]
 
-    if allFreePorts.length >= n
-      resData =
-        error: null
-        data: allFreePorts
+    # if allFreePorts.length >= n
+    #   resData =
+    #     error: null
+    #     data: allFreePorts
 
-      if @_callbacks.getFreePorts
-        resData = @_callbacks.getFreePorts @, resData
+    #   if @_callbacks.getFreePorts
+    #     resData = @_callbacks.getFreePorts @, resData
 
-      else
-        resData.data = resData.data[0..n-1]
+    #   else
+    #     resData.data = resData.data[0..n-1]
 
-    else
-      resData =
-        error: "port not enough"
-        data: null
+    # else
+    #   resData =
+    #     error: "port not enough"
+    #     data: null
 
-    resData
+    # resData
 
 
   _runTest:(imageTag) ->
@@ -660,10 +665,10 @@ needStreamingCallback = (fn, streamingFns=[])->
     servicePorts = db.envConfigTypes.findOne({_id:configTypeId}).configs.servicePorts
     fports = docker.getFreePorts(servicePorts.length)
 
-    if not fports.error
-      fports = fports.data
-    else
-      fports = []
+    # if not fports.error
+    #   fports = fports.data
+    # else
+    #   fports = []
 
     portDataArray = [0..fports.length-1].map (i)->
       portData =
