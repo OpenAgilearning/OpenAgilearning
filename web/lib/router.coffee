@@ -15,6 +15,8 @@ Meteor.startup ->
           Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
       waitOn: ->
+        Session.set "nodesListRendered", false
+
         userId = Meteor.userId()
 
         redirectAfterLogin = Cookies.get "redirectAfterLogin"
