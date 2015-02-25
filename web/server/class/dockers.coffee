@@ -772,7 +772,7 @@ needStreamingCallback = (fn, streamingFns=[])->
 
     configTypeId = 'ipynb'
     servicePorts = db.envConfigTypes.findOne({_id:configTypeId}).configs.servicePorts
-    fports = docker.getFreePorts(servicePorts.length)
+    fports = @getFreePorts(servicePorts.length)
 
     # if not fports.error
     #   fports = fports.data
@@ -801,7 +801,45 @@ needStreamingCallback = (fn, streamingFns=[])->
       containerResData
 
 
+@Class.DockersManager = class DockersManager
 
-@Class.DockersManager = new class DockersManager
-  constructor: ->
+  constructor: (@useIn="production")->
+
+    @_servers = {}
+
+    if @useIn is "production"
+      @_serverQuery =
+        useIn: "production"
+    else
+      @_serverQuery =
+        useIn: "testing"
+
+
+    db.dockerServers.find(@_serverQuery).map (serverData) =>
+      docker = new Class.DockerServer serverData
+      if not docker.ping().error
+        @_servers[docker._data.name] = docker
+        @_servers[docker._id] = docker
+
+    managerApis =
+      ls_servers:
+        desc:
+          get: ->
+            Object.keys @_servers
+
+    for api in Object.keys(managerApis)
+      Object.defineProperty @, api, managerApis[api].desc
+
+
+  _searchImageTag: (imageTag, activeOnly=true)->
+
+    query =
+      tag: imageTag
+      serverId:
+        $in: Object.keys(@_servers)
+
+    if activeOnly
+      query.active = true
+
+    db.dockerImageTagsMonitor.find(query).map (imageTagData)-> imageTagData.serverId
 

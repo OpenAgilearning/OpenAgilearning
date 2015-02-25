@@ -2,6 +2,9 @@ new Mongo.Collection "dockerServersMonitor"
 new Mongo.Collection "dockerImageTagsMonitor"
 new Mongo.Collection "dockerContainersMonitor"
 
+new Mongo.Collection "dockerHubs"
+new Mongo.Collection "dockerRepos"
+
 @DockerServers = new Mongo.Collection "dockerServers"
 @DockerServersException = new Mongo.Collection "dockerServersException"
 @DockerServerImages = new Mongo.Collection "dockerServerImages"
