@@ -11,30 +11,30 @@ Template.nodeInfo.helpers
   isSemiPublic: ->
     @publicStatus is "semipublic"
 
- 
-Template.applyCourseBtn.helpers  
+
+Template.applyCourseBtn.helpers
   waitForCheck: ->
     userId = Meteor.userId()
     if userId
-      RoleTools.isRole "waitForCheck", "course", @_id 
+      RoleTools.isRole "waitForCheck", "course", @_id
 
 
 Template.applyCourseBtn.events
   "click button.applyCourseBtn": (e,t)->
     # console.log e
     e.stopPropagation()
-    
+
     userId = Meteor.userId()
     if not userId
       Router.go "pleaseLogin"
     else
       courseId = $(e.target).attr "courseId"
-    
+
       Meteor.call "applyCourse", courseId
       # , (err,data) ->
       #   if err.error is 401
       #     Router.go "pleaseLogin"
-        
+
 
 # Template.nodeIcons.helpers
 #   isPrivate: ->
@@ -45,47 +45,13 @@ Template.applyCourseBtn.events
 #     @publicStatus is "semipublic"
 
 
-# Template.nodesList.rendered = ->
-#   # $container = $(".nodeList")
-#   # $container.imagesLoaded ->
-#   #   $container.masonry
-#   #     itemSelector: ".nodeInfo"
-          
-#   $('.nodesList').masonry
-#     columnWidth: ".col-md-3"
-#     itemSelector: '.nodeInfo'
-
-#   $conotianer = $(".nodeList").masonry()
-
-#   $conotianer.imagesLoaded ->
-#     $conotianer.masonry()
-
-
-# Template.nodeIcons.rendered = -> 
-#   $conotianer = $(".nodeList").masonry()
-
-#   $conotianer.imagesLoaded ->
-#     $conotianer.masonry()
-
-#     # columnWidth: ".col-md-3"
-#     # itemSelector: '.nodeInfo'
-
-
-Template.index.rendered = ->
-  
-#   # $container = $(".nodeList")
-#   # $container.imagesLoaded ->
-#   #   $container.masonry
-#   #     itemSelector: ".nodeInfo"
+Template.nodesList.rendered = ->
 
   $(".nodesList").masonry
     columnWidth: ".col-md-3"
     itemSelector: '.nodeInfo'
 
-  $conotianer = $(".nodesList").masonry()
-
-  $conotianer.imagesLoaded ->
-    $conotianer.masonry()
+  Session.set "nodesListRendered", true
 
 
 Template.nodeInfo.rendered = ->
@@ -95,48 +61,26 @@ Template.nodeInfo.rendered = ->
   # console.log elem
 
   # $(".nodesList").masonry('appended', elem).fadeIn(2000)
-    
+
   $(triggerElem).click ->
     $(elem).toggleClass "col-md-3"
     $(elem).toggleClass "col-md-6"
     $(".nodesList").masonry()
 
-  $conotianer = $(".nodesList").masonry()
-  
-  # $conotianer.masonry "appended", elem
-  
+
+  $conotianer = $(".nodesList")
   $conotianer.imagesLoaded ->
     $conotianer.masonry()
- 
-  
-#   $conotianer.imagesLoaded ->
-#     $conotianer.masonry()
+
+  if Session.get "nodesListRendered"
+    do (elem, $conotianer)->
+      $conotianer.masonry "appended", elem
 
 
-  # briefView = ->
-  #   console.log "briefView"
-  #   console.log @
-
-  # detailView = ->
-  #   console.log "detailView"
-  #   console.log @
-
-  # $(elem).toggle briefView, detailView
+  # console.clear()
 
 
-#   elem = this.find ".nodeInfo"
-  
-#   $('.nodesList').masonry 'appended', elem 
-
-  # $('.nodesList').masonry 'reloadItems' 
-
-  # $container = $(".nodeList")
-  # $container.imagesLoaded ->
-  #   $container.masonry
-  #     itemSelector: ".nodeInfo"
-
-  # $(".nodeList").masonry
-  #   itemSelector: '.nodeInfo'
-
-# Template.courseImage.rendered = ->
-#   $('.nodesList').masonry('layout')
+Template.nodeInfo.destroyed = ->
+  elem = @find ".nodeInfo"
+  $('.nodesList').masonry( 'remove', elem )
+  $('.nodesList').masonry()
