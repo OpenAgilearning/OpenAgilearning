@@ -336,7 +336,7 @@ Meteor.startup ->
         # userId = Meteor.userId()
         # if not userId
         #   Router.go "pleaseLogin"
-
+        Session.set "resourcesListRendered", false
         Meteor.subscribe "allLearningResources"
 
         Meteor.subscribe "userRoles", ["agilearning.io"]
