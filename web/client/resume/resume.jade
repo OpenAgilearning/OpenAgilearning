@@ -19,7 +19,9 @@ template(name="resume_profile")
   if field "email"
     p {{field "email"}}
   if field "hometown"
-    p {{field "hometown"}}
+    h4 {{field "hometown"}}
+  if field "description"
+    p {{field "description"}}
   a(href="{{pathFor 'resume' userId=user._id}}") see my resume
 
 
