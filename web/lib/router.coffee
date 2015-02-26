@@ -588,9 +588,25 @@ Meteor.startup ->
       template: "terms"
       data:
         terms:=>db.terms.findOne _id:@current().params.tocId
-
       waitOn:->
         Meteor.subscribe "terms"
+
+    @route "communitiesList",
+      path: "communitiesList/"
+      template: "communitiesList"
+
+      data:
+        user: -> Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId, "admin", "system") or Roles.userIsInRole(userId, "admin", "dockers")
+
+
+      waitOn: ->
+        Meteor.subscribe "userResume"
+        Meteor.subscribe "communities"
+
+
 
     @route "pleaseLogin",
       path: "becomeAgilearner/"
