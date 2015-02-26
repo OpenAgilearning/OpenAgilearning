@@ -603,8 +603,21 @@ Meteor.startup ->
 
 
       waitOn: ->
-        Meteor.subscribe "userResume"
         Meteor.subscribe "communities"
+
+    @route "community",
+      path: "community/:communityId"
+      template: "communityPage"
+
+      data:
+        user: -> Meteor.user()
+        showAdminPage: ->
+          userId = Meteor.userId()
+          Roles.userIsInRole(userId, "admin", "system") or Roles.userIsInRole(userId, "admin", "dockers")
+        community:->
+            db.communities.findOne()
+      waitOn: ->
+        Meteor.subscribe "communities" , @params.communityId
 
 
 

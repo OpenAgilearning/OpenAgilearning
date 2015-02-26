@@ -36,8 +36,14 @@ Meteor.publish "DevMileStone", ->
   DevMileStone.find()
 
 
+
 Meteor.publish "terms", ->
   db.terms.find()
 
-Meteor.publish "communities", ->
-  db.communities.find()
+
+Meteor.publish "communities", (id)->
+  if id
+    db.communities.find _id:id
+  else
+    db.communities.find()
+

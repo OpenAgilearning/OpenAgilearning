@@ -9,7 +9,14 @@
         createdBy : "MjSZYPJm6YMevQAW9"
         createdAt : new Date()
       }
-
+      {
+        _id: "Taishin"
+        name : "台新國際商業銀行"
+        pic_url : "http://upload.wikimedia.org/wikipedia/zh/thumb/b/b2/Taishin.svg/225px-Taishin.svg.png"
+        description : "台新國際商業銀行，金融機構代號：812，是台灣的商業銀行之一，現為台新金融控股公司旗下之子公司。共計有總行營業部、信託部、國外部、OBU等四個營業部門。"
+        createdBy : "MjSZYPJm6YMevQAW9"
+        createdAt : new Date()
+      }
     ]
 
   set: ->

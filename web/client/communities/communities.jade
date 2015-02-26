@@ -2,5 +2,13 @@ template(name="communitiesList")
   h2 List of communities
   each communities
     p {{name}}
-    img(src=pic_url)
+    a(href="{{pathFor 'community' communityId=_id}}")
+      img(src=pic_url)
     p {{description}}
+    hr
+
+template(name="communityPage")
+  h2 {{community.name}}
+  a(href="{{pathFor 'communitiesList'}}")
+    img(src=community.pic_url)
+  p {{community.description}}
