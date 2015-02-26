@@ -128,7 +128,7 @@ Template.adminPageUsersTable.helpers
 
 
     res =
-      collection: Meteor.users
+      collection: Meteor.users.find()
       rowsPerPage: 10
       showFilter: true
       fields: [userIdField, userNameField, userRolesField, setSystemAdminBtnsField, setDockerAdminBtnsField, setCourseManagerBtnField, setTeacherBtnField, setStudentBtnField]
