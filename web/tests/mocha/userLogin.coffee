@@ -3,20 +3,20 @@ if Meteor.isClient
     describe "Meetup Login (Client)", ->
       before ->
         meetupServiceData = Package['service-configuration'].ServiceConfiguration.configurations.findOne({service:"meetup"})
-        
+
         if not meetupServiceData
           configuration = { "service" : "meetup", "clientId" : "YOUR_OWN_ID", "secret" : "YOUR_SECRET", "loginStyle" : "redirect" }
           serviceName = "meetup"
           loginButtonsSession = Accounts._loginButtonsSession
-        
+
           Accounts.connection.call "configureLoginService", configuration, (error, result)->
             if error
               Meteor._debug "Error configuring login service " + serviceName, error
             else
-              loginButtonsSession.set 'configureLoginServiceDialogVisible', false 
-        
+              loginButtonsSession.set 'configureLoginServiceDialogVisible', false
 
-      
+
+
       it "service-configuration has meetup data", ->
         meetupServiceData = Package['service-configuration'].ServiceConfiguration.configurations.findOne({service:"meetup"})
         chai.expect(meetupServiceData).not.to.be.null
@@ -40,21 +40,21 @@ if Meteor.isServer
               Meteor.users.insert data
             # console.log data
           catch e
-            console.log "error = "
-            console.log e
+            console.log "[MochaTest][init Users and Courses]"
+            console.log "error = ", e
 
 
-    
+
         Fixture.Courses.forceClear()
         Fixture.Courses.set()
 
 
       it "check Meteor.users has data", ->
         chai.assert Meteor.users.find().count()>0, "Meteor.users has data"
-  
+
       it "check db.courses has data", ->
         chai.assert db.courses.find().count()>0, "db.courses has data"
-    
-  
+
+
 
 #     Package['service-configuration'].ServiceConfiguration.configurations.remove({service:"meetup"})
