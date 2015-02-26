@@ -796,7 +796,9 @@ needStreamingCallback = (fn, streamingFns=[])->
     containerResData = @createContainer containerData
 
     if not containerResData.error
-      new Class.DockerContainer @_id, containerResData.data
+      container = new Class.DockerContainer @_id, containerResData.data
+      container.start()
+      container
     else
       containerResData
 
