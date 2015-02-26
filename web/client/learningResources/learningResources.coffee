@@ -1,37 +1,18 @@
 
 
-# Template.resourcesList.rendered = ->
-#   $(".resourcesList").masonry
-#     columnWidth: ".col-md-3"
-#     itemSelector: '.resourceNode'
-
-#   $conotianer = $(".resourcesList").masonry()
-
-#   $conotianer.imagesLoaded ->
-#     $conotianer.masonry()
-
-
-Template.learningResourcesPage.rendered = ->
-  # $container = $(".nodeList")
-  # $container.imagesLoaded ->
-  #   $container.masonry
-  #     itemSelector: ".nodeInfo"
-  $("iframe#ytplayer").hide()
-
+Template.resourcesList.rendered = ->
   $(".resourcesList").masonry
     columnWidth: ".col-md-3"
     itemSelector: '.resourceNode'
 
+  Session.set "resourcesListRendered", true
 
-  $conotianer = $(".resourcesList").masonry()
-
-  $conotianer.imagesLoaded ->
-    $conotianer.masonry()
+Template.learningResourcesPage.rendered = ->
+  $("iframe#ytplayer").hide()
 
 
 Template.resourceNode.events
   "click img.play": (e,t) ->
-
 
     e.stopPropagation()
     $(e.target).closest(".resourceNode").toggleClass "col-md-3"
@@ -42,12 +23,8 @@ Template.resourceNode.events
     imgw = $(e.target).css("width")
     imgh = $(e.target).css("height")
 
-    console.log "here",imgw,imgh
-
     youtubeVideoId = $(e.target).attr "youtubeVideoId"
     playUrl = "http://www.youtube.com/embed/" + youtubeVideoId #+"?autoplay=1"
-
-    console.log "here",playUrl
 
     $("iframe#ytplayer").attr "src", playUrl
     $("iframe#ytplayer").attr "width", imgw
@@ -64,42 +41,19 @@ Template.resourceNode.events
     #   videojs @, JSON.parse($(@).attr("data-setup"))
 
 
-
-
-
-
-
 Template.resourceNode.rendered = ->
-  # elem = @find ".resourceNode"
-  # triggerElem = $(elem).find(".triggerBlock")
+  elem = @find ".resourceNode"
 
-  # $(triggerElem).click ->
-  #   $(elem).toggleClass "col-md-3"
-  #   $(elem).toggleClass "col-md-6"
-
-  #   $(".resourcesList").masonry()
-
-
-    # $iframe.attr("src", "http://www.youtube.com/embed/" + @youtubeVideoId)
-
-    # if $('img[youtubeVideoId='+@youtubeVideoId+']').closest(".resourceNode").find("iframe").length is 0
-    #   console.log "here"
-    #   $node = $('img[youtubeVideoId='+@youtubeVideoId+']').closest(".resourceNode")
-    #   $iframe = $("#ytplayer")
-    #   $iframe.appendTo $node
-    #   $iframe.attr("width", imgw)
-    #   $iframe.attr("height", imgh)
-      # $iframe.attr("frameborder", "0")
-      # $iframe.css("margin-bottom", "-4px")
-      # $iframe.attr("allowfullscreen", "")
-
-
-
-  $conotianer = $(".resourcesList").masonry()
-
-  # $conotianer.masonry "appended", elem
-
+  $conotianer = $(".resourcesList")
   $conotianer.imagesLoaded ->
     $conotianer.masonry()
 
+  if Session.get "resourcesListRendered"
+    do (elem, $conotianer)->
+      $conotianer.masonry "appended", elem
 
+
+Template.resourceNode.destroyed = ->
+  elem = @find ".resourceNode"
+  $('.resourcesList').masonry( 'remove', elem )
+  $('.resourcesList').masonry()
