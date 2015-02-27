@@ -508,6 +508,8 @@ needStreamingCallback = (fn, streamingFns=[])->
 @Class.DockerServer = class DockerServer extends Class.DockerodeClass
 
   constructor: (@_data, @_callbacks=DockerServerCallbacks, @_streamingCallbacks=StreamingCallBacks) ->
+    if typeof @_data is "string"
+      @_data = db.dockerServers.findOne {$or:[{_id:@_data}, {name:@_data}]}
 
     @_id = @_data._id
     @_configs = _.extend {}, @_data.connect
