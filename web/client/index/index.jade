@@ -12,7 +12,7 @@ template(name="index")
         //- +msgBoard
 
 
-  
+
 //- template(name="dockerImagePicture")
 //-   img(width="{{width}}",src="{{getDockerImagePictureURL dockerImage}}")
 
@@ -34,12 +34,12 @@ template(name="nodeInfo")
         .triggerBlock
           if isPublic
             +courseImage courseDoc=this width="100%" bindingATag=true
-          else 
+          else
             if isNotRole "waitForCheck" "course" _id
               +courseImage courseDoc=this width="100%" bindingATag=true
             else
               +courseImage courseDoc=this width="100%"
-          
+
           h3 {{courseName}}
           p {{description}}
           //- +aboutCoursesIcons
@@ -47,22 +47,22 @@ template(name="nodeInfo")
         if isSemiPublic
           +applyCourseBtn
         if isPrivate
-          i.fa.fa-user-secret.fa-2x.pull-right(style="margin:5px") 
+          i.fa.fa-user-secret.fa-2x.pull-right(style="margin:5px")
 
 
    else
     .nodeInfo.col-md-3
       .well
         .triggerBlock
-        
+
           if isPublic
             +courseImage courseDoc=this width="100%" bindingATag=true
-          else 
+          else
             if isNotRole "waitForCheck" "course" _id
               +courseImage courseDoc=this width="100%" bindingATag=true
             else
               +courseImage courseDoc=this width="100%"
-          
+
           .courseTitle
             h3 {{courseName}}
           .languageIcons
@@ -76,19 +76,19 @@ template(name="nodeInfo")
         if isSemiPublic
           +applyCourseBtn courseId=_id
         if isPrivate
-          i.fa.fa-user-secret.fa-2x.pull-right(style="margin:5px") 
+          i.fa.fa-user-secret.fa-2x.pull-right(style="margin:5px")
 
 template(name="applyCourseBtn")
   if isRole "waitForCheck" "course" courseId
-    button.btn.btn-warning.pull-right Applying             
-    
+    button.btn.btn-warning.pull-right Applying
+
   else
     if isNotRole "waitForCheck" "course" courseId
       i.fa.fa-user-secret.fa-2x.pull-right(style="margin:5px")
     else
-      button.applyCourseBtn.btn.btn-info.pull-right(courseId="{{courseId}}") Apply     
-      
-      
+      button.applyCourseBtn.btn.btn-info.pull-right(courseId="{{courseId}}") Apply
+
+
 template(name="nodeIcons")
   if video
     i.fa.fa-film.fa-2x(style="margin:5px")
@@ -96,8 +96,8 @@ template(name="nodeIcons")
     i.fa.fa-book.fa-2x(style="margin:5px")
   if dockerImage
     i.fa.fa-cube.fa-2x(style="margin:5px")
-  
-  
+
+
 
 template(name="index3")
   .container
@@ -112,7 +112,7 @@ template(name="index3")
         h4 You don't need to be cooped in different operation systems anymore!
         h4 Needn't spend a lot of time to synchronize environments !
         h4 Spend most of time playing data!
-        
+
         img(src="images/aha_tutorial_pic.jpg",style="width:100%")
 
   .container
@@ -128,9 +128,9 @@ template(name="index3")
           li
             h2 (for student) is "the programs could not be run in my computer, but it runs on teacher's!"
 
-        
 
-        
+
+
 
 
 template(name="index2")

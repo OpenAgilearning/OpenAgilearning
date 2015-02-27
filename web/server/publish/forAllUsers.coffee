@@ -8,7 +8,7 @@ Meteor.publish "allPublicEnvConfigTypes", ->
 
 Meteor.publish "allPublicEnvs", ->
   Envs.find publicStatus:"public"
-  
+
 
 Meteor.publish "allPublicCoursesDockerImages", ->
   allPublicCoursesDockerIds = Courses.find({"publicStatus" : "public"}).fetch().map (courseDoc) -> courseDoc.dockerImage

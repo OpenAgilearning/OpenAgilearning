@@ -6,11 +6,11 @@
 @dockerPull.DoingJobHandler = ()->
   dockerServerNames = db.dockerServers.find().fetch().map (xx) -> xx.name
   dockerPullDoingJobs = db.dockerPullImageJob.find({serverName:{$in:dockerServerNames},status:"Doing"}).fetch()
-  
+
   dockerPullDoingJobs.map (job) ->
-      
+
     if db.dockerPullImageStream.find({jobId:job._id,error:{"$exists":true}}).count() > 0
-      updateData = 
+      updateData =
         errorAt: new Date
         updatedAt: new Date
         status: "Error"
@@ -18,24 +18,24 @@
       db.dockerPullImageJob.update {_id:job._id}, {$set:updateData}
 
     else
-      updateData = 
+      updateData =
         updatedAt: new Date
         streamCount: db.dockerPullImageStream.find({jobId:job._id}).count()
-      
+
       if job.streamCount < updateData.streamCount
         db.dockerPullImageJob.update {_id:job._id}, {$set:updateData}
-      
+
       else
         if db.dockerServerImages.find({serverName:job.serverName,tag:job.imageTag}).count() > 0
-          updateData = 
+          updateData =
             doneAt: new Date
             updatedAt: new Date
             status: "Done"
-          
+
           db.dockerPullImageJob.update {_id:job._id}, {$set:updateData}
 
         # else
-        #   updateData = 
+        #   updateData =
         #     errorAt: new Date
         #     updatedAt: new Date
         #     status: "Error:MaybeCallbackDisconnect"
@@ -47,9 +47,9 @@
 @dockerPull.ToDoJobHandler = () ->
   dockerServerNames = db.dockerServers.find().fetch().map (xx) -> xx.name
   dockerPullToDoJobs = db.dockerPullImageJob.find({serverName:{$in:dockerServerNames},status:"ToDo"}).fetch()
-  
+
   MONGO_URL = process.env.MONGO_URL
-  
+
   dockerServerSettings = getDockerServerConnectionSettings "localhost"
 
   Docker = Meteor.npmRequire "dockerode"
@@ -60,7 +60,7 @@
       serverName = job.serverName
       jobId = job._id
 
-      updateData = 
+      updateData =
         DoingAt: new Date
         updatedAt: new Date
         streamCount: 0
@@ -72,21 +72,21 @@
 
         JSONStream = Meteor.npmRequire('JSONStream')
         parser = JSONStream.parse()
-        
-        options = 
+
+        options =
           db: MONGO_URL
           collection: 'dockerPullImageStream'
 
         streamToMongo = Meteor.npmRequire('stream-to-mongo')(options)
 
-        
+
         # MongoWritableStream = Meteor.npmRequire('mongo-writable-stream')
 
         # streamToMongo = new MongoWritableStream
         #   url: MONGO_URL
         #   collection: 'dockerPullImageStream'
         #   upsert: true
-        #   upsertFields: ['id',"jobId","status","error"] 
+        #   upsertFields: ['id',"jobId","status","error"]
 
 
         if not err
@@ -102,7 +102,7 @@
 
 
 @dockerPull.progressMonitor = ->
-  agg1 = 
+  agg1 =
     $group:
       _id:
         id:"$id",
@@ -114,7 +114,7 @@
         $max:
           $divide:["$progressDetail.current","$progressDetail.total"]
 
-  agg2 = 
+  agg2 =
     $sort:
       progress:1
 
