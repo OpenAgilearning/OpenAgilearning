@@ -1,5 +1,6 @@
 template(name="forumPost")
   .container
     with post
-      h1= title
-      p.post-content= content
+      h1.page-header= title
+      +mathdown
+        {{content}}
