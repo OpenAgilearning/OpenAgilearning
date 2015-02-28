@@ -791,14 +791,18 @@ needStreamingCallback = (fn, streamingFns=[])->
     container = @_getContainer containerId
 
     if not repo
-      commitData =
-        repo: "AgilearningIO/"+Random.id(20)
-        tag: "latest"
+      repo = "AgilearningIO/"+Random.id(20)
+
+      # commitData =
+      #   repo: "AgilearningIO/"+Random.id(20)
+      #   tag: "latest"
 
     if not tag
-      commitData = parseRepoString repo
-      if not commitData.tag
-        commitData.tag = "latest"
+      tag = "latest"
+
+      # commitData = parseRepoString repo
+      # if not commitData.tag
+      #   commitData.tag = "latest"
 
     if not comment
       comment = "agilearning.io awesome!"
@@ -806,7 +810,9 @@ needStreamingCallback = (fn, streamingFns=[])->
     if not author
       author = "agilearning.io"
 
-    commitData = _.extend commitData,
+    commitData = #_.extend commitData,
+      repo: repo
+      tag: tag
       comment: comment
       author: author
 
