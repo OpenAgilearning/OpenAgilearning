@@ -1,10 +1,10 @@
-AutoForm.hooks 
+AutoForm.hooks
   profileUpdate:
     onSuccess: (updateProfile, result, template) ->
       $(".show-profile").toggle()
       $(".profile-editor").toggle()
 
-  setEnvUserConfigs: 
+  setEnvUserConfigs:
     onSuccess: (operation, result, template)->
       Session.set "userConfigId", ""
       Session.set "envConfigTypeId", ""
@@ -16,3 +16,12 @@ AutoForm.hooks
   feedbackForm:
     onSuccess: (operation, result, template)->
       Session.set "feedbackFormSubmitted", yes
+
+  createCommunityForm:
+    onSuccess: (operation, result, template)->
+      $("#createCommunityModal").modal "hide"
+
+
+    onError: (operation, error, template)->
+      console.log "onError",error
+      $("#createCommunityModal").modal "hide"

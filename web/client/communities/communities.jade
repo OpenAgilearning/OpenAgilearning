@@ -1,14 +1,33 @@
 template(name="communitiesList")
+
+  button.btn.btn-primary(data-toggle='modal', href='#createCommunityModal') Create a community
+  #createCommunityModal.modal.fade
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal')
+            span(aria-hidden='true') &times;
+            span(sr-only) Close
+          h4.modal-title Create a community
+        .modal-body
+          +autoForm id="#createCommunityForm" schema="communitySchema" type="method" meteormethod="createCommunity"
+            +afFormGroup name="name"
+            //- +afFormGroup name="pic_url"
+            +afFormGroup name="description"
+            button(type="submit").btn.btn-primary Create
+
   h2 List of communities
-  each communities
-    p {{name}}
-    a(href="{{pathFor 'community' communityId=_id}}")
-      img(src=pic_url)
-    p {{description}}
+  p {{ids}}
+
+  each ids
+    a(href="{{pathFor 'community' communityId=this}}")
+      | {{field "name" this}}
+    img(src="{{field 'pic_url' this}}")
+    p {{field "description" this}}
     hr
 
 template(name="communityPage")
-  h2 {{community.name}}
+  h2 {{field "name"}}
   a(href="{{pathFor 'communitiesList'}}")
-    img(src=community.pic_url)
-  p {{community.description}}
+    img(src="{{field 'pic_url'}}")
+  p {{field "description"}}
