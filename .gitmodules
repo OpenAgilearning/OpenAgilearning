@@ -1,0 +1,6 @@
+[submodule "dockers/c3h3/ipython/agilearning"]
+	path = dockers/c3h3/ipython/agilearning
+	url = https://github.com/c3h3/docker-ipython.git
+[submodule "dockers/c3h3/ipython/latest"]
+	path = dockers/c3h3/ipython/latest
+	url = https://github.com/c3h3/docker-ipython.git
