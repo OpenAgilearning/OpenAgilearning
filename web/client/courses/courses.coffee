@@ -101,7 +101,7 @@ Template.courseImage.helpers
 
       else
         dockerImageTagData = db.dockerImageTags.findOne tag: courseDoc.dockerImageTag
-        console.log "dockerImageTagData = ",dockerImageTagData
+        # console.log "dockerImageTagData = ",dockerImageTagData
         if dockerImageTagData?.pictures?.length > 0
           resURL = Random.choice dockerImageTagData.pictures
         else
