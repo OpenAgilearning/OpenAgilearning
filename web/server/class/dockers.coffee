@@ -970,6 +970,8 @@ needStreamingCallback = (fn, streamingFns=[])->
       resData =
         data:
           configs: containerData
+          envs: containerConfig._Envs
+          portDataArray: containerConfig._portDataArray
           container: container
         error: null
     else

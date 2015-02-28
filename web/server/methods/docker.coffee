@@ -224,50 +224,26 @@ Meteor.methods
 
 
     if DockerInstances.find({userId:user._id,imageTag:fullImageTag}).count() is 0
-      dm = new Class.DockersManager("testing")
+
+      dm = new Class.DockersManager {"user.group.id":"TaishinDataMining"}
+
       resData = dm.getFreeServerForcely().RUN(imageTag, "basic", user._id)
 
       console.log "resData = ",resData
-      # console.log "fullImageTag = "
-      # console.log fullImageTag
 
-      # Future = Npm.require 'fibers/future'
-      # createFuture = new Future
+      if not resData.error
+        dockerData =
+          userId: user._id
+          imageTag: fullImageTag
+          containerConfigs: resData.data.configs
+          envs: resData.data.envs
+          portDataArray: resData.data.portDataArray
+          serverId: resData.data.container._serverId
+          containerId: resData.data.container._instance.id
+          ip: resData.data.container._docker._configs.host
+          createAt: new Date
 
-      # docker.createContainer containerData, (err, container) ->
-      #   createFuture.return container
-
-      # container = createFuture.wait()
-
-      # startFuture = new Future
-
-      # startOpt = {}
-      # # startOpt.PortBindings = containerData.HostConfig.PortBindings
-
-      # cont = docker.getContainer container.id
-      # cont.start startOpt, (err, data) ->
-      #   startFuture.return data
-
-      # data = startFuture.wait()
-
-      # serverIP = dockerServerSettings.host
-      # if not serverIP
-      #   serverIP = "localhost"
-
-      # dockerData =
-      #   userId: user._id
-      #   imageTag: fullImageTag
-      #   dockerLimitId: "defaultLimit"
-      #   containerConfig: containerData
-      #   containerId: container.id
-      #   configTypeId:configTypeId
-      #   portDataArray:portDataArray
-      #   configTypeId:configTypeId
-      #   ip:serverIP
-      #   serverName: freeDockerServerName
-      #   createAt: new Date
-
-      # DockerInstances.insert dockerData
+        DockerInstances.insert dockerData
 
 
 
