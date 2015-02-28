@@ -540,6 +540,19 @@ needStreamingCallback = (fn, streamingFns=[])->
 
 
     handsOnApis =
+      sum_cpus:
+        desc:
+          get: ->
+            @summaryUsedCpusets()
+
+      ls_cpus:
+        desc:
+          get: ->
+            @listUsedCpusets()
+
+      _cpus:
+        desc:
+          get: -> [0..@_serverSpec.NCPU-1].map String
       ps:
         desc:
           get: -> @listContainers()
@@ -843,7 +856,6 @@ needStreamingCallback = (fn, streamingFns=[])->
 
     freePorts
 
-
     # if allFreePorts.length >= n
     #   resData =
     #     error: null
@@ -861,6 +873,48 @@ needStreamingCallback = (fn, streamingFns=[])->
     #     data: null
 
     # resData
+
+
+  getUsedCpusets: ->
+    usedCpusets = []
+    @allContainers().map (con)->
+      usedCpusets.push con.inspect().data.Config.Cpuset
+
+    usedCpusets
+
+  summaryUsedCpusets: ()->
+    summary = {}
+    @_cpus.map (cpu)->
+      summary[cpu] = 0
+
+    allUsedCpusets = @getUsedCpusets()
+
+    for oneSet in allUsedCpusets
+      oneSet.split(",").map (cpu)->
+        summary[cpu] = summary[cpu] + 1
+
+    summary
+
+  listUsedCpusets: ()->
+    summary = @summaryUsedCpusets()
+    listSummary = Object.keys(summary).map (cpu)->
+      resData =
+        cpuName: cpu
+        usage: summary[cpu]
+
+
+  getFreeCpus: (n)->
+    if n >= @_cpus.length
+      res = @_cpus
+    else
+      sorted_ls_cpus = _.sortBy(@ls_cpus, "usage").map (cpuData)-> cpuData.cpuName
+      res = sorted_ls_cpus[0..n-1]
+
+    res
+
+
+
+
 
 
   _runTest:(imageTag) ->
