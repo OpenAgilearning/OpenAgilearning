@@ -1,0 +1,3 @@
+Template.assignServer.helpers
+  foo: () ->
+    # ...

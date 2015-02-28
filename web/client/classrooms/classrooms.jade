@@ -18,7 +18,6 @@ template(name="classroom")
             li
               a(data-toggle="tab", href="#Environment") Environment
 
-
           if course.slides
             li
               a(data-toggle="tab", href="#Slides") Slides
@@ -34,6 +33,10 @@ template(name="classroom")
           if isInRole "student" classroomAndId
             li
               a(data-toggle="tab", href="#Student") Student
+
+          if isInRole "admin" "system"
+            li
+              a(data-toggle="tab", href="#SystemAdmin") SystemAdmin
 
           +minimisedChatroom
 
@@ -58,7 +61,6 @@ template(name="classroom")
                   +spinner
                 +setEnvConfigsForm classroomId=classroomId
               else
-
                 +classroomEnvIframe docker=docker
 
           if course.dockerImageTag
@@ -71,7 +73,6 @@ template(name="classroom")
                 //- h2 {{classroomId}}
                 +setEnvConfigsForm classroomId=classroomId
               else
-
                 +classroomEnvIframe docker=docker
 
           if course.slides
@@ -104,6 +105,10 @@ template(name="classroom")
           if isInRole "student" classroomAndId
             .tab-pane.fade#Student
               +exercisePanelStudent
+
+          if isInRole "admin" "system"
+            .tab-pane.fade#SystemAdmin
+              +assignServer
 
       +classChatroom classroomId=classroomId type="classroom"
 
