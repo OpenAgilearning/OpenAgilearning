@@ -420,12 +420,12 @@ needStreamingCallback = (fn, streamingFns=[])->
   res
 
 
+
 @Class.DockerImage = class DockerImage extends Class.DockerodeClass
 
   constructor: (@_docker, @_image, @_callbacks=DockerImageCallbacks) ->
     @_serverId = @_docker._id
     super @_image.constructor, @_image, @_callbacks
-
 
   TAG: (repoString)->
     @.tag parseRepoString repoString
@@ -493,10 +493,23 @@ needStreamingCallback = (fn, streamingFns=[])->
     @_serverId = @_docker._id
     super @_container.constructor, @_container, @_callbacks
 
+    handsOnApis =
+      _MemoryLimit:
+        desc:
+          get:->
+            @inspect().data.Config.Memory
+
+
+    for api in Object.keys(handsOnApis)
+      Object.defineProperty @, api, handsOnApis[api].desc
+
+
 
 @Class.DockerServer = class DockerServer extends Class.DockerodeClass
 
   constructor: (@_data, @_callbacks=DockerServerCallbacks, @_streamingCallbacks=StreamingCallBacks) ->
+    if typeof @_data is "string"
+      @_data = db.dockerServers.findOne {$or:[{_id:@_data}, {name:@_data}]}
 
     @_id = @_data._id
     @_configs = _.extend {}, @_data.connect
@@ -526,7 +539,7 @@ needStreamingCallback = (fn, streamingFns=[])->
     @ping()
 
 
-    moreDockerApis =
+    handsOnApis =
       ps:
         desc:
           get: -> @listContainers()
@@ -562,11 +575,6 @@ needStreamingCallback = (fn, streamingFns=[])->
             @listContainerIds().data.map (containerId)=>
               @start containerId
 
-      allContainers:
-        desc:
-          get: ->
-            @listContainerIds().data.map (containerId)=>
-              @_getContainer containerId
 
       allImages:
         desc:
@@ -574,14 +582,98 @@ needStreamingCallback = (fn, streamingFns=[])->
             @listImageTags(tagOnly=true)?.data.map (imageTag)=>
               @_getImage imageTag
 
-    for api in Object.keys(moreDockerApis)
-      Object.defineProperty @, api, moreDockerApis[api].desc
 
+      totalMemoryLimit:
+        desc:
+          get: ->
+            @sumMemoryLimits({})
+
+
+      remainderMemory:
+        desc:
+          get:->
+            @_serverSpec.MemTotal - @totalMemoryLimit
+
+
+      _serverSpec:
+        desc:
+          get: ->
+            if not @_data.spec
+              serverInfo = @info()
+
+              if not serverInfo.error
+                specData =
+                  spec:
+                    MemTotal: serverInfo.data.MemTotal
+                    NCPU: serverInfo.data.NCPU
+                db.dockerServers.update({_id:@_id},{$set:specData})
+
+                @_data = db.dockerServers.findOne _id:@_id
+
+            @_data.spec
+
+
+      rmiAllNoneTags:
+        desc:
+          get: ->
+            allImageTags = @listImageTags()
+
+            if not allImageTags.error
+              rmiData = []
+
+              for imageTagData in allImageTags.data
+                if imageTagData.tag is '<none>:<none>'
+                  rmiData.push @rmi imageTagData.Id
+
+              resData =
+                data: rmiData
+                error: null
+
+            else
+              resData =
+                data: null
+                error: allImageTags.error
+
+            resData
+
+
+    for api in Object.keys(handsOnApis)
+      Object.defineProperty @, api, handsOnApis[api].desc
 
 
     if @_configs_errors.length is 0
       @_configs_ok = true
       @ping()
+
+
+  ensureImage: (image)->
+    if not @isImageTagInServer(image)
+      @pull image
+
+
+
+  remainderQuota: (c=1, memoryUsage=512*1024*1024)->
+    (@_serverSpec.MemTotal*c - @totalMemoryLimit) / memoryUsage
+
+
+  sumMemoryLimits: (opts={all:1})->
+    allMemory = @allContainers(opts).map (con)-> con._MemoryLimit
+
+    if allMemory.length > 1
+      res = allMemory.reduce (x,y)-> x+y
+    else
+      if allMemory.length is 1
+        res = allMemory[0]
+      else
+        res = 0
+
+    res
+
+
+  allContainers: (opts={all:1})->
+    @listContainerIds(opts).data.map (containerId)=>
+      @_getContainer containerId
+
 
   _syncCallCheck: (apiName) ->
     super apiName
@@ -699,14 +791,18 @@ needStreamingCallback = (fn, streamingFns=[])->
     container = @_getContainer containerId
 
     if not repo
-      commitData =
-        repo: "AgilearningIO/"+Random.id(20)
-        tag: "latest"
+      repo = "AgilearningIO/"+Random.id(20)
+
+      # commitData =
+      #   repo: "AgilearningIO/"+Random.id(20)
+      #   tag: "latest"
 
     if not tag
-      commitData = parseRepoString repo
-      if not commitData.tag
-        commitData.tag = "latest"
+      tag = "latest"
+
+      # commitData = parseRepoString repo
+      # if not commitData.tag
+      #   commitData.tag = "latest"
 
     if not comment
       comment = "agilearning.io awesome!"
@@ -714,7 +810,9 @@ needStreamingCallback = (fn, streamingFns=[])->
     if not author
       author = "agilearning.io"
 
-    commitData = _.extend commitData,
+    commitData = #_.extend commitData,
+      repo: repo
+      tag: tag
       comment: comment
       author: author
 
@@ -733,7 +831,18 @@ needStreamingCallback = (fn, streamingFns=[])->
     allPorts = [start..end].map String
     allUsedPorts = @allUsedPorts()
     allFreePorts = allPorts.filter (port)=> port not in allUsedPorts
-    allFreePorts[0..n-1]
+
+    #FIXME: checking allFreePorts is enough !
+
+    freePorts = []
+
+    for i in [0..n-1]
+      oneFreePort = Random.choice allFreePorts
+      freePorts.push oneFreePort
+      allFreePorts = allFreePorts.filter (port) -> port isnt oneFreePort
+
+    freePorts
+
 
     # if allFreePorts.length >= n
     #   resData =
@@ -772,7 +881,7 @@ needStreamingCallback = (fn, streamingFns=[])->
 
     configTypeId = 'ipynb'
     servicePorts = db.envConfigTypes.findOne({_id:configTypeId}).configs.servicePorts
-    fports = docker.getFreePorts(servicePorts.length)
+    fports = @getFreePorts(servicePorts.length)
 
     # if not fports.error
     #   fports = fports.data
@@ -796,12 +905,117 @@ needStreamingCallback = (fn, streamingFns=[])->
     containerResData = @createContainer containerData
 
     if not containerResData.error
-      new Class.DockerContainer @_id, containerResData.data
+      container = new Class.DockerContainer @_id, containerResData.data
+      container.start()
+      container
     else
       containerResData
 
 
+@Class.DockersManager = class DockersManager
 
-@Class.DockersManager = new class DockersManager
-  constructor: ->
+  constructor: (@useIn="production", serverQuery)->
+
+    if serverQuery
+      @_serverQuery = serverQuery
+
+    else
+      if @useIn is "production"
+        @_serverQuery =
+          useIn: "production"
+      else
+        @_serverQuery =
+          useIn: "testing"
+
+    managerApis =
+      rmiAllNoneTags:
+        desc:
+          get: ->
+            rmiData = {}
+            dockerServers = @_servers
+            Object.keys(dockerServers).map (name)->
+              rmiData[name] = dockerServers[name].rmiAllNoneTags
+
+            rmiData
+
+      _serverIds:
+        desc:
+          get: ->
+            db.dockerServers.find(@_serverQuery).map (serverData)-> serverData._id
+
+      _serverNames:
+        desc:
+          get: ->
+            db.dockerServers.find(@_serverQuery).map (serverData)-> serverData.name
+
+      ls_servers:
+        desc:
+          get: ->
+            # Object.keys @_servers
+            @_serverNames
+
+      _servers:
+        desc:
+          get: ->
+            @_DockerServers()
+
+      ps:
+        desc:
+          get: ->
+            dockersPs = {}
+            dockerServers = @_servers
+            Object.keys(dockerServers).map (name)->
+              dockersPs[name] = dockerServers[name].ps
+
+            dockersPs
+
+    for api in Object.keys(managerApis)
+      Object.defineProperty @, api, managerApis[api].desc
+
+
+  ensureImages: (images=["c3h3/ml-for-hackers", "c3h3/dsc2014tutorial", "c3h3/learning-shogun:u1404-ocv", "c3h3/rladies-hello-kaggle"])->
+    for image in images
+      @ensureImage image
+
+
+  ensureImage: (image)->
+    dockerServers = @_servers
+    Object.keys(dockerServers).map (name)->
+      dockerServers[name].ensureImage image
+
+
+  remainderQuota: (c=1, memoryUsage=512*1024*1024)->
+    serverQuota = {}
+    dockerServers = @_servers
+    Object.keys(dockerServers).map (name)->
+      serverQuota[name] = dockerServers[name].remainderQuota(c, memoryUsage)
+
+    serverQuota
+
+
+  _DockerServers: (index="names")->
+    dockerServers = {}
+
+    db.dockerServers.find(@_serverQuery).map (serverData) =>
+
+      docker = new Class.DockerServer serverData
+      if not docker.ping().error
+        if index is "names"
+          dockerServers[docker._data.name] = docker
+        else
+          dockerServers[docker._data._id] = docker
+
+    dockerServers
+
+  _searchImageTag: (imageTag, activeOnly=true)->
+
+    query =
+      tag: imageTag
+      serverId:
+        $in: Object.keys(@_servers)
+
+    if activeOnly
+      query.active = true
+
+    db.dockerImageTagsMonitor.find(query).map (imageTagData)-> imageTagData.serverId
 

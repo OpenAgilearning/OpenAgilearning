@@ -5,6 +5,7 @@
     "environment": "development"
   },
   "DOCKER_CERT_PATH": "",
+  "DOCKER_REGISTRY_CERT_PATH":"",
   "dockerodeConfig": {
       "socketPath": "/var/run/docker.sock"
   },
