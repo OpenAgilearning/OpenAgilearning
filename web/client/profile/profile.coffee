@@ -20,21 +20,21 @@ Template.profilePageEnvConfigsForm.helpers
       envUserConfingDoc = EnvUserConfigs.findOne _id: userConfigId
 
       configTypeId = envUserConfingDoc?.configTypeId
-    
+
     envConfigsData = EnvConfigTypes.findOne _id:configTypeId
     schemaSettings = {}
 
     if envConfigsData?.configs?.envs
       envConfigsData.configs.envs.map (env)->
         schemaSettings[env.name] = {type: String}
-          
+
         if not env.mustHave
           schemaSettings[env.name].optional = true
 
         if env.limitValues
           schemaSettings[env.name].allowedValues = env.limitValues
 
-      schemaSettings.configTypeId = 
+      schemaSettings.configTypeId =
         type: String
         defaultValue: configTypeId
         allowedValues: [configTypeId]
@@ -76,12 +76,12 @@ Template.profilePageEnvUserConfigsTableEditBtnField.events
     userConfigId = $(e.target).attr "userConfigId"
     Session.set "envConfigTypeId", ""
     Session.set "userConfigId", userConfigId
-    
+
 
     # Meteor.call "removeDocker", configTypeId, (err, res)->
     #   if not err
     #     console.log res
-    
+
 
 
 Template.profilePageDockerServerContainersTable.helpers
@@ -96,12 +96,12 @@ Template.profilePageDockerServerContainersTable.helpers
 
 Template.profilePageDockerInstancesTable.helpers
   settings: ->
-    envField = 
-      key: "containerConfig.Env"
+    envField =
+      key: "containerConfigs.Env"
       label: "ENVs"
       tmpl: Template.profilePageDockerInstancesTableEnvField
 
-    removeBtnField = 
+    removeBtnField =
       key: "_id"
       label: "Remove"
       tmpl: Template.profilePageDockerInstancesTableRemoveBtnField
@@ -112,11 +112,11 @@ Template.profilePageDockerInstancesTable.helpers
       rowsPerPage:5
       showFilter: false
       showNavigation:'never'
-      fields:["serverName", "configTypeId", "imageTag", envField, "status", "_id",removeBtnField]
+      fields:["serverId", "imageTag", envField,removeBtnField]
 
 
 Template.profilePageDockerInstancesTableRemoveBtnField.events
-  "click .removeInstanceBtn": (e,t)-> 
+  "click .removeInstanceBtn": (e,t)->
     instanceId = $(e.target).attr "instanceId"
     $(e.target).html "Stopping"
     Meteor.call "removeDockerInstance", instanceId, (err,data)->

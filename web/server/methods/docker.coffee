@@ -87,64 +87,30 @@ Meteor.methods
     #TODO: assert container exists
     instanceDoc = DockerInstances.findOne _id: instanceId
 
-    console.log "instanceId = "
-    console.log instanceId
-    console.log instanceDoc
+    # console.log "instanceId = "
+    # console.log instanceId
+    # console.log instanceDoc
 
     if not instanceDoc
       throw new Meteor.Error(1001, "Docker Server Instance ID Error!")
+
 
     hasRemovePermission = instanceDoc.userId is user._id
     hasRemovePermission = hasRemovePermission or Roles.userIsInRole(user._id, "admin", "dockers")
 
     if hasRemovePermission
-      dockerServerContainerId = instanceDoc.containerId
-      containerDoc = DockerServerContainers.findOne Id: dockerServerContainerId
+      docker = new Class.DockerServer instanceDoc.serverId
+      docker.stop(instanceDoc.containerId)
+      docker.rm(instanceDoc.containerId)
 
-      containerId = containerDoc.Id
 
-      Docker = Meteor.npmRequire "dockerode"
-      dockerServerSettings = getDockerServerConnectionSettings(containerDoc.serverName)
-      docker = new Docker dockerServerSettings
+      dockerInstanceDoc = instanceDoc
+      DockerInstances.remove _id: dockerInstanceDoc._id
 
-      Future = Meteor.npmRequire 'fibers/future'
-      stopFuture = new Future
-      container = docker.getContainer containerId
-
-      container.stop {}, (err,data)->
-        stopFuture.return data
-
-      data = stopFuture.wait()
-
-      removeFuture = new Future
-      container = docker.getContainer containerId
-
-      container.remove {}, (err,data)->
-        removeFuture.return data
-
-      data = removeFuture.wait()
-
-      DockerServerContainers.remove Id: dockerServerContainerId
-
-      containerDoc.removeAt = new Date
-      containerDoc.removeBy = "user"
-      containerDoc.removeByUid = user._id
-
-      DockerServerContainersLog.insert containerDoc
-
-      #TODO: modift DockerInstances data
-      instanceQuery =
-        serverName: containerDoc.serverName
-        containerId: containerId
-
-      dockerInstanceDoc = DockerInstances.findOne instanceQuery
-      if dockerInstanceDoc
-        DockerInstances.remove _id: dockerInstanceDoc._id
-
-        dockerInstanceDoc.removeAt = new Date
-        dockerInstanceDoc.removeBy = "user"
-        dockerInstanceDoc.removeByUid = user._id
-        DockerInstancesLog.insert dockerInstanceDoc
+      dockerInstanceDoc.removeAt = new Date
+      dockerInstanceDoc.removeBy = "user"
+      dockerInstanceDoc.removeByUid = user._id
+      DockerInstancesLog.insert dockerInstanceDoc
 
 
 
