@@ -831,7 +831,18 @@ needStreamingCallback = (fn, streamingFns=[])->
     allPorts = [start..end].map String
     allUsedPorts = @allUsedPorts()
     allFreePorts = allPorts.filter (port)=> port not in allUsedPorts
-    allFreePorts[0..n-1]
+
+    #FIXME: checking allFreePorts is enough !
+
+    freePorts = []
+
+    for i in [0..n-1]
+      oneFreePort = Random.choice allFreePorts
+      freePorts.push oneFreePort
+      allFreePorts = allFreePorts.filter (port) -> port isnt oneFreePort
+
+    freePorts
+
 
     # if allFreePorts.length >= n
     #   resData =
