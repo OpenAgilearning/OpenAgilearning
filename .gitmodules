@@ -10,3 +10,6 @@
 [submodule "dockers/c3h3/learning-shogun/latest"]
 	path = dockers/c3h3/learning-shogun/latest
 	url = https://github.com/c3h3/docker-learning-shogun.git
+[submodule "dockers/dockers/c3h3/ml-for-hackers/latest"]
+	path = dockers/dockers/c3h3/ml-for-hackers/latest
+	url = https://github.com/c3h3/docker-ml-for-hackers.git
