@@ -37,24 +37,24 @@ Template.courseInfoAdminEditorForm.helpers
             rows: 5
 
         if dockerImagesArray.length > 0
-          resSchema.dockerImage = 
+          resSchema.dockerImage =
             type: String
             allowedValues: dockerImagesArray
             optional: true
-        
+
         if slidesArray.length > 0
-          resSchema.slides = 
+          resSchema.slides =
             type: String
             allowedValues: slidesArray
             optional: true
 
         if VideosArray.length > 0
-          resSchema.video = 
+          resSchema.video =
             type: String
             allowedValues: VideosArray
             optional: true
 
-        # resSchema.courseId = 
+        # resSchema.courseId =
         #   type: String
         #   defaultValues: [courseId]
           # autoform:
@@ -87,17 +87,30 @@ Template.allPublicCoursesTable.helpers
 Template.courseImage.helpers
   getCourseImageURL: (courseDoc) ->
     if courseDoc.imageURL
-      courseDoc.imageURL
+      resURL = courseDoc.imageURL
     else
-      dockerImageDoc = DockerImages.findOne({_id:courseDoc.dockerImage})
-      if dockerImageDoc.imageURL
-        dockerImageDoc.imageURL
-      else
-        if dockerImageDoc.type is "ipynb"
-          "/images/ipynb_docker_default.png"
-        else if dockerImageDoc.type is "rstudio"
-          "/images/rstudio_docker_default.png"
+      if courseDoc.dockerImage
+        dockerImageDoc = DockerImages.findOne({_id:courseDoc.dockerImage})
+        if dockerImageDoc?.imageURL
+          resURL = dockerImageDoc.imageURL
+        else
+          if dockerImageDoc?.type is "ipynb"
+            resURL = "/images/ipynb_docker_default.png"
+          else if dockerImageDoc?.type is "rstudio"
+            resURL = "/images/rstudio_docker_default.png"
 
+      else
+        dockerImageTagData = db.dockerImageTags.findOne tag: courseDoc.dockerImageTag
+        console.log "dockerImageTagData = ",dockerImageTagData
+        if dockerImageTagData?.pictures?.length > 0
+          resURL = Random.choice dockerImageTagData.pictures
+        else
+          if dockerImageTagData.envConfigTypeName is "rstudioBasic"
+            resURL = "/images/rstudio_docker_default.png"
+          else if dockerImageTagData.envConfigTypeName is "ipynbBasic"
+            resURL = "/images/ipynb_docker_default.png"
+
+    resURL
 
 Template.goToClassroomBtn.helpers
   isClassroomMember: ->
@@ -124,14 +137,14 @@ Template.goToClassroomBtn.events
           Cookies.set "redirectAfterLogin", window.location.href
           Router.go "pleaseLogin"
 
-  
+
 Template.courseClassroomsTable.helpers
   settings: ->
     goToClassroomBtnField =
       key: "_id"
       label: "Learning Now!"
       tmpl: Template.goToClassroomBtn
-      
+
     res =
       collection: Classrooms
       rowsPerPage: 5
@@ -151,7 +164,7 @@ Template.courseApplicationsTable.helpers
       key: "_id"
       label: "Check"
       tmpl: Template.courseApplicationsTableCheckBtnField
-      
+
     res =
       collection: waitForCheckRoles
       rowsPerPage: 5

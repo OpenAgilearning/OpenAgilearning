@@ -971,6 +971,7 @@ needStreamingCallback = (fn, streamingFns=[])->
     else
       containerResData
 
+
 @Class.DockerContainerConfigs = class DockerContainerConfigs
   constructor: (@imageTag, @_docker)->
     @_configs = {}
@@ -1059,7 +1060,6 @@ needStreamingCallback = (fn, streamingFns=[])->
     @setUsageLimit(limitType).setServicePorts().setEnvs(userId)
     @saveEnvUserConfigs(userId)
     @
-
 
 
 @Class.DockersManager = class DockersManager
@@ -1161,10 +1161,6 @@ needStreamingCallback = (fn, streamingFns=[])->
               dockersAllUsedPorts[name] = dockerServers[name].allUsedPorts
 
             dockersAllUsedPorts
-
-
-
-
 
     for api in Object.keys(managerApis)
       Object.defineProperty @, api, managerApis[api].desc
