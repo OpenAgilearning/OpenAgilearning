@@ -540,6 +540,19 @@ needStreamingCallback = (fn, streamingFns=[])->
 
 
     handsOnApis =
+      sum_cpus:
+        desc:
+          get: ->
+            @summaryUsedCpusets()
+
+      ls_cpus:
+        desc:
+          get: ->
+            @listUsedCpusets()
+
+      _cpus:
+        desc:
+          get: -> [0..@_serverSpec.NCPU-1].map String
       ps:
         desc:
           get: -> @listContainers()
@@ -636,6 +649,17 @@ needStreamingCallback = (fn, streamingFns=[])->
 
             resData
 
+      allUsedPorts:
+        desc:
+          get:->
+            usedPorts = []
+            @listContainers({all:1}).data.map (xx)->
+              xx.Ports.map (yy)->
+                usedPorts.push yy.PublicPort
+
+            usedPorts.map String
+
+
 
     for api in Object.keys(handsOnApis)
       Object.defineProperty @, api, handsOnApis[api].desc
@@ -651,6 +675,14 @@ needStreamingCallback = (fn, streamingFns=[])->
       @pull image
 
 
+  summaryQuota: (c=1, memoryUsage=512*1024*1024)->
+    total = @_serverSpec.MemTotal / memoryUsage
+    remainder =  @remainderQuota(c, memoryUsage)
+
+    resData =
+      total: total
+      remainder: remainder
+      usage: 1 - remainder/total
 
   remainderQuota: (c=1, memoryUsage=512*1024*1024)->
     (@_serverSpec.MemTotal*c - @totalMemoryLimit) / memoryUsage
@@ -818,18 +850,9 @@ needStreamingCallback = (fn, streamingFns=[])->
 
     container.commit(commitData)
 
-
-  allUsedPorts: ->
-    usedPorts = []
-    @listContainers({all:1}).data.map (xx)->
-      xx.Ports.map (yy)->
-        usedPorts.push yy.PublicPort
-
-    usedPorts.map String
-
   getFreePorts: (n, start=8000, end=9000)->
     allPorts = [start..end].map String
-    allUsedPorts = @allUsedPorts()
+    allUsedPorts = @allUsedPorts
     allFreePorts = allPorts.filter (port)=> port not in allUsedPorts
 
     #FIXME: checking allFreePorts is enough !
@@ -842,7 +865,6 @@ needStreamingCallback = (fn, streamingFns=[])->
       allFreePorts = allFreePorts.filter (port) -> port isnt oneFreePort
 
     freePorts
-
 
     # if allFreePorts.length >= n
     #   resData =
@@ -863,44 +885,82 @@ needStreamingCallback = (fn, streamingFns=[])->
     # resData
 
 
-  _runTest:(imageTag) ->
+  getUsedCpusets: ->
+    usedCpusets = []
+    @allContainers().map (con)=>
+      cpuset = con.inspect().data.Config.Cpuset
+      if cpuset is ""
+        cpuset = @_cpus.join(",")
+      usedCpusets.push cpuset
+
+    usedCpusets
+
+  summaryUsedCpusets: ()->
+    summary = {}
+    @_cpus.map (cpu)->
+      summary[cpu] = 0
+
+    allUsedCpusets = @getUsedCpusets()
+
+    for oneSet in allUsedCpusets
+      oneSet.split(",").map (cpu)->
+        summary[cpu] = summary[cpu] + 1
+
+    summary
+
+  listUsedCpusets: ()->
+    summary = @summaryUsedCpusets()
+    listSummary = Object.keys(summary).map (cpu)->
+      resData =
+        cpuName: cpu
+        usage: summary[cpu]
+
+
+  getFreeCpus: (n)->
+    if n >= @_cpus.length
+      res = @_cpus
+    else
+      sorted_ls_cpus = _.sortBy(@ls_cpus, "usage").map (cpuData)-> cpuData.cpuName
+      res = sorted_ls_cpus[0..n-1]
+
+    res
+
+  getFreeCpuset: (n)->
+    @getFreeCpus(n).join(",")
+
+
+
+  RUN:(imageTag, limitType, userId, name, links=[]) ->
+    # dependents on db.dockerImageTags join db.envConfigTypes
+
+
     # con.commit({repo:"ClassDockerImage",tag:"firstCommit",comment:"agilearning awesome!",author:"agilearning.io"})
     # imageTag = "ClassDockerImage:firstCommit"
 
     if not imageTag
       imageTag = "c3h3/ipython:agilearning"
 
+    containerConfig = new Class.DockerContainerConfigs(imageTag, @)
+    containerConfig.setUsageLimit(limitType).setServicePorts()
 
-    configData = db.envUserConfigs.findOne({configTypeId:"ipynb"}).configData
-    EnvsArray = configData.map (envData) -> envData["key"] + "=" + envData["value"]
-    dockerLimit = db.dockerLimits.findOne()
+    if userId
+      containerConfig = new Class.DockerContainerConfigs(imageTag, @).setAll(limitType,userId)
+      # containerConfig.setEnvs(userId)
+    else
+    containerConfig = new Class.DockerContainerConfigs(imageTag, @).setAll(limitType)
+      # containerConfig.setEnvs()
 
-    containerData = _.extend {}, dockerLimit.limit
-    containerData.Image = imageTag
-    containerData.Env = EnvsArray
+    containerData = containerConfig._configs
 
-    configTypeId = 'ipynb'
-    servicePorts = db.envConfigTypes.findOne({_id:configTypeId}).configs.servicePorts
-    fports = @getFreePorts(servicePorts.length)
+    console.log "containerData = ",containerData
 
-    # if not fports.error
-    #   fports = fports.data
-    # else
-    #   fports = []
+    if name
+      containerData.name = name
 
-    portDataArray = [0..fports.length-1].map (i)->
-      portData =
-        guestPort: servicePorts[i].port
-        hostPort: fports[i]
-        type: servicePorts[i].type
+    if links
+      containerData.HostConfig.Links = links
 
-    containerData.HostConfig = {}
-    containerData.HostConfig.PortBindings = {}
-
-    for portData in portDataArray
-      servicePort = portData.guestPort + "/tcp"
-      containerData.HostConfig.PortBindings[servicePort] = [{"HostPort": portData.hostPort}]
-
+    console.log "containerData = ",containerData
 
     containerResData = @createContainer containerData
 
@@ -911,15 +971,102 @@ needStreamingCallback = (fn, streamingFns=[])->
     else
       containerResData
 
+@Class.DockerContainerConfigs = class DockerContainerConfigs
+  constructor: (@imageTag, @_docker)->
+    @_configs = {}
+    @_configs.Image = @imageTag
+
+
+    @_configs.HostConfig = {}
+    @_configs.HostConfig.PortBindings = {}
+
+    @_imageTagData = db.dockerImageTags.findOne({tag:@imageTag})
+    @_envConfigType = db.envConfigTypes.findOne({name:@_imageTagData.envConfigTypeName})
+
+    @_Envs = {}
+    @_portDataArray = []
+
+  setUsageLimit: (limitType)->
+    if limitType
+      dockerLimit = db.dockerUsageLimits.findOne({name:limitType})
+
+      usageLimitData =
+        Cpuset: @_docker.getFreeCpuset(dockerLimit.NCPU)
+        Memory: dockerLimit.Memory
+
+      _.extend @_configs, usageLimitData
+    @
+
+  setServicePorts: ->
+    servicePorts = @_imageTagData.servicePorts
+    fports = @_docker.getFreePorts(servicePorts.length)
+
+    portDataArray = [0..fports.length-1].map (i)->
+      portData =
+        guestPort: servicePorts[i].port
+        hostPort: fports[i]
+        type: servicePorts[i].type
+
+    for portData in portDataArray
+      servicePort = portData.guestPort + "/tcp"
+      @_configs.HostConfig.PortBindings[servicePort] = [{"HostPort": portData.hostPort}]
+
+    @_portDataArray = portDataArray
+    @
+
+  getUserEnvConfigData: (userId)->
+    query =
+      userId: userId
+      envConfigTypeName: @_imageTagData.envConfigTypeName
+    db.envUserConfigs.findOne(query)
+
+
+  setEnvs: (userId)->
+    mustSetEnvFields = []
+
+    Envs = {}
+    @_envConfigType.envs.map (fieldData)->
+      if fieldData.mustHave
+        mustSetEnvFields.push fieldData.name
+
+        if fieldData.autoGen
+          Envs[fieldData.name] = Random.id(40)
+
+      else
+        if fieldData.defaultValue
+          Envs[fieldData.name] = fieldData.defaultValue
+
+    if userId
+      @getUserEnvConfigData(userId)?.envs.map (fieldData)->
+        Envs[fieldData.key] = fieldData.value
+
+
+    # FIXME: check all mustSetEnvFields are set
+    EnvsArray = Object.keys(Envs).map (key)-> key + "=" + Envs[key]
+    @_configs.Env = EnvsArray
+
+    _.extend @_Envs, Envs
+
+    @
+
+  saveEnvUserConfigs: (userId)->
+    console.log "TODO: db.envUserConfigs.upsert ? suggest use update and insert "
+    console.log "@_Envs = ", @_Envs
+    console.log "@_portDataArray = ", @_portDataArray
+
+
+  setAll: (limitType, userId)->
+    @setUsageLimit(limitType).setServicePorts().setEnvs(userId)
+    @saveEnvUserConfigs(userId)
+    @
+
+
 
 @Class.DockersManager = class DockersManager
 
-  constructor: (@useIn="production", serverQuery)->
+  constructor: (@useIn="production")->
 
-    if serverQuery
-      @_serverQuery = serverQuery
-
-    else
+    if typeof @useIn is "string"
       if @useIn is "production"
         @_serverQuery =
           useIn: "production"
@@ -927,7 +1074,33 @@ needStreamingCallback = (fn, streamingFns=[])->
         @_serverQuery =
           useIn: "testing"
 
+    else
+      @_serverQuery = @useIn
+
+
     managerApis =
+      ls_cpus:
+        desc:
+          get: ->
+            lsCpusData = {}
+            dockerServers = @_servers
+            Object.keys(dockerServers).map (name)->
+              lsCpusData[name] = dockerServers[name].ls_cpus
+
+            lsCpusData
+
+
+      rmAll:
+        desc:
+          get: ->
+            rmAllData = {}
+            dockerServers = @_servers
+            Object.keys(dockerServers).map (name)->
+              rmAllData[name] = dockerServers[name].rmAll
+
+            rmAllData
+
+
       rmiAllNoneTags:
         desc:
           get: ->
@@ -969,6 +1142,30 @@ needStreamingCallback = (fn, streamingFns=[])->
 
             dockersPs
 
+      ps_a:
+        desc:
+          get: ->
+            dockersPs = {}
+            dockerServers = @_servers
+            Object.keys(dockerServers).map (name)->
+              dockersPs[name] = dockerServers[name].ps_a
+
+            dockersPs
+
+      allUsedPorts:
+        desc:
+          get: ->
+            dockersAllUsedPorts = {}
+            dockerServers = @_servers
+            Object.keys(dockerServers).map (name)->
+              dockersAllUsedPorts[name] = dockerServers[name].allUsedPorts
+
+            dockersAllUsedPorts
+
+
+
+
+
     for api in Object.keys(managerApis)
       Object.defineProperty @, api, managerApis[api].desc
 
@@ -984,6 +1181,47 @@ needStreamingCallback = (fn, streamingFns=[])->
       dockerServers[name].ensureImage image
 
 
+  summaryQuota: (c=1, memoryUsage=512*1024*1024)->
+    serverQuota = {}
+    dockerServers = @_servers
+    Object.keys(dockerServers).map (name)->
+      serverQuota[name] = dockerServers[name].summaryQuota(c, memoryUsage)
+
+    serverQuota
+
+
+  ls_summaryQuota: (c=1, memoryUsage=512*1024*1024)->
+    dockerServers = @_servers
+    Object.keys(dockerServers).map (name)->
+      summary = dockerServers[name].summaryQuota(c, memoryUsage)
+      resData =
+        serverName: name
+        total: summary.total
+        remainder: summary.remainder
+        usage: summary.usage
+
+
+  getFreeServerName: (c=1, memoryUsage=512*1024*1024, forcely=false)->
+    sumQuota = @ls_summaryQuota(c,memoryUsage)
+
+    if forcely
+      filteredSumQuota = sumQuota
+    else
+      filteredSumQuota = sumQuota.filter (quotaData)-> quotaData.remainder >= 1
+
+    if filteredSumQuota.length > 0
+      _.sortBy(filteredSumQuota,"usage")[0].serverName
+
+    #FIXME: if no free servers ! OR no server
+
+  getFreeServer: (c=1, memoryUsage=512*1024*1024)->
+    @_servers[@getFreeServerName(c,memoryUsage,false)]
+
+
+  getFreeServerForcely: (c=1, memoryUsage=512*1024*1024)->
+    @_servers[@getFreeServerName(c,memoryUsage,true)]
+
+
   remainderQuota: (c=1, memoryUsage=512*1024*1024)->
     serverQuota = {}
     dockerServers = @_servers
@@ -991,6 +1229,14 @@ needStreamingCallback = (fn, streamingFns=[])->
       serverQuota[name] = dockerServers[name].remainderQuota(c, memoryUsage)
 
     serverQuota
+
+
+  ls_remainderQuota: (c=1, memoryUsage=512*1024*1024)->
+    dockerServers = @_servers
+    Object.keys(dockerServers).map (name)->
+      resData =
+        serverName: name
+        quota: dockerServers[name].remainderQuota(c, memoryUsage)
 
 
   _DockerServers: (index="names")->
@@ -1006,6 +1252,7 @@ needStreamingCallback = (fn, streamingFns=[])->
           dockerServers[docker._data._id] = docker
 
     dockerServers
+
 
   _searchImageTag: (imageTag, activeOnly=true)->
 
