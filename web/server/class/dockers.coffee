@@ -952,7 +952,7 @@ needStreamingCallback = (fn, streamingFns=[])->
 
     containerData = containerConfig._configs
 
-    console.log "containerData = ",containerData
+    # console.log "containerData = ",containerData
 
     if name
       containerData.name = name
@@ -960,14 +960,18 @@ needStreamingCallback = (fn, streamingFns=[])->
     if links
       containerData.HostConfig.Links = links
 
-    console.log "containerData = ",containerData
+    # console.log "containerData = ",containerData
 
     containerResData = @createContainer containerData
 
     if not containerResData.error
-      container = new Class.DockerContainer @_id, containerResData.data
+      container = new Class.DockerContainer @, containerResData.data
       container.start()
-      container
+      resData =
+        data:
+          configs: containerData
+          container: container
+        error: null
     else
       containerResData
 

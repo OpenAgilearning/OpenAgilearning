@@ -71,15 +71,17 @@ Meteor.methods
     if classroomDoc
       courseData = Courses.findOne _id:classroomDoc.courseId
 
-      if courseData
+      if courseData.dockerImage
         imageId = courseData.dockerImage
+      else
+        imageId = courseData.dockerImageTag
 
         # imageType = DockerImages.findOne({_id:imageId}).type
         # if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
         #   #FIXME: write a checking function for env vars
         #   throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
 
-        Meteor.call "runDocker", imageId
+      Meteor.call "runDocker", imageId
 
   "getCourseDocker": (courseId) ->
     user = Meteor.user()
