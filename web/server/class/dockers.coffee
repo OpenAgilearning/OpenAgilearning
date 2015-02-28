@@ -664,6 +664,10 @@ needStreamingCallback = (fn, streamingFns=[])->
       @pull image
 
 
+  summaryQuota: (c=1, memoryUsage=512*1024*1024)->
+    resData =
+      total: @_serverSpec.MemTotal / memoryUsage
+      remainder: @remainderQuota(c, memoryUsage)
 
   remainderQuota: (c=1, memoryUsage=512*1024*1024)->
     (@_serverSpec.MemTotal*c - @totalMemoryLimit) / memoryUsage
@@ -912,12 +916,12 @@ needStreamingCallback = (fn, streamingFns=[])->
 
     res
 
+  getFreeCpuset: (n)->
+    @getFreeCpus(n).join(",")
 
 
 
-
-
-  _runTest:(imageTag) ->
+  _runTest:(imageTag, name, links=[]) ->
     # con.commit({repo:"ClassDockerImage",tag:"firstCommit",comment:"agilearning awesome!",author:"agilearning.io"})
     # imageTag = "ClassDockerImage:firstCommit"
 
@@ -955,6 +959,13 @@ needStreamingCallback = (fn, streamingFns=[])->
       servicePort = portData.guestPort + "/tcp"
       containerData.HostConfig.PortBindings[servicePort] = [{"HostPort": portData.hostPort}]
 
+    if name
+      containerData.name = name
+
+    if links
+      containerData.HostConfig.Links = links
+
+    console.log "containerData = ",containerData
 
     containerResData = @createContainer containerData
 
@@ -1036,6 +1047,14 @@ needStreamingCallback = (fn, streamingFns=[])->
     dockerServers = @_servers
     Object.keys(dockerServers).map (name)->
       dockerServers[name].ensureImage image
+
+  summaryQuota: (c=1, memoryUsage=512*1024*1024)->
+    serverQuota = {}
+    dockerServers = @_servers
+    Object.keys(dockerServers).map (name)->
+      serverQuota[name] = dockerServers[name].summaryQuota(c, memoryUsage)
+
+    serverQuota
 
 
   remainderQuota: (c=1, memoryUsage=512*1024*1024)->
