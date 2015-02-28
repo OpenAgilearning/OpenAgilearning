@@ -6,6 +6,7 @@ new Mongo.Collection "dockerHubs"
 new Mongo.Collection "dockerRepos"
 
 new Mongo.Collection "dockerUsageLimits"
+new Mongo.Collection "dockerImageTags"
 
 
 

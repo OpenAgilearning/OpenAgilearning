@@ -1,4 +1,9 @@
 
+Meteor.publish null, ->
+  db.dockerImageTags.find()
+  db.dockerServers.find({},{fields:{"connect.host":1}})
+
+
 Meteor.publish "allLearningResources", ->
   LearningResources.find({},{limit : 50})
 
