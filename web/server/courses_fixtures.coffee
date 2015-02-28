@@ -3,7 +3,7 @@
   set: ->
     # http://taiwanrusergroup.github.io/DSC2014Tutorial/
     demoCourses = [
-      { "languages":["EN"], "courseName" : "Large Margin Nearest Neighbours", "dockerImageTag" : "c3h3/learning-shogun:u1404-ocv", "slides" : "http://nbviewer.ipython.org/github/shogun-toolbox/shogun/blob/master/doc/ipython-notebooks/metric/LMNN.ipynb", "description" : "Fernando Iglesias talks about the GSoC-Project bringing Large Margin Nearest Neighbours into the Shogun Toolbox.", "video" : "https://www.youtube.com/watch?v=7pm91lCWyfE", "imageURL":"/images/ipynb_lmnn1.png"},
+      { "languages":["EN"], "courseName" : "Large Margin Nearest Neighbours", "dockerImageTag" : "c3h3/learning-shogun:agilearning", "slides" : "http://nbviewer.ipython.org/github/shogun-toolbox/shogun/blob/master/doc/ipython-notebooks/metric/LMNN.ipynb", "description" : "Fernando Iglesias talks about the GSoC-Project bringing Large Margin Nearest Neighbours into the Shogun Toolbox.", "video" : "https://www.youtube.com/watch?v=7pm91lCWyfE", "imageURL":"/images/ipynb_lmnn1.png"},
 
       { "languages":["ZH"], "courseName" : "R Basic (part1)", "dockerImageTag" : "c3h3/dsc2014tutorial:latest", "slides" : "http://dboyliao.github.io/RBasic_reveal/", "description" : "This is a tutorial series about R given by Taiwan R User Group in Data Science Conference 2014 in Taiwan", "video" : "https://www.youtube.com/watch?v=Ut55jPEm-yE"},
       { "languages":["ZH"], "courseName" : "R Basic (part2)", "dockerImageTag" : "c3h3/dsc2014tutorial:latest", "slides" : "http://dboyliao.github.io/RBasic_reveal/", "description" : "This is a tutorial series about R given by Taiwan R User Group in Data Science Conference 2014 in Taiwan", "video" : "https://www.youtube.com/watch?v=zCE4kEnQlkM"},
@@ -84,7 +84,10 @@
     db.roles.remove {}
     db.roleGroups.remove {}
 
+  reset: ->
+    @forceClear()
+    @set()
 
 
 
-Fixture.Courses.set()
+Fixture.Courses.reset()

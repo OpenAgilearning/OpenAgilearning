@@ -1085,6 +1085,16 @@ needStreamingCallback = (fn, streamingFns=[])->
 
 
     managerApis =
+      imageTags:
+        desc:
+          get: ->
+            imageTagsData = {}
+            dockerServers = @_servers
+            Object.keys(dockerServers).map (name)->
+              imageTagsData[name] = dockerServers[name].imageTags
+
+            imageTagsData
+
       ls_cpus:
         desc:
           get: ->
@@ -1261,7 +1271,7 @@ needStreamingCallback = (fn, streamingFns=[])->
     query =
       tag: imageTag
       serverId:
-        $in: Object.keys(@_servers)
+        $in: Object.keys(@_serverIds)
 
     if activeOnly
       query.active = true

@@ -226,7 +226,11 @@ Meteor.startup ->
           docker: =>
             classroomDoc = Classrooms.findOne _id:@params.classroomId
             courseData = Courses.findOne _id:classroomDoc.courseId
-            imageTag = courseData.dockerImage
+            if courseData.dockerImage
+              imageTag = courseData.dockerImage
+            else
+              imageTag = courseData.dockerImageTag
+
             if imageTag.split(":").length is 1
               fullImageTag = imageTag + ":latest"
             else
@@ -244,8 +248,25 @@ Meteor.startup ->
 
             # configTypeId = DockerImages.findOne({_id:imageTag}).type
 
-            configTypeId = getEnvConfigTypeIdFromClassroomId(@params.classroomId)
-            EnvUserConfigs.find({userId:userId, configTypeId:configTypeId}).count() is 0
+            # configTypeId = getEnvConfigTypeIdFromClassroomId(@params.classroomId)
+            # if configTypeId
+            #   EnvUserConfigs.find({userId:userId, configTypeId:configTypeId}).count() is 0
+            classroomDoc = Classrooms.findOne _id:@params.classroomId
+            courseData = Courses.findOne _id:classroomDoc.courseId
+
+            if courseData.dockerImage
+              imageTag = courseData.dockerImage
+            else
+              imageTag = courseData.dockerImageTag
+
+            if imageTag.split(":").length is 1
+              fullImageTag = imageTag + ":latest"
+            else
+              fullImageTag = imageTag
+
+            DockerInstances.find({imageTag:fullImageTag}).count() is 0
+
+
 
           # envConfigsSchema: =>
           #   userId = Meteor.userId()

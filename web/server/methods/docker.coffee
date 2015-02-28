@@ -222,6 +222,7 @@ Meteor.methods
     if not user
       throw new Meteor.Error(401, "You need to login")
 
+    @unblock()
 
     if DockerInstances.find({userId:user._id,imageTag:fullImageTag}).count() is 0
 
