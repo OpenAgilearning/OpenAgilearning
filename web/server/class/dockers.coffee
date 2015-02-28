@@ -665,9 +665,13 @@ needStreamingCallback = (fn, streamingFns=[])->
 
 
   summaryQuota: (c=1, memoryUsage=512*1024*1024)->
+    total = @_serverSpec.MemTotal / memoryUsage
+    remainder =  @remainderQuota(c, memoryUsage)
+
     resData =
-      total: @_serverSpec.MemTotal / memoryUsage
-      remainder: @remainderQuota(c, memoryUsage)
+      total: total
+      remainder: remainder
+      usage: 1 - remainder/total
 
   remainderQuota: (c=1, memoryUsage=512*1024*1024)->
     (@_serverSpec.MemTotal*c - @totalMemoryLimit) / memoryUsage
@@ -979,18 +983,19 @@ needStreamingCallback = (fn, streamingFns=[])->
 
 @Class.DockersManager = class DockersManager
 
-  constructor: (@useIn="production", serverQuery)->
+  constructor: (@useIn="production")->
 
-    if serverQuery
-      @_serverQuery = serverQuery
-
-    else
+    if typeof @useIn is "string"
       if @useIn is "production"
         @_serverQuery =
           useIn: "production"
       else
         @_serverQuery =
           useIn: "testing"
+
+    else
+      @_serverQuery = @useIn
+
 
     managerApis =
       rmiAllNoneTags:
@@ -1048,6 +1053,7 @@ needStreamingCallback = (fn, streamingFns=[])->
     Object.keys(dockerServers).map (name)->
       dockerServers[name].ensureImage image
 
+
   summaryQuota: (c=1, memoryUsage=512*1024*1024)->
     serverQuota = {}
     dockerServers = @_servers
@@ -1057,6 +1063,36 @@ needStreamingCallback = (fn, streamingFns=[])->
     serverQuota
 
 
+  ls_summaryQuota: (c=1, memoryUsage=512*1024*1024)->
+    dockerServers = @_servers
+    Object.keys(dockerServers).map (name)->
+      summary = dockerServers[name].summaryQuota(c, memoryUsage)
+      resData =
+        serverName: name
+        total: summary.total
+        remainder: summary.remainder
+        usage: summary.usage
+
+
+  getFreeServer: (c=1, memoryUsage=512*1024*1024)->
+    sumQuota = @ls_summaryQuota(c,memoryUsage)
+    filteredSumQuota = sumQuota.filter (quotaData)-> quotaData.remainder >= 1
+
+    if filteredSumQuota.length > 0
+      _.sortBy(filteredSumQuota,"usage")[0].serverName
+
+    #FIXME: if no free servers !
+
+
+  getFreeServerForcely: (c=1, memoryUsage=512*1024*1024)->
+    sumQuota = @ls_summaryQuota(c,memoryUsage)
+
+    if sumQuota.length > 0
+      _.sortBy(sumQuota,"usage")[0].serverName
+
+    #FIXME: if no servers !
+
+
   remainderQuota: (c=1, memoryUsage=512*1024*1024)->
     serverQuota = {}
     dockerServers = @_servers
@@ -1064,6 +1100,14 @@ needStreamingCallback = (fn, streamingFns=[])->
       serverQuota[name] = dockerServers[name].remainderQuota(c, memoryUsage)
 
     serverQuota
+
+
+  ls_remainderQuota: (c=1, memoryUsage=512*1024*1024)->
+    dockerServers = @_servers
+    Object.keys(dockerServers).map (name)->
+      resData =
+        serverName: name
+        quota: dockerServers[name].remainderQuota(c, memoryUsage)
 
 
   _DockerServers: (index="names")->
@@ -1079,6 +1123,7 @@ needStreamingCallback = (fn, streamingFns=[])->
           dockerServers[docker._data._id] = docker
 
     dockerServers
+
 
   _searchImageTag: (imageTag, activeOnly=true)->
 

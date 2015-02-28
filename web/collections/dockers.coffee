@@ -5,6 +5,8 @@ new Mongo.Collection "dockerContainersMonitor"
 new Mongo.Collection "dockerHubs"
 new Mongo.Collection "dockerRepos"
 
+new Mongo.Collection "dockerUsageLimits"
+
 
 
 
@@ -19,7 +21,6 @@ new Mongo.Collection "dockerRepos"
 @DockerConfigTypes = new Mongo.Collection "dockerConfigTypes"
 @DockerImageIsConfigTypes = new Mongo.Collection "dockerImageIsConfigTypes"
 
-@DockerUsageLimits = new Mongo.Collection "dockerUsageLimits"
 
 @DockersUsedInEnvs = new Mongo.Collection "dockersUsedInEnvs"
 
