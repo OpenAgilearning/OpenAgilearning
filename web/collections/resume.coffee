@@ -1,6 +1,6 @@
 new Meteor.Collection "publicResume"
 
-@editablePrivacyFields = ["hometown", "email"]
+@editablePrivacyFields = ["hometown", "email","description"]
 
 @profileSchema = new SimpleSchema
   name:
@@ -19,6 +19,17 @@ new Meteor.Collection "publicResume"
       afFieldInput:
         type: "email"
         placeholder: "please edit email"
+
+  description:
+    type: String
+    label: "About me"
+    max:140
+    optional:true
+    autoform:
+      afFieldInput:
+        type: "textarea"
+        placeholder: "I like learning more than I can say!"
+
 
 @privacySchema = new SimpleSchema
   publicFields:
