@@ -131,10 +131,12 @@ Meteor.methods
     if Roles.userIsInRole user._id, "admin", "dockers"
       containerId = dockerServerContainerId
 
-      docker = new Class.DockerServer(containerDoc.serverId)
-      con = docker.Container(containerId)
-      # FIXME if container didn't stop
-      con.kill()
+      if containerDoc.serverId
+        docker = new Class.DockerServer(containerDoc.serverId)
+        # docker.stop containerId
+        # docker.rm containerId
+        docker.rmForcely containerId
+
 
       db.dockerContainersMonitor.remove Id:containerId
 
