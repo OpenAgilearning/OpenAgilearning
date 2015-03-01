@@ -124,18 +124,17 @@ Meteor.methods
     #TODO: assert container exists
     containerDoc = db.dockerContainersMonitor.findOne Id: dockerServerContainerId
 
-    if not containerDoc?
+    if not containerDoc
       throw new Meteor.Error(1001, "Docker Server Container ID Error!")
 
 
     if Roles.userIsInRole user._id, "admin", "dockers"
       containerId = dockerServerContainerId
 
-      if containerDoc.serverId
-        docker = new Class.DockerServer(containerDoc.serverId)
-        # docker.stop containerId
-        # docker.rm containerId
-        docker.rmForcely containerId
+      docker = new Class.DockerServer(containerDoc.serverId)
+      # docker.stop containerId
+      # docker.rm containerId
+      docker.rmForcely containerId
 
 
       db.dockerContainersMonitor.remove Id:containerId
@@ -152,7 +151,7 @@ Meteor.methods
         containerId: containerId
 
       dockerInstanceDoc = db.dockerInstances.findOne instanceQuery
-      if not dockerInstanceDoc?
+      if dockerInstanceDoc
         db.dockerInstances.remove _id: dockerInstanceDoc._id
 
         dockerInstanceDoc.removeAt = new Date
