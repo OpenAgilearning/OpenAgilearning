@@ -30,7 +30,7 @@ template(name="profilePageEnvConfigTypesTableRelatedCoursesField")
 
 template(name="profilePageEnvUserConfigsTableConfigDataField")
   ul
-    each configData
+    each envs
       li {{key}}={{value}}
 
 
@@ -48,7 +48,7 @@ template(name="profilePageDockerInstancesTable")
 
 template(name="profilePageDockerInstancesTableEnvField")
   ul
-    each containerConfig.Env
+    each containerConfigs.Env
       li {{this}}
 
 template(name="profilePageDockerInstancesTableRemoveBtnField")

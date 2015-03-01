@@ -1,4 +1,8 @@
 
+Meteor.publish null, ->
+  userId = @userId
+  if userId
+    db.dockerInstances.find userId:userId
 
 
 Meteor.publish "userRoles", (roleTypes=[])->
@@ -16,13 +20,13 @@ Meteor.publish "userRoles", (roleTypes=[])->
 
     for groupId in roleGroupsIds
       if Collections.Roles.find({role:"admin",groupId:groupId,userId:userId}).count() > 0
-        queryCond = 
+        queryCond =
           groupId: groupId
         queryConditions.push queryCond
       else
-        queryCond = 
+        queryCond =
           groupId: groupId
-          userId:userId          
+          userId:userId
         queryConditions.push queryCond
 
     # console.log queryConditions
