@@ -410,7 +410,7 @@ Meteor.startup ->
             Meteor.subscribe "allDockerServerContainers"
 
             # Meteor.subscribe "allEnvTypes"
-            Meteor.subscribe "allEnvs"
+            # Meteor.subscribe "allEnvs"
 
           else
             if Roles.userIsInRole(userId,"admin","dockers")
