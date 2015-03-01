@@ -28,21 +28,21 @@ Meteor.publish "allDockerInstances", ->
 
 Meteor.publish "allDockerServerContainers", ->
   if Roles.userIsInRole @userId, "admin", "dockers"
-    DockerServerContainers.find()
+    db.dockerContainersMonitor.find()
   else
-    DockerServerContainers.find _id: "permisionDeny"
+    db.dockerContainersMonitor.find _id: "permisionDeny"
 
 Meteor.publish "allDockerServerImages", ->
   if Roles.userIsInRole @userId, "admin", "dockers"
-    DockerServerImages.find()
+    db.dockerImageTagsMonitor.find()
   else
-    DockerServerImages.find _id: "permisionDeny"
+    db.dockerImageTagsMonitor.find _id: "permisionDeny"
 
 Meteor.publish "allDockerServers", ->
   if Roles.userIsInRole @userId, "admin", "dockers"
-    DockerServers.find()
+    db.dockerServersMonitor.find({})
   else
-    DockerServers.find _id: "permisionDeny"
+    db.dockerServersMonitor.find _id: "permisionDeny"
 
 Meteor.publish "dockerServerImages", (dockerServerId)->
   if Roles.userIsInRole @userId, "admin", "dockers"
