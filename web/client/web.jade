@@ -3,6 +3,9 @@ template(name="layout")
   +yield
   +feedback
 
+template(name="loading")
+  +spinner
+
 template(name="navBar")
   .navbar.navbar-inverse.navbar-fixed-top
     .container
@@ -15,12 +18,12 @@ template(name="navBar")
         a.navbar-brand(href="/") Agilearning
       .collapse.navbar-collapse
         ul.nav.navbar-nav
-          
+
           //- if user
           //-   li.nav.navbar-nav
           //-     a(href="{{pathFor 'profile'}}") Profile
 
-          
+
           li.nav.navbar-nav
             a(href="{{pathFor 'envs'}}") Environments
 
@@ -29,7 +32,7 @@ template(name="navBar")
 
           li.nav.navbar-nav
             a(href="{{pathFor 'discussions'}}") Discuss
-          
+
           li.nav.navbar-nav
             a(href="{{pathFor 'learningResources'}}") Videos
 
@@ -40,7 +43,7 @@ template(name="navBar")
           //- li.nav.navbar-nav
           //-   a(href="{{pathFor 'wishFeatures'}}") Wish Features
 
-          
+
           if showAdminPage
             li.nav.navbar-nav
               a(href="{{pathFor 'admin'}}") Admin
