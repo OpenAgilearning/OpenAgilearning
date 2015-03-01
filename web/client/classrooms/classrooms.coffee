@@ -1,4 +1,5 @@
 Template.classroom.rendered = ->
+
   $("video.video-js").map ->
     videojs @, JSON.parse($(@).attr("data-setup"))
 
@@ -11,6 +12,14 @@ Template.classroom.rendered = ->
     setTimeout showFeedBack , ( 10 * 60 * 1000 )
   else
     setTimeout showFeedBack , 3000
+
+  classroomId = Router.current().params.classroomId
+  Meteor.call "getClassroomDocker", classroomId, (err, data)->
+    if not err
+      console.log "get env successfully!"
+    else
+      console.log "get env failed!"
+
 
 Template.envIframe.events
   "click .connectEnvBtn": (e, t)->

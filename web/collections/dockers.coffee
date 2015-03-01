@@ -76,6 +76,8 @@ Meteor.methods
       else
         imageTag = courseData.dockerImageTag
 
+      console.log "imageTag = ",imageTag
+
         # imageType = DockerImages.findOne({_id:imageId}).type
         # if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
         #   #FIXME: write a checking function for env vars

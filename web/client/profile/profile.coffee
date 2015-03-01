@@ -46,20 +46,20 @@ Template.profilePageEnvConfigsForm.helpers
 
 Template.profilePageEnvUserConfigsTable.helpers
   settings: ->
-    ConfigDataField =
-      key: "configData"
-      label: "Config Data"
-      tmpl: Template.profilePageEnvUserConfigsTableConfigDataField
+    # ConfigDataField =
+    #   key: "envs"
+    #   label: "Config Data"
+    #   tmpl: Template.profilePageEnvUserConfigsTableConfigDataField
 
-    EditBtnField =
-      key: "_id"
-      label: "Edit"
-      tmpl: Template.profilePageEnvUserConfigsTableEditBtnField
+    # EditBtnField =
+    #   key: "_id"
+    #   label: "Edit"
+    #   tmpl: Template.profilePageEnvUserConfigsTableEditBtnField
 
-    RelatedCoursesField =
-      key: "configTypeId"
-      label: "Related Courses"
-      tmpl: Template.profilePageEnvConfigTypesTableRelatedCoursesField
+    # RelatedCoursesField =
+    #   key: "envConfigTypeName"
+    #   label: "Related Courses"
+    #   tmpl: Template.profilePageEnvConfigTypesTableRelatedCoursesField
 
 
     res=
@@ -67,7 +67,7 @@ Template.profilePageEnvUserConfigsTable.helpers
       rowsPerPage:5
       showFilter: false
       showNavigation:'never'
-      fields:["configTypeId", RelatedCoursesField, ConfigDataField,EditBtnField]
+      fields:["envConfigTypeName", "envs"]
 
 
 Template.profilePageEnvUserConfigsTableEditBtnField.events

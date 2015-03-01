@@ -321,17 +321,19 @@ Meteor.startup ->
         Meteor.subscribe "classChatroomMessages", @params.classroomId
         # Meteor.subscribe "userDockerInstances", @params.classroomId
 
-        Meteor.call "getClassroomDocker", @params.classroomId, (err, data)->
-          if not err
-            console.log "get env successfully!"
-          else
-            console.log "get env failed!"
-
         Meteor.subscribe "classChatroom", @params.classroomId
         Meteor.subscribe "usersOfClassroom", @params.classroomId
         Meteor.subscribe "classExercises", @params.classroomId
 
         Meteor.subscribe "userRoles", ["agilearning.io"]
+
+      # onAfterAction: ->
+        # Meteor.call "getClassroomDocker", @params.classroomId, (err, data)->
+        #   if not err
+        #     console.log "get env successfully!"
+        #   else
+        #     console.log "get env failed!"
+
 
     @route "learningResources",
       path: "learningResources/"

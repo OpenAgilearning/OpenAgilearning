@@ -15,11 +15,11 @@ template(name="envPageEnvUserConfigsBlock")
   if hasUnsettingEnvUserConfigs
     p (need to setup)
     +envPageEnvConfigTypesTable filteredEnvConfigTypes=filteredEnvConfigTypes
-   
+
   if hasEnvUserConfigs
     p (already setup)
     +profilePageEnvUserConfigsTable
-  
+
   +profilePageEnvConfigsForm userConfigId=userConfigId envConfigTypeId=envConfigTypeId
 
 
@@ -28,7 +28,7 @@ template(name="envPageEnvConfigTypesTable")
 
 template(name="envPageEnvConfigTypesTableConfigEnvsField")
   ul
-    each configs.envs
+    each envs
       if mustHave
         li (need) {{name}}
       else
@@ -45,7 +45,7 @@ template(name="envPageEnvConfigTypesTableRelatedCoursesField")
 template(name="EnvConfigTypesRelatedCoursesField")
   ul
     each configTypeCourses
-      li 
+      li
         a(href="{{pathFor 'course' courseId=_id}}") {{courseName}}
 
 
@@ -61,7 +61,7 @@ template(name="envsTable")
 
 template(name="envPicture")
   img(width="{{width}}",src="{{getEnvPictureURL envDoc}}")
-  
+
 
 template(name="envPictureField")
   +envPicture envDoc=this width="300px"
