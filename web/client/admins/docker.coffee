@@ -28,7 +28,7 @@ Template.adminPageDockerServerContainersTable.helpers
       tmpl: Template.adminPageDockerServerContainersTablePortsField
 
     removeContainerBtnField =
-      key: "_id"
+      key: "Id"
       label: "Remove Container"
       tmpl: Template.adminPageDockerServerContainersTableRemoveContainerBtnField
 
@@ -42,6 +42,7 @@ Template.adminPageDockerServerContainersTable.helpers
 
 Template.adminPageDockerServerContainersTableRemoveContainerBtnField.events
   "click .removeContainerBtn": (e, t)->
-    containerId = $(e.target).attr "containerId"
+    containerId = $(e.target).attr "container_id"
     $(e.target).html "Stopping"
+    # FIXME with delete container job queu
     Meteor.call "removeDockerServerContainer", containerId
