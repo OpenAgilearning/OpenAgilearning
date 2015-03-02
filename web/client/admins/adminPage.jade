@@ -62,8 +62,8 @@ template(name="AdminPage")
             +envsTableAdminPage
             h2 Envs Creator
 
-            +autoForm id="envCreator" schema="EnvsSchema" type="method" meteormethod="createEnv"
-              +afQuickField name="imageTag" options=uniqueDockerImageTagsForAutoForm
+            //- +autoForm id="envCreator" schema="EnvsSchema" type="method" meteormethod="createEnv"
+            //-   +afQuickField name="imageTag" options=uniqueDockerImageTagsForAutoForm
 
 
       if isInRole "admin" "system"

@@ -100,9 +100,9 @@ Meteor.methods
 
     if hasRemovePermission
       docker = new Class.DockerServer instanceDoc.serverId
-      docker.stop(instanceDoc.containerId)
-      docker.rm(instanceDoc.containerId)
-
+      # docker.stop instanceDoc.containerId
+      # docker.rm instanceDoc.containerId
+      docker.rm_f instanceDoc.containerId
 
       dockerInstanceDoc = instanceDoc
       DockerInstances.remove _id: dockerInstanceDoc._id
@@ -122,57 +122,42 @@ Meteor.methods
       throw new Meteor.Error(401, "You need to login")
 
     #TODO: assert container exists
-    containerDoc = DockerServerContainers.findOne _id: dockerServerContainerId
+    containerDoc = db.dockerContainersMonitor.findOne Id: dockerServerContainerId
 
     if not containerDoc
       throw new Meteor.Error(1001, "Docker Server Container ID Error!")
 
 
     if Roles.userIsInRole user._id, "admin", "dockers"
-      containerId = containerDoc.Id
+      containerId = dockerServerContainerId
 
-      Docker = Meteor.npmRequire "dockerode"
-      dockerServerSettings = getDockerServerConnectionSettings(containerDoc.serverName)
-      docker = new Docker dockerServerSettings
+      docker = new Class.DockerServer(containerDoc.serverId)
+      # docker.stop containerId
+      # docker.rm containerId
+      docker.rmForcely containerId
 
-      Future = Meteor.npmRequire 'fibers/future'
-      stopFuture = new Future
-      container = docker.getContainer containerId
 
-      container.stop {}, (err,data)->
-        stopFuture.return data
-
-      data = stopFuture.wait()
-
-      removeFuture = new Future
-      container = docker.getContainer containerId
-
-      container.remove {}, (err,data)->
-        removeFuture.return data
-
-      data = removeFuture.wait()
-
-      DockerServerContainers.remove _id: dockerServerContainerId
+      db.dockerContainersMonitor.remove Id:containerId
 
       containerDoc.removeAt = new Date
       containerDoc.removeBy = "dockerAdmin"
       containerDoc.removeByUid = user._id
-
-      DockerServerContainersLog.insert containerDoc
+      db.dockerContainersLog.insert containerDoc
+      # DockerServerContainersLog.insert containerDoc
 
       #TODO: modift DockerInstances data
       instanceQuery =
-        serverName: containerDoc.serverName
+        serverName: containerDoc.serverId
         containerId: containerId
 
-      dockerInstanceDoc = DockerInstances.findOne instanceQuery
+      dockerInstanceDoc = db.dockerInstances.findOne instanceQuery
       if dockerInstanceDoc
-        DockerInstances.remove _id: dockerInstanceDoc._id
+        db.dockerInstances.remove _id: dockerInstanceDoc._id
 
         dockerInstanceDoc.removeAt = new Date
         dockerInstanceDoc.removeBy = "dockerAdmin"
         dockerInstanceDoc.removeByUid = user._id
-        DockerInstancesLog.insert dockerInstanceDoc
+        db.dockerInstancesLog.insert dockerInstanceDoc
 
   "runDocker": (imageTag)->
 

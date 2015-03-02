@@ -1,27 +1,23 @@
 Template.adminPageDockerServersTable.helpers
   settings: ->
-    dockerServerNameField = 
-      key: "name"
+    dockerServerNameField =
+      key: "serverId"
       label: "Server Name"
-      
-    dockerServerIPField =
-      key: "connect.host"
-      label: "Server IP"
-     
+
     res=
-      collection:DockerServers
+      collection:db.dockerServersMonitor
       rowsPerPage:5
       showFilter: true
-      fields:[dockerServerNameField, dockerServerIPField, "active", "lastUpdateAt"]
+      fields:[dockerServerNameField, "active", "lastInfoMoonitorAt"]
 
 
 Template.adminPageDockerServerImagesTable.helpers
   settings: ->
     res =
-      collection: DockerServerImages
+      collection: db.dockerImageTagsMonitor
       rowsPerPage: 10
       showFilter: true
-      fields: ["serverName","tag","lastUpdateAt"]
+      fields: ["serverId","tag","lastUpdatedAt"]
 
 
 Template.adminPageDockerServerContainersTable.helpers
@@ -31,23 +27,22 @@ Template.adminPageDockerServerContainersTable.helpers
       label: "Ports"
       tmpl: Template.adminPageDockerServerContainersTablePortsField
 
-    removeContainerBtnField = 
-      key: "_id"
+    removeContainerBtnField =
+      key: "Id"
       label: "Remove Container"
       tmpl: Template.adminPageDockerServerContainersTableRemoveContainerBtnField
 
 
     res =
-      collection: DockerServerContainers
+      collection: db.dockerContainersMonitor
       rowsPerPage: 10
       showFilter: true
-      fields: ["serverName","Image",portsField,"Status","lastUpdateAt", removeContainerBtnField]
+      fields: ["serverId","Image",portsField,"alive","running","Status","lastUpdatedAt", removeContainerBtnField]
 
 
 Template.adminPageDockerServerContainersTableRemoveContainerBtnField.events
   "click .removeContainerBtn": (e, t)->
-    containerId = $(e.target).attr "containerId"
+    containerId = $(e.target).attr "container_id"
     $(e.target).html "Stopping"
+    # FIXME with delete container job queu
     Meteor.call "removeDockerServerContainer", containerId
-
-

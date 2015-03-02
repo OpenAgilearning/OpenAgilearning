@@ -815,6 +815,11 @@ needStreamingCallback = (fn, streamingFns=[])->
     @_getContainer(containerId).remove()
 
 
+  rm_f: (containerId)->
+    @_getContainer(containerId).stop()
+    @_getContainer(containerId).remove()
+
+
   start: (containerId)->
     @_getContainer(containerId).start()
 
