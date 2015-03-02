@@ -1037,7 +1037,7 @@ needStreamingCallback = (fn, streamingFns=[])->
         mustSetEnvFields.push fieldData.name
 
         if fieldData.autoGen
-          Envs[fieldData.name] = Random.id(40)
+          Envs[fieldData.name] = Random.id(10)
 
       else
         if fieldData.defaultValue
