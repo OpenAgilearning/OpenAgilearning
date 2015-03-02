@@ -815,7 +815,7 @@ needStreamingCallback = (fn, streamingFns=[])->
     @_getContainer(containerId).remove()
 
 
-  rmForcely: (containerId)->
+  rm_f: (containerId)->
     @_getContainer(containerId).stop()
     @_getContainer(containerId).remove()
 

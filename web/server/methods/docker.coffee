@@ -100,9 +100,9 @@ Meteor.methods
 
     if hasRemovePermission
       docker = new Class.DockerServer instanceDoc.serverId
-      docker.stop(instanceDoc.containerId)
-      docker.rm(instanceDoc.containerId)
-
+      # docker.stop instanceDoc.containerId
+      # docker.rm instanceDoc.containerId
+      docker.rm_f instanceDoc.containerId
 
       dockerInstanceDoc = instanceDoc
       DockerInstances.remove _id: dockerInstanceDoc._id
