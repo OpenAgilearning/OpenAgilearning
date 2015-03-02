@@ -15,8 +15,8 @@ Template.resourceNode.events
   "click img.play": (e,t) ->
 
     e.stopPropagation()
-    $(e.target).closest(".resourceNode").toggleClass "col-md-3"
-    $(e.target).closest(".resourceNode").toggleClass "col-md-6"
+    $(e.target).closest(".resourceNode").removeClass "col-md-3"
+    $(e.target).closest(".resourceNode").addClass "col-md-6"
 
     $("iframe#ytplayer").show()
 
