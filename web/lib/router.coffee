@@ -529,7 +529,14 @@ Meteor.startup ->
       waitOn: ->
         Meteor.subscribe "userResume"
 
+    @route "termsOfConditions",
+      path: "toc/:tocId"
+      template: "terms"
+      data:
+        terms:=>db.terms.findOne _id:@current().params.tocId
 
+      waitOn:->
+        Meteor.subscribe "terms"
 
     @route "pleaseLogin",
       path: "becomeAgilearner/"

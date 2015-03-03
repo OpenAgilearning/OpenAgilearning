@@ -1,0 +1,1 @@
+new Meteor.Collection "terms"
