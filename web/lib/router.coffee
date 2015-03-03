@@ -1,5 +1,6 @@
 Router.configure
   layoutTemplate: 'layout'
+  loadingTemplate: 'loading'
 
 Meteor.startup ->
   Router.map ->
