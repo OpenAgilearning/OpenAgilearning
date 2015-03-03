@@ -33,6 +33,10 @@ Template.envIframe.events
     $("#envIframe").attr 'src', url
 
 Template.classroomEnvIframe.helpers
+  iframeUser:->
+    @docker.envs.USER
+  iframePassword:->
+    @docker.envs.PASSWORD
   iframeIp: ->
     # console.log @
     @docker.ip
