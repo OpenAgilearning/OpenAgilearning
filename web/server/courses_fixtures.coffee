@@ -12,7 +12,7 @@
       'video' : 'https://www.youtube.com/watch?v=3h_fx95i-bA'
       'imageURL': '/images/ipynb_lmnn1.png'
       'publicStatus': 'private'
-      'bundleServer': ['[DockerServer]d1-agilearning','[DockerServer]d4-agilearning']
+      'bundleServer': ['[DockerServer]d4-agilearning']
 
     if Courses.find({"publicStatus" : "private"}).count() is 0
       demoUser = Meteor.users.findOne({"services.meetup.id" : {$in: adminMeetupIds}})

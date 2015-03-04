@@ -76,6 +76,11 @@ Meteor.methods
       else
         imageTag = courseData.dockerImageTag
 
+      if courseData.bundleServer
+        queryServer = courseData.bundleServer
+      else
+        queryServer = {"user.group.id":"TaishinDataMining"}
+
       console.log "imageTag = ",imageTag
 
         # imageType = DockerImages.findOne({_id:imageId}).type
@@ -84,7 +89,7 @@ Meteor.methods
         #   throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
 
       if db.dockerInstances.find({userId:user._id, imageTag:imageTag}).count() is 0
-        Meteor.call "runDocker", imageTag
+        Meteor.call "runDocker", imageTag, queryServer
 
       @unblock()
 

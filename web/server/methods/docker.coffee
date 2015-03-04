@@ -159,7 +159,7 @@ Meteor.methods
         dockerInstanceDoc.removeByUid = user._id
         db.dockerInstancesLog.insert dockerInstanceDoc
 
-  "runDocker": (imageTag)->
+  "runDocker": (imageTag, queryServer={"user.group.id":"TaishinDataMining"})->
 
     # FIXME refactor dockerImage collection, image with full tag
     if imageTag.split(":").length is 1
@@ -177,7 +177,7 @@ Meteor.methods
 
     if DockerInstances.find({userId:user._id,imageTag:fullImageTag}).count() is 0
 
-      dm = new Class.DockersManager {"user.group.id":"TaishinDataMining"}
+      dm = new Class.DockersManager queryServer
 
       resData = dm.getFreeServerForcely().run(imageTag, "basic", user._id)
 
