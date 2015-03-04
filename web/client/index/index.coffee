@@ -84,3 +84,10 @@ Template.nodeInfo.destroyed = ->
   elem = @find ".nodeInfo"
   $('.nodesList').masonry( 'remove', elem )
   $('.nodesList').masonry()
+
+
+Template.advitedToJoin.helpers
+  settings:->
+    resSchema = new SimpleSchema
+      code:
+        type: String

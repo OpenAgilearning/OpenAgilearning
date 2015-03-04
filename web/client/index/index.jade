@@ -1,6 +1,8 @@
 template(name="index")
   .container
     .row-fluid
+      +advitedToJoin
+      hr
       +nodesList
       //- .col-md-10.column
       //-   //- h2 Courses:
@@ -196,3 +198,11 @@ template(name="index2")
       .col-md-5.column
 
         img(src="images/jiawei_tutorial_pic.jpg",style="width:100%")
+
+template(name="advitedToJoin")
+  +autoForm schema=settings id="advitedCode" type="method" meteormethod="validAdvitedCode"
+    fieldset
+      +afQuickField name="code"
+    button.btn.btn-primary(type="submit") submit
+    
+  

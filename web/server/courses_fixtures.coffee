@@ -1,7 +1,64 @@
 
 @Fixture.Courses =
   set: ->
+    adminMeetupIds = Meteor.settings.adminMeetupIds
+    # Test for private course
+    private_course =
+      'languages':['EN']
+      'courseName': 'Private course test case'
+      'dockerImageTag': 'c3h3/learning-shogun:agilearning'
+      'slides': 'http://nbviewer.ipython.org/github/unpingco/Python-for-Signal-Processing/blob/master/Confidence_Intervals.ipynb'
+      'description': 'Taishin data team course'
+      'video' : 'https://www.youtube.com/watch?v=3h_fx95i-bA'
+      'imageURL': '/images/ipynb_lmnn1.png'
+      'publicStatus': 'private'
+      'bundleServer': ['[DockerServer]d1-agilearning','[DockerServer]d4-agilearning']
+
+    if Courses.find({"publicStatus" : "private"}).count() is 0
+      demoUser = Meteor.users.findOne({"services.meetup.id" : {$in: adminMeetupIds}})
+      if demoUser
+        private_course.creatorId = demoUser._id
+        private_course.creatorAt = new Date
+        courseId = Courses.insert private_course
+        courseRoleGroupData =
+          type: "course"
+          id: courseId
+          collection: "Courses"
+          query:
+            _id: courseId
+        if Collections.RoleGroups.find(courseRoleGroupData).count() is 0
+          courseRoleGroupData.createdAt = new Date
+          courseRoleGroupId = Collections.RoleGroups.insert courseRoleGroupData
+        else
+          courseRoleGroupId = Collections.RoleGroups.findOne(courseRoleGroupData)._id
+          courseRoleData =
+            groupId: courseRoleGroupId
+            userId: private_course.creatorId
+            role: "admin"
+            createdAt: new Date
+
+          Collections.Roles.insert courseRoleData
+
+      else
+        private_course = Courses.findOne private_course
+        courseId = private_course._id
+      if private_course.publicStatus is "private"
+        if Classrooms.find({courseId:courseId,publicStatus:"private"}).count() is 0
+          publicClassroomDoc =
+            name: "private Classroom"
+            description: "Everyone is welcome!"
+            creatorId: private_course.creatorId
+            courseId: courseId
+            publicStatus:"private"
+            createAt: new Date
+          classroomId = Classrooms.insert publicClassroomDoc
+
+          ClassroomRoles.insert {classroomId:classroomId, userId: private_course.creatorId, role:"admin", isActive:true}
+          Roles.addUsersToRoles(private_course.creatorId, "admin", "classroom_" + classroomId)
+
+
     # http://taiwanrusergroup.github.io/DSC2014Tutorial/
+    # public course case
     demoCourses = [
       { "languages":["EN"], "courseName" : "Large Margin Nearest Neighbours", "dockerImageTag" : "c3h3/learning-shogun:agilearning", "slides" : "http://nbviewer.ipython.org/github/shogun-toolbox/shogun/blob/master/doc/ipython-notebooks/metric/LMNN.ipynb", "description" : "Fernando Iglesias talks about the GSoC-Project bringing Large Margin Nearest Neighbours into the Shogun Toolbox.", "video" : "https://www.youtube.com/watch?v=7pm91lCWyfE", "imageURL":"/images/ipynb_lmnn1.png"},
 
@@ -33,7 +90,6 @@
         description: "This is an learning environment used in Taiwan R Ladies to learn how to play 'hello-world' datasets in kaggle with R."
         imageURL: "/images/rstudio_dsc2014_etl2.png"
 
-    adminMeetupIds = Meteor.settings.adminMeetupIds
 
     for oneCourse in demoCourses
       if Courses.find(oneCourse).count() is 0
@@ -126,4 +182,3 @@
 
 if ENV.isDev
   Fixture.Courses.reset()
-
