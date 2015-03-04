@@ -128,8 +128,11 @@ Meteor.publish "userResume", ->
     Exceptions.find {_id:"ExceptionPermissionDeny"}
 
 Meteor.publish "registeredCourse", ->
-  userData = Meteor.user()
-  if userData
+  # console.log "[publish func] userId = #{@userId}"
+  # console.log "[publish func] this = #{@}"
+  userData = Meteor.users.findOne _id:@userId
+  if userData?.roles?
+    # console.log "[publish func] userData key = #{Object.keys userData }"
     # Get registered classrooms data
     keyArr = Object.keys userData.roles
     classIdArr = []
@@ -141,3 +144,5 @@ Meteor.publish "registeredCourse", ->
     db.classrooms.find({_id: {$in : classIdArr } }).fetch().map (xxx)->
       courseIdArr.push xxx.courseId
     Courses.find { _id: {$in:courseIdArr} }
+  else
+    Courses.find {"publicStatus" : {$in:["public","semipublic"]}}
