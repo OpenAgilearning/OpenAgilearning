@@ -1,0 +1,8 @@
+.terms-box {
+  position: relative;
+  margin-left: 10%;
+  width: 50%;
+  height: 200px;
+  overflow: auto;
+}
+

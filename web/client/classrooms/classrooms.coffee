@@ -87,3 +87,6 @@ Template.setEnvConfigsForm.helpers
           label: false
 
       new SimpleSchema schemaSettings
+
+Template.classroom.helpers
+  TermsSigned:-> _.contains Meteor.user().agreedTOC, "toc_main"
