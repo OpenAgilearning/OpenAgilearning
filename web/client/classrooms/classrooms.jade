@@ -113,12 +113,18 @@ template(name="setEnvConfigsForm")
 
 template(name="classroomEnvIframe")
   if iframePort
-    +envIframe ip=iframeIp port=iframePort
+    +envIframe ip=iframeIp port=iframePort user=iframeUser password=iframePassword
 
 
 
 
 template(name="envIframe")
-  input.connectEnvBtn.btn.btn-default(value="Connect Environment Again")
+  button.connectEnvBtn.btn.btn-default Connect Environment Again
+  if user
+    span User:
+    span.label.label-info {{user}}
+  if password
+    span Password:
+    span.label.label-info {{password}}
   iframe#envIframe(src="http://{{ip}}:{{port}}",port="{{port}}",ip="{{ip}}", width="100%", height="550px", scrolling="yes")
 
