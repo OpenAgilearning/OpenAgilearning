@@ -3,7 +3,7 @@ fs = Meteor.npmRequire "fs"
 @Fixture.terms =
   data: ->
     [{
-      _id: "toc1"
+      _id: "toc_main"
       title:"Terms of Conditions for Environment"
       content: fs.readFileSync("assets/app/toc1.md").toString()
       version: "0.0.1"
