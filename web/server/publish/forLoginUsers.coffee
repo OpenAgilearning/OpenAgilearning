@@ -126,3 +126,18 @@ Meteor.publish "userResume", ->
     db.publicResume.find userId:userId
   else
     Exceptions.find {_id:"ExceptionPermissionDeny"}
+
+Meteor.publish "registeredCourse", ->
+  userData = Meteor.user()
+  if userData
+    # Get registered classrooms data
+    keyArr = Object.keys userData.roles
+    classIdArr = []
+    keyArr.map (xx)->
+      if xx isnt "system"
+        classIdArr.push xx.split("_")[1]
+    # Use classrooms' id to find course
+    courseIdArr = []
+    db.classrooms.find({_id: {$in : classIdArr } }).fetch().map (xxx)->
+      courseIdArr.push xxx.courseId
+    Courses.find { _id: {$in:courseIdArr} }

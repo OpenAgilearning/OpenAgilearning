@@ -33,7 +33,7 @@ Meteor.startup ->
 
         Meteor.subscribe "allPublicAndSemipublicCourses"
         Meteor.subscribe "userRoles", ["course", "agilearning.io"]
-
+        Meteor.subscribe "registeredCourse"
 
     @route "envs",
       path: "envs/"
