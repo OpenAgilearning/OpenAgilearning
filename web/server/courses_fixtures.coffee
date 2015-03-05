@@ -28,7 +28,7 @@
       demoCourses.push
         languages: ["ZH"]
         courseName: "Try SFTP"
-        dockerImageTag: "luzifer/sftp-share:latest"
+        dockerImageTag: "c3h3/sftp-share:UsePAM-no"
         slides: "http://www.kaggle.com/c/titanic-gettingStarted/dails/new-getting-started-with-r"
         description: "This is an learning environment used in Taiwan R Ladies to learn how to play 'hello-world' datasets in kaggle with R."
         imageURL: "/images/rstudio_dsc2014_etl2.png"
