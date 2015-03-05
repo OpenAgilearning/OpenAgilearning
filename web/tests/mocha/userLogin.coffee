@@ -34,7 +34,7 @@ if Meteor.isServer
         wholeJsonText = fs.readFileSync(process.env.PWD + "/private/users.json", 'utf8')
         for jsonText in wholeJsonText.split("\n")
           try
-            data = JSON.parse(jsonText.replace("$date","date"))
+            data = EJSON.parse(jsonText)
             # data.createdAt = new Date data.createdAt["$date"]
             if Meteor.users.find({_id:data._id}).count() is 0
               Meteor.users.insert data
