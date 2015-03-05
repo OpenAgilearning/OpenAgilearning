@@ -3,10 +3,15 @@ new Meteor.Collection "terms"
 @AgreeToTerms= new SimpleSchema
   agree:
     type: Boolean
-    label: "I agree to the terms of conditions above."
+    label: "I agree to the Terms of Service above."
+    custom:->
+      if @value is false
+        return "pleaseAgree"
   tocId:
     type: String
 
+SimpleSchema.messages
+  "pleaseAgree":"Please agree to the Terms of Service."
 
 Meteor.methods
   "agreeToTerms":(data)->
