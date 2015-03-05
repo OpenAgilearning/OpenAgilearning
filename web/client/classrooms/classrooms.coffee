@@ -20,6 +20,22 @@ Template.classroom.rendered = ->
     else
       console.log "get env failed!"
 
+  # timer = setInterval((->
+  #   xhr = new XMLHttpRequest()
+  #   xhr.onload=->
+  #     # console.log "pinging", @status # Always 200
+  #     console.log "pinging", @.getResponseHeader "Server"
+  #     # if @.getResponseHeader "Server"
+  #     #   clearInterval timer
+  #   xhr.onerror= (e)->
+  #     console.log "error",e, @
+  #     clearInterval timer
+
+  #   xhr.open 'get', $("#envIframe").attr('src')
+  #   xhr.send()
+  #   return
+  # ), 1000)
+
 
 Template.envIframe.events
   "click .connectEnvBtn": (e, t)->
