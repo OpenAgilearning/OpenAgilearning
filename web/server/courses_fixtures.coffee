@@ -18,10 +18,20 @@
       { "languages":["EN"], "courseName" : "ml-for-hackers", "dockerImageTag" : "c3h3/ml-for-hackers:latest", "slides" : "http://shop.oreilly.com/product/0636920018483.do", "description" : "This is an learning environment used in Taiwan R Ladies to learn the material in the book 'Machine Learning for Hackers' in RLadies' monthly study group."},
       { "languages":["EN","ZH"], "courseName" : "RLadies Play Kaggle", "dockerImageTag" : "c3h3/rladies-hello-kaggle:latest", "slides" : "http://www.kaggle.com/c/titanic-gettingStarted/dails/new-getting-started-with-r", "description" : "This is an learning environment used in Taiwan R Ladies to learn how to play 'hello-world' datasets in kaggle with R."}
 
+
       # { "courseName" : "livehouse20141105", "dockerImageTag" : "c3h3/livehouse20141105", "slides" : "https://www.slidenow.com/slide/129/play", "description" : "https://event.livehouse.in/2014/combo8/"},
       # { "courseName" : "NCCU Crawler 201411", "dockerImageTag" : "c3h3/nccu-crawler-courses-201411", "slides" : "http://nbviewer.ipython.org/github/c3h3/NCCU-PyData-Courses-2013Spring/blob/master/Lecture1/crawler/Lecture2_WebCrawler.ipynb", "description" : ""},
       # { "courseName" : "TOSSUG DS 20141209 BigO", "dockerImageTag" : "dboyliao/docker-tossug", "slides" : "http://interactivepython.org/runestone/static/pythonds/index.html", "description" : ""},
     ]
+
+    if ENV.isDev
+      demoCourses.push
+        languages: ["ZH"]
+        courseName: "Try SFTP"
+        dockerImageTag: "luzifer/sftp-share:latest"
+        slides: "http://www.kaggle.com/c/titanic-gettingStarted/dails/new-getting-started-with-r"
+        description: "This is an learning environment used in Taiwan R Ladies to learn how to play 'hello-world' datasets in kaggle with R."
+        imageURL: "/images/rstudio_dsc2014_etl2.png"
 
     adminMeetupIds = Meteor.settings.adminMeetupIds
 
@@ -114,5 +124,6 @@
     @set()
 
 
+if ENV.isDev
+  Fixture.Courses.reset()
 
-Fixture.Courses.reset()
