@@ -206,6 +206,9 @@ Meteor.startup ->
         Meteor.subscribe "allPublicClassroomRoles", @params.courseId
         Meteor.subscribe "courseDockerImages", @params.courseId
 
+        Meteor.subscribe "relateClassrooms", @params.courseId
+        Meteor.subscribe "relateClassroomRoles", @params.courseId
+
     @route "classroom",
       path: "classroom/:classroomId"
       template: "classroom"
@@ -340,6 +343,7 @@ Meteor.startup ->
           Router.go "pleaseLogin"
 
         classroomAndId = "classroom_" + @params.classroomId
+
         redirectToIndex = not Roles.userIsInRole(userId,"admin",classroomAndId)
         redirectToIndex = redirectToIndex  and not Roles.userIsInRole(userId,"teacher",classroomAndId)
         redirectToIndex = redirectToIndex  and not Roles.userIsInRole(userId,"student",classroomAndId)
@@ -347,22 +351,32 @@ Meteor.startup ->
         if redirectToIndex
           Router.go "index"
 
-        Meteor.subscribe "allPublicEnvConfigTypes"
-        Meteor.subscribe "userEnvUserConfigs"
-        Meteor.subscribe "userDockerInstances"
-        Meteor.subscribe "classroom", @params.classroomId
-        Meteor.subscribe "classroomCourse", @params.classroomId
-        Meteor.subscribe "classroomDockerImages", @params.classroomId
-        Meteor.subscribe "classChatroom", @params.classroomId
-        Meteor.subscribe "classChatroomMessages", @params.classroomId
-        # Meteor.subscribe "userDockerInstances", @params.classroomId
+        # FIXME expensive query
+        userData = Meteor.user()
+        if userData?.roles
+          # Get registered classrooms data
+          keyArr = Object.keys userData.roles
+          classIdArr = []
+          keyArr.map (xx)->
+            if xx isnt "system"
+              classIdArr.push xx.split("_")[1]
+        if not (@params.classroomId in classIdArr)
+          Router.go "index"
+        else
+          Meteor.subscribe "allPublicEnvConfigTypes"
+          Meteor.subscribe "userEnvUserConfigs"
+          Meteor.subscribe "userDockerInstances"
+          Meteor.subscribe "classroom", @params.classroomId
+          Meteor.subscribe "classroomCourse", @params.classroomId
+          Meteor.subscribe "classroomDockerImages", @params.classroomId
+          Meteor.subscribe "classChatroom", @params.classroomId
+          Meteor.subscribe "classChatroomMessages", @params.classroomId
+          # Meteor.subscribe "userDockerInstances", @params.classroomId
+          Meteor.subscribe "usersOfClassroom", @params.classroomId
+          Meteor.subscribe "classExercises", @params.classroomId
 
-        Meteor.subscribe "classChatroom", @params.classroomId
-        Meteor.subscribe "usersOfClassroom", @params.classroomId
-        Meteor.subscribe "classExercises", @params.classroomId
-
-        Meteor.subscribe "userRoles", ["agilearning.io"]
-        Meteor.subscribe "terms"
+          Meteor.subscribe "terms"
+          Meteor.subscribe "userRoles", ["agilearning.io"]
 
       # onAfterAction: ->
         # Meteor.call "getClassroomDocker", @params.classroomId, (err, data)->

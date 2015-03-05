@@ -1,8 +1,8 @@
 template(name="index")
   .container
     .row-fluid
-      +advitedToJoin
-      hr
+      //- +advitedToJoin
+      //- hr
       +nodesList
       //- .col-md-10.column
       //-   //- h2 Courses:
@@ -40,7 +40,7 @@ template(name="nodeInfo")
             if isNotRole "waitForCheck" "course" _id
               +courseImage courseDoc=this width="100%" bindingATag=true
             else
-              +courseImage courseDoc=this width="100%"
+              +courseImage courseDoc=this width="100%" bindingATag=true
 
           h3 {{courseName}}
           p {{description}}
@@ -63,7 +63,7 @@ template(name="nodeInfo")
             if isNotRole "waitForCheck" "course" _id
               +courseImage courseDoc=this width="100%" bindingATag=true
             else
-              +courseImage courseDoc=this width="100%"
+              +courseImage courseDoc=this width="100%" bindingATag=true
 
           .courseTitle
             h3 {{courseName}}
