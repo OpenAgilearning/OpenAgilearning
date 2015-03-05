@@ -200,7 +200,7 @@ if Meteor.isServer
                       repo:"testingTag"
                       tag:"testingTag"
 
-                    image._tag tagOpts
+                    image.tag tagOpts
 
                     chai.expect(docker.isImageTagInServer("testingTag:testingTag")).to.be.true
 
