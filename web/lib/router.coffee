@@ -267,7 +267,8 @@ Meteor.startup ->
 
             DockerInstances.find({imageTag:fullImageTag}).count() is 0
 
-
+          terms:->
+            db.terms.findOne _id:"toc_main"
 
           # envConfigsSchema: =>
           #   userId = Meteor.userId()
@@ -327,6 +328,7 @@ Meteor.startup ->
         Meteor.subscribe "classExercises", @params.classroomId
 
         Meteor.subscribe "userRoles", ["agilearning.io"]
+        Meteor.subscribe "terms"
 
       # onAfterAction: ->
         # Meteor.call "getClassroomDocker", @params.classroomId, (err, data)->
@@ -529,7 +531,14 @@ Meteor.startup ->
       waitOn: ->
         Meteor.subscribe "userResume"
 
+    @route "termsOfConditions",
+      path: "toc/:tocId"
+      template: "terms"
+      data:
+        terms:=>db.terms.findOne _id:@current().params.tocId
 
+      waitOn:->
+        Meteor.subscribe "terms"
 
     @route "pleaseLogin",
       path: "becomeAgilearner/"

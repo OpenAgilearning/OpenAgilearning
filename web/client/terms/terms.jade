@@ -1,0 +1,23 @@
+template(name="terms")
+  with terms
+    h2 {{title}}
+    +markdown
+      {{content}}
+
+
+template(name="pleaseSignTerms")
+  h3 Please sign the terms of conditions
+  //-   a(href="{{pathFor 'termsOfConditions' tocId='toc_main'}}")
+  //-     | terms of conditions
+  //-   |.
+  //- button.btn.btn-primary#i-agree I agree
+
+
+  +autoForm id="AgreeToTerms" schema="AgreeToTerms" type="method" meteormethod="agreeToTerms" doc=doc
+    fieldset
+      .panel.panel-default.terms-box
+        .panel-body
+          +terms
+      +afQuickField name="agree"
+      +afFieldInput name="tocId" type="hidden"
+      button(type="submit").btn.btn-primary I agree
