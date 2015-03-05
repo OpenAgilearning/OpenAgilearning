@@ -4,7 +4,7 @@ fs = Meteor.npmRequire "fs"
   data: ->
     [{
       _id: "toc_main"
-      title:"Terms of Conditions for Environment"
+      title:"Terms of Service for Environment"
       content: fs.readFileSync("assets/app/toc1.md").toString()
       version: "0.0.1"
       publishedAt:new Date()
