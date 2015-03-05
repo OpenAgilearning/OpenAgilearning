@@ -2,7 +2,7 @@
 #   "click #i-agree":->
 #     Meteor.call "agreeToTerms",
 Template.pleaseSignTerms.rendered = ->
-  $.material.init()
+  $.material?.init()
 
 Template.pleaseSignTerms.helpers
   doc: ->{tocId:"toc_main"}
