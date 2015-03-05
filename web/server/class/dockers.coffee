@@ -268,6 +268,8 @@ needStreamingCallback = (fn, streamingFns=[])->
       # Object.defineProperty @.constructor::, api, apiDes
       Object.defineProperty @, api, apiDes
 
+    conflictApis = ["run","tag","push"]
+
     for api in @_streamingApis
 
       apiDes = do (api) ->
@@ -276,7 +278,10 @@ needStreamingCallback = (fn, streamingFns=[])->
             (args...) -> this._streamingCall(api,args)
             # (args...) -> this._syncCall.call this, args.unshift(api)
 
-      Object.defineProperty @, api, apiDes
+      if api in conflictApis
+        Object.defineProperty @, "_"+api, apiDes
+      else
+        Object.defineProperty @, api, apiDes
 
 
   _syncCallCheck: (apiName) ->
@@ -427,11 +432,11 @@ needStreamingCallback = (fn, streamingFns=[])->
     @_serverId = @_docker._id
     super @_image.constructor, @_image, @_callbacks
 
-  TAG: (repoString)->
-    @.tag parseRepoString repoString
+  tag: (repoString)->
+    @._tag parseRepoString repoString
 
 
-  PUSH: (callback)->
+  push: (callback)->
 
     if not callback
       if @_callbacks.push
@@ -497,7 +502,11 @@ needStreamingCallback = (fn, streamingFns=[])->
       _MemoryLimit:
         desc:
           get:->
-            @inspect().data.Config.Memory
+            memory = @inspect().data.Config.Memory
+            if memory is 0
+              @_docker._serverSpec.MemTotal
+            else
+              memory
 
 
     for api in Object.keys(handsOnApis)
@@ -582,12 +591,18 @@ needStreamingCallback = (fn, streamingFns=[])->
             @listContainerIds().data.map (containerId)=>
               @rm containerId
 
+      rmfAll:
+        desc:
+          get: ->
+            @stopAll
+            @listContainerIds().data.map (containerId)=>
+              @rmf containerId
+
       startAll:
         desc:
           get: ->
             @listContainerIds().data.map (containerId)=>
               @start containerId
-
 
       allImages:
         desc:
@@ -595,18 +610,15 @@ needStreamingCallback = (fn, streamingFns=[])->
             @listImageTags(tagOnly=true)?.data.map (imageTag)=>
               @_getImage imageTag
 
-
       totalMemoryLimit:
         desc:
           get: ->
             @sumMemoryLimits({})
 
-
       remainderMemory:
         desc:
           get:->
             @_serverSpec.MemTotal - @totalMemoryLimit
-
 
       _serverSpec:
         desc:
@@ -624,7 +636,6 @@ needStreamingCallback = (fn, streamingFns=[])->
                 @_data = db.dockerServers.findOne _id:@_id
 
             @_data.spec
-
 
       rmiAllNoneTags:
         desc:
@@ -815,7 +826,7 @@ needStreamingCallback = (fn, streamingFns=[])->
     @_getContainer(containerId).remove()
 
 
-  rm_f: (containerId)->
+  rmf: (containerId)->
     @_getContainer(containerId).stop()
     @_getContainer(containerId).remove()
 
@@ -935,7 +946,7 @@ needStreamingCallback = (fn, streamingFns=[])->
 
 
 
-  RUN:(imageTag, limitType, userId, name, links=[]) ->
+  run:(imageTag, limitType, userId, name, links=[]) ->
     # dependents on db.dockerImageTags join db.envConfigTypes
 
 
@@ -952,124 +963,147 @@ needStreamingCallback = (fn, streamingFns=[])->
       containerConfig = new Class.DockerContainerConfigs(imageTag, @).setAll(limitType,userId)
       # containerConfig.setEnvs(userId)
     else
-    containerConfig = new Class.DockerContainerConfigs(imageTag, @).setAll(limitType)
+      containerConfig = new Class.DockerContainerConfigs(imageTag, @).setAll(limitType)
       # containerConfig.setEnvs()
 
-    containerData = containerConfig._configs
+    if not containerConfig._error
+      containerData = containerConfig._configs
 
-    # console.log "containerData = ",containerData
+      # console.log "containerData = ",containerData
 
-    if name
-      containerData.name = name
+      if name
+        containerData.name = name
 
-    if links
-      containerData.HostConfig.Links = links
+      if links
+        containerData.HostConfig.Links = links
 
-    # console.log "containerData = ",containerData
+      # console.log "containerData = ",containerData
 
-    containerResData = @createContainer containerData
+      containerResData = @createContainer containerData
 
-    if not containerResData.error
-      container = new Class.DockerContainer @, containerResData.data
-      container.start()
-      resData =
-        data:
-          configs: containerData
-          envs: containerConfig._Envs
-          portDataArray: containerConfig._portDataArray
-          container: container
-        error: null
-    else
-      containerResData
+      if not containerResData.error
+        container = new Class.DockerContainer @, containerResData.data
+        container.start()
+        resData =
+          data:
+            configs: containerData
+            envs: containerConfig._Envs
+            portDataArray: containerConfig._portDataArray
+            container: container
+          error: null
+      else
+        containerResData
 
 
 @Class.DockerContainerConfigs = class DockerContainerConfigs
   constructor: (@imageTag, @_docker)->
     @_configs = {}
     @_configs.Image = @imageTag
-
+    @_error = null
 
     @_configs.HostConfig = {}
     @_configs.HostConfig.PortBindings = {}
 
     @_imageTagData = db.dockerImageTags.findOne({tag:@imageTag})
-    @_envConfigType = db.envConfigTypes.findOne({name:@_imageTagData.envConfigTypeName})
+
+    if not @_imageTagData
+      @_error =
+        msg: "There is no dockerImageTags data with tag=" + @imageTag
+
+    else
+      @_envConfigType = db.envConfigTypes.findOne({name:@_imageTagData.envConfigTypeName})
+
+      if not @_envConfigType
+        @_error =
+          msg: "There is no envConfigTypes data with name=" + @_imageTagData.envConfigTypeName
+
+
+
 
     @_Envs = {}
     @_portDataArray = []
 
+
   setUsageLimit: (limitType)->
     if limitType
-      dockerLimit = db.dockerUsageLimits.findOne({name:limitType})
+      if not @_error
+        dockerLimit = db.dockerUsageLimits.findOne({name:limitType})
 
-      usageLimitData =
-        Cpuset: @_docker.getFreeCpuset(dockerLimit.NCPU)
-        Memory: dockerLimit.Memory
+        usageLimitData =
+          Cpuset: @_docker.getFreeCpuset(dockerLimit.NCPU)
+          Memory: dockerLimit.Memory
 
-      _.extend @_configs, usageLimitData
+        _.extend @_configs, usageLimitData
     @
 
   setServicePorts: ->
-    servicePorts = @_imageTagData.servicePorts
-    fports = @_docker.getFreePorts(servicePorts.length)
+    if not @_error
+      servicePorts = @_imageTagData.servicePorts
+      fports = @_docker.getFreePorts(servicePorts.length)
 
-    portDataArray = [0..fports.length-1].map (i)->
-      portData =
-        guestPort: servicePorts[i].port
-        hostPort: fports[i]
-        type: servicePorts[i].type
+      portDataArray = [0..fports.length-1].map (i)->
+        portData =
+          guestPort: servicePorts[i].port
+          hostPort: fports[i]
+          type: servicePorts[i].type
 
-    for portData in portDataArray
-      servicePort = portData.guestPort + "/tcp"
-      @_configs.HostConfig.PortBindings[servicePort] = [{"HostPort": portData.hostPort}]
+      for portData in portDataArray
+        servicePort = portData.guestPort + "/tcp"
+        @_configs.HostConfig.PortBindings[servicePort] = [{"HostPort": portData.hostPort}]
 
-    @_portDataArray = portDataArray
+      @_portDataArray = portDataArray
     @
 
   getUserEnvConfigData: (userId)->
-    query =
-      userId: userId
-      envConfigTypeName: @_imageTagData.envConfigTypeName
-    db.envUserConfigs.findOne(query)
+    if not @_error
+      query =
+        userId: userId
+        envConfigTypeName: @_imageTagData.envConfigTypeName
+      db.envUserConfigs.findOne(query)
 
+    @
 
   setEnvs: (userId)->
-    mustSetEnvFields = []
+    if not @_error
+      mustSetEnvFields = []
 
-    Envs = {}
-    @_envConfigType.envs.map (fieldData)->
-      if fieldData.mustHave
-        mustSetEnvFields.push fieldData.name
+      Envs = {}
+      @_envConfigType.envs.map (fieldData)->
+        if fieldData.mustHave
+          mustSetEnvFields.push fieldData.name
 
-        if fieldData.autoGen
-          Envs[fieldData.name] = Random.id(10)
+          if fieldData.autoGen
+            Envs[fieldData.name] = Random.id(10)
 
-      else
-        if fieldData.defaultValue
-          Envs[fieldData.name] = fieldData.defaultValue
+        else
+          if fieldData.defaultValue
+            Envs[fieldData.name] = fieldData.defaultValue
 
-    if userId
-      @getUserEnvConfigData(userId)?.envs.map (fieldData)->
-        Envs[fieldData.key] = fieldData.value
+      if userId
+        @getUserEnvConfigData(userId)?.envs.map (fieldData)->
+          Envs[fieldData.key] = fieldData.value
 
 
-    # FIXME: check all mustSetEnvFields are set
-    EnvsArray = Object.keys(Envs).map (key)-> key + "=" + Envs[key]
-    @_configs.Env = EnvsArray
+      # FIXME: check all mustSetEnvFields are set
+      EnvsArray = Object.keys(Envs).map (key)-> key + "=" + Envs[key]
+      @_configs.Env = EnvsArray
 
-    _.extend @_Envs, Envs
+      _.extend @_Envs, Envs
 
     @
 
   saveEnvUserConfigs: (userId)->
-    console.log "TODO: db.envUserConfigs.upsert ? suggest use update and insert "
-    console.log "@_Envs = ", @_Envs
-    console.log "@_portDataArray = ", @_portDataArray
+    if not @_error
+      console.log "TODO: db.envUserConfigs.upsert ? suggest use update and insert "
+      console.log "@_Envs = ", @_Envs
+      console.log "@_portDataArray = ", @_portDataArray
 
 
   setAll: (limitType, userId)->
-    @setUsageLimit(limitType).setServicePorts().setEnvs(userId)
-    @saveEnvUserConfigs(userId)
+    if not @_error
+      @setUsageLimit(limitType).setServicePorts().setEnvs(userId)
+      @saveEnvUserConfigs(userId)
+
     @
 
 

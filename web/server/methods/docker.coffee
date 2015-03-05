@@ -102,7 +102,7 @@ Meteor.methods
       docker = new Class.DockerServer instanceDoc.serverId
       # docker.stop instanceDoc.containerId
       # docker.rm instanceDoc.containerId
-      docker.rm_f instanceDoc.containerId
+      docker.rmf instanceDoc.containerId
 
       dockerInstanceDoc = instanceDoc
       DockerInstances.remove _id: dockerInstanceDoc._id
@@ -179,7 +179,7 @@ Meteor.methods
 
       dm = new Class.DockersManager {"user.group.id":"TaishinDataMining"}
 
-      resData = dm.getFreeServerForcely().RUN(imageTag, "basic", user._id)
+      resData = dm.getFreeServerForcely().run(imageTag, "basic", user._id)
 
       console.log "resData = ",resData
 
