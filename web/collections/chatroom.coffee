@@ -45,7 +45,7 @@ Meteor.methods
       throw new Meteor.Error 402, "No such chatroom"
 
     user.profile.photo = user.profile.photo or {}
-    user.profile.photo.thumb_link = user.profile.photo.thumb_link or "http://photos1.meetupstatic.com/img/noPhoto_50.png"
+    user.profile.photo.thumb_link = user.profile.photo.thumb_link or "/images/noPhoto.png"
 
     doc =
       userId: user._id
@@ -85,7 +85,7 @@ Meteor.methods
 
     ChatMessages.insert
       userId: "system"
-      userAvatar: "http://photos1.meetupstatic.com/img/noPhoto_50.png"
+      userAvatar: "/images/noPhoto.png"
       userName: "System"
       createdAt: new Date
       chatroomId: chatroomId
@@ -116,7 +116,7 @@ Meteor.methods
 
     ChatMessages.insert
       userId: "system"
-      userAvatar: "http://photos1.meetupstatic.com/img/noPhoto_50.png"
+      userAvatar: "/images/noPhoto.png"
       userName: "System"
       createdAt: new Date
       chatroomId: chatroomId
@@ -147,7 +147,7 @@ Meteor.methods
 
     ChatMessages.insert
       userId: "system"
-      userAvatar: "http://photos1.meetupstatic.com/img/noPhoto_50.png"
+      userAvatar: "/images/noPhoto.png"
       userName: "System"
       createdAt: new Date
       chatroomId: chatroomId

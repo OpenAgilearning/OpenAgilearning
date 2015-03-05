@@ -73,6 +73,28 @@
             publicStatus:"public"
             createAt: new Date
           classroomId = Classrooms.insert publicClassroomDoc
+          if db.chatrooms.find(classroomId: classroomId).count() is 0
+            chatroomDoc =
+              classroomId: classroomId
+              name: "#{oneCourse.courseName} (#{classroomId[..5]}...)"
+              creatorId: oneCourse.creatorId
+              lastUpdate: new Date
+            chatroomId = db.chatrooms.insert chatroomDoc
+            creatorDoc = Meteor.users.findOne _id: oneCourse.creatorId
+            db.chatMessages.insert
+              chatroomId: chatroomId
+              classroomId: classroomId
+              userId: "system"
+              userAvatar: "/images/noPhoto.png"
+              userName: "System"
+              createdAt: new Date
+              type: "M"
+              text: "Chatroom Created by #{creatorDoc.profile.name}"
+            db.userJoinsChatroom.insert
+              userId: oneCourse.creatorId
+              userName: creatorDoc.profile.name
+              chatroomId: chatroomId
+              chatroomName: chatroomDoc.name
 
           ClassroomRoles.insert {classroomId:classroomId, userId: oneCourse.creatorId, role:"admin", isActive:true}
           Roles.addUsersToRoles(oneCourse.creatorId, "admin", "classroom_" + classroomId)
@@ -83,6 +105,9 @@
     db.classrooms.remove {}
     db.roles.remove {}
     db.roleGroups.remove {}
+    db.chatrooms.remove {}
+    db.chatMessages.remove {}
+    db.userJoinsChatroom.remove {}
 
   reset: ->
     @forceClear()
