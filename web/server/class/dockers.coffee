@@ -966,6 +966,8 @@ needStreamingCallback = (fn, streamingFns=[])->
       containerConfig = new Class.DockerContainerConfigs(imageTag, @).setAll(limitType)
       # containerConfig.setEnvs()
 
+    console.log "docker = ", @_data
+
     if not containerConfig._error
       containerData = containerConfig._configs
 
@@ -1075,12 +1077,16 @@ needStreamingCallback = (fn, streamingFns=[])->
           if fieldData.autoGen
             Envs[fieldData.name] = Random.id(10)
 
+          if fieldData.defaultValue
+            Envs[fieldData.name] = fieldData.defaultValue
+
+
         else
           if fieldData.defaultValue
             Envs[fieldData.name] = fieldData.defaultValue
 
       if userId
-        @getUserEnvConfigData(userId)?.envs.map (fieldData)->
+        @getUserEnvConfigData(userId)?.envs?.map (fieldData)->
           Envs[fieldData.key] = fieldData.value
 
 
