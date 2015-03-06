@@ -239,6 +239,40 @@ Meteor.startup ->
 
             DockerInstances.findOne({imageTag:fullImageTag})
 
+          dockerHasHTTP: ->
+            # docker = @docker()
+            # httpPorts = docker?.portDataArray?.filter (portData)-> portData.type is "http"
+            # httpPorts?.length > 0
+
+            course = @course()
+            ports = db.dockerImageTags.findOne({tag:course.dockerImageTag}).servicePorts.filter (portData)-> portData.type is "http"
+            ports?.length > 0
+
+
+          dockerHasSFTP: ->
+            # docker = @docker()
+            # httpPorts = docker?.portDataArray?.filter (portData)-> portData.type is "http"
+            # httpPorts?.length > 0
+
+            course = @course()
+            ports = db.dockerImageTags.findOne({tag:course.dockerImageTag}).servicePorts.filter (portData)-> portData.type is "sftp"
+            ports?.length > 0
+
+          sftp: ->
+            docker = @docker()
+            httpPorts = docker?.portDataArray?.filter (portData)-> portData.type is "sftp"
+            if httpPorts?.length > 0
+              resData =
+                ip: docker.ip
+                port: httpPorts[0].hostPort
+                envs: docker.containerConfigs.Env
+
+
+          SFTPPort: ->
+            docker = @docker()
+            httpPorts = docker?.portDataArray?.filter (portData)-> portData.type is "sftp"
+            httpPorts[0].hostPort
+
           classroomId: @params.classroomId
 
           needToSetEnvConfigs: =>
