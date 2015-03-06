@@ -240,9 +240,23 @@ Meteor.startup ->
             DockerInstances.findOne({imageTag:fullImageTag})
 
           dockerHasHTTP: ->
-            docker = @docker()
-            httpPorts = docker?.portDataArray?.filter (portData)-> portData.type is "http"
-            httpPorts?.length > 0
+            # docker = @docker()
+            # httpPorts = docker?.portDataArray?.filter (portData)-> portData.type is "http"
+            # httpPorts?.length > 0
+
+            course = @course()
+            ports = db.dockerImageTags.findOne({tag:course.dockerImageTag}).servicePorts.filter (portData)-> portData.type is "http"
+            ports?.length > 0
+
+
+          dockerHasSFTP: ->
+            # docker = @docker()
+            # httpPorts = docker?.portDataArray?.filter (portData)-> portData.type is "http"
+            # httpPorts?.length > 0
+
+            course = @course()
+            ports = db.dockerImageTags.findOne({tag:course.dockerImageTag}).servicePorts.filter (portData)-> portData.type is "sftp"
+            ports?.length > 0
 
           sftp: ->
             docker = @docker()

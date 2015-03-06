@@ -1,6 +1,6 @@
 
 Meteor.publish null, ->
-  [db.dockerImageTags.find({}, {fields:{tag:1, envConfigTypeName:1, pictures:1, description:1}}),
+  [db.dockerImageTags.find({}, {fields:{tag:1, envConfigTypeName:1, pictures:1, description:1, servicePorts:1}}),
   db.dockerServers.find({},{fields:{"connect.host":1}}),
   db.dockerRepos.find({isPublic: true})]
 
