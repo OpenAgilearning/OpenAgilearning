@@ -202,12 +202,16 @@ Meteor.startup ->
               if not RoleTools.isRole(["admin","member"],"course",@params.courseId)
                 Router.go "index"
 
-        Meteor.subscribe "allPublicClassrooms", @params.courseId
-        Meteor.subscribe "allPublicClassroomRoles", @params.courseId
+        # Meteor.subscribe "allPublicClassrooms", @params.courseId
+        # Meteor.subscribe "allPublicClassroomRoles", @params.courseId
         Meteor.subscribe "courseDockerImages", @params.courseId
 
-        Meteor.subscribe "relateClassrooms", @params.courseId
-        Meteor.subscribe "relateClassroomRoles", @params.courseId
+        # FIXME BUG!!!! for demo 2015-03-06 taishin
+        Meteor.subscribe "allClassroomRoles", @params.courseId
+        Meteor.subscribe "allClassrooms", @params.courseId
+
+        # Meteor.subscribe "relateClassrooms", @params.courseId
+        # Meteor.subscribe "relateClassroomRoles", @params.courseId
 
     @route "classroom",
       path: "classroom/:classroomId"

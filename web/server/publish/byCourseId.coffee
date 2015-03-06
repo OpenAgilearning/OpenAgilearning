@@ -18,6 +18,19 @@ Meteor.publish "allPublicClassroomRoles", (courseId)->
   publicClassroomIds = Classrooms.find({courseId:courseId,publicStatus:"public"}).map (classroomDoc) -> classroomDoc._id
   ClassroomRoles.find classroomId:{$in:publicClassroomIds}
 
+# 2015-03-06 for taishin
+# FIXME need to fix this bug
+Meteor.publish "allClassrooms", (courseId) ->
+  courseDoc = Courses.findOne _id:courseId
+  Classrooms.find {courseId:courseId}
+
+Meteor.publish "allClassroomRoles", (courseId) ->
+  courseDoc = Courses.findOne _id:courseId
+  relateClassroomIds = Classrooms.find({courseId:courseId,publicStatus:courseDoc.publicStatus}).map (classroomDoc) -> classroomDoc._id
+  ClassroomRoles.find classroomId:{$in:relateClassroomIds}
+
+#
+
 Meteor.publish "relateClassrooms", (courseId) ->
   courseDoc = Courses.findOne _id:courseId
   Classrooms.find {courseId:courseId,publicStatus:courseDoc.publicStatus}
