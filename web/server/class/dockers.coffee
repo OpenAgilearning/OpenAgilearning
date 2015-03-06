@@ -1124,8 +1124,11 @@ needStreamingCallback = (fn, streamingFns=[])->
       else
         @_serverQuery =
           useIn: "testing"
-
-    else
+    else if (@useIn instanceof Array)
+      @_serverQuery =
+        _id:"$in":
+          @useIn
+    else if (@useIn instanceof Object)
       @_serverQuery = @useIn
 
 
@@ -1322,4 +1325,3 @@ needStreamingCallback = (fn, streamingFns=[])->
       query.active = true
 
     db.dockerImageTagsMonitor.find(query).map (imageTagData)-> imageTagData.serverId
-

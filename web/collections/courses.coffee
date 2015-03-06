@@ -62,7 +62,7 @@ Meteor.methods
 
     if Collections.Roles.find({_id:roleId}).count() is 0
       throw new Meteor.Error(1402, "[Admin Error] there is no role with id" + roleId)
-    
+
     groupId = Collections.Roles.findOne({_id:roleId}).groupId
 
     if Collections.Roles.find({userId:loggedInUserId,role:"admin",groupId:groupId}).count() > 0
@@ -76,14 +76,14 @@ Meteor.methods
 
     if Courses.find({_id:courseId}).count() is 0
       throw new Meteor.Error(1302, "[Admin Error] there is no course with id" + courseId)
-    
-    queryRoleGroup = 
+
+    queryRoleGroup =
       type: "course"
       id: courseId
 
     roleGroupId = Collections.RoleGroups.findOne(queryRoleGroup)._id
-      
-    data = 
+
+    data =
       groupId: roleGroupId
       userId: loggedInUserId
       role: "waitForCheck"
@@ -109,12 +109,11 @@ Meteor.methods
 
     if Courses.find({_id:courseId}).count() is 0
       throw new Meteor.Error(1302, "[Admin Error] there is no course with id" + courseId)
-    
+
     if RoleTools.isRole loggedInUserId, "admin", "course", courseId
       delete courseDoc._id
       Courses.update {_id:courseId}, {$set:courseDoc}
-    
-
+      db.classrooms.update {"courseId":courseId}, {$set: {"publicStatus" : courseDoc.publicStatus} }
 
   "createCourse": (courseData) ->
 
