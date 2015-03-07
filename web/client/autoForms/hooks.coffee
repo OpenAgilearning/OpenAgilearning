@@ -18,10 +18,11 @@ AutoForm.hooks
       Session.set "feedbackFormSubmitted", yes
 
   createCommunityForm:
-    onSuccess: (operation, result, template)->
-      $("#createCommunityModal").modal "hide"
+    after:
+      createCommunity:(error, result, template)->
+        unless error
+          console.log "on onSuccess"
+        else
+          console.log "onError",error
 
-
-    onError: (operation, error, template)->
-      console.log "onError",error
-      $("#createCommunityModal").modal "hide"
+        $("#createCommunityModal").modal "hide"

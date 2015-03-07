@@ -20,7 +20,7 @@ new Meteor.Collection "communityIds"
         type: "textarea"
 
 Meteor.methods
-  "createCommunity":(data)->
+  "createCommunity":(data,modifier,documentId)->
 
     loggedInUserId = Meteor.userId()
 
@@ -50,8 +50,9 @@ Meteor.methods
                 value: val
                 isPublic : true
           else
-            throw new Error 5566, 'Error 5566: Cannot create community', error
+            throw new Meteor.Error 5566, 'Error 5566: Cannot create community'
+
       else
-        throw new Error  5566, "Maximum personal community quota reached"
+        throw new Meteor.Error  5566, "Maximum personal community quota reached"
 
 

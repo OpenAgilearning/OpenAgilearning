@@ -10,7 +10,7 @@ template(name="communitiesList")
             span(sr-only) Close
           h4.modal-title Create a community
         .modal-body
-          +autoForm id="#createCommunityForm" schema="communitySchema" type="method" meteormethod="createCommunity"
+          +autoForm id="createCommunityForm" schema="communitySchema" type="method" meteormethod="createCommunity"
             +afFormGroup name="name"
             //- +afFormGroup name="pic_url"
             +afFormGroup name="description"
