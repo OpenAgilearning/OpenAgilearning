@@ -1,6 +1,21 @@
 template(name="communitiesList")
 
-  button.btn.btn-primary(data-toggle='modal', href='#createCommunityModal') Create a community
+  .container
+    .row.clearfix
+
+      button.btn.btn-primary(data-toggle='modal', href='#createCommunityModal') Create a community
+
+      h2 List of communities
+
+      each ids
+        .col-md-3
+          .well
+            a(href="{{pathFor 'community' communityId=this}}")
+              img(src="{{field 'pic_url' this}}" height="200px" width="auto")
+            h3 {{field "name" this}}
+
+            p {{field "description" this}}
+
   #createCommunityModal.modal.fade
     .modal-dialog
       .modal-content
@@ -16,18 +31,19 @@ template(name="communitiesList")
             +afFormGroup name="description"
             button(type="submit").btn.btn-primary Create
 
-  h2 List of communities
-  p {{ids}}
-
-  each ids
-    a(href="{{pathFor 'community' communityId=this}}")
-      | {{field "name" this}}
-    img(src="{{field 'pic_url' this}}")
-    p {{field "description" this}}
-    hr
-
 template(name="communityPage")
-  h2 {{field "name"}}
-  a(href="{{pathFor 'communitiesList'}}")
-    img(src="{{field 'pic_url'}}")
-  p {{field "description"}}
+  .container
+    .row.clearfix
+      .col-md-3
+        .well
+          a(href="{{pathFor 'communitiesList'}}")
+            img(src="{{field 'pic_url'}}" height="200px" width="auto")
+          h2 {{field "name"}}
+          p {{field "description"}}
+      .col-md-9
+        h2 Members
+        p member 1
+        p member 2
+        p member 3
+        h2 Courses Joined
+        h2 Content provided
