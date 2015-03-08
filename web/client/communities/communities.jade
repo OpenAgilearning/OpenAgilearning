@@ -1,0 +1,49 @@
+template(name="communitiesList")
+
+  .container
+    .row.clearfix
+
+      button.btn.btn-primary(data-toggle='modal', href='#createCommunityModal') Create a community
+
+      h2 List of communities
+
+      each ids
+        .col-md-3
+          .well
+            a(href="{{pathFor 'community' communityId=this}}")
+              img(src="{{field 'pic_url' this}}" height="200px" width="auto")
+            h3 {{field "name" this}}
+
+            p {{field "description" this}}
+
+  #createCommunityModal.modal.fade
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close(type='button', data-dismiss='modal')
+            span(aria-hidden='true') &times;
+            span(sr-only) Close
+          h4.modal-title Create a community
+        .modal-body
+          +autoForm id="createCommunityForm" schema="communitySchema" type="method" meteormethod="createCommunity"
+            +afFormGroup name="name"
+            //- +afFormGroup name="pic_url"
+            +afFormGroup name="description"
+            button(type="submit").btn.btn-primary Create
+
+template(name="communityPage")
+  .container
+    .row.clearfix
+      .col-md-3
+        .well
+          a(href="{{pathFor 'communitiesList'}}")
+            img(src="{{field 'pic_url'}}" height="200px" width="auto")
+          h2 {{field "name"}}
+          p {{field "description"}}
+      .col-md-9
+        h2 Members
+        p member 1
+        p member 2
+        p member 3
+        h2 Courses Joined
+        h2 Content provided

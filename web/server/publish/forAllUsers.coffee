@@ -35,5 +35,14 @@ Meteor.publish "WantedFeature", ->
 Meteor.publish "DevMileStone", ->
   DevMileStone.find()
 
+
 Meteor.publish "terms", ->
   db.terms.find()
+
+
+Meteor.publish "communities", (communityId)->
+  if communityId
+    db.communities.find communityId:communityId
+  else
+    db.communities.find()
+
