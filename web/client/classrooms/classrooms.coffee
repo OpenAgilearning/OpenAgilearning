@@ -20,6 +20,17 @@ Template.classroom.rendered = ->
     else
       console.log "get env failed!"
 
+  ["#copy-user-button","#copy-password-button"].map (id)->
+    copybtn = new ZeroClipboard $(id)
+    copybtn.on 'ready', (readyEvent) ->
+      $(id).attr("data-original-title", "click to copy")
+      .tooltip()
+
+      copybtn.on 'aftercopy', (event) ->
+        $(id)
+        .attr("data-original-title", "copied")
+        .tooltip "show"
+        .attr("data-original-title", "click to copy")
   # timer = setInterval((->
   #   xhr = new XMLHttpRequest()
   #   xhr.onload=->

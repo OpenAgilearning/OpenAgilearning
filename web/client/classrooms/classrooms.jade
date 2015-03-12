@@ -164,9 +164,11 @@ template(name="envIframe")
   if user
     span User:
     span.label.label-info {{user}}
+    button#copy-user-button(type="button" data-clipboard-text="{{user}}").btn.btn-primary.btn-xs copy
   if password
     span Password:
     span.label.label-info {{password}}
+    button#copy-password-button(type="button" data-clipboard-text="{{password}}").btn.btn-primary.btn-xs copy
   button.connectEnvBtn.btn.btn-warning.btn-default.pull-right Reconnect
   button.commitBtn.btn.btn-info.btn-default.pull-right Commit
 
