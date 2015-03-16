@@ -5,7 +5,7 @@ Package.describe({
 	debugOnly: true
 });
 
-Package.on_use(function (api) {
+Package.onUse(function (api) {
 	api.use("coffeescript", ["client", "server"]);
 	api.add_files("tests/mocha/admins.coffee",["server","client"]);
 	api.add_files("tests/mocha/dockerServers.coffee",["server","client"]);
