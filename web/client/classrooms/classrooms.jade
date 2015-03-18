@@ -162,13 +162,15 @@ template(name="classroomEnvIframe")
 
 template(name="envIframe")
   if user
-    span User:
-    span.label.label-info {{user}}
-    button#copy-user-button(type="button" data-clipboard-text="{{user}}").btn.btn-primary.btn-xs copy
+    label Username:
+    button.btn.btn-flat.btn-link#copy-user-button(type="button" data-clipboard-text="{{user}}" data-placement="bottom" style="text-transform:none;") {{user}}
+    //- Style 2
+    //- label.control-label Username:
+    //- input.form-control(type='text' value="{{user}}" readonly="readonly" style="display: inline-block;width: 100px;")
+    //- button#copy-user-button.btn.btn-default.btn-raised.btn-xs(type='button' data-clipboard-text="{{user}}" data-placement="bottom") copy
   if password
-    span Password:
-    span.label.label-info {{password}}
-    button#copy-password-button(type="button" data-clipboard-text="{{password}}").btn.btn-primary.btn-xs copy
+    label Password:
+    button.btn.btn-flat.btn-link#copy-password-button(type="button" data-clipboard-text="{{password}}" data-placement="bottom" style="text-transform:none;") {{password}}
   button.connectEnvBtn.btn.btn-warning.btn-default.pull-right Reconnect
   button.commitBtn.btn.btn-info.btn-default.pull-right Commit
 

@@ -40,14 +40,14 @@ Template.envIframe.rendered = ->
     if $(id).length is 1
       copybtn = new ZeroClipboard $(id)
       copybtn.on 'ready', (readyEvent) ->
-        $(id).attr("data-original-title", "click to copy")
+        $(id).attr("data-original-title", "Click to Copy")
         .tooltip()
 
         copybtn.on 'aftercopy', (event) ->
           $(id)
-          .attr("data-original-title", "copied")
+          .attr("data-original-title", "Copied")
           .tooltip "show"
-          .attr("data-original-title", "click to copy")
+          .attr("data-original-title", "Click to Copy")
 
 
 Template.envIframe.events
