@@ -7,6 +7,15 @@ Meteor.startup ->
 
     @route "index",
       path: "/"
+      template: "landing"
+      waitOn: ->
+        user = Meteor.user()
+        if user
+          Router.go "courses"
+
+
+    @route "courses",
+      path: "/courses"
       template: "index"
       data:
         user: ->
@@ -133,31 +142,31 @@ Meteor.startup ->
         Meteor.subscribe "userRoles", ["agilearning.io"]
         Meteor.subscribe "userResume"
 
-    @route "courses",
-      path: "courses/"
-      template: "courses"
-      data:
-        user: ->
-          Meteor.user()
-        showAdminPage: ->
-          userId = Meteor.userId()
-          Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
+    #@route "courses",
+    #  path: "courses/"
+    #  template: "courses"
+    #  data:
+    #    user: ->
+    #      Meteor.user()
+    #    showAdminPage: ->
+    #      userId = Meteor.userId()
+    #      Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
-        isAdmin: ->
-          uid = Meteor.userId()
-          Roles.find({userId:uid,role:"admin"}).count()>0
-        courses: ->
-          Courses.find()
+    #    isAdmin: ->
+    #      uid = Meteor.userId()
+    #      Roles.find({userId:uid,role:"admin"}).count()>0
+    #    courses: ->
+    #      Courses.find()
 
-      waitOn: ->
-        # userId = Meteor.userId()
-        # if not userId
-        #   Router.go "pleaseLogin"
+    #  waitOn: ->
+    #    # userId = Meteor.userId()
+    #    # if not userId
+    #    #   Router.go "pleaseLogin"
 
-        Meteor.subscribe "allPublicAndSemipublicCourses"
-        Meteor.subscribe "allPublicCoursesDockerImages"
+    #    Meteor.subscribe "allPublicAndSemipublicCourses"
+    #    Meteor.subscribe "allPublicCoursesDockerImages"
 
-        Meteor.subscribe "userRoles", ["course", "agilearning.io"]
+    #    Meteor.subscribe "userRoles", ["course", "agilearning.io"]
 
     @route "course",
       path: "course/:courseId"
