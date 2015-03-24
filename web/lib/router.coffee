@@ -652,5 +652,5 @@ Meteor.startup ->
         showAdminPage: ->
           userId = Meteor.userId()
           Roles.userIsInRole(userId, "admin", "system") or Roles.userIsInRole(userId, "admin", "dockers")
-
+        waitOn: ->
           Meteor.subscribe "userRoles", ["agilearning.io"]
