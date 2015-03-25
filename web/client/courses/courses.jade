@@ -8,7 +8,7 @@ template(name="courses")
         //-   h2 Add New Course
 
         //-   +quickForm id="demo" schema="coursesSchema" type="method" meteormethod="createCourse" template="bootstrap3-inline" label-class="sr-only" afFieldInput-placeholder="schemaLabel"
-        
+
         +aboutCoursesIcons
         +allPublicCoursesTable
 
@@ -56,14 +56,14 @@ template(name="course")
         +Template.dynamic template="courseNameAndDescription" data=course
         //- +courseNameAndDescription courseName=course.courseName description=course.description
 
-        
+
         if isRole "admin" "course" course._id
           button.btn.btn-info(href="#", data-toggle="modal", data-target="#courseInfoAdminEditorModal") Edit
           //- hr
           //- button.btn.btn-info(href="#", data-toggle="modal", data-target="#courseInfoAdminEditorModal") Add Learning Resources
 
           +courseInfoAdminEditorForm
-        
+
         //- +test123 xx=xx yy=yy
 
       .col-md-9.column
@@ -72,11 +72,11 @@ template(name="course")
           +courseApplicationsTable
 
         h2 Classrooms:
-        +courseClassroomsTable 
+        +courseClassroomsTable
 
 
 template(name="courseApplicationsTable")
-  +reactiveTable settings=settings 
+  +reactiveTable settings=settings
 //- template(name="test123")
 //-   h2 {{test xx yy}}
 
@@ -99,14 +99,14 @@ template(name="courseInfoAdminEditorForm")
               +afQuickField name="publicStatus"
               +afQuickField name="languages"
               +afQuickField name="description"
-              +afQuickField name="bundleServer"
+              //- +afQuickField name="bundleServer"
               button(type="submit").btn.btn-primary.btn-lg Done!
 
           //- .modal-footer
           //-   button(data-dismiss="modal").btn.btn-default Cancel
           //-   button.btn.btn-primary#submit-creation Create
-    
-    
+
+
 
 template(name="courseImage")
   if bindingATag
@@ -116,7 +116,7 @@ template(name="courseImage")
     img(width="{{width}}",src="{{getCourseImageURL courseDoc}}")
 
 template(name="courseClassroomsTable")
-  +reactiveTable settings=settings        
+  +reactiveTable settings=settings
 
 template(name="goToClassroomBtn")
   if isClassroomMember
