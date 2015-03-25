@@ -36,13 +36,13 @@ Template.courseInfoAdminEditorForm.helpers
           autoform:
             rows: 5
 
-        bundleServer:
-          type: [String]
-          optional: true
-          autoform:
-            type: "select-checkbox-inline"
-            options:->
-              db.dockerServers.find().fetch().map (xx)-> {label:xx._id,value:xx._id}
+        # bundleServer:
+        #   type: [String]
+        #   optional: true
+        #   autoform:
+        #     type: "select-checkbox-inline"
+        #     options:->
+        #       db.dockerServers.find().fetch().map (xx)-> {label:xx._id,value:xx._id}
 
         if dockerImagesArray.length > 0
           resSchema.dockerImage =
