@@ -1133,6 +1133,25 @@ needStreamingCallback = (fn, streamingFns=[])->
 
 
     managerApis =
+      serverQuery:
+        desc:
+          get: ->
+            query = _.extend {}, @_serverQuery
+            query = _.extend query, {_id:{$in:@_okServerIds}}
+            db.dockerServers.find(query)
+
+
+      _okServerIds:
+        desc:
+          get: ->
+            query =
+              pingStatus :"OK"
+            opts =
+              fields:
+                serverId: 1
+            db.dockerServersMonitor.find query,opts
+                                   .map (data)-> data.serverId
+
       imageTags:
         desc:
           get: ->
@@ -1178,12 +1197,13 @@ needStreamingCallback = (fn, streamingFns=[])->
       _serverIds:
         desc:
           get: ->
-            db.dockerServers.find(@_serverQuery).map (serverData)-> serverData._id
+
+            @serverQuery.map (serverData)-> serverData._id
 
       _serverNames:
         desc:
           get: ->
-            db.dockerServers.find(@_serverQuery).map (serverData)-> serverData.name
+            @serverQuery.map (serverData)-> serverData.name
 
       ls_servers:
         desc:
@@ -1302,7 +1322,7 @@ needStreamingCallback = (fn, streamingFns=[])->
   _DockerServers: (index="names")->
     dockerServers = {}
 
-    db.dockerServers.find(@_serverQuery).map (serverData) =>
+    @serverQuery.map (serverData) =>
 
       docker = new Class.DockerServer serverData
       if not docker.ping().error
