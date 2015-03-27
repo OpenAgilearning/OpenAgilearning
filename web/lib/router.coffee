@@ -553,21 +553,21 @@ Meteor.startup ->
         Meteor.subscribe "feedback"
         Meteor.subscribe "votes", ["Feedback"]
 
-    @route "forumPost",
-      path: "forums/:postId"
-      template: "forumPost"
+    #@route "forumPost",
+    #  path: "forums/:postId"
+    #  template: "forumPost"
 
-      data:
-        user: -> Meteor.user()
-        showAdminPage: ->
-          userId = Meteor.userId()
-          Roles.userIsInRole(userId, "admin", "system") or Roles.userIsInRole(userId, "admin", "dockers")
-        post: =>
-          db.forumPosts.findOne(_id: @current().params.postId)
+    #  data:
+    #    user: -> Meteor.user()
+    #    showAdminPage: ->
+    #      userId = Meteor.userId()
+    #      Roles.userIsInRole(userId, "admin", "system") or Roles.userIsInRole(userId, "admin", "dockers")
+    #    post: =>
+    #      db.forumPosts.findOne(_id: @current().params.postId)
 
 
-      waitOn: ->
-        Meteor.subscribe "forumPost", @params.postId
+    #  waitOn: ->
+    #    Meteor.subscribe "forumPost", @params.postId
 
 
     @route "resume",
