@@ -591,6 +591,15 @@ needStreamingCallback = (fn, streamingFns=[])->
             @listContainerIds().data.map (containerId)=>
               @rm containerId
 
+
+      rmiAll:
+        desc:
+          get: ->
+            @rmfAll
+            @imageTags?.data?.map (containerId)=>
+              @rmi containerId
+
+
       rmfAll:
         desc:
           get: ->
@@ -1182,6 +1191,17 @@ needStreamingCallback = (fn, streamingFns=[])->
               rmAllData[name] = dockerServers[name].rmAll
 
             rmAllData
+
+
+      rmiAll:
+        desc:
+          get: ->
+            rmiAllData = {}
+            dockerServers = @_servers
+            Object.keys(dockerServers).map (name)->
+              rmiAllData[name] = dockerServers[name].rmiAll
+
+            rmiAllData
 
 
       rmiAllNoneTags:
