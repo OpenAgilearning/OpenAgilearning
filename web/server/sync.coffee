@@ -7,13 +7,39 @@
 #     * syncDockerServerContainer
 #   setTimeInterval * 3
 
+@syncDockerEnsureImages = ->
+  ensureImages = db.dockerEnsureImages.find().fetch()
+
+  for data in ensureImages
+    imageTagData = db.dockerImageTags.findOne data.ensureImageTagId
+
+    if imageTagData?.dockerHubId is "[DockerHub]OfficialDockerHub"
+      dm = new Class.DockersManager data.serversQuery
+      dm.ensureImage imageTagData.tag
+
+
+
 
 syncDockerServerInfo = ->
   dockerServers = DockerServers.find().fetch()
 
+  # console.log DockerServers.find({},{fields:{_id:1}}).fetch()
+
   for dockerServerData in dockerServers
-    docker = new Class.DockerServer(dockerServerData, UsefulCallbacks)
-    resData = docker.info()
+
+    # console.log dockerServerData._id
+
+    try
+      docker = new Class.DockerServer(dockerServerData, UsefulCallbacks)
+      resData = docker.info()
+
+    catch e
+      console.log "error = ", e
+
+    # console.log "~~~~~~~~~~~~~~~~~~~~"
+    # console.log "dockerServerData", dockerServerData
+    # console.log "syncDockerServerInfo", resData
+
 
     # try
     #   resData = docker.info()
@@ -207,6 +233,7 @@ syncDockerServerContainer = ->
 Meteor.setInterval syncDockerServerInfo, 10000
 Meteor.setInterval syncDockerServerImageTags, 10000
 Meteor.setInterval syncDockerServerContainer, 10000
+Meteor.setInterval syncDockerEnsureImages, 300000
 
 # Meteor.setInterval dockerPull.ToDoJobHandler, 5000
 # Meteor.setInterval dockerPull.DoingJobHandler, 60000

@@ -14,6 +14,7 @@ if Meteor.isServer
 
         # db.dockerServers.remove({})
         dockerServersData = db.dockerServers.find({"useIn" : "testing"}).fetch()
+        # console.log dockerServersData
 
         it "db.dockerServers have data", ->
           chai.assert dockerServersData.length > 0, "db.dockerServers have data"

@@ -12,6 +12,11 @@ if Meteor.isClient
         get: ->
           Meteor.settings.public.environment is "staging"
 
+    isTesting:
+      desc:
+        get: ->
+          Meteor.settings.public.environment is "testing"
+
     isDev:
       desc:
         get: ->
@@ -33,6 +38,13 @@ if Meteor.isServer
       desc:
         get: ->
           Meteor.settings.environment is "staging"
+
+
+    isTesting:
+      desc:
+        get: ->
+          Meteor.settings.public.environment is "testing"
+
 
     isDev:
       desc:

@@ -119,13 +119,13 @@
         updateData =
           info: resData.data
           error: null
-          lastInfoMoonitorAt: new Date
+          lastInfoMonitorAt: new Date
 
       else
         updateData =
           info: null
           error: resData.error
-          lastInfoMoonitorAt: new Date
+          lastInfoMonitorAt: new Date
 
       db.dockerServersMonitor.update serverQuery, {$set:updateData}, {upsert:true}
 
@@ -596,6 +596,7 @@ needStreamingCallback = (fn, streamingFns=[])->
         desc:
           get: ->
             @rmfAll
+            @rmiAllNoneTags
             @imageTags?.data?.map (containerId)=>
               @rmi containerId
 
@@ -1133,10 +1134,12 @@ needStreamingCallback = (fn, streamingFns=[])->
       else
         @_serverQuery =
           useIn: "testing"
+
     else if (@useIn instanceof Array)
       @_serverQuery =
-        _id:"$in":
-          @useIn
+        _id:
+          $in: @useIn
+
     else if (@useIn instanceof Object)
       @_serverQuery = @useIn
 

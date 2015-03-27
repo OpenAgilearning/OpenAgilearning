@@ -159,7 +159,7 @@ Meteor.methods
         dockerInstanceDoc.removeByUid = user._id
         db.dockerInstancesLog.insert dockerInstanceDoc
 
-  "runDocker": (imageTag, queryServer="production")->
+  "runDocker": (imageTag)->
 
     # FIXME refactor dockerImage collection, image with full tag
     if imageTag.split(":").length is 1
@@ -173,7 +173,13 @@ Meteor.methods
     if not user
       throw new Meteor.Error(401, "You need to login")
 
+    if ENV.isDev or ENV.isStaging
+      queryServer = "testing"
+    else
+      queryServer = "production"
+
     @unblock()
+
 
     if DockerInstances.find({userId:user._id,imageTag:fullImageTag}).count() is 0
 
