@@ -9,6 +9,9 @@ new Mongo.Collection "dockerUsageLimits"
 new Mongo.Collection "dockerImageTags"
 new Mongo.Collection "dockerContainersLog"
 
+new Mongo.Collection "dockerEnsureImages"
+
+
 
 
 @DockerServers = new Mongo.Collection "dockerServers"
@@ -76,10 +79,12 @@ Meteor.methods
       else
         imageTag = courseData.dockerImageTag
 
-      if courseData.bundleServer
-        queryServer = courseData.bundleServer
-      else
-        queryServer = {"user.group.id":"TaishinDataMining"}
+      # if courseData.bundleServer
+      #   queryServer = courseData.bundleServer
+      # else
+      #   queryServer = {"user.group.id":"TaishinDataMining"}
+
+
 
       console.log "imageTag = ",imageTag
 
@@ -89,9 +94,9 @@ Meteor.methods
         #   throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
 
       if db.dockerInstances.find({userId:user._id, imageTag:imageTag}).count() is 0
-        Meteor.call "runDocker", imageTag, queryServer
+        Meteor.call "runDocker", imageTag
 
-      @unblock()
+
 
 
   "getCourseDocker": (courseId) ->
