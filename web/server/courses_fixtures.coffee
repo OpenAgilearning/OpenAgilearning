@@ -2,59 +2,60 @@
 @Fixture.Courses =
   set: ->
     adminMeetupIds = Meteor.settings.adminMeetupIds
+
     # Test for private course
-    private_course =
-      'languages':['EN']
-      'courseName': 'Private course test case'
-      'dockerImageTag': 'c3h3/learning-shogun:agilearning'
-      'slides': 'http://nbviewer.ipython.org/github/unpingco/Python-for-Signal-Processing/blob/master/Confidence_Intervals.ipynb'
-      'description': 'Taishin data team course'
-      'video' : 'https://www.youtube.com/watch?v=3h_fx95i-bA'
-      'imageURL': '/images/ipynb_lmnn1.png'
-      'publicStatus': 'private'
-      'bundleServer': ['[DockerServer]d4-agilearning']
+    # private_course =
+    #   'languages':['EN']
+    #   'courseName': 'Private course test case'
+    #   'dockerImageTag': 'c3h3/learning-shogun:agilearning'
+    #   'slides': 'http://nbviewer.ipython.org/github/unpingco/Python-for-Signal-Processing/blob/master/Confidence_Intervals.ipynb'
+    #   'description': 'Taishin data team course'
+    #   'video' : 'https://www.youtube.com/watch?v=3h_fx95i-bA'
+    #   'imageURL': '/images/ipynb_lmnn1.png'
+    #   'publicStatus': 'private'
+    #   'bundleServer': ['[DockerServer]d4-agilearning']
 
-    if Courses.find({"publicStatus" : "private"}).count() is 0
-      demoUser = Meteor.users.findOne({"services.meetup.id" : {$in: adminMeetupIds}})
-      if demoUser
-        private_course.creatorId = demoUser._id
-        private_course.creatorAt = new Date
-        courseId = Courses.insert private_course
-        courseRoleGroupData =
-          type: "course"
-          id: courseId
-          collection: "Courses"
-          query:
-            _id: courseId
-        if Collections.RoleGroups.find(courseRoleGroupData).count() is 0
-          courseRoleGroupData.createdAt = new Date
-          courseRoleGroupId = Collections.RoleGroups.insert courseRoleGroupData
-        else
-          courseRoleGroupId = Collections.RoleGroups.findOne(courseRoleGroupData)._id
-          courseRoleData =
-            groupId: courseRoleGroupId
-            userId: private_course.creatorId
-            role: "admin"
-            createdAt: new Date
+    # if Courses.find({"publicStatus" : "private"}).count() is 0
+    #   demoUser = Meteor.users.findOne({"services.meetup.id" : {$in: adminMeetupIds}})
+    #   if demoUser
+    #     private_course.creatorId = demoUser._id
+    #     private_course.creatorAt = new Date
+    #     courseId = Courses.insert private_course
+    #     courseRoleGroupData =
+    #       type: "course"
+    #       id: courseId
+    #       collection: "Courses"
+    #       query:
+    #         _id: courseId
+    #     if Collections.RoleGroups.find(courseRoleGroupData).count() is 0
+    #       courseRoleGroupData.createdAt = new Date
+    #       courseRoleGroupId = Collections.RoleGroups.insert courseRoleGroupData
+    #     else
+    #       courseRoleGroupId = Collections.RoleGroups.findOne(courseRoleGroupData)._id
+    #       courseRoleData =
+    #         groupId: courseRoleGroupId
+    #         userId: private_course.creatorId
+    #         role: "admin"
+    #         createdAt: new Date
 
-          Collections.Roles.insert courseRoleData
+    #       Collections.Roles.insert courseRoleData
 
-      else
-        private_course = Courses.findOne private_course
-        courseId = private_course._id
-      if private_course.publicStatus is "private"
-        if Classrooms.find({courseId:courseId,publicStatus:"private"}).count() is 0
-          publicClassroomDoc =
-            name: "private Classroom"
-            description: "Everyone is welcome!"
-            creatorId: private_course.creatorId
-            courseId: courseId
-            publicStatus:"private"
-            createAt: new Date
-          classroomId = Classrooms.insert publicClassroomDoc
+    #   else
+    #     private_course = Courses.findOne private_course
+    #     courseId = private_course._id
+    #   if private_course.publicStatus is "private"
+    #     if Classrooms.find({courseId:courseId,publicStatus:"private"}).count() is 0
+    #       publicClassroomDoc =
+    #         name: "private Classroom"
+    #         description: "Everyone is welcome!"
+    #         creatorId: private_course.creatorId
+    #         courseId: courseId
+    #         publicStatus:"private"
+    #         createAt: new Date
+    #       classroomId = Classrooms.insert publicClassroomDoc
 
-          ClassroomRoles.insert {classroomId:classroomId, userId: private_course.creatorId, role:"admin", isActive:true}
-          Roles.addUsersToRoles(private_course.creatorId, "admin", "classroom_" + classroomId)
+    #       ClassroomRoles.insert {classroomId:classroomId, userId: private_course.creatorId, role:"admin", isActive:true}
+    #       Roles.addUsersToRoles(private_course.creatorId, "admin", "classroom_" + classroomId)
 
 
     # http://taiwanrusergroup.github.io/DSC2014Tutorial/
@@ -74,6 +75,8 @@
 
       { "languages":["EN"], "courseName" : "ml-for-hackers", "dockerImageTag" : "c3h3/ml-for-hackers:latest", "slides" : "http://shop.oreilly.com/product/0636920018483.do", "description" : "This is an learning environment used in Taiwan R Ladies to learn the material in the book 'Machine Learning for Hackers' in RLadies' monthly study group."},
       { "languages":["EN","ZH"], "courseName" : "RLadies Play Kaggle", "dockerImageTag" : "c3h3/rladies-hello-kaggle:latest", "slides" : "http://www.kaggle.com/c/titanic-gettingStarted/dails/new-getting-started-with-r", "description" : "This is an learning environment used in Taiwan R Ladies to learn how to play 'hello-world' datasets in kaggle with R."}
+
+      { "languages":["ZH"], "courseName" : "Chinese Text Mining", "dockerImageTag" : "c3h3/r-nlp:sftp", "slides" : "http://rstudio-pubs-static.s3.amazonaws.com/12422_b2b48bb2da7942acaca5ace45bd8c60c.html", "description" : "Introduction to text mining with R (tmcn and Rwordseg)", "video" : "https://www.youtube.com/watch?v=TcMao3r6jYY"},
 
 
       # { "courseName" : "livehouse20141105", "dockerImageTag" : "c3h3/livehouse20141105", "slides" : "https://www.slidenow.com/slide/129/play", "description" : "https://event.livehouse.in/2014/combo8/"},
@@ -182,3 +185,7 @@
 
 if ENV.isDev
   Fixture.Courses.reset()
+
+Fixture.Courses.set()
+
+

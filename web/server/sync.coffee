@@ -233,7 +233,7 @@ syncDockerServerContainer = ->
 Meteor.setInterval syncDockerServerInfo, 10000
 Meteor.setInterval syncDockerServerImageTags, 10000
 Meteor.setInterval syncDockerServerContainer, 10000
-Meteor.setInterval syncDockerEnsureImages, 300000
+Meteor.setInterval syncDockerEnsureImages, 600000
 
 # Meteor.setInterval dockerPull.ToDoJobHandler, 5000
 # Meteor.setInterval dockerPull.DoingJobHandler, 60000

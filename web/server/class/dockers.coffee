@@ -1185,6 +1185,18 @@ needStreamingCallback = (fn, streamingFns=[])->
             lsCpusData
 
 
+
+      stopAll:
+        desc:
+          get: ->
+            stopAllData = {}
+            dockerServers = @_servers
+            Object.keys(dockerServers).map (name)->
+              stopAllData[name] = dockerServers[name].stopAll
+
+            stopAllData
+
+
       rmAll:
         desc:
           get: ->
@@ -1271,6 +1283,15 @@ needStreamingCallback = (fn, streamingFns=[])->
 
     for api in Object.keys(managerApis)
       Object.defineProperty @, api, managerApis[api].desc
+
+
+  rmi: (imageTag)->
+    rmiData = {}
+    dockerServers = @_servers
+    Object.keys(dockerServers).map (name)->
+      rmiData[name] = dockerServers[name].rmi imageTag
+
+    rmiData
 
 
   ensureImages: (images=["c3h3/ml-for-hackers", "c3h3/dsc2014tutorial", "c3h3/learning-shogun:u1404-ocv", "c3h3/rladies-hello-kaggle"])->
