@@ -134,7 +134,7 @@ Meteor.methods
       docker = new Class.DockerServer(containerDoc.serverId)
       # docker.stop containerId
       # docker.rm containerId
-      docker.rmForcely containerId
+      docker.rmf containerId
 
 
       db.dockerContainersMonitor.remove Id:containerId
@@ -147,7 +147,7 @@ Meteor.methods
 
       #TODO: modift DockerInstances data
       instanceQuery =
-        serverName: containerDoc.serverId
+        serverId: containerDoc.serverId
         containerId: containerId
 
       dockerInstanceDoc = db.dockerInstances.findOne instanceQuery
