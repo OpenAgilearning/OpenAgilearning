@@ -161,7 +161,7 @@ template(name="envIframe")
     label Password:
     button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{password}}" data-placement="bottom" style="text-transform:none;") {{password}}
   button.connectEnvBtn.btn.btn-warning.btn-default.pull-right Reconnect
-  button.commitBtn.btn.btn-info.btn-default.pull-right Commit
+  //- button.commitBtn.btn.btn-info.btn-default.pull-right Commit
 
   iframe.envIframe(src="http://{{ip}}:{{port}}",port="{{port}}",ip="{{ip}}", width="100%", height="550px", scrolling="yes" )
 
