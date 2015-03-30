@@ -8,7 +8,7 @@ Template.adminPageDockerServersTable.helpers
       collection:db.dockerServersMonitor
       rowsPerPage:5
       showFilter: true
-      fields:[dockerServerNameField, "active", "lastInfoMoonitorAt"]
+      fields:[dockerServerNameField, "active", "lastInfoMonitorAt"]
 
 
 Template.adminPageDockerServerImagesTable.helpers
