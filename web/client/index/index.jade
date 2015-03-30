@@ -93,12 +93,20 @@ template(name="applyCourseBtn")
 
 template(name="nodeIcons")
   if video
-    i.fa.fa-film.fa-2x(style="margin:5px")
+    i.fa.fa-film.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="This course has video")
+  else
+    button.btn.btn-default.btn-xs
+      i.fa.fa-film.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want video!")
   if slides
-    i.fa.fa-book.fa-2x(style="margin:5px")
-  if dockerImage
-    i.fa.fa-cube.fa-2x(style="margin:5px")
-
+    i.fa.fa-book.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="This course has slides")
+  else
+    button.btn.btn-default.btn-xs
+      i.fa.fa-book.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want slides!")
+  if dockerImageTag
+    i.fa.fa-cube.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="This course has coding environment")
+  else
+    button.btn.btn-default.btn-xs
+      i.fa.fa-cube.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want coding environment!")
 
 
 template(name="index3")
@@ -204,5 +212,5 @@ template(name="advitedToJoin")
     fieldset
       +afQuickField name="code"
     button.btn.btn-primary(type="submit") submit
-    
-  
+
+
