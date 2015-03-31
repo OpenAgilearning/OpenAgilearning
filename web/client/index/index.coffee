@@ -92,22 +92,55 @@ Template.advitedToJoin.helpers
       code:
         type: String
 
-Template.nodeIcons.events
-  "click .upvote":(e,t)->
-    console.log "upvoting!!" + @_id
-    e.stopPropagation()
+Template.nodeIcons.helpers
+  upvoted: (item)->
+    db.Votes.findOne(
+      objectId:@_id
+      subcategory: item
+      )?.degree is 1
+
+
+vote = (id,item,upvote)->
+  console.log "upvoting!!" + id
+  if upvote
     data =
-      objectId: @_id
+      objectId: id
       degree: 1
-      type: "upvote"
+      subcategory: item
       collection: "learningResources"
-    Meteor.call "vote", data
-  "click .deupvote":(e,t)->
-    e.stopPropagation()
-    console.log "deupvote"
+  else
     data =
-      objectId: @_id
+      objectId: id
       degree: 0
-      type: "upvote"
+      subcategory: item
       collection: "learningResources"
-    Meteor.call "vote", data
+  Meteor.call "vote", data
+
+
+
+Template.nodeIcons.events
+  "click .upvoteSlides":(e,t)->
+    e.stopPropagation()
+    vote @_id, "slide", true
+
+  "click .deupvoteSlides":(e,t)->
+    e.stopPropagation()
+    vote @_id, "slide", false
+
+  "click .upvoteVideo":(e,t)->
+    e.stopPropagation()
+    vote @_id, "video", true
+
+  "click .deupvoteVideo":(e,t)->
+    e.stopPropagation()
+    vote @_id, "video", false
+
+  "click .upvoteDockerImage":(e,t)->
+    e.stopPropagation()
+    vote @_id, "environment", true
+
+  "click .deupvoteDockerImage":(e,t)->
+    e.stopPropagation()
+    vote @_id, "environment", false
+
+

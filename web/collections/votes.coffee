@@ -6,7 +6,7 @@
 #    data =
 #      objectId: @_id
 #      degree: 1
-#      type: "upvote"
+#      subcategory: "slides"
 #      collection: "Feedback"
 #    Meteor.call "vote", data
 
@@ -22,9 +22,10 @@
   degree:
     type: Number
     # This is how much you like an object.
-  type:
+  subcategory:
     type: String
-    # Like, love, upvote, archive, add to favorite, rate, bookmark ...
+    optional: true
+    # for a video object, want slides, want environments
   collection:
     type: String
     # This specify which collection the object belongs to
@@ -38,16 +39,23 @@
 @vote_policy =
   Feedback:
     degreeSpec: votes_policy_type.only_like
-    type: ["upvote"]
   learningResources:
     degreeSpec: votes_policy_type.only_like
-    type: ["upvote"]
+    subcategory: ["slide","video","environment"]
 
-@is_valid_vote = (degree, type, collection)->
-  #implement later
-  (collection in Object.keys vote_policy) and
-    vote_policy[collection].degreeSpec(degree) and
-    type in vote_policy[collection].type
+@is_valid_vote = (degree, subcategory, collection)->
+
+  if collection in Object.keys vote_policy
+
+    policy =  vote_policy[collection]
+
+
+    policy.degreeSpec(degree) and
+    ((policy.subcategory is undefined and subcategory is undefined) or
+    (policy.subcategory isnt undefined and subcategory in policy.subcategory))
+
+  else
+    throw new Meteor.Error(401, "Please define vote_policy for the collection")
 
 Meteor.methods
   "vote": (data) ->
@@ -63,13 +71,19 @@ Meteor.methods
 
       @unblock()
 
-      if is_valid_vote data.degree, data.type, data.collection
+      if is_valid_vote data.degree, data.subcategory, data.collection
 
-
-        historicVote =
-          db.Votes.findOne
-            userId:loggedInUserId
-            objectId:data.objectId
+        if data.subcategory
+          historicVote =
+            db.Votes.findOne
+              userId:loggedInUserId
+              objectId:data.objectId
+              subcategory: data.subcategory
+        else
+          historicVote =
+            db.Votes.findOne
+              userId:loggedInUserId
+              objectId:data.objectId
 
 
         # correct:   console.log historicVote?.degree isnt data.degree
@@ -81,11 +95,14 @@ Meteor.methods
 
 
           if targetObject
-            accumulatedVote = targetObject?.vote?[data.type] ? 0
+            if data.subcategory
+              accumulatedVote = targetObject?.vote?[data.subcategory] ? 0
+            else
+              accumulatedVote = targetObject?.vote ? 0
             oldDegree = historicVote?.degree ? 0
 
             updateObject = {}
-            updateObject[ "vote." + data.type] = accumulatedVote + data.degree - oldDegree
+            updateObject[ "vote." + data.subcategory] = accumulatedVote + data.degree - oldDegree
 
 #            console.log "userId: " + loggedInUserId
 #            console.log "accumulatedVote: " + accumulatedVote
