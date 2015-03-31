@@ -45,7 +45,7 @@ template(name="nodeInfo")
           h3 {{courseName}}
           p {{description}}
           //- +aboutCoursesIcons
-        +nodeIcons
+        +nodeIcons _id=_id
         if isSemiPublic
           +applyCourseBtn
         if isPrivate
@@ -73,7 +73,7 @@ template(name="nodeInfo")
           .courseDescription
             p {{description}}
           //- +aboutCoursesIcons
-        +nodeIcons
+        +nodeIcons _id=_id
 
         if isSemiPublic
           +applyCourseBtn courseId=_id
@@ -95,18 +95,30 @@ template(name="nodeIcons")
   if video
     i.fa.fa-film.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="This course has video")
   else
-    button.btn.btn-default.btn-xs
-      i.fa.fa-film.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want video!")
+    unless videoUpvoted
+      button.btn.btn-default.btn-xs.upvote
+        i.fa.fa-film.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want video!")
+    else
+      button.btn.btn-success.btn-xs.deupvote
+        i.fa.fa-film.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want video!")
   if slides
     i.fa.fa-book.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="This course has slides")
   else
-    button.btn.btn-default.btn-xs
-      i.fa.fa-book.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want slides!")
+    unless slidesUpvoted
+      button.btn.btn-default.btn-xs.upvote
+        i.fa.fa-book.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want slides!")
+    else
+      button.btn.btn-success.btn-xs.deupvote
+        i.fa.fa-book.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want slides!")
   if dockerImageTag
     i.fa.fa-cube.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="This course has coding environment")
   else
-    button.btn.btn-default.btn-xs
-      i.fa.fa-cube.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want coding environment!")
+    unless dockerImageUpvoted
+      button.btn.btn-default.btn-xs.upvote
+        i.fa.fa-cube.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want coding environment!")
+    else
+      button.btn.btn-success.btn-xs.deupvote
+        i.fa.fa-cube.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want coding environment!")
 
 
 template(name="index3")

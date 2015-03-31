@@ -91,3 +91,23 @@ Template.advitedToJoin.helpers
     resSchema = new SimpleSchema
       code:
         type: String
+
+Template.nodeIcons.events
+  "click .upvote":(e,t)->
+    console.log "upvoting!!" + @_id
+    e.stopPropagation()
+    data =
+      objectId: @_id
+      degree: 1
+      type: "upvote"
+      collection: "learningResources"
+    Meteor.call "vote", data
+  "click .deupvote":(e,t)->
+    e.stopPropagation()
+    console.log "deupvote"
+    data =
+      objectId: @_id
+      degree: 0
+      type: "upvote"
+      collection: "learningResources"
+    Meteor.call "vote", data

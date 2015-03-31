@@ -427,6 +427,7 @@ Meteor.startup ->
         Meteor.subscribe "allLearningResources"
 
         Meteor.subscribe "userRoles", ["agilearning.io"]
+        Meteor.subscribe "votes", "LearningResources"
 
     @route "admin",
       path: "admin/"

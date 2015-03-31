@@ -111,10 +111,15 @@ Meteor.publish "votes", (collections)->
   userId = @userId
 
   if userId
-    db.Votes.find
-      userId:userId
-      collection:
-        $in: collections
+    if typeof collections is "string"
+      db.Votes.find
+        userId:userId
+        collection: collections
+    else
+      db.Votes.find
+        userId:userId
+        collection:
+          $in: collections
   else
     Exceptions.find {_id:"ExceptionPermissionDeny"}
 
