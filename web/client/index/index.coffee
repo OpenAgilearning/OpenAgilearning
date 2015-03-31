@@ -121,26 +121,32 @@ vote = (id,item,upvote)->
 Template.nodeIcons.events
   "click .upvoteSlides":(e,t)->
     e.stopPropagation()
-    vote @_id, "slide", true
+    if @user
+      vote @_id, "slide", true
 
   "click .deupvoteSlides":(e,t)->
     e.stopPropagation()
-    vote @_id, "slide", false
+    if @user
+      vote @_id, "slide", false
 
   "click .upvoteVideo":(e,t)->
     e.stopPropagation()
-    vote @_id, "video", true
+    if @user
+      vote @_id, "video", true
 
   "click .deupvoteVideo":(e,t)->
     e.stopPropagation()
-    vote @_id, "video", false
+    if @user
+      vote @_id, "video", false
 
   "click .upvoteDockerImage":(e,t)->
     e.stopPropagation()
-    vote @_id, "environment", true
+    if @user
+      vote @_id, "environment", true
 
   "click .deupvoteDockerImage":(e,t)->
     e.stopPropagation()
-    vote @_id, "environment", false
+    if @user
+      vote @_id, "environment", false
 
 

@@ -39,6 +39,7 @@
 @vote_policy =
   Feedback:
     degreeSpec: votes_policy_type.only_like
+    subcategory: ["upvote"]
   learningResources:
     degreeSpec: votes_policy_type.only_like
     subcategory: ["slide","video","environment"]
