@@ -55,11 +55,15 @@ template(name="classroom")
 
           if dockerHasHTTP
             .tab-pane.fade#Environment
-              if needToSetEnvConfigs
-                div(style="position:relative; height:500px;")
-                  +spinner
+              if TermsSigned
+
+                if needToSetEnvConfigs
+                  div(style="position:relative; height:500px;")
+                    +spinner
+                else
+                  +classroomEnvIframe docker=docker
               else
-                +classroomEnvIframe docker=docker
+                +pleaseSignTerms
 
               //- if needToSetEnvConfigs
               //-   div(style="position:relative; height:500px;")
@@ -94,23 +98,6 @@ template(name="classroom")
                 li
                   h2 Fill up: IP, Port, USER, PASS
                   img(src="/images/filezillaTutorial2.png",width="100%")
-
-
-          if course.dockerImageTag
-            .tab-pane.fade#Environment
-              if TermsSigned
-
-                if needToSetEnvConfigs
-                  div(style="position:relative; height:500px;")
-                    //- p.text-primary loading environment ...
-                    +spinner
-
-                  //- h2 {{classroomId}}
-                  +setEnvConfigsForm classroomId=classroomId
-                else
-                  +classroomEnvIframe docker=docker
-              else
-                +pleaseSignTerms
 
           if course.slides
             .tab-pane.fade#Slides
