@@ -682,11 +682,11 @@ needStreamingCallback = (fn, streamingFns=[])->
 
       freeze:
         desc:
-          get:-> @setFrozen yes
+          get:-> @setFrozen yes, setContainersAlso=yes
 
       unfreeze:
         desc:
-          get:-> @setFrozen no
+          get:-> @setFrozen no, setContainersAlso=yes
 
       isFrozen:
         desc:
@@ -1016,8 +1016,15 @@ needStreamingCallback = (fn, streamingFns=[])->
       else
         containerResData
 
-  setFrozen:(status=true)->
+  setFrozen:(status=true, setContainersAlso=true)->
     @_data.frozen = status
+
+    if setContainersAlso
+      ids = @listContainerIds().data
+
+      if ids
+        db.dockerInstances.update {containerId:$in:ids}, {$set:frozen:status}, multi:true
+
     db.dockerServers.update @_id, $set:frozen:status
 
 
