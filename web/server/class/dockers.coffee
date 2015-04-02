@@ -680,7 +680,17 @@ needStreamingCallback = (fn, streamingFns=[])->
 
             usedPorts.map String
 
+      freeze:
+        desc:
+          get:-> @setFrozen yes
 
+      unfreeze:
+        desc:
+          get:-> @setFrozen no
+
+      isFrozen:
+        desc:
+          get:-> @_data.frozen or no
 
     for api in Object.keys(handsOnApis)
       Object.defineProperty @, api, handsOnApis[api].desc
@@ -1005,6 +1015,11 @@ needStreamingCallback = (fn, streamingFns=[])->
           error: null
       else
         containerResData
+
+  setFrozen:(status=true)->
+    @_data.frozen = status
+    db.dockerServers.update @_id, $set:frozen:status
+
 
 
 @Class.DockerContainerConfigs = class DockerContainerConfigs
