@@ -1317,15 +1317,16 @@ needStreamingCallback = (fn, streamingFns=[])->
         total: summary.total
         remainder: summary.remainder
         usage: summary.usage
+        frozen: dockerServers[name].isFrozen
 
 
-  getFreeServerName: (c=1, memoryUsage=512*1024*1024, forcely=false)->
+  getFreeServerName: (c=1, memoryUsage=512*1024*1024, forcely=false, includeFrozen=false)->
     sumQuota = @ls_summaryQuota(c,memoryUsage)
 
     if forcely
-      filteredSumQuota = sumQuota
+      filteredSumQuota = sumQuota.filter (quotaData)-> includeFrozen or not quotaData.frozen
     else
-      filteredSumQuota = sumQuota.filter (quotaData)-> quotaData.remainder >= 1
+      filteredSumQuota = sumQuota.filter (quotaData)-> quotaData.remainder >= 1 and (includeFrozen or not quotaData.frozen)
 
     if filteredSumQuota.length > 0
       _.sortBy(filteredSumQuota,"usage")[0].serverName
@@ -1333,11 +1334,11 @@ needStreamingCallback = (fn, streamingFns=[])->
     #FIXME: if no free servers ! OR no server
 
   getFreeServer: (c=1, memoryUsage=512*1024*1024)->
-    @_servers[@getFreeServerName(c,memoryUsage,false)]
+    @_servers[@getFreeServerName(c,memoryUsage,false,false)]
 
 
   getFreeServerForcely: (c=1, memoryUsage=512*1024*1024)->
-    @_servers[@getFreeServerName(c,memoryUsage,true)]
+    @_servers[@getFreeServerName(c,memoryUsage,true,false)]
 
 
   remainderQuota: (c=1, memoryUsage=512*1024*1024)->
