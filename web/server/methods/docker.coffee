@@ -181,7 +181,11 @@ Meteor.methods
     @unblock()
 
 
-    if DockerInstances.find({userId:user._id,imageTag:fullImageTag}).count() is 0
+    if DockerInstances.find({userId:user._id,imageTag:fullImageTag, $or:[{frozen:$exists:false},{frozen:false}]}).count() is 0
+
+      # Before we start a new instance, say bye bye to all
+      # old mess(frozen instances) you've created.
+      DockerInstances.remove {userId:user._id, frozen:true}
 
       dm = new Class.DockersManager queryServer
 
