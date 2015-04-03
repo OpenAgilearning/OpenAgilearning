@@ -185,7 +185,24 @@ Meteor.methods
 
       # Before we start a new instance, say bye bye to all
       # old mess(frozen instances) you've created.
-      DockerInstances.remove {userId:user._id, frozen:true}
+      frozenInstances = DockerInstances.find {userId:user._id, frozen:true}
+
+      if frozenInstances
+        frozenInstances.map (instanceDoc)->
+          # No, don't call method here. Since rmf takes time, the user can still see
+          # the old instance when the classroom rerender.
+          # Meteor.call "removeDockerInstance", instanceDoc._id
+
+          dockerInstanceDoc = instanceDoc
+          DockerInstances.remove _id: dockerInstanceDoc._id
+
+          dockerInstanceDoc.removeAt = new Date
+          dockerInstanceDoc.removeBy = "system"
+          dockerInstanceDoc.removeByUid = user._id
+          DockerInstancesLog.insert dockerInstanceDoc
+
+          docker = new Class.DockerServer instanceDoc.serverId
+          docker.rmf instanceDoc.containerId
 
       dm = new Class.DockersManager queryServer
 

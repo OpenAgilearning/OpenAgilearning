@@ -682,11 +682,11 @@ needStreamingCallback = (fn, streamingFns=[])->
 
       freeze:
         desc:
-          get:-> @setFrozen yes, setContainersAlso=yes
+          get:-> @setFrozen yes, yes
 
       unfreeze:
         desc:
-          get:-> @setFrozen no, setContainersAlso=yes
+          get:-> @setFrozen no, yes
 
       isFrozen:
         desc:
@@ -1020,6 +1020,7 @@ needStreamingCallback = (fn, streamingFns=[])->
     @_data.frozen = status
 
     if setContainersAlso
+
       ids = @listContainerIds().data
 
       if ids
