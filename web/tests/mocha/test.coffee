@@ -26,16 +26,16 @@ if Meteor.isServer
 
     describe "is_valid_vote function", ->
       it "should return true when data is proper",->
-        chai.expect is_valid_vote(0, undefined ,"Feedback")
+        chai.expect is_valid_vote(0, "upvote" ,"Feedback")
         .to.equal true
-        chai.expect is_valid_vote(1, undefined, "Feedback")
+        chai.expect is_valid_vote(1, "upvote", "Feedback")
         .to.equal true
       it "should return false when data is in proper",->
-        chai.expect is_valid_vote(2, undefined, "Feedback")
+        chai.expect is_valid_vote(2, "upvote", "Feedback")
         .to.equal false
-        chai.expect is_valid_vote(undefined, undefined, "Feedback")
+        chai.expect is_valid_vote(undefined, "upvote", "Feedback")
         .to.equal false
-        chai.expect is_valid_vote(null, undefined, "Feedback")
+        chai.expect is_valid_vote(null, "upvote", "Feedback")
         .to.equal false
 
         # TODO
