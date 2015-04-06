@@ -45,7 +45,8 @@ template(name="nodeInfo")
           h3 {{courseName}}
           p {{description}}
           //- +aboutCoursesIcons
-        +nodeIcons
+        +nodeIcons _id=_id video=video slides=slides dockerImageTag=dockerImageTag vote=vote
+
         if isSemiPublic
           +applyCourseBtn
         if isPrivate
@@ -73,7 +74,7 @@ template(name="nodeInfo")
           .courseDescription
             p {{description}}
           //- +aboutCoursesIcons
-        +nodeIcons
+        +nodeIcons _id=_id video=video slides=slides dockerImageTag=dockerImageTag vote=vote
 
         if isSemiPublic
           +applyCourseBtn courseId=_id
@@ -93,13 +94,42 @@ template(name="applyCourseBtn")
 
 template(name="nodeIcons")
   if video
-    i.fa.fa-film.fa-2x(style="margin:5px")
+    i.fa.fa-film.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="This course has video")
+  else
+    unless upvoted "video"
+      button.btn.btn-default.btn-xs.upvoteVideo
+        i.fa.fa-film.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want video!")
+    else
+      button.btn.btn-success.btn-xs.deupvoteVideo
+        i.fa.fa-film.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want video!")
+    with vote
+      if video
+        i.fa.fa-users(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="{{video}} agilearners want videos") {{video}}
   if slides
-    i.fa.fa-book.fa-2x(style="margin:5px")
-  if dockerImage
-    i.fa.fa-cube.fa-2x(style="margin:5px")
+    i.fa.fa-book.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="This course has slides")
+  else
+    unless upvoted "slide"
+      button.btn.btn-default.btn-xs.upvoteSlides
+        i.fa.fa-book.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want slides!")
+    else
+      button.btn.btn-success.btn-xs.deupvoteSlides
+        i.fa.fa-book.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want slides!")
+    with vote
+      if slide
+        i.fa.fa-users(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="{{slide}} agilearners want slides") {{slide}}
 
-
+  if dockerImageTag
+    i.fa.fa-cube.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="This course has coding environment")
+  else
+    unless upvoted "environment"
+      button.btn.btn-default.btn-xs.upvoteDockerImage
+        i.fa.fa-cube.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want coding environment!")
+    else
+      button.btn.btn-success.btn-xs.deupvoteDockerImage
+        i.fa.fa-cube.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want coding environment!")
+    with vote
+      if environment
+        i.fa.fa-users(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="{{environment}} agilearners want coding environment") {{environment}}
 
 template(name="index3")
   .container
@@ -204,5 +234,5 @@ template(name="advitedToJoin")
     fieldset
       +afQuickField name="code"
     button.btn.btn-primary(type="submit") submit
-    
-  
+
+

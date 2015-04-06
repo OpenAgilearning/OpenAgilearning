@@ -91,3 +91,62 @@ Template.advitedToJoin.helpers
     resSchema = new SimpleSchema
       code:
         type: String
+
+Template.nodeIcons.helpers
+  upvoted: (item)->
+    db.Votes.findOne(
+      objectId:@_id
+      subcategory: item
+      )?.degree is 1
+
+
+vote = (id,item,upvote)->
+  console.log "upvoting!!" + id
+  if upvote
+    data =
+      objectId: id
+      degree: 1
+      subcategory: item
+      collection: "learningResources"
+  else
+    data =
+      objectId: id
+      degree: 0
+      subcategory: item
+      collection: "learningResources"
+  Meteor.call "vote", data
+
+
+
+Template.nodeIcons.events
+  "click .upvoteSlides":(e,t)->
+    e.stopPropagation()
+    if @user
+      vote @_id, "slide", true
+
+  "click .deupvoteSlides":(e,t)->
+    e.stopPropagation()
+    if @user
+      vote @_id, "slide", false
+
+  "click .upvoteVideo":(e,t)->
+    e.stopPropagation()
+    if @user
+      vote @_id, "video", true
+
+  "click .deupvoteVideo":(e,t)->
+    e.stopPropagation()
+    if @user
+      vote @_id, "video", false
+
+  "click .upvoteDockerImage":(e,t)->
+    e.stopPropagation()
+    if @user
+      vote @_id, "environment", true
+
+  "click .deupvoteDockerImage":(e,t)->
+    e.stopPropagation()
+    if @user
+      vote @_id, "environment", false
+
+

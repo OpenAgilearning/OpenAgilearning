@@ -24,7 +24,7 @@ Template.feedbackDiscussion.helpers
       key:"vote.upvote"
       label:"Like"
       tmpl: Template.feedbackVote
-      
+
     res =
       collection: Feedback.find()
       rowsPerPage: 30
@@ -40,7 +40,7 @@ Template.feedbackDiscussion.helpers
 
 Template.feedbackType.helpers
   isWish:(type)-> type is "w"
-  
+
 Template.feedbackVote.helpers
   upvoted:->
     db.Votes.findOne(objectId:@_id)?.degree is 1
@@ -52,7 +52,7 @@ Template.feedbackVote.events
     data =
       objectId: @_id
       degree: 1
-      type: "upvote"
+      subcategory: "upvote"
       collection: "Feedback"
     Meteor.call "vote", data
   "click .deupvote":(e,t)->
@@ -61,7 +61,6 @@ Template.feedbackVote.events
     data =
       objectId: @_id
       degree: 0
-      type: "upvote"
+      subcategory: "upvote"
       collection: "Feedback"
     Meteor.call "vote", data
-    
