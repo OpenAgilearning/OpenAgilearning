@@ -95,7 +95,7 @@ template(name="applyCourseBtn")
 template(name="nodeIcons")
   if video
     i.fa.fa-film.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="This course has video")
-  else
+  else if votable
     unless upvoted "video"
       button.btn.btn-default.btn-xs.upvoteVideo
         i.fa.fa-film.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want video!")
@@ -107,7 +107,7 @@ template(name="nodeIcons")
         i.fa.fa-users(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="{{video}} agilearners want videos") {{video}}
   if slides
     i.fa.fa-book.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="This course has slides")
-  else
+  else if votable
     unless upvoted "slide"
       button.btn.btn-default.btn-xs.upvoteSlides
         i.fa.fa-book.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want slides!")
@@ -120,7 +120,7 @@ template(name="nodeIcons")
 
   if dockerImageTag
     i.fa.fa-cube.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="This course has coding environment")
-  else
+  else if votable
     unless upvoted "environment"
       button.btn.btn-default.btn-xs.upvoteDockerImage
         i.fa.fa-cube.fa-2x(style="margin:5px" data-toggle="tooltip" data-placement="bottom" title="Want coding environment!")
