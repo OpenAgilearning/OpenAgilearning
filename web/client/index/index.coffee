@@ -101,7 +101,6 @@ Template.nodeIcons.helpers
 
 
 vote = (id,item,upvote)->
-  console.log "upvoting!!" + id
   if upvote
     data =
       objectId: id
@@ -121,32 +120,32 @@ vote = (id,item,upvote)->
 Template.nodeIcons.events
   "click .upvoteSlides":(e,t)->
     e.stopPropagation()
-    if @user
+    if Meteor.userId()
       vote @_id, "slide", true
 
   "click .deupvoteSlides":(e,t)->
     e.stopPropagation()
-    if @user
+    if Meteor.userId()
       vote @_id, "slide", false
 
   "click .upvoteVideo":(e,t)->
     e.stopPropagation()
-    if @user
+    if Meteor.userId()
       vote @_id, "video", true
 
   "click .deupvoteVideo":(e,t)->
     e.stopPropagation()
-    if @user
+    if Meteor.userId()
       vote @_id, "video", false
 
   "click .upvoteDockerImage":(e,t)->
     e.stopPropagation()
-    if @user
+    if Meteor.userId()
       vote @_id, "environment", true
 
   "click .deupvoteDockerImage":(e,t)->
     e.stopPropagation()
-    if @user
+    if Meteor.userId()
       vote @_id, "environment", false
 
 
