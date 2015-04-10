@@ -61,18 +61,18 @@
     # http://taiwanrusergroup.github.io/DSC2014Tutorial/
     # public course case
     demoCourses = [
-      { _id:"LMNN","languages":["EN"], "courseName" : "Large Margin Nearest Neighbours", "dockerImageTag" : "c3h3/learning-shogun:agilearning",  "description" : "Fernando Iglesias talks about the GSoC-Project bringing Large Margin Nearest Neighbours into the Shogun Toolbox." , "imageURL":"/images/ipynb_lmnn1.png"},
+      { _id:"LMNN","languages":["EN"], "courseName" : "Large Margin Nearest Neighbours", "dockerImageTag" : "c3h3/learning-shogun:agilearning", "video":true, "slides":true, "description" : "Fernando Iglesias talks about the GSoC-Project bringing Large Margin Nearest Neighbours into the Shogun Toolbox." , "imageURL":"/images/ipynb_lmnn1.png"},
 
-      { _id:"RBasic","languages":["ZH"], "courseName" : "R Basic", "dockerImageTag" : "c3h3/dsc2014tutorial:latest",  "description" : "This is a tutorial series about R given by Taiwan R User Group in Data Science Conference 2014 in Taiwan" },
-      { _id:"RETL","languages":["ZH"], "courseName" : "R ETL", "dockerImageTag" : "c3h3/dsc2014tutorial:latest",  "description" : "This is a tutorial series about R given by Taiwan R User Group in Data Science Conference 2014 in Taiwan" , "imageURL":"/images/rstudio_dsc2014_etl2.png"},
-      { _id:"R_Data_Analysis","languages":["ZH"], "courseName" : "R Data Analysis", "dockerImageTag" : "c3h3/dsc2014tutorial:latest",  "description" : "This is a tutorial series about R given by Taiwan R User Group in Data Science Conference 2014 in Taiwan" },
-      { _id:"Visualization", "languages":["ZH"], "courseName" : "Visualization (part1)", "dockerImageTag" : "c3h3/dsc2014tutorial:latest",  "description" : "This is a tutorial series about R given by Taiwan R User Group in Data Science Conference 2014 in Taiwan" },
+      { _id:"RBasic","languages":["ZH"], "courseName" : "R Basic", "dockerImageTag" : "c3h3/dsc2014tutorial:latest","video":true, "slides":true,  "description" : "This is a tutorial series about R given by Taiwan R User Group in Data Science Conference 2014 in Taiwan" },
+      { _id:"RETL","languages":["ZH"], "courseName" : "R ETL", "dockerImageTag" : "c3h3/dsc2014tutorial:latest", "video":true, "slides":true, "description" : "This is a tutorial series about R given by Taiwan R User Group in Data Science Conference 2014 in Taiwan" , "imageURL":"/images/rstudio_dsc2014_etl2.png"},
+      { _id:"R_Data_Analysis","languages":["ZH"], "courseName" : "R Data Analysis", "dockerImageTag" : "c3h3/dsc2014tutorial:latest", "video":true, "slides":true, "description" : "This is a tutorial series about R given by Taiwan R User Group in Data Science Conference 2014 in Taiwan" },
+      { _id:"Visualization", "languages":["ZH"], "courseName" : "R Visualization", "dockerImageTag" : "c3h3/dsc2014tutorial:latest", "video":true, "slides":true, "description" : "This is a tutorial series about R given by Taiwan R User Group in Data Science Conference 2014 in Taiwan" },
 
 
-      { _id:"ml-for-hackers", "languages":["EN"], "courseName" : "ml-for-hackers", "dockerImageTag" : "c3h3/ml-for-hackers:latest",  "description" : "This is an learning environment used in Taiwan R Ladies to learn the material in the book 'Machine Learning for Hackers' in RLadies' monthly study group."},
-      { _id: "playKaggle" , "languages":["EN","ZH"], "courseName" : "RLadies Play Kaggle", "dockerImageTag" : "c3h3/rladies-hello-kaggle:latest",  "description" : "This is an learning environment used in Taiwan R Ladies to learn how to play 'hello-world' datasets in kaggle with R."}
+      { _id:"ml-for-hackers", "languages":["EN"], "courseName" : "ml-for-hackers", "dockerImageTag" : "c3h3/ml-for-hackers:latest", "slides":true, "description" : "This is an learning environment used in Taiwan R Ladies to learn the material in the book 'Machine Learning for Hackers' in RLadies' monthly study group."},
+      { _id: "playKaggle" , "languages":["EN","ZH"], "courseName" : "RLadies Play Kaggle", "dockerImageTag" : "c3h3/rladies-hello-kaggle:latest", "slides":true,  "description" : "This is an learning environment used in Taiwan R Ladies to learn how to play 'hello-world' datasets in kaggle with R."}
 
-      { _id:"Chinese_Text_Mining", "languages":["ZH"], "courseName" : "Chinese Text Mining", "dockerImageTag" : "c3h3/r-nlp:sftp",  "description" : "Introduction to text mining with R (tmcn and Rwordseg)" },
+      { _id:"Chinese_Text_Mining", "languages":["ZH"], "courseName" : "Chinese Text Mining", "dockerImageTag" : "c3h3/r-nlp:sftp", "video":true, "slides":true, "description" : "Introduction to text mining with R (tmcn and Rwordseg)" },
       { "languages":["EN","ZH"], "courseName" : "Play Jupyter", "dockerImageTag" : "adrianliaw/jupyter-irkernel:agilearning", "description" : "The language-agnostic parts of IPython are getting a new home in Project Jupyter.", "imageURL":"/images/jupyter-sq-text.svg"},
 
       # { "courseName" : "livehouse20141105", "dockerImageTag" : "c3h3/livehouse20141105", "slides" : "https://www.slidenow.com/slide/129/play", "description" : "https://event.livehouse.in/2014/combo8/"},

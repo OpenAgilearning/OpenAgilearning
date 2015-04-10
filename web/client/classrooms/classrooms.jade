@@ -4,7 +4,7 @@ template(name="classroom")
       .col-md-9.column.classroom-body
         ul.nav.nav-tabs.classroom-nav
           li.active
-            a(data-toggle="tab", href="#CourseInfo") Info
+            a(data-toggle="tab", href="#Materials") Materials
 
           if dockerHasHTTP
             li
@@ -34,21 +34,21 @@ template(name="classroom")
 
 
         .tab-content
-          .tab-pane.fade.in.active#CourseInfo
+          .tab-pane.fade.in.active#Materials
             .row
               .col-md-3
                 ul.nav.nav-pills.nav-stacked(style="margin-top:30px")
                   li.active
-                    a(data-toggle="tab", href="#info") Classroom Information
+                    a(data-toggle="tab", href="#info") Course Information
 
-                  if videos
+                  if hasVideo
                     li Videos
 
                   each videos
                     li
                       a(data-toggle="tab", href="#video_{{_id}}") {{ytTitle}}
 
-                  if slides
+                  if hasSlide
                     li Slides
 
                   each slides
