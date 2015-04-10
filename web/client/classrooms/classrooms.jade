@@ -6,10 +6,6 @@ template(name="classroom")
           li.active
             a(data-toggle="tab", href="#CourseInfo") Info
 
-          if course.video
-            li
-              a(data-toggle="tab", href="#Video") Video
-
           if dockerHasHTTP
             li
               a(data-toggle="tab", href="#Environment") Environment
@@ -17,10 +13,6 @@ template(name="classroom")
           if dockerHasSFTP
             li
               a(data-toggle="tab", href="#SFTP") SFTP
-
-          if course.slides
-            li
-              a(data-toggle="tab", href="#Slides") Slides
 
           if isInRole "admin" classroomAndId
             li
@@ -43,15 +35,42 @@ template(name="classroom")
 
         .tab-content
           .tab-pane.fade.in.active#CourseInfo
-            br
-            +courseImage courseDoc=course width="300px"
-            h2 {{course.courseName}}
-            p {{course.description}}
+            .row
+              .col-md-3
+                ul.nav.nav-pills.nav-stacked(style="margin-top:30px")
+                  li.active
+                    a(data-toggle="tab", href="#info") Classroom Information
 
-          if course.video
-            .tab-pane.fade#Video
-              video.video-js.vjs-default-skin(id="vid",src="",controls
-  preload="auto",width="100%",height="500px",data-setup='{ "techOrder": ["youtube"], "src": "{{course.video}}" }')
+                  if videos
+                    li Videos
+
+                  each videos
+                    li
+                      a(data-toggle="tab", href="#video_{{_id}}") {{ytTitle}}
+
+                  if slides
+                    li Slides
+
+                  each slides
+                    li
+                      a(data-toggle="tab", href="#slide_{{_id}}") {{title}}
+
+              .col-md-9
+                .tab-content
+                  .tab-pane.fade.in.active#info
+                    br
+                    +courseImage courseDoc=course width="300px"
+                    h2 {{course.courseName}}
+                    p {{course.description}}
+
+                  each videos
+                    .tab-pane.fade(id="video_{{_id}}")
+                      video.video-js.vjs-default-skin(id="videojs_{{_id}}",controls, preload="auto",width="100%",height="500px",data-setup='{ "techOrder": ["youtube"], "src": "https://www.youtube.com/watch?v={{youtubeVideoId}}" }')
+
+                  each slides
+                    .tab-pane.fade(id="slide_{{_id}}")
+                      iframe(id="slide_iframe_{{_id}}" src="{{url}}", width="100%", height="500px", scrolling="auto")
+
 
           if dockerHasHTTP
             .tab-pane.fade#Environment
@@ -99,9 +118,6 @@ template(name="classroom")
                   h2 Fill up: IP, Port, USER, PASS
                   img(src="/images/filezillaTutorial2.png",width="100%")
 
-          if course.slides
-            .tab-pane.fade#Slides
-              iframe#slides(src="{{course.slides}}", width="100%", height="700px", scrolling="auto")
 
           if isInRole "admin" classroomAndId
             .tab-pane.fade#Admin

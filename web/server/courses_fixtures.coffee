@@ -81,17 +81,17 @@
     ]
 
     slides = [
-      {_id: "shogun_LMNN", url:"http://nbviewer.ipython.org/github/shogun-toolbox/shogun/blob/master/doc/ipython-notebooks/metric/LMNN.ipynb"}
-      {_id: "RBasic", url:"http://dboyliao.github.io/RBasic_reveal/"}
-      {_id: "R_ETL_LAB", url:"http://ntuaha.github.io/R_ETL_LAB/"}
-      {_id: "R_ETL_JIAWEI", url:"http://ntuaha.github.io/R_ETL_JIAWEI/"}
-      {_id: "R_Data_Analysis", url:"http://whizzalan.github.io/R-tutorial_DataAnalysis/"}
-      {_id: "Visualization_1", url:"http://kuiming.github.io/graphics/index.html"}
-      {_id: "Visualization_2", url:"http://everdark.github.io/lecture_ggplot/lecture_ggplot2/index.html"}
-      {_id: "Visualization_3", url:"http://rpubs.com/mansun_kuo/24330"}
-      {_id: "ml-for-hackers", url:"http://shop.oreilly.com/product/0636920018483.do"}
-      {_id: "playKaggle", url:"http://www.kaggle.com/c/titanic-gettingStarted/dails/new-getting-started-with-r"}
-      {_id: "Chinese_Text_Mining", url:"http://rstudio-pubs-static.s3.amazonaws.com/12422_b2b48bb2da7942acaca5ace45bd8c60c.html"}
+      {_id: "shogun_LMNN", title: "shogun_LMNN", url:"http://nbviewer.ipython.org/github/shogun-toolbox/shogun/blob/master/doc/ipython-notebooks/metric/LMNN.ipynb"}
+      {_id: "RBasic", title: "RBasic", url:"http://dboyliao.github.io/RBasic_reveal/"}
+      {_id: "R_ETL_LAB", title: "R_ETL_LAB", url:"http://ntuaha.github.io/R_ETL_LAB/"}
+      {_id: "R_ETL_JIAWEI", title: "R_ETL_JIAWEI", url:"http://ntuaha.github.io/R_ETL_JIAWEI/"}
+      {_id: "R_Data_Analysis", title: "R_Data_Analysis", url:"http://whizzalan.github.io/R-tutorial_DataAnalysis/"}
+      {_id: "Visualization_1", title: "Visualization_1", url:"http://kuiming.github.io/graphics/index.html"}
+      {_id: "Visualization_2", title: "Visualization_2", url:"http://everdark.github.io/lecture_ggplot/lecture_ggplot2/index.html"}
+      {_id: "Visualization_3", title: "Visualization_3", url:"http://rpubs.com/mansun_kuo/24330"}
+      {_id: "ml-for-hackers", title: "ml-for-hackers", url:"http://shop.oreilly.com/product/0636920018483.do"}
+      {_id: "playKaggle", title: "playKaggle", url:"http://www.kaggle.com/c/titanic-gettingStarted/dails/new-getting-started-with-r"}
+      {_id: "Chinese_Text_Mining", title: "Chinese_Text_Mining", url:"http://rstudio-pubs-static.s3.amazonaws.com/12422_b2b48bb2da7942acaca5ace45bd8c60c.html"}
 
     ]
 
