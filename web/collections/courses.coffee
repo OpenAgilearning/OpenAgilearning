@@ -11,7 +11,7 @@
 @db.courseJoinSlides = new Mongo.Collection "courseJoinSlides"
 @db.courseJoinVideos = new Mongo.Collection "courseJoinVideos"
 @db.courseJoinWebsites = new Mongo.Collection "courseJoinWebsites"
-
+@db.courseJoinDockerImageTags = new Mongo.Collection "courseJoinDockerImageTags"
 
 # @learningResourceSchema = new SimpleSchema
 #   title:

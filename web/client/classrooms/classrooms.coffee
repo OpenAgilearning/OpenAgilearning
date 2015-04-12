@@ -158,3 +158,18 @@ Template.classroom.helpers
   TermsSigned:-> _.contains Meteor.user().agreedTOC, "toc_main"
   hasVideo:-> db.videos.find().count() > 0
   hasSlide:-> db.slides.find().count() > 0
+  hash:(string)->string.replace /[\[\]:\/]+/g, ""
+
+
+Template.classroomEnvIframe2.helpers
+  dockerInstance: -> DockerInstances.findOne imageTag:@tag
+
+Template.classroomEnvIframe2.rendered = ->
+  classroomId = Router.current().params.classroomId
+  tag = @data.tag
+  console.log "tag", tag
+  Meteor.call "getClassroomDocker", classroomId, tag, (err, data)->
+    if not err
+      console.log "get env successfully!"
+    else
+      console.log "get env failed!"

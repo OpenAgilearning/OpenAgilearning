@@ -244,6 +244,12 @@ Meteor.startup ->
           slides: ->
             db.slides.find()
 
+          dockerImageTags: ->
+            course = @course()
+            pairs = db.courseJoinDockerImageTags.find(courseId:course._id).fetch()
+            array = pairs.map (doc)-> doc.tag
+            db.dockerImageTags.find tag:$in:array
+
 
           classroomAndId: =>
             "classroom_" + @params.classroomId
@@ -400,6 +406,9 @@ Meteor.startup ->
           Meteor.subscribe "userRoles", ["agilearning.io"]
           Meteor.subscribe "classroomVideos", @params.classroomId
           Meteor.subscribe "classroomSlides", @params.classroomId
+          Meteor.subscribe "classroomCourseJoinDockerImageTags", @params.classroomId
+
+
       # onAfterAction: ->
         # Meteor.call "getClassroomDocker", @params.classroomId, (err, data)->
         #   if not err
