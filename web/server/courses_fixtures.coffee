@@ -111,30 +111,30 @@
 
 
     videos =[
-      {_id:"LMNN",youtubeVideoId:"7pm91lCWyfE",ytTitle:"Large Margin Nearest Neighbours"}
-      {_id:"RBasic1",youtubeVideoId:"Ut55jPEm-yE",ytTitle:"R Basic (part1)"}
-      {_id:"RBasic2",youtubeVideoId:"zCE4kEnQlkM",ytTitle:"R Basic (part2)"}
-      {_id:"R_ETL_1",youtubeVideoId:"JD1eDxxrur0",ytTitle:"R ETL (part1)"}
-      {_id:"R_ETL_2",youtubeVideoId:"aDIVtL2YrPE",ytTitle:"R ETL (part2)"}
-      {_id:"R_Data_Analysis",youtubeVideoId:"fcRtf4l1Xfc",ytTitle:"R Data Analysis"}
-      {_id:"Visualization_1",youtubeVideoId:"oksIFsSWXmM",ytTitle:"Visualization (part1)"}
-      {_id:"Visualization_2",youtubeVideoId:"Da7RNqPWBZA",ytTitle:"Visualization (part2)"}
-      {_id:"Visualization_3",youtubeVideoId:"0KpLjx5wyJE",ytTitle:"Visualization (part3)"}
-      {_id:"Chinese_Text_Mining",youtubeVideoId:"TcMao3r6jYY",ytTitle:"Chinese Text Mining"}
+      {_id: "YTV_7pm91lCWyfE" ,youtubeVideoId:"7pm91lCWyfE",ytTitle:"Large Margin Nearest Neighbours"}
+      {_id: "YTV_Ut55jPEm-yE" ,youtubeVideoId:"Ut55jPEm-yE",ytTitle:"R Basic (part1)"}
+      {_id: "YTV_zCE4kEnQlkM" ,youtubeVideoId:"zCE4kEnQlkM",ytTitle:"R Basic (part2)"}
+      {_id: "YTV_JD1eDxxrur0" ,youtubeVideoId:"JD1eDxxrur0",ytTitle:"R ETL (part1)"}
+      {_id: "YTV_aDIVtL2YrPE" ,youtubeVideoId:"aDIVtL2YrPE",ytTitle:"R ETL (part2)"}
+      {_id: "YTV_fcRtf4l1Xfc" ,youtubeVideoId:"fcRtf4l1Xfc",ytTitle:"R Data Analysis"}
+      {_id: "YTV_oksIFsSWXmM" ,youtubeVideoId:"oksIFsSWXmM",ytTitle:"Visualization (part1)"}
+      {_id: "YTV_Da7RNqPWBZA" ,youtubeVideoId:"Da7RNqPWBZA",ytTitle:"Visualization (part2)"}
+      {_id: "YTV_0KpLjx5wyJE" ,youtubeVideoId:"0KpLjx5wyJE",ytTitle:"Visualization (part3)"}
+      {_id: "YTV_TcMao3r6jYY" ,youtubeVideoId:"TcMao3r6jYY",ytTitle:"Chinese Text Mining"}
 
     ]
 
     courseJoinVideos = [
-      {courseId:"LMNN", videoId:"LMNN"}
-      {courseId:"RBasic", videoId:"RBasic1"}
-      {courseId:"RBasic", videoId:"RBasic2"}
-      {courseId:"RETL", videoId:"R_ETL_1"}
-      {courseId:"RETL", videoId:"R_ETL_2"}
-      {courseId:"R_Data_Analysis", videoId:"R_Data_Analysis"}
-      {courseId:"Visualization", videoId:"Visualization_1"}
-      {courseId:"Visualization", videoId:"Visualization_2"}
-      {courseId:"Visualization", videoId:"Visualization_3"}
-      {courseId:"Chinese_Text_Mining", videoId:"Chinese_Text_Mining"}
+      {courseId:"LMNN", videoId:"YTV_7pm91lCWyfE"}
+      {courseId:"RBasic", videoId:"YTV_Ut55jPEm-yE"}
+      {courseId:"RBasic", videoId:"YTV_zCE4kEnQlkM"}
+      {courseId:"RETL", videoId:"YTV_JD1eDxxrur0"}
+      {courseId:"RETL", videoId:"YTV_aDIVtL2YrPE"}
+      {courseId:"R_Data_Analysis", videoId:"YTV_fcRtf4l1Xfc"}
+      {courseId:"Visualization", videoId:"YTV_oksIFsSWXmM"}
+      {courseId:"Visualization", videoId:"YTV_Da7RNqPWBZA"}
+      {courseId:"Visualization", videoId:"YTV_0KpLjx5wyJE"}
+      {courseId:"Chinese_Text_Mining", videoId:"YTV_TcMao3r6jYY"}
     ]
 
     if ENV.isDev
