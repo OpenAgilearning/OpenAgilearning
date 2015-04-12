@@ -4,6 +4,14 @@
 @Collections.LearningResources = @LearningResources
 @db.learningResources = @Collections.LearningResources
 
+@db.slides = new Mongo.Collection "slides"
+@db.videos = new Mongo.Collection "videos"
+@db.websites = new Mongo.Collection "websites"
+
+@db.courseJoinSlides = new Mongo.Collection "courseJoinSlides"
+@db.courseJoinVideos = new Mongo.Collection "courseJoinVideos"
+@db.courseJoinWebsites = new Mongo.Collection "courseJoinWebsites"
+
 
 # @learningResourceSchema = new SimpleSchema
 #   title:

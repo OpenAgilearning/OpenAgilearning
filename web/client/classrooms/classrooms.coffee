@@ -156,3 +156,5 @@ Template.setEnvConfigsForm.helpers
 
 Template.classroom.helpers
   TermsSigned:-> _.contains Meteor.user().agreedTOC, "toc_main"
+  hasVideo:-> db.videos.find().count() > 0
+  hasSlide:-> db.slides.find().count() > 0

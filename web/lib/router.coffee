@@ -226,6 +226,7 @@ Meteor.startup ->
       path: "classroom/:classroomId"
       template: "classroom"
       data: ->
+
         resData =
           rootURL:rootURL
           user: ->
@@ -236,6 +237,13 @@ Meteor.startup ->
 
           course: =>
             Courses.findOne()
+
+          videos: ->
+            db.videos.find()
+
+          slides: ->
+            db.slides.find()
+
 
           classroomAndId: =>
             "classroom_" + @params.classroomId
@@ -390,7 +398,8 @@ Meteor.startup ->
 
           Meteor.subscribe "terms"
           Meteor.subscribe "userRoles", ["agilearning.io"]
-
+          Meteor.subscribe "classroomVideos", @params.classroomId
+          Meteor.subscribe "classroomSlides", @params.classroomId
       # onAfterAction: ->
         # Meteor.call "getClassroomDocker", @params.classroomId, (err, data)->
         #   if not err

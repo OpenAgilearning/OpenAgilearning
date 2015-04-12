@@ -5,7 +5,7 @@
 
 #   if userId
 #     classroomDoc = Classrooms.findOne _id:classroomId
-    
+
 #     console.log "classroomDoc = "
 #     console.log classroomDoc
 
@@ -30,7 +30,7 @@ Meteor.publish "classroomCourse", (classroomId)->
 Meteor.publish "classroom", (classroomId)->
   #FIXME: if someone know th id
   Classrooms.find _id:classroomId
-  
+
 
 Meteor.publish "classroomDockerImages", (classroomId)->
   #FIXME: if someone know th id
@@ -47,7 +47,7 @@ Meteor.publish "classChatroomMessages", (classroomId) ->
 
 Meteor.publish "classChatroom", (classroomId) ->
   Chatrooms.find {classroomId: classroomId}
-  
+
 Meteor.publish "classExercises", (classroomId) ->
 
   Exercises.find {classroomId: classroomId}
@@ -60,3 +60,26 @@ Meteor.publish "usersOfClassroom", (classroomId)->
     Roles.getUsersInRole ["student","teacher","admin"],classroomAndId
   else
     Meteor.users.find _id: "permisionDeny"
+
+
+Meteor.publish "classroomVideos", (classroomId)->
+
+  classroomDoc = Classrooms.findOne _id:classroomId
+  if classroomDoc
+
+    course_video_pairs = db.courseJoinVideos.find courseId:classroomDoc.courseId
+    videoIds = course_video_pairs.map (doc)->doc.videoId
+    db.videos.find _id:$in:videoIds
+  else
+    db.videos.find _id:"permisionDeny"
+
+Meteor.publish "classroomSlides", (classroomId)->
+
+  classroomDoc = Classrooms.findOne _id:classroomId
+  if classroomDoc
+
+    course_slide_pairs = db.courseJoinSlides.find courseId:classroomDoc.courseId
+    slideIds = course_slide_pairs.map (doc)->doc.slideId
+    db.slides.find _id:$in:slideIds
+  else
+    db.slides.find _id:"permisionDeny"
