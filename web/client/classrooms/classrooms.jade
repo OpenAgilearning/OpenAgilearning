@@ -3,8 +3,17 @@ template(name="classroom")
     .row.clearfix
       .col-md-9.column.classroom-body
         ul.nav.nav-tabs.classroom-nav
+
           li.active
+            a(data-toggle="tab", href="#Info") Info
+
+          li
             a(data-toggle="tab", href="#Materials") Materials
+
+          each dockerImageTags
+            li
+              a(data-toggle="tab", href="#imageTag_{{hash _id}}", tag="{{tag}}").select-env {{tag}}
+
 
           //- if dockerHasHTTP
           //-   li
@@ -34,7 +43,15 @@ template(name="classroom")
 
 
         .tab-content
-          .tab-pane.fade.in.active#Materials
+
+          .tab-pane.fade.in.active#Info
+            br
+            +courseImage courseDoc=course width="300px"
+            h2 {{course.courseName}}
+            p {{course.description}}
+
+
+          .tab-pane.fade.in#Materials
             .row
               .col-md-3
                 ul.nav.nav-pills.nav-stacked(style="margin-top:30px")
@@ -55,11 +72,7 @@ template(name="classroom")
                     li
                       a(data-toggle="tab", href="#slide_{{_id}}") {{title}}
 
-                  li Coding Environment
 
-                  each dockerImageTags
-                    li
-                      a(data-toggle="tab", href="#imageTag_{{hash _id}}") {{tag}}
 
               .col-md-9
                 .tab-content
@@ -77,9 +90,9 @@ template(name="classroom")
                     .tab-pane.fade(id="slide_{{_id}}")
                       iframe(id="slide_iframe_{{_id}}" src="{{url}}", width="100%", height="500px", scrolling="auto")
 
-                  each dockerImageTags
-                    .tab-pane.fade(id="imageTag_{{hash _id}}")
-                      +codingEnvironment TermsSigned=TermsSigned tag=tag
+          each dockerImageTags
+            .tab-pane.fade(id="imageTag_{{hash _id}}")
+              +codingEnvironment TermsSigned=TermsSigned tag=tag
 
 
           //- if dockerHasHTTP

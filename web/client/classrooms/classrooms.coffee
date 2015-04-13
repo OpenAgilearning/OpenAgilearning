@@ -20,6 +20,7 @@ Template.classroom.rendered = ->
     else
       console.log "get env failed!"
 
+
   # timer = setInterval((->
   #   xhr = new XMLHttpRequest()
   #   xhr.onload=->
@@ -142,6 +143,7 @@ Template.classroom.helpers
   hasVideo:-> db.videos.find().count() > 0
   hasSlide:-> db.slides.find().count() > 0
   hash:(string)->string.replace /[\[\]:\/]+/g, ""
+
 
 
 Template.codingEnvironment.helpers
