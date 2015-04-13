@@ -1,6 +1,6 @@
 {
   "dockerode": "2.0.7",
-  "fibers": "1.0.2",
+  "fibers": "1.0.5",
   "stream-to-mongo": "0.1.4",
   "JSONStream":"0.10.0",
   "mongo-writable-stream":"0.1.2",
