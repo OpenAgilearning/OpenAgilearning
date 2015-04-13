@@ -5,9 +5,6 @@ template(name="classroom")
         ul.nav.nav-tabs.classroom-nav
 
           li.active
-            a(data-toggle="tab", href="#Info") Info
-
-          li
             a(data-toggle="tab", href="#Materials") Materials
 
           each dockerImageTags
@@ -43,15 +40,7 @@ template(name="classroom")
 
 
         .tab-content
-
-          .tab-pane.fade.in.active#Info
-            br
-            +courseImage courseDoc=course width="300px"
-            h2 {{course.courseName}}
-            p {{course.description}}
-
-
-          .tab-pane.fade.in#Materials
+          .tab-pane.fade.in.active#Materials
             .row
               .col-md-3
                 ul.nav.nav-pills.nav-stacked(style="margin-top:30px")
