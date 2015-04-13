@@ -51,7 +51,7 @@
       }
     },
     "fibers": {
-      "version": "1.0.2"
+      "version": "1.0.5"
     },
     "introspect": {
       "version": "0.0.3"
