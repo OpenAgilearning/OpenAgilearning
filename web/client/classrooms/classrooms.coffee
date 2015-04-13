@@ -55,13 +55,13 @@ Template.envIframe.rendered = ->
 Template.envIframe.events
   "click .connectEnvBtn": (e, t)->
     e.stopPropagation()
-    $("#envIframe").attr 'src', ""
+    t.$(".envIframe").attr 'src', ""
 
-    ip = $("#envIframe").attr "ip"
-    port = $("#envIframe").attr "port"
+    ip = t.$(".envIframe").attr "ip"
+    port = t.$(".envIframe").attr "port"
     url = "http://"+ip+":"+port
 
-    $("#envIframe").attr 'src', url
+    t.$(".envIframe").attr 'src', url
 
 Template.classroomEnvIframe.helpers
   iframeUser:->
