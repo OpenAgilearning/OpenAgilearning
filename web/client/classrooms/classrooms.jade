@@ -6,15 +6,15 @@ template(name="classroom")
           li.active
             a(data-toggle="tab", href="#Materials") Materials
 
-          if dockerHasHTTP
-            li
-              a(data-toggle="tab", href="#Environment") Environment
+          //- if dockerHasHTTP
+          //-   li
+          //-     a(data-toggle="tab", href="#Environment") Environment
 
-          if dockerHasSFTP
-            li
-              a(data-toggle="tab", href="#SFTP") SFTP
+          //- if dockerHasSFTP
+          //-   li
+          //-     a(data-toggle="tab", href="#SFTP") SFTP
 
-          if isInRole "admin" classroomAndId
+          //- if isInRole "admin" classroomAndId
             li
               a(data-toggle="tab", href="#Admin") Admin
 
@@ -79,58 +79,54 @@ template(name="classroom")
 
                   each dockerImageTags
                     .tab-pane.fade(id="imageTag_{{hash _id}}")
-                      if TermsSigned
-
-                        +classroomEnvIframe2 tag=tag
-                      else
-                        +pleaseSignTerms
+                      +codingEnvironment TermsSigned=TermsSigned tag=tag
 
 
-          if dockerHasHTTP
-            .tab-pane.fade#Environment
-              if TermsSigned
+          //- if dockerHasHTTP
+          //-   .tab-pane.fade#Environment
+          //-     if TermsSigned
 
-                if needToSetEnvConfigs
-                  div(style="position:relative; height:500px;")
-                    +spinner
-                else
-                  +classroomEnvIframe docker=docker
-              else
-                +pleaseSignTerms
+          //-       if needToSetEnvConfigs
+          //-         div(style="position:relative; height:500px;")
+          //-           +spinner
+          //-       else
+          //-         +classroomEnvIframe docker=docker
+          //-     else
+          //-       +pleaseSignTerms
 
-              //- if needToSetEnvConfigs
-              //-   div(style="position:relative; height:500px;")
-              //-     //- p.text-primary loading environment ...
-              //-     +spinner
-              //-   +setEnvConfigsForm classroomId=classroomId
-              //- else
-              //-   +classroomEnvIframe docker=docker
+          //-     //- if needToSetEnvConfigs
+          //-     //-   div(style="position:relative; height:500px;")
+          //-     //-     //- p.text-primary loading environment ...
+          //-     //-     +spinner
+          //-     //-   +setEnvConfigsForm classroomId=classroomId
+          //-     //- else
+          //-     //-   +classroomEnvIframe docker=docker
 
 
-          if dockerHasSFTP
-            .tab-pane.fade#SFTP
-              if sftp
-                h2 SFTP Info:
-                ul
-                  li IP: {{sftp.ip}}
-                  li Port: {{sftp.port}}
-                  li {{sftp.envs}}
-              else
-                div(style="position:relative; height:500px;")
-                  +spinner
+          //- if dockerHasSFTP
+          //-   .tab-pane.fade#SFTP
+          //-     if sftp
+          //-       h2 SFTP Info:
+          //-       ul
+          //-         li IP: {{sftp.ip}}
+          //-         li Port: {{sftp.port}}
+          //-         li {{sftp.envs}}
+          //-     else
+          //-       div(style="position:relative; height:500px;")
+          //-         +spinner
 
-              h2 FileZilla Tutorial
-              ul
-                li
-                  h2 Download FileZilla
-                  a(href="https://filezilla-project.org/")
-                    img(src="/images/filezillaDownload.png",width="100%")
-                li
-                  h2 Open Site Manager
-                  img(src="/images/filezillaTutorial1.png",width="100%")
-                li
-                  h2 Fill up: IP, Port, USER, PASS
-                  img(src="/images/filezillaTutorial2.png",width="100%")
+          //-     h2 FileZilla Tutorial
+          //-     ul
+          //-       li
+          //-         h2 Download FileZilla
+          //-         a(href="https://filezilla-project.org/")
+          //-           img(src="/images/filezillaDownload.png",width="100%")
+          //-       li
+          //-         h2 Open Site Manager
+          //-         img(src="/images/filezillaTutorial1.png",width="100%")
+          //-       li
+          //-         h2 Fill up: IP, Port, USER, PASS
+          //-         img(src="/images/filezillaTutorial2.png",width="100%")
 
 
           if isInRole "admin" classroomAndId
@@ -180,25 +176,32 @@ template(name="classroomEnvIframe")
 template(name="envIframe")
   if user
     label Username:
-    button.btn.btn-flat.btn-link#copy-user-button(type="button" data-clipboard-text="{{user}}" data-placement="bottom" style="text-transform:none;") {{user}}
+    button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{user}}" data-placement="bottom" style="text-transform:none;") {{user}}
     //- Style 2
     //- label.control-label Username:
     //- input.form-control(type='text' value="{{user}}" readonly="readonly" style="display: inline-block;width: 100px;")
     //- button#copy-user-button.btn.btn-default.btn-raised.btn-xs(type='button' data-clipboard-text="{{user}}" data-placement="bottom") copy
   if password
     label Password:
-    button.btn.btn-flat.btn-link#copy-password-button(type="button" data-clipboard-text="{{password}}" data-placement="bottom" style="text-transform:none;") {{password}}
+    button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{password}}" data-placement="bottom" style="text-transform:none;") {{password}}
   button.connectEnvBtn.btn.btn-warning.btn-default.pull-right Reconnect
   button.commitBtn.btn.btn-info.btn-default.pull-right Commit
 
-  #beforeIframeLoadedSpinner(width="100%", height="550px")
-    +spinner
-  iframe#envIframe(src="http://{{ip}}:{{port}}",port="{{port}}",ip="{{ip}}", width="100%", height="550px", scrolling="yes" , style="visibility: hidden;")
+  iframe#envIframe(src="http://{{ip}}:{{port}}",port="{{port}}",ip="{{ip}}", width="100%", height="550px", scrolling="yes" )
 
-template(name="classroomEnvIframe2")
+template(name="codingEnvironment")
 
-  if dockerInstance
-    +classroomEnvIframe docker=dockerInstance
+  if TermsSigned
+
+    if dockerInstance
+      +classroomEnvIframe docker=dockerInstance
+    else
+
+      if useThisEnvironment
+        div(style="position:relative; height:500px;")
+          +spinner
+      else
+        button(type="button").btn.btn-primary.wantToCode I want to code!
+
   else
-    div(style="position:relative; height:500px;")
-      +spinner
+    +pleaseSignTerms

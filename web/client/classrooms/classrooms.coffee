@@ -36,18 +36,19 @@ Template.classroom.rendered = ->
   #   return
   # ), 1000)
 Template.envIframe.rendered = ->
-  ["#copy-user-button","#copy-password-button"].map (id)->
-    if $(id).length is 1
-      copybtn = new ZeroClipboard $(id)
-      copybtn.on 'ready', (readyEvent) ->
-        $(id).attr("data-original-title", "Click to Copy")
-        .tooltip()
 
-        copybtn.on 'aftercopy', (event) ->
-          $(id)
-          .attr("data-original-title", "Copied")
-          .tooltip "show"
-          .attr("data-original-title", "Click to Copy")
+  _.map @$(".copy-button"), (dom)->
+    button = $(dom)
+    copybtn = new ZeroClipboard button
+    copybtn.on 'ready', (readyEvent) ->
+      button.attr("data-original-title", "Click to Copy")
+      .tooltip()
+
+      copybtn.on 'aftercopy', (event) ->
+        button
+        .attr("data-original-title", "Copied")
+        .tooltip "show"
+        .attr("data-original-title", "Click to Copy")
 
 
 Template.envIframe.events
@@ -101,24 +102,6 @@ Template.classroomEnvIframe.rendered = ->
   # $("#envIframe").on "load",->
   #   console.log "load:s.dm.asm.,sm"
 
-  wait = 3000
-
-  setTimeout((->
-    $("#beforeIframeLoadedSpinner").css("display", "none")
-    $("#envIframe").attr 'src', ""
-
-    ip = $("#envIframe").attr "ip"
-    port = $("#envIframe").attr "port"
-    url = "http://"+ip+":"+port
-
-    $("#envIframe").attr 'src', url
-
-  ),wait)
-
-  setTimeout((->
-    $("#envIframe").css("visibility", "visible")
-  ),wait + 700)
-
 
 
 Template.setEnvConfigsForm.helpers
@@ -161,15 +144,26 @@ Template.classroom.helpers
   hash:(string)->string.replace /[\[\]:\/]+/g, ""
 
 
-Template.classroomEnvIframe2.helpers
+Template.codingEnvironment.helpers
   dockerInstance: -> DockerInstances.findOne imageTag:@tag
+  useThisEnvironment: ->
+    console.log @tag, "and ", Router.current().data().course().dockerImageTag, @tag is Router.current().data().course().dockerImageTag
+    Session.get("useThisEnvironment" + @tag) or (@tag is Router.current().data().course().dockerImageTag)
 
-Template.classroomEnvIframe2.rendered = ->
-  classroomId = Router.current().params.classroomId
+Template.codingEnvironment.events
+  "click .wantToCode": (e) ->
+    e.stopPropagation()
+
+    classroomId = Router.current().params.classroomId
+    Meteor.call "getClassroomDocker", classroomId, @tag, (err, data)->
+      if not err
+        console.log "get env successfully!"
+      else
+        console.log "get env failed!"
+
+    Session.set ("useThisEnvironment" + @tag), yes
+
+
+Template.codingEnvironment.rendered = ->
   tag = @data.tag
-  console.log "tag", tag
-  Meteor.call "getClassroomDocker", classroomId, tag, (err, data)->
-    if not err
-      console.log "get env successfully!"
-    else
-      console.log "get env failed!"
+  Session.set ("useThisEnvironment" + tag), no
