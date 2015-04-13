@@ -19,9 +19,9 @@ template(name="classroom")
           //-   li
           //-     a(data-toggle="tab", href="#Environment") Environment
 
-          //- if dockerHasSFTP
-          //-   li
-          //-     a(data-toggle="tab", href="#SFTP") SFTP
+          if dockerHasSFTP
+            li
+              a(data-toggle="tab", href="#SFTP") SFTP
 
           //- if isInRole "admin" classroomAndId
             li
@@ -116,30 +116,30 @@ template(name="classroom")
           //-     //-   +classroomEnvIframe docker=docker
 
 
-          //- if dockerHasSFTP
-          //-   .tab-pane.fade#SFTP
-          //-     if sftp
-          //-       h2 SFTP Info:
-          //-       ul
-          //-         li IP: {{sftp.ip}}
-          //-         li Port: {{sftp.port}}
-          //-         li {{sftp.envs}}
-          //-     else
-          //-       div(style="position:relative; height:500px;")
-          //-         +spinner
+          if dockerHasSFTP
+            .tab-pane.fade#SFTP
+              if sftp
+                h2 SFTP Info:
+                ul
+                  li IP: {{sftp.ip}}
+                  li Port: {{sftp.port}}
+                  li {{sftp.envs}}
+              else
+                div(style="position:relative; height:500px;")
+                  +spinner
 
-          //-     h2 FileZilla Tutorial
-          //-     ul
-          //-       li
-          //-         h2 Download FileZilla
-          //-         a(href="https://filezilla-project.org/")
-          //-           img(src="/images/filezillaDownload.png",width="100%")
-          //-       li
-          //-         h2 Open Site Manager
-          //-         img(src="/images/filezillaTutorial1.png",width="100%")
-          //-       li
-          //-         h2 Fill up: IP, Port, USER, PASS
-          //-         img(src="/images/filezillaTutorial2.png",width="100%")
+              h2 FileZilla Tutorial
+              ul
+                li
+                  h2 Download FileZilla
+                  a(href="https://filezilla-project.org/")
+                    img(src="/images/filezillaDownload.png",width="100%")
+                li
+                  h2 Open Site Manager
+                  img(src="/images/filezillaTutorial1.png",width="100%")
+                li
+                  h2 Fill up: IP, Port, USER, PASS
+                  img(src="/images/filezillaTutorial2.png",width="100%")
 
 
           if isInRole "admin" classroomAndId
