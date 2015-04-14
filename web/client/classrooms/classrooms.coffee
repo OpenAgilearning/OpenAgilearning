@@ -20,6 +20,7 @@ Template.classroom.rendered = ->
     else
       console.log "get env failed!"
 
+
   # timer = setInterval((->
   #   xhr = new XMLHttpRequest()
   #   xhr.onload=->
@@ -36,30 +37,31 @@ Template.classroom.rendered = ->
   #   return
   # ), 1000)
 Template.envIframe.rendered = ->
-  ["#copy-user-button","#copy-password-button"].map (id)->
-    if $(id).length is 1
-      copybtn = new ZeroClipboard $(id)
-      copybtn.on 'ready', (readyEvent) ->
-        $(id).attr("data-original-title", "Click to Copy")
-        .tooltip()
 
-        copybtn.on 'aftercopy', (event) ->
-          $(id)
-          .attr("data-original-title", "Copied")
-          .tooltip "show"
-          .attr("data-original-title", "Click to Copy")
+  _.map @$(".copy-button"), (dom)->
+    button = $(dom)
+    copybtn = new ZeroClipboard button
+    copybtn.on 'ready', (readyEvent) ->
+      button.attr("data-original-title", "Click to Copy")
+      .tooltip()
+
+      copybtn.on 'aftercopy', (event) ->
+        button
+        .attr("data-original-title", "Copied")
+        .tooltip "show"
+        .attr("data-original-title", "Click to Copy")
 
 
 Template.envIframe.events
   "click .connectEnvBtn": (e, t)->
     e.stopPropagation()
-    $("#envIframe").attr 'src', ""
+    t.$(".envIframe").attr 'src', ""
 
-    ip = $("#envIframe").attr "ip"
-    port = $("#envIframe").attr "port"
+    ip = t.$(".envIframe").attr "ip"
+    port = t.$(".envIframe").attr "port"
     url = "http://"+ip+":"+port
 
-    $("#envIframe").attr 'src', url
+    t.$(".envIframe").attr 'src', url
 
 Template.classroomEnvIframe.helpers
   iframeUser:->
@@ -101,24 +103,6 @@ Template.classroomEnvIframe.rendered = ->
   # $("#envIframe").on "load",->
   #   console.log "load:s.dm.asm.,sm"
 
-  wait = 3000
-
-  setTimeout((->
-    $("#beforeIframeLoadedSpinner").css("display", "none")
-    $("#envIframe").attr 'src', ""
-
-    ip = $("#envIframe").attr "ip"
-    port = $("#envIframe").attr "port"
-    url = "http://"+ip+":"+port
-
-    $("#envIframe").attr 'src', url
-
-  ),wait)
-
-  setTimeout((->
-    $("#envIframe").css("visibility", "visible")
-  ),wait + 700)
-
 
 
 Template.setEnvConfigsForm.helpers
@@ -158,3 +142,32 @@ Template.classroom.helpers
   TermsSigned:-> _.contains Meteor.user().agreedTOC, "toc_main"
   hasVideo:-> db.videos.find().count() > 0
   hasSlide:-> db.slides.find().count() > 0
+  hash:(string)->string.replace /[\[\]:\/]+/g, ""
+
+
+
+Template.codingEnvironment.helpers
+  dockerInstance: -> DockerInstances.findOne imageTag:@tag
+  dockerImageTag: ->
+    console.log 'db.dockerImageTags.findOne tag:@tag', (db.dockerImageTags.findOne tag:@tag)
+    db.dockerImageTags.findOne tag:@tag
+  useThisEnvironment: ->
+    Session.get("useThisEnvironment" + @tag) or (@tag is Router.current().data().course().dockerImageTag)
+
+Template.codingEnvironment.events
+  "click .wantToCode": (e) ->
+    e.stopPropagation()
+
+    classroomId = Router.current().params.classroomId
+    Meteor.call "getClassroomDocker", classroomId, @tag, (err, data)->
+      if not err
+        console.log "get env successfully!"
+      else
+        console.log "get env failed!"
+
+    Session.set ("useThisEnvironment" + @tag), yes
+
+
+Template.codingEnvironment.rendered = ->
+  tag = @data.tag
+  Session.set ("useThisEnvironment" + tag), no

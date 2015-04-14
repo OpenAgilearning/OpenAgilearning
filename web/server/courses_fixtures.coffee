@@ -73,7 +73,7 @@
       { _id: "playKaggle" , "languages":["EN","ZH"], "courseName" : "RLadies Play Kaggle", "dockerImageTag" : "c3h3/rladies-hello-kaggle:latest", "slides":true,  "description" : "This is an learning environment used in Taiwan R Ladies to learn how to play 'hello-world' datasets in kaggle with R."}
 
       { _id:"Chinese_Text_Mining", "languages":["ZH"], "courseName" : "Chinese Text Mining", "dockerImageTag" : "c3h3/r-nlp:sftp", "video":true, "slides":true, "description" : "Introduction to text mining with R (tmcn and Rwordseg)" },
-      { "languages":["EN","ZH"], "courseName" : "Play Jupyter", "dockerImageTag" : "adrianliaw/jupyter-irkernel:agilearning", "description" : "The language-agnostic parts of IPython are getting a new home in Project Jupyter.", "imageURL":"/images/jupyter-sq-text.svg"},
+      { _id: "jupyter", "languages":["EN","ZH"], "courseName" : "Play Jupyter", "dockerImageTag" : "adrianliaw/jupyter-irkernel:agilearning", "description" : "The language-agnostic parts of IPython are getting a new home in Project Jupyter.", "imageURL":"/images/jupyter-sq-text.svg"},
 
       # { "courseName" : "livehouse20141105", "dockerImageTag" : "c3h3/livehouse20141105", "slides" : "https://www.slidenow.com/slide/129/play", "description" : "https://event.livehouse.in/2014/combo8/"},
       # { "courseName" : "NCCU Crawler 201411", "dockerImageTag" : "c3h3/nccu-crawler-courses-201411", "slides" : "http://nbviewer.ipython.org/github/c3h3/NCCU-PyData-Courses-2013Spring/blob/master/Lecture1/crawler/Lecture2_WebCrawler.ipynb", "description" : ""},
@@ -137,6 +137,19 @@
       {courseId:"Chinese_Text_Mining", videoId:"YTV_TcMao3r6jYY"}
     ]
 
+    courseJoinDockerImageTags = [
+      {courseId:"LMNN", tag:"c3h3/learning-shogun:agilearning"}
+      {courseId:"RBasic", tag:"c3h3/dsc2014tutorial:latest"}
+      {courseId:"RETL", tag:"c3h3/dsc2014tutorial:latest"}
+      {courseId:"R_Data_Analysis", tag:"c3h3/dsc2014tutorial:latest"}
+      {courseId:"Visualization", tag:"c3h3/dsc2014tutorial:latest"}
+      {courseId:"ml-for-hackers",tag:"c3h3/ml-for-hackers:latest"}
+      {courseId:"playKaggle",tag:"c3h3/rladies-hello-kaggle:latest"}
+      {courseId:"Chinese_Text_Mining", tag:"c3h3/r-nlp:sftp"}
+      {courseId:"jupyter",tag:"adrianliaw/jupyter-irkernel:agilearning"}
+
+    ]
+
     if ENV.isDev
       demoCourses.push
         _id: "Try_SFTP"
@@ -147,6 +160,10 @@
         imageURL: "/images/rstudio_dsc2014_etl2.png"
 
       courseJoinSlides.push {courseId: "Try_SFTP", slideId: "playKaggle"}
+
+
+      courseJoinDockerImageTags.push {courseId:"RBasic",tag:"adrianliaw/jupyter-irkernel:agilearning"}
+      courseJoinDockerImageTags.push {courseId:"RBasic",tag:"c3h3/r-nlp:sftp"}
 
 
     for oneCourse in demoCourses
@@ -240,6 +257,9 @@
       if db.courseJoinVideos.find(item).count() is 0
         db.courseJoinVideos.insert item
 
+    for item in courseJoinDockerImageTags
+      if db.courseJoinDockerImageTags.find(item).count() is 0
+        db.courseJoinDockerImageTags.insert item
 
   forceClear: ->
     db.courses.remove {}
@@ -247,6 +267,7 @@
     db.courseJoinSlides.remove {}
     db.videos.remove {}
     db.courseJoinVideos.remove {}
+    db.courseJoinDockerImageTags.remove {}
     db.classrooms.remove {}
     db.roles.remove {}
     db.roleGroups.remove {}

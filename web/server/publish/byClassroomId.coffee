@@ -83,3 +83,14 @@ Meteor.publish "classroomSlides", (classroomId)->
     db.slides.find _id:$in:slideIds
   else
     db.slides.find _id:"permisionDeny"
+
+
+Meteor.publish "classroomCourseJoinDockerImageTags", (classroomId)->
+
+  classroomDoc = Classrooms.findOne _id:classroomId
+  if classroomDoc
+
+    db.courseJoinDockerImageTags.find courseId:classroomDoc.courseId
+
+  else
+    db.courseJoinDockerImageTags.find _id:"permisionDeny"

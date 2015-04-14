@@ -62,7 +62,7 @@ getDockerFreePort = (dockerServerId)->
 
 Meteor.methods
 
-  "getClassroomDocker": (classroomId) ->
+  "getClassroomDocker": (classroomId, customTag=undefined) ->
     user = Meteor.user()
     if not user
       throw new Meteor.Error(401, "You need to login")
@@ -72,17 +72,25 @@ Meteor.methods
 
     classroomDoc = Classrooms.findOne _id:classroomId
     if classroomDoc
-      courseData = Courses.findOne _id:classroomDoc.courseId
 
-      if courseData.dockerImage
-        imageTag = courseData.dockerImage
+      console.log "db.courseJoinDockerImageTags.findOne({tag:customTag, courseId:classroomDoc.courseId})", db.courseJoinDockerImageTags.findOne({tag:customTag, courseId:classroomDoc.courseId})
+
+      if customTag and db.courseJoinDockerImageTags.findOne({tag:customTag, courseId:classroomDoc.courseId})
+        imageTag = customTag
       else
-        imageTag = courseData.dockerImageTag
+
+        courseData = Courses.findOne _id:classroomDoc.courseId
+
+        if courseData.dockerImage
+          imageTag = courseData.dockerImage
+        else
+          imageTag = courseData.dockerImageTag
 
       # if courseData.bundleServer
       #   queryServer = courseData.bundleServer
       # else
       #   queryServer = {"user.group.id":"TaishinDataMining"}
+
 
 
 
