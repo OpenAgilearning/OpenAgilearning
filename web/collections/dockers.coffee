@@ -73,8 +73,6 @@ Meteor.methods
     classroomDoc = Classrooms.findOne _id:classroomId
     if classroomDoc
 
-      console.log "db.courseJoinDockerImageTags.findOne({tag:customTag, courseId:classroomDoc.courseId})", db.courseJoinDockerImageTags.findOne({tag:customTag, courseId:classroomDoc.courseId})
-
       if customTag and db.courseJoinDockerImageTags.findOne({tag:customTag, courseId:classroomDoc.courseId})
         imageTag = customTag
       else

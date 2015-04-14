@@ -148,9 +148,7 @@ Template.classroom.helpers
 
 Template.codingEnvironment.helpers
   dockerInstance: -> DockerInstances.findOne imageTag:@tag
-  dockerImageTag: ->
-    console.log 'db.dockerImageTags.findOne tag:@tag', (db.dockerImageTags.findOne tag:@tag)
-    db.dockerImageTags.findOne tag:@tag
+  dockerImageTag: -> db.dockerImageTags.findOne tag:@tag
   useThisEnvironment: ->
     Session.get("useThisEnvironment" + @tag) or (@tag is Router.current().data().course().dockerImageTag)
 
