@@ -3,7 +3,7 @@
     [{
       _id: "toc_main"
       title:"Terms of Service for Environment"
-      content: Assets.getText "toc1.md"#fs.readFileSync("assets/app/toc1.md").toString()
+      content: Assets.getText "toc1.md"
       version: "0.0.1"
       publishedAt:new Date()
     }
