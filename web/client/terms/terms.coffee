@@ -7,3 +7,5 @@ Template.pleaseSignTerms.rendered = ->
 Template.pleaseSignTerms.helpers
   doc: ->{tocId:"toc_main"}
 
+Template.terms.helpers
+  terms:-> Router.current().data().terms()
