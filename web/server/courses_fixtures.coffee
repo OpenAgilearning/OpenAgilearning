@@ -164,6 +164,7 @@
 
       courseJoinDockerImageTags.push {courseId:"RBasic",tag:"adrianliaw/jupyter-irkernel:agilearning"}
       courseJoinDockerImageTags.push {courseId:"RBasic",tag:"c3h3/r-nlp:sftp"}
+      courseJoinDockerImageTags.push {courseId:"jupyter",tag:"c3h3/dsc2014tutorial:latest"}
 
 
     for oneCourse in demoCourses
