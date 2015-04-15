@@ -1,6 +1,27 @@
 
+@Collections.Roles = new Meteor.Collection "roleTypes", {maskName:"roles"}
+new Meteor.Collection "userIsRole"
 
-@Collections.Roles = new Meteor.Collection "agileaningRoles", {maskName:"roles"}
+
+@_Roles =
+  is: (group, role)->
+    userId = Meteor.userId()
+
+    # if not userId
+    roleQuery =
+      group: group
+      role: role
+
+    roleId = db.roles.findOne(roleQuery)._id
+
+    userInRoleQuery =
+      roleId: roleId
+      userId: userId
+
+    db.userInRole.find(userInRoleQuery).count() > 0
+
+
+# @Collections.Roles = new Meteor.Collection "agileaningRoles", {maskName:"roles"}
 @Collections.RoleGroups = new Meteor.Collection "agileaningRoleGroups", {maskName:"roleGroups"}
 
 @db.roles = @Collections.Roles
