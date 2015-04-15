@@ -10,5 +10,6 @@
       "socketPath": "/var/run/docker.sock"
   },
   "adminMeetupIds":[59393362, 173080282, 129433302,114542292],
+  "adminFacebookIds":[],
   "environment": "development"
 }

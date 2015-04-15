@@ -50,8 +50,12 @@ syncDockerServerImageTags = ->
   dockerServers = DockerServers.find().fetch()
 
   for dockerServerData in dockerServers
-    docker = new Class.DockerServer(dockerServerData, UsefulCallbacks)
-    resData = docker.listImageTags()
+    try
+      docker = new Class.DockerServer(dockerServerData, UsefulCallbacks)
+      resData = docker.listImageTags()
+    catch e
+      console.log "error = ", e
+
 
     # try
     #   resData = docker.listImageTags()

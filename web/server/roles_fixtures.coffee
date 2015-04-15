@@ -2,9 +2,9 @@ adminMeetupIds = Meteor.settings.adminMeetupIds
 
 defaultAdminUidArray = Meteor.users.find({"services.meetup.id" : {$in:adminMeetupIds}}).fetch().map (xx)-> xx._id
 
-roleGroupData = 
+roleGroupData =
   _id: "agilearning.io"
-  type: "agilearning.io"        
+  type: "agilearning.io"
 
 if db.roleGroups.find(roleGroupData).count() is 0
   roleGroupDataId = db.roleGroups.insert roleGroupData
@@ -13,10 +13,10 @@ else
 
 for uid in defaultAdminUidArray
   for roleType in ["admin","cofounder","developer"]
-    userRoleData = 
+    userRoleData =
       userId:uid
       role:roleType
       groupId:roleGroupDataId
-      
+
     if db.roles.find(userRoleData).count() is 0
       db.roles.insert userRoleData
