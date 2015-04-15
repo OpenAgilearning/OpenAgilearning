@@ -177,18 +177,19 @@ template(name="codingEnvironment")
         div(style="position:relative; height:500px;")
           +spinner
       else
-        .row
-          .jumbotron
-            with dockerImageTag
+        with dockerImageTag
 
-              //- if pictures.[0]
-              //-   img(src="{{pictures.[0]}}" height="200px")
-              if videos.[0]
-                video(width="75%" autoplay loop)
-                  source(src="{{videos.[0]}}" type="video/mp4")
-              h2 {{tag}}
+          //- if pictures.[0]
+          //-   img(src="{{pictures.[0]}}" height="200px")
+          h2 {{tag}}
 
-            button(type="button").btn.btn-primary.btn-lg.wantToCode Initiate this coding environment
+          button(type="button").btn.btn-success.btn-raised.btn-lg.wantToCode Initiate this coding environment
+
+          if videos.[0]
+            video(width="75%" autoplay loop style="position: relative;left: 12.5%;").panel.panel-default.shadow-z-3
+              source(src="{{videos.[0]}}" type="video/mp4")
+
+
 
   else
     +pleaseSignTerms
