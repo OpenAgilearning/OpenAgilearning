@@ -10,7 +10,7 @@
     ]
 
   set: ->
-    if db.terms.find().count() is 0 and Meteor.settings.public.environment isnt "production"
+    if db.terms.find().count() is 0
 
       db.terms.insert term for term in @data()
 
@@ -20,5 +20,3 @@
   reset: ->
     @clear()
     @set()
-
-@Fixture.terms.set()

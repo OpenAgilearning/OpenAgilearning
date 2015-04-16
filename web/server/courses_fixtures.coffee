@@ -284,6 +284,6 @@
 if ENV.isDev
   Fixture.Courses.reset()
 
-Fixture.Courses.set()
+# Fixture.Courses.set()
 
 
