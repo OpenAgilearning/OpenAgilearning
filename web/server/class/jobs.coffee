@@ -50,10 +50,9 @@ new Mongo.Collection "testJobs"
 
 
 @Class.Job = class Job
-  _jobHandlers: defaultJobHandlers
   collection: db.testJobs
 
-  constructor: (@_data)->
+  constructor: (@_data, @_jobHandlers=_.extend {}, defaultJobHandlers)->
     tmpData = @_data
 
     if typeof @_data is "string"
@@ -84,6 +83,12 @@ new Mongo.Collection "testJobs"
           get: ->
             @._data.status
 
+      remove:
+      	desc:
+          get: ->
+            @collection.remove _id:@id
+
+
       updateData:
         desc:
           get: ->
@@ -108,8 +113,6 @@ new Mongo.Collection "testJobs"
 
   setJobHandlers: (jobHandlers) ->
     @_jobHandlers = _.extend @_jobHandlers, jobHandlers
-
-
 
 
 
