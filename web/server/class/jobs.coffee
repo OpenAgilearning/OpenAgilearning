@@ -1,7 +1,7 @@
 
 new Mongo.Collection "testJobs"
 
-defaultJobHandlers =
+@defaultJobHandlers =
   "TODO": (jobObject)->
     console.log "[in defaultJobHandlers with Status TODO]"
     console.log "[in defaultJobHandlers jobObject._data]", jobObject._data
