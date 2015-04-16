@@ -14,7 +14,7 @@
 
     data
   set: ->
-    if db.publicResume.find().count() is 0 and Meteor.settings.public.environment isnt "production"
+    if db.publicResume.find().count() is 0
 
       db.publicResume.insert resume for resume in @data()
 
@@ -24,5 +24,3 @@
   reset: ->
     @clear()
     @set()
-
-Fixture.publicResume.set()
