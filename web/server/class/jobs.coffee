@@ -3,6 +3,8 @@ new Mongo.Collection "testJobs"
 
 @defaultJobHandlers =
   "TODO": (jobObject)->
+    console.log "TEST FIXTURE", Fixture
+
     console.log "[in defaultJobHandlers with Status TODO]"
     console.log "[in defaultJobHandlers jobObject._data]", jobObject._data
 
