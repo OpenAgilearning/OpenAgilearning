@@ -5,4 +5,4 @@ dockerServerCAs/
 data/dataBackup20150130/
 try/
 web/server/methods/testing.coffee
-production_tmp
+backup/
