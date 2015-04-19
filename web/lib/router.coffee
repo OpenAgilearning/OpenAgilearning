@@ -480,34 +480,35 @@ Meteor.startup ->
           Router.go "pleaseLogin"
 
 
+        if Is.systemAdmin
+
+          Meteor.subscribe "allUsers"
+          # Meteor.subscribe "allDockerInstances"
+          # Meteor.subscribe "allDockerImages"
+          # Meteor.subscribe "DevMileStone"
+          # Meteor.subscribe "WantedFeature"
+
+          Meteor.subscribe "allDockerServers"
+          Meteor.subscribe "allDockerServerImages"
+          Meteor.subscribe "allDockerServerContainers"
+
+          # Meteor.subscribe "allEnvTypes"
+          # Meteor.subscribe "allEnvs"
+
         else
-          if Roles.userIsInRole(userId,"admin","system")
-            Meteor.subscribe "allUsers"
+          if Is.dockerAdmin
             # Meteor.subscribe "allDockerInstances"
             # Meteor.subscribe "allDockerImages"
-            # Meteor.subscribe "DevMileStone"
-            # Meteor.subscribe "WantedFeature"
 
             Meteor.subscribe "allDockerServers"
             Meteor.subscribe "allDockerServerImages"
             Meteor.subscribe "allDockerServerContainers"
 
             # Meteor.subscribe "allEnvTypes"
-            # Meteor.subscribe "allEnvs"
+            Meteor.subscribe "allEnvs"
 
           else
-            if Roles.userIsInRole(userId,"admin","dockers")
-              # Meteor.subscribe "allDockerInstances"
-              # Meteor.subscribe "allDockerImages"
-
-              Meteor.subscribe "allDockerServers"
-              Meteor.subscribe "allDockerServerImages"
-              Meteor.subscribe "allDockerServerContainers"
-
-              # Meteor.subscribe "allEnvTypes"
-              Meteor.subscribe "allEnvs"
-            else
-              Router.go "index"
+            Router.go "index"
 
     @route "server",
       path: "admin/server/:dockerServerId"

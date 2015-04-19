@@ -13,15 +13,16 @@
       systemAdminGroup = "agilearning.io"
 
 
-      for role in ["admin"] # ,"cofounder","developer"]
+      for type in ["agilearning.io", "docker"]
         roleType =
-          group: "agilearning.io"
-          role: role
+          group:
+            type: type
+          role: "admin"
 
-        if db.roles.find(roleType).count() is 0
-          roleId = db.roles.insert roleType
+        if db.roleTypes.find(roleType).count() is 0
+          roleId = db.roleTypes.insert roleType
         else
-          roleId = db.roles.findOne(roleType)._id
+          roleId = db.roleTypes.findOne(roleType)._id
 
         for uid in defaultAdminUidArray
           userIsRole =
@@ -33,11 +34,9 @@
 
 
   clear: ->
-    roleQuery =
-      group: "agilearning.io"
 
-    db.roles.remove roleQuery
-
+    db.roleTypes.remove {}
+    db.userIsRole.remove {}
 
 
   reset: ->
@@ -45,12 +44,12 @@
     @set()
 
 
-if ENV.isDev
-  Fixture.SystemAdmins.reset()
+# if ENV.isDev
+#   Fixture.SystemAdmins.reset()
 
 
 Meteor.startup ->
-  Fixture.SystemAdmins.set()
+  Fixture.SystemAdmins.reset()
 
 
 

@@ -1,27 +1,113 @@
 
-@Collections.Roles = new Meteor.Collection "roleTypes", {maskName:"roles"}
+new Meteor.Collection "roleTypes"
 new Meteor.Collection "userIsRole"
 
 
-@_Roles =
-  is: (group, role)->
-    userId = Meteor.userId()
+@Role = class Role
+  constructor: (@group={},@role="admin")->
 
-    # if not userId
-    roleQuery =
-      group: group
-      role: role
+    handsOnApis =
+      query:
+        desc:
+          get: ->
+            group: @group
+            role: @role
 
-    roleId = db.roles.findOne(roleQuery)._id
-
-    userInRoleQuery =
-      roleId: roleId
-      userId: userId
-
-    db.userInRole.find(userInRoleQuery).count() > 0
+      id:
+        desc:
+          get: ->
+            db.roleTypes.findOne(@query)?._id
 
 
-# @Collections.Roles = new Meteor.Collection "agileaningRoles", {maskName:"roles"}
+      check:
+        desc:
+          get: ->
+            userId = Meteor.userId()
+
+            if @id
+              userInRoleQuery =
+                roleId: @id
+                userId: userId
+
+              db.userIsRole.find(userInRoleQuery).count() > 0
+
+
+    for api in Object.keys(handsOnApis)
+      Object.defineProperty @, api, handsOnApis[api].desc
+
+
+  setGroupType: (type)->
+    @group.type = type
+    @
+
+  setGroupId: (id)->
+    @group.id = id
+    @
+
+  setRole: (role)->
+    @role = role
+    @
+
+
+if Meteor.isClient
+  Role::add = (userId)->
+    add.Role userId, @group, @role
+
+else
+  Role::add = (userId)->
+    groupAdminCheck = new @constructor(@group,"admin").check
+    systemAdminCheck = new @constructor({type:"agilearning"},"admin").check
+
+    if groupAdminCheck or systemAdminCheck
+      data =
+        roleId: @id
+        userId: userId
+
+      if db.userIsRole.find(data).count() is 0
+        db.userIsRole.insert data
+      else
+        db.userIsRole.findOne(data)._id
+
+    else
+      throw new Meteor.Error(1301, "[Admin Error] permision deny")
+
+
+  Meteor.methods
+    addRole: (userId, group, role)->
+      loggedInUserId = Meteor.userId()
+
+      if not loggedInUserId
+        throw new Meteor.Error(401, "You need to login")
+
+      new Role(group,role).add userId
+
+
+
+@Is =
+  course: (courseId, role) ->
+    new Role({type:"course",id:courseId}, role).check
+
+  classrooom: (classroomId, role) ->
+    new Role({type:"classroom",id:classroomId}, role).check
+
+
+Object.defineProperty Is, "systemAdmin",
+  get: ->
+    new Role({type:"agilearning.io"},"admin").check
+
+Object.defineProperty Is, "dockerAdmin",
+  get: ->
+    new Role({type:"docker"},"admin").check
+
+
+
+
+
+
+
+
+
+@Collections.Roles = new Meteor.Collection "agileaningRoles", {maskName:"roles"}
 @Collections.RoleGroups = new Meteor.Collection "agileaningRoleGroups", {maskName:"roleGroups"}
 
 @db.roles = @Collections.Roles

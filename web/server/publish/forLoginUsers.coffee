@@ -2,7 +2,18 @@
 Meteor.publish null, ->
   userId = @userId
   if userId
-    db.dockerInstances.find userId:userId
+    dockerInstancesPUB = db.dockerInstances.find userId:userId
+
+    userIsRolePUB = db.userIsRole.find userId:userId
+
+    roleIds = userIsRolePUB.map (data)->data.roleId
+
+    # console.log "roleIds = ", roleIds
+
+    roleTypesPUB = db.roleTypes.find {_id:{$in:roleIds}}
+
+    [dockerInstancesPUB, userIsRolePUB, roleTypesPUB]
+
 
 
 Meteor.publish "userRoles", (roleTypes=[])->
