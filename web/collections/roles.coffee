@@ -58,17 +58,25 @@ if Meteor.isClient
 if Meteor.isServer
   Role::add = (userId)->
     groupAdminCheck = new @constructor(@group,"admin").check
-    systemAdminCheck = new @constructor({type:"agilearning"},"admin").check
+    systemAdminCheck = new @constructor({type:"agilearning.io"},"admin").check
 
     if groupAdminCheck or systemAdminCheck
-      data =
-        roleId: @id
-        userId: userId
 
-      if db.userIsRole.find(data).count() is 0
-        db.userIsRole.insert data
-      else
-        db.userIsRole.findOne(data)._id
+      @add_f(userId)
+
+      # if not @id
+      #   id = db.roleTypes.insert @query
+      # else
+      #   id = @id
+
+      # data =
+      #   roleId: id
+      #   userId: userId
+
+      # if db.userIsRole.find(data).count() is 0
+      #   db.userIsRole.insert data
+      # else
+      #   db.userIsRole.findOne(data)._id
 
     else
       throw new Meteor.Error(1301, "[Admin Error] permision deny")
@@ -118,7 +126,6 @@ for api in isApis
             res = res or new Role({type:api,id:id}, role).check
 
       res
-
 
 
 # @Is =
