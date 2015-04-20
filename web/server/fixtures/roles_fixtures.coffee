@@ -49,7 +49,7 @@
 
 
 Meteor.startup ->
-  Fixture.SystemAdmins.reset()
+  Fixture.SystemAdmins.set()
 
 
 

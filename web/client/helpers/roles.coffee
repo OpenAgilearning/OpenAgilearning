@@ -1,15 +1,19 @@
+Template.registerHelper "Is", ->
+  # console.log "Is = ",Is
+  Is
+
 Template.registerHelper "isNotRole", (roles, groupType, groupId) ->
   RoleTools.isNotRole(roles, groupType, groupId)
 
 Template.registerHelper "isRole", (roles, groupType, groupId) ->
   RoleTools.isRole(roles, groupType, groupId)
-  
-  # console.log "[Dev] forget to publish Collections.RoleGroups"   
+
+  # console.log "[Dev] forget to publish Collections.RoleGroups"
 
   # userId = Meteor.userId()
-    
+
   # if userId
-  #   groupQuery = 
+  #   groupQuery =
   #     type: groupType
   #     id: groupId
 

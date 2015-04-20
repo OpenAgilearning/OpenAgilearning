@@ -53,7 +53,9 @@ if Meteor.isClient
   Role::add = (userId)->
     add.Role userId, @group, @role
 
-else
+
+
+if Meteor.isServer
   Role::add = (userId)->
     groupAdminCheck = new @constructor(@group,"admin").check
     systemAdminCheck = new @constructor({type:"agilearning"},"admin").check
@@ -71,6 +73,23 @@ else
     else
       throw new Meteor.Error(1301, "[Admin Error] permision deny")
 
+  Role::add_f = (userId)->
+    if not @id
+      id = db.roleTypes.insert @query
+    else
+      id = @id
+
+
+    data =
+      roleId: id
+      userId: userId
+
+    if db.userIsRole.find(data).count() is 0
+      db.userIsRole.insert data
+    else
+      db.userIsRole.findOne(data)._id
+
+
 
   Meteor.methods
     addRole: (userId, group, role)->
@@ -82,13 +101,45 @@ else
       new Role(group,role).add userId
 
 
+@Is = {}
+isApis = ["course", "classroom"]
 
-@Is =
-  course: (courseId, role) ->
-    new Role({type:"course",id:courseId}, role).check
+for api in isApis
 
-  classrooom: (classroomId, role) ->
-    new Role({type:"classroom",id:classroomId}, role).check
+  @Is[api] = do (api) ->
+    (id, roles) ->
+      if typeof roles is "string"
+        res = new Role({type:api,id:id}, roles).check
+      else
+        res = false
+
+        if Array.isArray roles
+          for role in roles
+            res = res or new Role({type:api,id:id}, role).check
+
+      res
+
+
+
+# @Is =
+#   course: (courseId, roles) ->
+
+#     if typeof roles is "string"
+#       res = new Role({type:"course",id:courseId}, roles).check
+#     else
+#       res = false
+
+#       if Array.isArray roles
+#         for role in roles
+#           res = res or new Role({type:"course",id:courseId}, role).check
+
+#     res
+
+
+#   classrooom: (classroomId, role) ->
+#     new Role({type:"classroom",id:classroomId}, role).check
+
+
 
 
 Object.defineProperty Is, "systemAdmin",
