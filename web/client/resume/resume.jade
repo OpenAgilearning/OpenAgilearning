@@ -22,7 +22,7 @@ template(name="resume_profile")
     h4 {{field "hometown"}}
   if field "description"
     p {{field "description"}}
-  a(href="{{pathFor 'resume' userId=user._id}}") see my resume
+  //- a(href="{{pathFor 'resume' userId=user._id}}") see my resume
 
 
 template(name="resume_setting")

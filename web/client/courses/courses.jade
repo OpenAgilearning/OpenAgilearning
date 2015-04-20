@@ -57,7 +57,7 @@ template(name="course")
         //- +courseNameAndDescription courseName=course.courseName description=course.description
 
 
-        if isRole "admin" "course" course._id
+        if Is.course course._id "admin"
           button.btn.btn-info(href="#", data-toggle="modal", data-target="#courseInfoAdminEditorModal") Edit
           //- hr
           //- button.btn.btn-info(href="#", data-toggle="modal", data-target="#courseInfoAdminEditorModal") Add Learning Resources
@@ -67,7 +67,7 @@ template(name="course")
         //- +test123 xx=xx yy=yy
 
       .col-md-9.column
-        if isRole "admin" "course" course._id
+        if Is.course course._id "admin"
           h2 Applications:
           +courseApplicationsTable
 

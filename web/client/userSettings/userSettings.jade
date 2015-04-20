@@ -6,6 +6,11 @@ template(name="userSettings")
       .col-md-9.column
         ul.nav.nav-tabs
           li.active
+            a(data-toggle="tab", href="#Profile")
+              |#[span(aria-hidden="true").glyphicon.glyphicon-user]
+              | Profile
+
+          li
             a(data-toggle="tab", href="#Env")
               |#[i.fa.fa-cube]
               | Environment
@@ -13,10 +18,7 @@ template(name="userSettings")
             a(data-toggle="tab", href="#Course")
               |#[span(aria-hidden="true").glyphicon.glyphicon-book]
               | Course
-          li
-            a(data-toggle="tab", href="#Profile")
-              |#[span(aria-hidden="true").glyphicon.glyphicon-user]
-              | Profile
+
           li
             a(data-toggle="tab", href="#Privacy")
               i.fa.fa-user-secret
@@ -24,8 +26,12 @@ template(name="userSettings")
 
 
         .tab-content
-          .tab-pane.fade.in.active#Env
-            +envPageEnvUserConfigsBlock
+          .tab-pane.fade.in.active#Profile
+
+            +resume_setting
+
+          .tab-pane.fade.in#Env
+            //- +envPageEnvUserConfigsBlock
             +envsPageDockerInstancesBlock
 
           .tab-pane.fade.in#Course
@@ -36,9 +42,6 @@ template(name="userSettings")
             h3 Watch List
             p It would be awesome if these courses are ready!
 
-          .tab-pane.fade.in#Profile
-
-            +resume_setting
 
           .tab-pane.fade.in#Privacy
 
