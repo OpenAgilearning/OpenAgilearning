@@ -39,6 +39,7 @@ Meteor.startup ->
           roleIds = db.userIsRole.find().map (data)-> data.roleId
           Meteor.subscribe "roleTypesByRoleIds", roleIds
 
+
         Meteor.subscribe "allPublicCoursesDockerImages"
 
         Meteor.subscribe "allPublicAndSemipublicCourses"
@@ -171,6 +172,7 @@ Meteor.startup ->
         Tracker.autorun ->
           roleIds = db.userIsRole.find().map (data)-> data.roleId
           Meteor.subscribe "roleTypesByRoleIds", roleIds
+
 
 
         if Is.course(@params.courseId, "admin")

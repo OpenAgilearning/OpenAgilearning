@@ -172,11 +172,14 @@ Template.courseMemberTable.helpers
       label: "User"
       fn:(value, object) ->
         userData = Meteor.users.findOne({_id:value})
-        if userData.profile.organization
-          "["+userData.profile.organization+"] "+userData.profile.name
+        org = db.publicResume.findOne({userId:value,key:"organization"})?.value
+        name = db.publicResume.findOne({userId:value,key:"name"})?.value
+
+        if org
+          "["+org+"] "+name
 
         else
-          userData.profile.name
+          name
 
 
     res =
@@ -202,9 +205,11 @@ Template.courseMemberTableCheckBtnField.events
     # console.log @
     userIsRoleId = $(e.target).attr "uirid"
 
+
     Meteor.call "checkCourseApplication", userIsRoleId, (err, data) ->
       if not err
         console.log data
+
       else
         console.log err
         if err.error is 401

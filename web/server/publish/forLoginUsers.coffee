@@ -63,7 +63,9 @@ Meteor.publish "courseAdmin", (courseId)->
 
     # console.log "userIds = ",userIds
     usersPUB = Meteor.users.find(_id:{$in:userIds},{fields:{profile:1,agreeTOC:1}})
-    [rolesPUB, userIsRolesPUB,usersPUB]
+
+    resumesPub = db.publicResume.find({userId:{$in:userIds}})
+    [rolesPUB, userIsRolesPUB,usersPUB,resumesPub]
 
   else
     []

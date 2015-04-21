@@ -37,7 +37,8 @@ Meteor.methods
         new Role({type:"course",id:courseId},"member").add_f(loggedInUserId)
 
       else
-        new Role({type:"course",id:courseId},"waitForCheck").add_f(loggedInUserId)
+        unless Is.course(courseId,["admin","member"])
+          new Role({type:"course",id:courseId},"waitForCheck").add_f(loggedInUserId)
 
 
 
