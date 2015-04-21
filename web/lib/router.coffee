@@ -34,6 +34,7 @@ Meteor.startup ->
           Cookies.expire "redirectAfterLogin"
           window.location = redirectAfterLogin
 
+
         Meteor.subscribe "DevMileStone"
         Meteor.subscribe "WantedFeature"
         # Meteor.subscribe "allPublicCourses"
@@ -196,9 +197,13 @@ Meteor.startup ->
         resData
 
       waitOn: ->
-        # userId = Meteor.userId()
-        # if not userId
-        #   Router.go "pleaseLogin"
+        userId = Meteor.userId()
+        if not userId
+          Router.go "pleaseLogin"
+
+        if userId
+          Meteor.call "applyCourse", @params.courseId
+
 
         CoursesSubHandler = Meteor.subscribe "course", @params.courseId
         RolesHandler = Meteor.subscribe "userRoles", ["course", "agilearning.io"]

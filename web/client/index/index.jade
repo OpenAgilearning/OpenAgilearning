@@ -87,12 +87,12 @@ template(name="nodeInfo")
           i.fa.fa-user-secret.fa-2x.pull-right(style="margin:5px")
 
 template(name="applyCourseBtn")
-  if isRole "waitForCheck" "course" courseId
-    button.btn.btn-warning.pull-right Applying
+  if Is.course courseId "student"
+      i.fa.fa-user-secret.fa-2x.pull-right(style="margin:5px")
 
   else
-    if isNotRole "waitForCheck" "course" courseId
-      i.fa.fa-user-secret.fa-2x.pull-right(style="margin:5px")
+    if Is.course courseId "waitForCheck"
+      button.btn.btn-warning.pull-right Applying
     else
       button.applyCourseBtn.btn.btn-info.pull-right(courseId="{{courseId}}") Apply
 

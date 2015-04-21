@@ -24,17 +24,17 @@ template(name="classroom")
             li
               a(data-toggle="tab", href="#Admin") Admin
 
-          if isInRole "teacher" classroomAndId
+          if Is.classroom classroomId "teacher"
             li
               a(data-toggle="tab", href="#Teacher") Teacher
 
-          if isInRole "student" classroomAndId
+          if Is.classroom classroomId "student"
             li
               a(data-toggle="tab", href="#Student") Student
 
-          if isInRole "admin" "system"
+          if Is.classroom classroomId "admin"
             li
-              a(data-toggle="tab", href="#SystemAdmin") SystemAdmin
+              a(data-toggle="tab", href="#Admin") Admin
 
           +minimisedChatroom
 
@@ -131,14 +131,14 @@ template(name="classroom")
                   img(src="/images/filezillaTutorial2.png",width="100%")
 
 
-          if isInRole "admin" classroomAndId
+          if Is.classroom classroomId "admin"
             .tab-pane.fade#Admin
               h2 Classroom Participants
               p You are the administrator of this classroom. You can see class participants in the list and can add change their roles.
               +studentListTableAdmin
 
 
-          if isInRole "teacher" classroomAndId
+          if Is.classroom classroomId "teacher"
             .tab-pane.fade#Teacher
               h2 Teacher's Dashboard
               p You are the teacher of this classroom. You can quiz the class with some exercise. Switch to another tab, you can also see class participants in the list.
@@ -154,13 +154,13 @@ template(name="classroom")
                   +studentListTableTeacher
 
 
-          if isInRole "student" classroomAndId
+          if Is.classroom classroomId "student"
             .tab-pane.fade#Student
               +exercisePanelStudent
 
-          if isInRole "admin" "system"
-            .tab-pane.fade#SystemAdmin
-              +assignServer
+          //- if isInRole "admin" "system"
+          //-   .tab-pane.fade#SystemAdmin
+          //-     +assignServer
 
       +classChatroom classroomId=classroomId type="classroom"
 
