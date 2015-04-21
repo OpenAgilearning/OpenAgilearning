@@ -19,6 +19,8 @@
 
       { _id:"Chinese_Text_Mining", "languages":["ZH"], "courseName" : "Chinese Text Mining", "dockerImageTag" : "c3h3/r-nlp:sftp", "video":true, "slides":true, "description" : "Introduction to text mining with R (tmcn and Rwordseg)" },
       { _id: "jupyter", "languages":["EN","ZH"], "courseName" : "Play Jupyter", "dockerImageTag" : "adrianliaw/jupyter-irkernel:agilearning", "description" : "The language-agnostic parts of IPython are getting a new home in Project Jupyter.", "imageURL":"/images/jupyter-sq-text.svg"},
+      { _id: "TaishinCrawler","languages":["EN","ZH"], "courseName" : "Taishin Crawler", "dockerImageTag" : "c3h3/dsc2014tutorial:latest", "description" : "This course is for Taishin Commercial bank internal trainning.", "imageURL":"http://i.imgur.com/KHtsRCF.png", "publicStatus":"semipublic"},
+
 
       # { "courseName" : "livehouse20141105", "dockerImageTag" : "c3h3/livehouse20141105", "slides" : "https://www.slidenow.com/slide/129/play", "description" : "https://event.livehouse.in/2014/combo8/"},
       # { "courseName" : "NCCU Crawler 201411", "dockerImageTag" : "c3h3/nccu-crawler-courses-201411", "slides" : "http://nbviewer.ipython.org/github/c3h3/NCCU-PyData-Courses-2013Spring/blob/master/Lecture1/crawler/Lecture2_WebCrawler.ipynb", "description" : ""},
@@ -109,7 +111,7 @@
         if demoUser
           oneCourse.creatorId = demoUser._id
           oneCourse.creatorAt = new Date
-          oneCourse.publicStatus = "public"
+          #oneCourse.publicStatus = "public"
 
           courseId = Courses.insert oneCourse
 
@@ -218,7 +220,7 @@
 
 # if ENV.isDev
 #   Fixture.Courses.reset()
-
-# Fixture.Courses.set()
+Meteor.startup ->
+  Fixture.Courses.set()
 
 
