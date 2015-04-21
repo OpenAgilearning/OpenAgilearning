@@ -14,7 +14,7 @@ Template.nodeInfo.helpers
 
 Template.applyCourseBtn.helpers
   allowRoles: ->
-    ["admin", "student", "teacher"]
+    ["admin", "member"]
 
   waitForCheck: ->
     db.userIsRole.find().count()

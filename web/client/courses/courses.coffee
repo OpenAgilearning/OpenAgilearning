@@ -122,13 +122,7 @@ Template.courseImage.helpers
 
 Template.goToClassroomBtn.helpers
   isClassroomMember: ->
-    userId = Meteor.userId()
-    classroomId = @_id
-    classroomAndId = "classroom_" + classroomId
-
-    isClassroomMember = Roles.userIsInRole(userId,"admin",classroomAndId)
-    isClassroomMember = isClassroomMember  or Roles.userIsInRole(userId,"teacher",classroomAndId)
-    isClassroomMember = isClassroomMember  or Roles.userIsInRole(userId,"student",classroomAndId)
+    Is.classroom @_id, ["admin","teacher","student"]
 
 Template.goToClassroomBtn.events
   "click .joinClassroomBtn": (e,t) ->
@@ -136,14 +130,7 @@ Template.goToClassroomBtn.events
     # console.log @
     classroomId = $(e.target).attr "classroomId"
 
-    Meteor.call "joinClassroom", classroomId, (err, data) ->
-      if not err
-        console.log data
-      else
-        console.log err
-        if err.error is 401
-          Cookies.set "redirectAfterLogin", window.location.href
-          Router.go "pleaseLogin"
+    Meteor.call "joinClassroom", classroomId
 
 
 Template.courseClassroomsTable.helpers
@@ -167,9 +154,6 @@ Template.courseMemberTable.helpers
     # waitForCheckRoles = Collections.Roles.find({groupId:groupId,role:"waitForCheck"})
 
     roleIds = db.roleTypes.find({group:{type:"course",id:courseId}}).map (data)-> data._id
-
-    console.log db.roleTypes.find({group:{type:"course",id:courseId}}).fetch()
-
     waitForCheckRoles = db.userIsRole.find({roleId:{$in:roleIds}})
 
     CheckBtnField =
@@ -183,13 +167,24 @@ Template.courseMemberTable.helpers
       fn:(value, object) ->
         db.roleTypes.findOne({_id:value}).role
 
+    UserProfileField =
+      key: "userId"
+      label: "User"
+      fn:(value, object) ->
+        userData = Meteor.users.findOne({_id:value})
+        if userData.profile.organization
+          "["+userData.profile.organization+"] "+userData.profile.name
+
+        else
+          userData.profile.name
+
 
     res =
       collection: waitForCheckRoles
-      rowsPerPage: 5
+      rowsPerPage: 20
       showFilter: false
-      showNavigation:'never'
-      fields: ["userId", "roleId", RoleTypeField, CheckBtnField]
+      # showNavigation:'never'
+      fields: [UserProfileField,  "userId", "roleId", RoleTypeField, CheckBtnField]
 
 
 Template.courseMemberTableCheckBtnField.helpers

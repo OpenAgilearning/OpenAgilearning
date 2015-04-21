@@ -35,7 +35,7 @@ Meteor.startup ->
           window.location = redirectAfterLogin
 
 
-        Meteor.subscribe "userRoles"
+
 
         Meteor.subscribe "DevMileStone"
         Meteor.subscribe "WantedFeature"
@@ -167,8 +167,13 @@ Meteor.startup ->
         if not userId
           Router.go "pleaseLogin"
 
+        unless Is.course(@params.courseId, ["admin", "member"])
+          Router.go "index"
+
+
         if userId
           Meteor.call "applyCourse", @params.courseId
+
 
         if Is.course(@params.courseId, "admin")
           Meteor.subscribe "courseAdmin", @params.courseId
@@ -339,43 +344,39 @@ Meteor.startup ->
         if not userId
           Router.go "pleaseLogin"
 
-        classroomAndId = "classroom_" + @params.classroomId
-
-        redirectToIndex = not Roles.userIsInRole(userId,"admin",classroomAndId)
-        redirectToIndex = redirectToIndex  and not Roles.userIsInRole(userId,"teacher",classroomAndId)
-        redirectToIndex = redirectToIndex  and not Roles.userIsInRole(userId,"student",classroomAndId)
-
-        if redirectToIndex
+        unless Is.classroom @params.classroomId, ["admin","teacher","student"]
           Router.go "index"
 
-        # FIXME expensive query
-        userData = Meteor.user()
-        if userData?.roles
-          # Get registered classrooms data
-          keyArr = Object.keys userData.roles
-          classIdArr = []
-          keyArr.map (xx)->
-            if xx isnt "system"
-              classIdArr.push xx.split("_")[1]
-        if not (@params.classroomId in classIdArr)
-          Router.go "index"
-        else
-          Meteor.subscribe "allPublicEnvConfigTypes"
-          Meteor.subscribe "userEnvUserConfigs"
-          Meteor.subscribe "userDockerInstances"
-          Meteor.subscribe "classroom", @params.classroomId
-          Meteor.subscribe "classroomCourse", @params.classroomId
-          Meteor.subscribe "classroomDockerImages", @params.classroomId
-          Meteor.subscribe "classChatroom", @params.classroomId
-          Meteor.subscribe "classChatroomMessages", @params.classroomId
-          # Meteor.subscribe "userDockerInstances", @params.classroomId
-          Meteor.subscribe "usersOfClassroom", @params.classroomId
-          Meteor.subscribe "classExercises", @params.classroomId
+        # # FIXME expensive query
+        # userData = Meteor.user()
+        # if userData?.roles
+        #   # Get registered classrooms data
+        #   keyArr = Object.keys userData.roles
+        #   classIdArr = []
+        #   keyArr.map (xx)->
+        #     if xx isnt "system"
+        #       classIdArr.push xx.split("_")[1]
 
-          Meteor.subscribe "terms"
-          Meteor.subscribe "classroomVideos", @params.classroomId
-          Meteor.subscribe "classroomSlides", @params.classroomId
-          Meteor.subscribe "classroomCourseJoinDockerImageTags", @params.classroomId
+        # if not (@params.classroomId in classIdArr)
+        #   Router.go "index"
+        # else
+
+        Meteor.subscribe "allPublicEnvConfigTypes"
+        Meteor.subscribe "userEnvUserConfigs"
+        Meteor.subscribe "userDockerInstances"
+        Meteor.subscribe "classroom", @params.classroomId
+        Meteor.subscribe "classroomCourse", @params.classroomId
+        Meteor.subscribe "classroomDockerImages", @params.classroomId
+        Meteor.subscribe "classChatroom", @params.classroomId
+        Meteor.subscribe "classChatroomMessages", @params.classroomId
+        # Meteor.subscribe "userDockerInstances", @params.classroomId
+        Meteor.subscribe "usersOfClassroom", @params.classroomId
+        Meteor.subscribe "classExercises", @params.classroomId
+
+        Meteor.subscribe "terms"
+        Meteor.subscribe "classroomVideos", @params.classroomId
+        Meteor.subscribe "classroomSlides", @params.classroomId
+        Meteor.subscribe "classroomCourseJoinDockerImageTags", @params.classroomId
 
 
       # onAfterAction: ->

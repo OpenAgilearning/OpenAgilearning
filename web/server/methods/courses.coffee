@@ -12,7 +12,7 @@ Meteor.methods
       roleData = db.roleTypes.findOne({_id:userIsRoleData.roleId})
 
       if roleData.role is "waitForCheck"
-        new Role(roleData.group,"student").add(userIsRoleData.userId)
+        new Role(roleData.group,"member").add(userIsRoleData.userId)
         db.userIsRole.remove({_id:userIsRoleId})
 
     else
@@ -34,7 +34,7 @@ Meteor.methods
         throw new Meteor.Error(1302, "[Admin Error] there is no course with id" + courseId)
 
       if db.courses.findOne({_id:courseId}).publicStatus is "public"
-        new Role({type:"course",id:courseId},"student").add_f(loggedInUserId)
+        new Role({type:"course",id:courseId},"member").add_f(loggedInUserId)
 
       else
         new Role({type:"course",id:courseId},"waitForCheck").add_f(loggedInUserId)
