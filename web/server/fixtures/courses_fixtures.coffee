@@ -105,13 +105,16 @@
 
 
     for oneCourse in demoCourses
+      console.log "oneCourse = ",oneCourse
       if Courses.find(oneCourse).count() is 0
         demoUser = Meteor.users.findOne({"services.meetup.id" : {$in: adminMeetupIds}})
 
         if demoUser
           oneCourse.creatorId = demoUser._id
           oneCourse.creatorAt = new Date
-          oneCourse.publicStatus = "public"
+
+          if not oneCourse.publicStatus
+            oneCourse.publicStatus = "public"
 
           courseId = Courses.insert oneCourse
 
