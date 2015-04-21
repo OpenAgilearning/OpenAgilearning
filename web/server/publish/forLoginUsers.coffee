@@ -14,10 +14,15 @@ Meteor.publish null, ->
 
     roleTypesPUB = db.roleTypes.find {_id:{$in:roleIds}}
 
-    [dockerInstancesPUB,userIsRolePUB, roleTypesPUB]
+    userPUB = Meteor.users.find({_id:userId},{fields:{agreedTOC:1}})
+
+    # console.log userPUB.fetch()
+
+    [dockerInstancesPUB, userIsRolePUB, roleTypesPUB, userPUB]
 
   else
     []
+
 
 Meteor.publish "roleTypesByRoleIds", (RoleIds)->
   userId = @userId
@@ -57,11 +62,13 @@ Meteor.publish "courseAdmin", (courseId)->
     userIds = userIsRolesPUB.map (data)-> data.userId
 
     # console.log "userIds = ",userIds
-    usersPUB = Meteor.users.find(_id:{$in:userIds},{fields:{profile:1}})
+    usersPUB = Meteor.users.find(_id:{$in:userIds},{fields:{profile:1,agreeTOC:1}})
     [rolesPUB, userIsRolesPUB,usersPUB]
 
   else
     []
+
+
 
 
 
