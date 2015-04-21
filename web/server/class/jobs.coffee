@@ -1,58 +1,62 @@
 
 new Mongo.Collection "testJobs"
 
-@defaultJobHandlers =
-  "TODO": (jobObject)->
-    console.log "[in defaultJobHandlers with Status TODO]"
-    console.log "[in defaultJobHandlers jobObject._data]", jobObject._data
+@defaultJobHandlerPool =
+  defaultJH:
+    "TODO": (jobObject)->
+      console.log "TEST FIXTURE", Fixture
 
-    finishedAtKey = ["finished", jobObject.status, "At"].join "_"
+      console.log "[in defaultJobHandlers with Status TODO]"
+      console.log "[in defaultJobHandlers jobObject._data]", jobObject._data
 
-    updateData =
-      status: "DOING"
+      finishedAtKey = ["finished", jobObject.status, "At"].join "_"
 
-    updateData[finishedAtKey] = new Date
+      updateData =
+        status: "DOING"
 
-    jobObject.collection.update {_id:jobObject.id}, {$set:updateData}
+      updateData[finishedAtKey] = new Date
 
-
-  "DOING": (jobObject)->
-    console.log "[in defaultJobHandlers with Status DOING]"
-    console.log "[in defaultJobHandlers jobObject._data]", jobObject._data
-
-    finishedAtKey = ["finished", jobObject.status, "At"].join "_"
-
-    updateData =
-      status: "DONE"
-
-    updateData[finishedAtKey] = new Date
-
-    jobObject.collection.update {_id:jobObject.id}, {$set:updateData}
+      jobObject.collection.update {_id:jobObject.id}, {$set:updateData}
 
 
-  "DONE": (jobObject)->
-    console.log "[in defaultJobHandlers with Status DONE]"
-    console.log "[in defaultJobHandlers jobObject._data]", jobObject._data
+    "DOING": (jobObject)->
+      console.log "[in defaultJobHandlers with Status DOING]"
+      console.log "[in defaultJobHandlers jobObject._data]", jobObject._data
 
-    finishedAtKey = ["finished", jobObject.status, "At"].join "_"
+      finishedAtKey = ["finished", jobObject.status, "At"].join "_"
 
-    updateData =
-      status: "FINISHED"
+      updateData =
+        status: "DONE"
 
-    updateData[finishedAtKey] = new Date
+      updateData[finishedAtKey] = new Date
 
-    jobObject.collection.update {_id:jobObject.id}, {$set:updateData}
+      jobObject.collection.update {_id:jobObject.id}, {$set:updateData}
 
 
-  "FINISHED": (jobObject)->
-    console.log "[in defaultJobHandlers with Status FINISHED]"
-    console.log "[in defaultJobHandlers jobObject._data]", jobObject._data
+    "DONE": (jobObject)->
+      console.log "[in defaultJobHandlers with Status DONE]"
+      console.log "[in defaultJobHandlers jobObject._data]", jobObject._data
+
+      finishedAtKey = ["finished", jobObject.status, "At"].join "_"
+
+      updateData =
+        status: "FINISHED"
+
+      updateData[finishedAtKey] = new Date
+
+      jobObject.collection.update {_id:jobObject.id}, {$set:updateData}
+
+
+    "FINISHED": (jobObject)->
+      console.log "[in defaultJobHandlers with Status FINISHED]"
+      console.log "[in defaultJobHandlers jobObject._data]", jobObject._data
 
 
 @Class.Job = class Job
+  handlerPool: defaultJobHandlerPool
   collection: db.testJobs
 
-  constructor: (@_data, @_jobHandlers=_.extend {}, defaultJobHandlers)->
+  constructor: (@_data, @_jobHandlers="defaultJH")->
     tmpData = @_data
 
     if typeof @_data is "string"
@@ -70,6 +74,9 @@ new Mongo.Collection "testJobs"
 
         @_data = @collection.findOne _id:jobId
 
+    if typeof @_jobHandlers is "string"
+      if @handlerPool
+        @_jobHandlers = @handlerPool[@_jobHandlers]
 
 
     handsOnApis =
@@ -114,6 +121,9 @@ new Mongo.Collection "testJobs"
   setJobHandlers: (jobHandlers) ->
     @_jobHandlers = _.extend @_jobHandlers, jobHandlers
 
+
+  resetJobHandlers: (jobHandlers) ->
+    @_jobHandlers = _.extend {}, jobHandlers
 
 
 

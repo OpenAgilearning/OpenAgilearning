@@ -2,39 +2,75 @@
 Meteor.publish null, ->
   userId = @userId
   if userId
-    db.dockerInstances.find userId:userId
+    dockerInstancesPUB = db.dockerInstances.find userId:userId
 
+    userIsRolePUB = db.userIsRole.find userId:userId
 
-Meteor.publish "userRoles", (roleTypes=[])->
-  userId = @userId
-  if typeof(roleTypes) is "string"
-    roleTypes = [roleTypes]
+    roleIds = userIsRolePUB.map (data)->data.roleId
+    # console.log "~~~~~~~~~~~~~~~~"
+    # console.log "null pub"
+    # console.log new Date
+    # console.log "roleIds = ",roleIds
 
-  if userId
-    roleGroups = Collections.RoleGroups.find({type:{$in:roleTypes}})
-    roleGroupsIds = roleGroups.fetch().map (xx) -> xx._id
+    roleTypesPUB = db.roleTypes.find {_id:{$in:roleIds}}
 
-    queryConditions = []
+    userPUB = Meteor.users.find({_id:userId},{fields:{agreedTOC:1}})
 
-    # console.log roleGroupsIds
+    # console.log userPUB.fetch()
 
-    for groupId in roleGroupsIds
-      if Collections.Roles.find({role:"admin",groupId:groupId,userId:userId}).count() > 0
-        queryCond =
-          groupId: groupId
-        queryConditions.push queryCond
-      else
-        queryCond =
-          groupId: groupId
-          userId:userId
-        queryConditions.push queryCond
+    [dockerInstancesPUB, userIsRolePUB, roleTypesPUB, userPUB]
 
-    # console.log queryConditions
-
-    roles = Collections.Roles.find({$or:queryConditions})
-    [roleGroups, roles]
   else
-    Exceptions.find {_id:"ExceptionPermissionDeny"}
+    []
+
+
+Meteor.publish "roleTypesByRoleIds", (RoleIds)->
+  userId = @userId
+  if userId
+    userIsRolePUB = db.userIsRole.find userId:userId
+
+    roleIds = userIsRolePUB.map (data)->data.roleId
+
+    filteredRoleIds = RoleIds.filter (id)-> id in roleIds
+    # console.log "roleIds = ", roleIds
+
+    db.roleTypes.find {_id:{$in:filteredRoleIds}}
+
+
+  else
+    []
+
+
+
+Meteor.publish "courseAdmin", (courseId)->
+  userId = @userId
+
+  if new Role({type:"course",id:courseId},"admin").check_f(userId)
+    # console.log "courseAdmin"
+    rolesPUB = db.roleTypes.find({group:{type:"course", id:courseId}})
+    roleIds = rolesPUB.map (data)-> data._id
+
+    # console.log "~~~~~~~~~~~~~~~~"
+    # console.log "courseAdmin pub"
+    # console.log new Date
+    # console.log "roleIds = ",roleIds
+
+
+    userIsRolesPUB = db.userIsRole.find({roleId:{$in:roleIds}})
+    # console.log userIsRolesPUB.count()
+
+    userIds = userIsRolesPUB.map (data)-> data.userId
+
+    # console.log "userIds = ",userIds
+    usersPUB = Meteor.users.find(_id:{$in:userIds},{fields:{profile:1,agreeTOC:1}})
+
+    resumesPub = db.publicResume.find({userId:{$in:userIds}})
+    [rolesPUB, userIsRolesPUB,usersPUB,resumesPub]
+
+  else
+    []
+
+
 
 
 

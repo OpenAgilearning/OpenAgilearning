@@ -15,7 +15,18 @@ showCollectionsDes =
 Object.defineProperty show, "collections", showCollectionsDes
 
 
-@add = {}
+if Meteor.isClient
+  @add =
+    Role: (userId, group, role)->
+      do (userId, group, role)->
+        Meteor.call "addRole", userId, group, role, (err, res)->
+          if not err
+            console.log "[in addRole] res = ", res
+          else
+            console.log "[in addRole] err = ", err
+
+else
+  @add = {}
 
 addCollectionDes =
   set: (input)->
@@ -42,6 +53,7 @@ addCollectionDes =
         collectionData.opts = opts
 
       db._AllCollections.insert collectionData
+
 
 Object.defineProperty add, "collection", addCollectionDes
 

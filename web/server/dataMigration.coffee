@@ -1,9 +1,15 @@
 
 new Mongo.Collection "migrationJobs"
 
+@MigrationHandlersPool = _.extend {}, defaultJobHandlerPool
+
+
 @Migration =
   Job: class MigrationJob extends Class.Job
-    collection: db.migrationJobs
+      handlerPool: MigrationHandlersPool
+      collection: db.migrationJobs
+
+  HandlersPool: MigrationHandlersPool
 
 
 

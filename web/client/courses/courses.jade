@@ -57,7 +57,7 @@ template(name="course")
         //- +courseNameAndDescription courseName=course.courseName description=course.description
 
 
-        if isRole "admin" "course" course._id
+        if Is.course course._id "admin"
           button.btn.btn-info(href="#", data-toggle="modal", data-target="#courseInfoAdminEditorModal") Edit
           //- hr
           //- button.btn.btn-info(href="#", data-toggle="modal", data-target="#courseInfoAdminEditorModal") Add Learning Resources
@@ -67,21 +67,38 @@ template(name="course")
         //- +test123 xx=xx yy=yy
 
       .col-md-9.column
-        if isRole "admin" "course" course._id
-          h2 Applications:
-          +courseApplicationsTable
 
-        h2 Classrooms:
-        +courseClassroomsTable
+        ul.nav.nav-tabs
+          li.active
+            a(data-toggle="tab", href="#Classrooms") Classrooms
 
 
-template(name="courseApplicationsTable")
+          if Is.course course._id "admin"
+            li
+              a(data-toggle="tab", href="#Admin") Admin
+
+
+        .tab-content
+          .tab-pane.fade.in.active#Classrooms
+            h2 Classrooms:
+            +courseClassroomsTable
+
+          if Is.course course._id "admin"
+            .tab-pane.fade.in#Admin
+
+              h2 Members:
+              +courseMemberTable
+
+
+
+template(name="courseMemberTable")
   +reactiveTable settings=settings
 //- template(name="test123")
 //-   h2 {{test xx yy}}
 
-template(name="courseApplicationsTableCheckBtnField")
-  a.btn.btn-warning.checkBtn(roleId="{{_id}}") Allow
+template(name="courseMemberTableCheckBtnField")
+  if isWaitForCheck
+    a.btn.btn-warning.checkBtn(uirid="{{_id}}") Allow
 
 template(name="courseInfoAdminEditorForm")
   if coursesEditSchema
