@@ -56,6 +56,14 @@ if Meteor.isClient
 
 
 if Meteor.isServer
+  Role::check_f = (userId)->
+    if @id
+      userInRoleQuery =
+        roleId: @id
+        userId: userId
+
+      db.userIsRole.find(userInRoleQuery).count() > 0
+
   Role::add = (userId)->
     groupAdminCheck = new @constructor(@group,"admin").check
     systemAdminCheck = new @constructor({type:"agilearning.io"},"admin").check

@@ -42,7 +42,6 @@ Meteor.startup ->
         Meteor.subscribe "allPublicCoursesDockerImages"
 
         Meteor.subscribe "allPublicAndSemipublicCourses"
-        Meteor.subscribe "userRoles", ["course", "agilearning.io"]
         Meteor.subscribe "registeredCourse"
 
     @route "envs",
@@ -89,11 +88,6 @@ Meteor.startup ->
         Meteor.subscribe "allPublicAndSemipublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
 
-        Meteor.subscribe "userRoles", ["agilearning.io"]
-
-#    @route "profile",
-#      path: "profile/"
-#      template: "profile"
 
 
     @route "userSettings",
@@ -140,34 +134,8 @@ Meteor.startup ->
         Meteor.subscribe "allPublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
 
-        Meteor.subscribe "userRoles", ["agilearning.io"]
         Meteor.subscribe "userResume"
 
-    #@route "courses",
-    #  path: "courses/"
-    #  template: "courses"
-    #  data:
-    #    user: ->
-    #      Meteor.user()
-    #    showAdminPage: ->
-    #      userId = Meteor.userId()
-    #      Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
-
-    #    isAdmin: ->
-    #      uid = Meteor.userId()
-    #      Roles.find({userId:uid,role:"admin"}).count()>0
-    #    courses: ->
-    #      Courses.find()
-
-    #  waitOn: ->
-    #    # userId = Meteor.userId()
-    #    # if not userId
-    #    #   Router.go "pleaseLogin"
-
-    #    Meteor.subscribe "allPublicAndSemipublicCourses"
-    #    Meteor.subscribe "allPublicCoursesDockerImages"
-
-    #    Meteor.subscribe "userRoles", ["course", "agilearning.io"]
 
     @route "course",
       path: "course/:courseId"
@@ -182,17 +150,13 @@ Meteor.startup ->
             Roles.userIsInRole(userId,"admin","system") or Roles.userIsInRole(userId,"admin","dockers")
 
           course: =>
-            Courses.findOne _id: @params.courseId
+            db.courses.findOne _id: @params.courseId
 
           courseAndId: =>
             "course_" + @params.courseId
 
-          # coursesEditSchema: =>
-          #   console.log "@params.courseId = "
-          #   console.log @params.courseId
-          #   getCoursesEditSchema(@params.courseId)
-
-
+          courseId: =>
+            @params.courseId
 
         resData
 
@@ -204,17 +168,13 @@ Meteor.startup ->
         if userId
           Meteor.call "applyCourse", @params.courseId
 
+        if Is.course(@params.courseId, "admin")
+          Meteor.subscribe "courseAdmin", @params.courseId
 
-        CoursesSubHandler = Meteor.subscribe "course", @params.courseId
-        RolesHandler = Meteor.subscribe "userRoles", ["course", "agilearning.io"]
 
-        Meteor.autorun =>
-          if CoursesSubHandler.ready() and RolesHandler.ready()
-            if Courses.findOne().publicStatus isnt "public"
-              console.log 'RoleTools.isRole(["admin","member"],"course",@params.courseId)'
-              console.log RoleTools.isRole(["admin","member"],"course",@params.courseId)
-              if not RoleTools.isRole(["admin","member"],"course",@params.courseId)
-                Router.go "index"
+
+        Meteor.subscribe "course", @params.courseId
+
 
         # Meteor.subscribe "allPublicClassrooms", @params.courseId
         # Meteor.subscribe "allPublicClassroomRoles", @params.courseId
@@ -254,6 +214,9 @@ Meteor.startup ->
             pairs = db.courseJoinDockerImageTags.find(courseId:course._id).fetch()
             array = pairs.map (doc)-> doc.tag
             db.dockerImageTags.find tag:$in:array
+
+          classroomId: =>
+            @params.classroomId
 
 
           classroomAndId: =>
@@ -408,7 +371,6 @@ Meteor.startup ->
           Meteor.subscribe "classExercises", @params.classroomId
 
           Meteor.subscribe "terms"
-          Meteor.subscribe "userRoles", ["agilearning.io"]
           Meteor.subscribe "classroomVideos", @params.classroomId
           Meteor.subscribe "classroomSlides", @params.classroomId
           Meteor.subscribe "classroomCourseJoinDockerImageTags", @params.classroomId
@@ -449,7 +411,6 @@ Meteor.startup ->
         Session.set "resourcesListRendered", false
         Meteor.subscribe "allLearningResources"
 
-        Meteor.subscribe "userRoles", ["agilearning.io"]
         Meteor.subscribe "votes", "learningResources"
 
     @route "admin",
@@ -477,8 +438,6 @@ Meteor.startup ->
           _.uniq(DockerServerImages.find().fetch().map((xx) -> xx["tag"]))
 
       waitOn: ->
-
-        Meteor.subscribe "userRoles", ["agilearning.io"]
 
         userId = Meteor.userId()
         if not userId
@@ -581,7 +540,6 @@ Meteor.startup ->
           Meteor.subscribe "chatrooms"
           Meteor.subscribe "userJoinsChatroom"
 
-        Meteor.subscribe "userRoles", ["agilearning.io"]
         Meteor.subscribe "feedback"
         Meteor.subscribe "votes", ["Feedback"]
 
@@ -664,7 +622,6 @@ Meteor.startup ->
         if userId
           Router.go "index"
 
-        Meteor.subscribe "userRoles", ["agilearning.io"]
 
     @route "about",
       path: "about/"
@@ -677,5 +634,3 @@ Meteor.startup ->
         showAdminPage: ->
           userId = Meteor.userId()
           Roles.userIsInRole(userId, "admin", "system") or Roles.userIsInRole(userId, "admin", "dockers")
-        waitOn: ->
-          Meteor.subscribe "userRoles", ["agilearning.io"]

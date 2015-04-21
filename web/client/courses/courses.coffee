@@ -160,33 +160,54 @@ Template.courseClassroomsTable.helpers
       showNavigation:'never'
       fields: [goToClassroomBtnField, "name", "description"]
 
-Template.courseApplicationsTable.helpers
+Template.courseMemberTable.helpers
   settings: ->
     courseId = Router.current().params.courseId
     # groupId = RoleTools.getGroupId "course", courseId
     # waitForCheckRoles = Collections.Roles.find({groupId:groupId,role:"waitForCheck"})
 
-    waitForCheckRoles = RoleTools.getRoles("waitForCheck","course",courseId)
+    roleIds = db.roleTypes.find({group:{type:"course",id:courseId}}).map (data)-> data._id
+
+    console.log db.roleTypes.find({group:{type:"course",id:courseId}}).fetch()
+
+    waitForCheckRoles = db.userIsRole.find({roleId:{$in:roleIds}})
 
     CheckBtnField =
       key: "_id"
       label: "Check"
-      tmpl: Template.courseApplicationsTableCheckBtnField
+      tmpl: Template.courseMemberTableCheckBtnField
+
+    RoleTypeField =
+      key: "roleId"
+      label: "Role Type"
+      fn:(value, object) ->
+        db.roleTypes.findOne({_id:value}).role
+
 
     res =
       collection: waitForCheckRoles
       rowsPerPage: 5
       showFilter: false
       showNavigation:'never'
-      fields: [CheckBtnField,"userId", "role"]
+      fields: ["userId", "roleId", RoleTypeField, CheckBtnField]
 
-Template.courseApplicationsTableCheckBtnField.events
+
+Template.courseMemberTableCheckBtnField.helpers
+  roleType: ->
+    db.roleTypes.findOne({_id:@roleId}).role
+  isWaitForCheck: ->
+    db.roleTypes.findOne({_id:@roleId}).role is "waitForCheck"
+
+
+
+
+Template.courseMemberTableCheckBtnField.events
   "click .checkBtn": (e,t) ->
     e.stopPropagation()
     # console.log @
-    roleId = $(e.target).attr "roleId"
+    userIsRoleId = $(e.target).attr "uirid"
 
-    Meteor.call "checkCourseApplication", roleId, (err, data) ->
+    Meteor.call "checkCourseApplication", userIsRoleId, (err, data) ->
       if not err
         console.log data
       else

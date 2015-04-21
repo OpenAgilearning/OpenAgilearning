@@ -1,17 +1,23 @@
 Meteor.methods
-  "checkCourseApplication": (roleId) ->
+  "checkCourseApplication": (userIsRoleId) ->
     loggedInUserId = Meteor.userId()
 
     if not loggedInUserId
       throw new Meteor.Error(401, "You need to login")
 
-    if Collections.Roles.find({_id:roleId}).count() is 0
+    userIsRoleData = db.userIsRole.findOne({_id:userIsRoleId})
+    console.log "userIsRoleData = ",userIsRoleData
+
+    if userIsRoleData
+      roleData = db.roleTypes.findOne({_id:userIsRoleData.roleId})
+
+      if roleData.role is "waitForCheck"
+        new Role(roleData.group,"student").add(userIsRoleData.userId)
+        db.userIsRole.remove({_id:userIsRoleId})
+
+    else
       throw new Meteor.Error(1402, "[Admin Error] there is no role with id" + roleId)
 
-    groupId = Collections.Roles.findOne({_id:roleId}).groupId
-
-    if Collections.Roles.find({userId:loggedInUserId,role:"admin",groupId:groupId}).count() > 0
-      Collections.Roles.update({_id:roleId},{$set:{role:"member"}})
 
 
   "applyCourse": (courseId) ->
