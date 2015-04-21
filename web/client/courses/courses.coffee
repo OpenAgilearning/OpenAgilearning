@@ -184,7 +184,7 @@ Template.courseMemberTable.helpers
       rowsPerPage: 20
       showFilter: false
       # showNavigation:'never'
-      fields: [UserProfileField,  "userId", "roleId", RoleTypeField, CheckBtnField]
+      fields: [UserProfileField,  "userId", RoleTypeField, CheckBtnField]
 
 
 Template.courseMemberTableCheckBtnField.helpers

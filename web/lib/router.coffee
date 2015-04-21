@@ -35,11 +35,9 @@ Meteor.startup ->
           window.location = redirectAfterLogin
 
 
-
-
-        Meteor.subscribe "DevMileStone"
-        Meteor.subscribe "WantedFeature"
-        # Meteor.subscribe "allPublicCourses"
+        Tracker.autorun ->
+          roleIds = db.userIsRole.find().map (data)-> data.roleId
+          Meteor.subscribe "roleTypesByRoleIds", roleIds
 
         Meteor.subscribe "allPublicCoursesDockerImages"
 
@@ -170,14 +168,16 @@ Meteor.startup ->
         unless Is.course(@params.courseId, ["admin", "member"])
           Router.go "index"
 
-
-        if userId
-          Meteor.call "applyCourse", @params.courseId
+        Tracker.autorun ->
+          roleIds = db.userIsRole.find().map (data)-> data.roleId
+          Meteor.subscribe "roleTypesByRoleIds", roleIds
 
 
         if Is.course(@params.courseId, "admin")
           Meteor.subscribe "courseAdmin", @params.courseId
 
+        if userId
+          Meteor.call "applyCourse", @params.courseId
 
 
         Meteor.subscribe "course", @params.courseId
@@ -343,6 +343,11 @@ Meteor.startup ->
         userId = Meteor.userId()
         if not userId
           Router.go "pleaseLogin"
+
+        Tracker.autorun ->
+          roleIds = db.userIsRole.find().map (data)-> data.roleId
+          Meteor.subscribe "roleTypesByRoleIds", roleIds
+
 
         unless Is.classroom @params.classroomId, ["admin","teacher","student"]
           Router.go "index"
