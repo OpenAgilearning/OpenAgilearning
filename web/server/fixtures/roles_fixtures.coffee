@@ -12,6 +12,10 @@
 
       systemAdminGroup = "agilearning.io"
 
+      courseIds = db.courses.find().map (data)-> data._id
+
+      for cid in courseIds
+        new Role({type:"course",id:cid},"admin").add_f(uid)
 
       for type in ["agilearning.io", "docker"]
         roleType =

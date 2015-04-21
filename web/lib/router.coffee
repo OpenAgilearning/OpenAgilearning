@@ -35,6 +35,8 @@ Meteor.startup ->
           window.location = redirectAfterLogin
 
 
+        Meteor.subscribe "userRoles"
+
         Meteor.subscribe "DevMileStone"
         Meteor.subscribe "WantedFeature"
         # Meteor.subscribe "allPublicCourses"

@@ -20,6 +20,26 @@ Meteor.methods
 
 
 
+  "applyCourse": (courseId) ->
+
+    console.log "[in applyCourse]"
+
+    loggedInUserId = Meteor.userId()
+
+    if not loggedInUserId
+      throw new Meteor.Error(401, "You need to login")
+
+    else
+      if db.courses.find({_id:courseId}).count() is 0
+        throw new Meteor.Error(1302, "[Admin Error] there is no course with id" + courseId)
+
+      if db.courses.findOne({_id:courseId}).publicStatus is "public"
+        new Role({type:"course",id:courseId},"student").add_f(loggedInUserId)
+
+      else
+        new Role({type:"course",id:courseId},"waitForCheck").add_f(loggedInUserId)
+
+
 
 
   "editCourseInfoByAdmin": (courseDoc) ->

@@ -17,6 +17,7 @@ Template.applyCourseBtn.helpers
     ["admin", "student", "teacher"]
 
   waitForCheck: ->
+    db.userIsRole.find().count()
     Is.course(@courseId, "waitForCheck")
 
 
