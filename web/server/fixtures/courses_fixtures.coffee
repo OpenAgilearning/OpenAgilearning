@@ -111,7 +111,7 @@
         if demoUser
           oneCourse.creatorId = demoUser._id
           oneCourse.creatorAt = new Date
-          #oneCourse.publicStatus = "public"
+          oneCourse.publicStatus = "public"
 
           courseId = Courses.insert oneCourse
 
@@ -220,7 +220,5 @@
 
 # if ENV.isDev
 #   Fixture.Courses.reset()
-Meteor.startup ->
-  Fixture.Courses.set()
-
-
+# Meteor.startup ->
+#   Fixture.Courses.set()
