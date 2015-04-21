@@ -124,6 +124,8 @@ for api in isApis
 
   @Is[api] = do (api) ->
     (id, roles) ->
+      console.log "roles = ",roles
+
       if typeof roles is "string"
         res = new Role({type:api,id:id}, roles).check
       else

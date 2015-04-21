@@ -13,10 +13,11 @@ Template.nodeInfo.helpers
 
 
 Template.applyCourseBtn.helpers
+  allowRoles: ->
+    ["admin", "student", "teacher"]
+
   waitForCheck: ->
-    userId = Meteor.userId()
-    if userId
-      RoleTools.isRole "waitForCheck", "course", @_id
+    Is.course(@courseId, "waitForCheck")
 
 
 Template.applyCourseBtn.events
