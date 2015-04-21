@@ -20,6 +20,13 @@ new Meteor.Collection "publicResume"
         type: "email"
         placeholder: "please edit email"
 
+  organization:
+    type: String
+    label: "Organization"
+    max:100
+    optional:true
+
+
   description:
     type: String
     label: "About me"
