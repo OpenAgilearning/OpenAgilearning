@@ -51,6 +51,20 @@ Template.envIframe.rendered = ->
         .tooltip "show"
         .attr("data-original-title", "Click to Copy")
 
+Template.sftpInfo.rendered = ->
+  _.map @$(".copy-button"), (dom)->
+    button = $(dom)
+    copybtn = new ZeroClipboard button
+    copybtn.on 'ready', (readyEvent) ->
+      button.attr("data-original-title", "Click to Copy")
+      .tooltip()
+
+      copybtn.on 'aftercopy', (event) ->
+        button
+        .attr("data-original-title", "Copied")
+        .tooltip "show"
+        .attr("data-original-title", "Click to Copy")
+
 
 Template.envIframe.events
   "click .connectEnvBtn": (e, t)->

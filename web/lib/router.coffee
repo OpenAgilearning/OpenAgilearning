@@ -272,7 +272,7 @@ Meteor.startup ->
               resData =
                 ip: docker.ip
                 port: httpPorts[0].hostPort
-                envs: docker.containerConfigs.Env
+                envs: docker.envs
 
 
           SFTPPort: ->
