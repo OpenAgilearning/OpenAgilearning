@@ -196,15 +196,16 @@ template(name="codingEnvironment")
 template(name="sftpInfo")
   .well.well-sm
     if sftp
-      with sftp
-       label Host:
-        button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{ip}}" data-placement="bottom" style="text-transform:none;") {{ip}}
-       label Port:
-        button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{port}}" data-placement="bottom" style="text-transform:none;") {{port}}
-       label User:
-        button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{envs.USER}}" data-placement="bottom" style="text-transform:none;") {{envs.USER}}
-       label Password:
-        button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{envs.PASSWORD}}" data-placement="bottom" style="text-transform:none;") {{envs.PASSWORD}}
+      .container-fluid
+        with sftp
+         label Host:
+          button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{ip}}" data-placement="bottom" style="text-transform:none;") {{ip}}
+         label Port:
+          button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{port}}" data-placement="bottom" style="text-transform:none;") {{port}}
+         label User:
+          button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{envs.USER}}" data-placement="bottom" style="text-transform:none;") {{envs.USER}}
+         label Password:
+          button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{envs.PASSWORD}}" data-placement="bottom" style="text-transform:none;") {{envs.PASSWORD}}
     else
       div(style="position:relative; height:100px;")
         +spinner
