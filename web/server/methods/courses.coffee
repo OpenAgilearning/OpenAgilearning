@@ -19,6 +19,64 @@ Meteor.methods
       throw new Meteor.Error(1402, "[Admin Error] there is no role with id" + roleId)
 
 
+  "denyCourseApplication": (userIsRole) ->
+    if not @userId
+      throw new Meteor.Error 401, "Login required"
+
+    roleType = db.roleTypes.findOne _id: userIsRole.roleId
+    if not roleType
+      throw new Meteor.Error 1402, "[Admin Error] there is no role with id #{userIsRole.roleId}"
+
+    isCourseAdmin = new Role({type: "course", id: roleType.group.id}, "admin").check
+    isSystemAdmin = new Role({type: "agilearning.io"}, "admin").check
+
+    if isCourseAdmin or isSystemAdmin
+
+      userIsRoleData = db.userIsRole.findOne userIsRole
+      
+      if userIsRoleData
+        roleData = db.roleTypes.findOne _id: userIsRoleData.roleId
+
+        if roleData.role is "waitForCheck"
+          db.userIsRole.remove _id: userIsRoleData._id
+
+      else
+        throw new Meteor.Error 1402, "[Admin Error] there is no role with id #{userIsRoleId}"
+
+    else
+      throw new Meteor.Error 1301, "[Admin Error] Permission Denied"
+
+
+  "ejectCourseMember": (userIsRole) ->
+    if not @userId
+      throw new Meteor.Error 401, "Login required"
+
+    roleType = db.roleTypes.findOne _id: userIsRole.roleId
+    if not roleType
+      throw new Meteor.Error 1402, "[Admin Error] there is no role with id #{userIsRole.roleId}"
+
+    isCourseAdmin = new Role({type: "course", id: roleType.group.id}, "admin").check
+    isSystemAdmin = new Role({type: "agilearning.io"}, "admin").check
+
+    if isCourseAdmin or isSystemAdmin
+
+      userIsRoleData = db.userIsRole.findOne userIsRole
+      
+      if userIsRoleData
+        roleData = db.roleTypes.findOne _id: userIsRoleData.roleId
+
+        if roleData.role is "member"
+          db.userIsRole.remove _id: userIsRoleData._id
+
+        else
+          throw new Meteor.Error 1402, "[Admin Error] Not a course member"
+
+      else
+        throw new Meteor.Error 1402, "[Admin Error] there is no role with id #{userIsRoleId}"
+
+    else
+      throw new Meteor.Error 1301, "[Admin Error] Permission Denied"
+
 
   "applyCourse": (courseId) ->
 

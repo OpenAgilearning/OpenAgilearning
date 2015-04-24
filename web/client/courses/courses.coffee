@@ -195,6 +195,8 @@ Template.courseMemberTableCheckBtnField.helpers
     db.roleTypes.findOne({_id:@roleId}).role
   isWaitForCheck: ->
     db.roleTypes.findOne({_id:@roleId}).role is "waitForCheck"
+  memberName: ->
+    db.publicResume.findOne(userId: @userId, key: "name").value
 
 
 
@@ -216,6 +218,21 @@ Template.courseMemberTableCheckBtnField.events
           Cookies.set "redirectAfterLogin", window.location.href
           Router.go "pleaseLogin"
 
+  "click .denyBtn": (e, t) ->
+    e.stopPropagation()
+
+    Meteor.call "denyCourseApplication", @, (err, data) ->
+
+      if err?.error is 401
+        Cookies.set "redirectAfterLogin", window.location.href
+        Router.go "pleaseLogin"
+
+  "click .confirm-eject": (e, t) ->
+    e.stopPropagation()
+    Meteor.call "ejectCourseMember", @, (err, data) =>
+      if err?.error is 401
+        Cookies.set "redirectAfterLogin", window.location.href
+        Router.go "pleaseLogin"
 
 
 Template.courses.helpers

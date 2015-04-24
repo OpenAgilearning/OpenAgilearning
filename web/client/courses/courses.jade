@@ -98,7 +98,28 @@ template(name="courseMemberTable")
 
 template(name="courseMemberTableCheckBtnField")
   if isWaitForCheck
-    a.btn.btn-warning.checkBtn(uirid="{{_id}}") Allow
+    .dropdown
+      button.btn.btn-warning(data-toggle="dropdown")
+        | Check
+        span.caret
+      ul.dropdown-menu(role="menu")
+        li: a.checkBtn(href="#", uirid="{{_id}}", role="menuitem") Allow
+        li: a.denyBtn(href="#", role="menuitem") Deny
+
+  else
+    button.btn.btn-danger(data-toggle="modal", data-target="#ejectAlert{{_id}}") Eject
+    .modal.fade(id="ejectAlert{{_id}}", role="dialog")
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(data-dismiss="modal", aria-label="Close")
+              span &times;
+            h3.modal-title Are you sure you want to eject {{memberName}}?
+          .modal-body
+            p Think twice before you press the "Confirm" button.
+          .modal-footer
+            button.btn.btn-default(data-dismiss="modal") Cancel
+            button.btn.btn-danger.confirm-eject Confirm
 
 template(name="courseInfoAdminEditorForm")
   if coursesEditSchema
