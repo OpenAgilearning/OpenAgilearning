@@ -83,52 +83,25 @@ template(name="classroom")
             .tab-pane.fade(id="imageTag_{{hash _id}}")
               +codingEnvironment TermsSigned=TermsSigned tag=tag
 
-
-          //- if dockerHasHTTP
-          //-   .tab-pane.fade#Environment
-          //-     if TermsSigned
-
-          //-       if needToSetEnvConfigs
-          //-         div(style="position:relative; height:500px;")
-          //-           +spinner
-          //-       else
-          //-         +classroomEnvIframe docker=docker
-          //-     else
-          //-       +pleaseSignTerms
-
-          //-     //- if needToSetEnvConfigs
-          //-     //-   div(style="position:relative; height:500px;")
-          //-     //-     //- p.text-primary loading environment ...
-          //-     //-     +spinner
-          //-     //-   +setEnvConfigsForm classroomId=classroomId
-          //-     //- else
-          //-     //-   +classroomEnvIframe docker=docker
-
-
           if dockerHasSFTP
             .tab-pane.fade#SFTP
-              if sftp
-                h2 SFTP Info:
-                ul
-                  li IP: {{sftp.ip}}
-                  li Port: {{sftp.port}}
-                  li {{sftp.envs}}
-              else
-                div(style="position:relative; height:500px;")
-                  +spinner
+              h2 SFTP Info
+              +sftpInfo sftp=sftp
 
               h2 FileZilla Tutorial
-              ul
-                li
-                  h2 Download FileZilla
+              .container-fluid
+                .row
+                  h3 Step1: Download FileZilla
                   a(href="https://filezilla-project.org/")
                     img(src="/images/filezillaDownload.png",width="100%")
-                li
-                  h2 Open Site Manager
+                .row
+                  h3 Step2: Open Site Manager
                   img(src="/images/filezillaTutorial1.png",width="100%")
-                li
-                  h2 Fill up: IP, Port, USER, PASS
+                .row
+                  h3 Final step: Fill in required information
+                  +sftpInfo
                   img(src="/images/filezillaTutorial2.png",width="100%")
+
 
 
           if Is.classroom classroomId "admin"
@@ -218,3 +191,22 @@ template(name="codingEnvironment")
 
   else
     +pleaseSignTerms
+
+
+template(name="sftpInfo")
+  .well.well-sm
+    if sftp
+      .container-fluid
+        with sftp
+         label Host:
+          button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{ip}}" data-placement="bottom" style="text-transform:none;") {{ip}}
+         label Port:
+          button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{port}}" data-placement="bottom" style="text-transform:none;") {{port}}
+         label User:
+          button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{envs.USER}}" data-placement="bottom" style="text-transform:none;") {{envs.USER}}
+         label Password:
+          button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{envs.PASSWORD}}" data-placement="bottom" style="text-transform:none;") {{envs.PASSWORD}}
+    else
+      div(style="position:relative; height:100px;")
+        +spinner
+
