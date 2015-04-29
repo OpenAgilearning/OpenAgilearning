@@ -78,6 +78,30 @@ Meteor.methods
       throw new Meteor.Error 1301, "[Admin Error] Permission Denied"
 
 
+  "setCourseMemberRole": (userId, roleId, userIsRoleId) ->
+    if not @userId
+      throw new Meteor.Error 401, "Login required"
+
+    roleType = db.roleTypes.findOne _id: roleId
+    if not roleType
+      throw new Meteor.Error 1402, "[Admin Error] there is no role with id #{userIsRoleId}"
+
+    isCourseAdmin = new Role({type: "course", id: roleType.group.id}, "admin").check
+    isSystemAdmin = new Role({type: "agilearning.io"}, "admin").check
+
+    if isCourseAdmin or isSystemAdmin
+
+      userIsRoleData = db.userIsRole.findOne _id: userIsRoleId
+
+      if userIsRoleData
+        db.userIsRole.update({_id: userIsRoleId}, {$set: roleId: roleId})
+
+      else
+        throw new Meteor.Error 1402, "[Admin Error] there is no role with id #{userIsRoleId}"
+    else
+      throw new Meteor.Error 1302, "[Admin Error] Permission Denied"
+
+
   "applyCourse": (courseId) ->
 
     console.log "[in applyCourse]"
