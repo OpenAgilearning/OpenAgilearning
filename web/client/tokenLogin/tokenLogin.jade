@@ -1,0 +1,14 @@
+template(name="tokenLogin")
+  .container
+    .row
+      if user
+        h2 Copy the following string
+        {{token}}
+
+      else
+        form
+          legend Paste your token here
+          .form-group
+            label Token
+            input.form-control(type='text', placeholder='Some messy text like : jLTvBtSBKHDth....')#token
+          a.btn.btn-primary#login-btn Login
