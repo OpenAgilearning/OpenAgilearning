@@ -1,0 +1,24 @@
+template(name="tokenLogin")
+  .container
+    .row
+      .col-md-6
+        if user
+          h2 Copy the following string
+          {{token}}
+
+        else
+          form
+            legend Paste your token here
+            .form-group
+              label Token
+              input.form-control(type='text', placeholder='Some messy text like : jLTvBtSBKHDth....')#token
+            a.btn.btn-primary#login-btn Login
+
+      .col-md-6
+        .well
+          h2 Instruction
+          ul
+            li Login with Meetup or Facebook when having free access to them.
+            li Save or write down the your login token string. Make sure the token is kept secret.
+            li Please DONT logout.
+            li When behind a firewall where Meetup and Facebook are not available, you can login and enjoy the learning after pasting your token in the input field and pressing login.

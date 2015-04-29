@@ -632,6 +632,9 @@ Meteor.startup ->
         if userId
           Router.go "index"
 
+    @route "tokenLogin",
+      path: "tokenLogin/"
+      template: "tokenLogin"
 
     @route "about",
       path: "about/"
