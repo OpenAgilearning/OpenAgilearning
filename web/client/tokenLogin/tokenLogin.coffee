@@ -5,5 +5,6 @@ Template.tokenLogin.helpers
 Template.tokenLogin.events
   "click #login-btn": (e,t) ->
     token = t.$("#token").val()
-    Meteor.loginWithToken token
+    Meteor.loginWithToken token, ->
+      Router.go "courses"
 

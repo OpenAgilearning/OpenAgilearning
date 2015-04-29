@@ -3,8 +3,8 @@ template(name="tokenLogin")
     .row
       .col-md-6
         if user
-          h2 Copy the following string
-          {{token}}
+          h2 Copy the following token string
+          input.form-control(type="text" value="{{token}}" onclick="this.select()")
 
         else
           form
@@ -20,5 +20,5 @@ template(name="tokenLogin")
           ul
             li Login with Meetup or Facebook when having free access to them.
             li Save or write down the your login token string. Make sure the token is kept secret.
-            li Please DONT logout.
+            li Please DO NOT logout.
             li When behind a firewall where Meetup and Facebook are not available, you can login and enjoy the learning after pasting your token in the input field and pressing login.
