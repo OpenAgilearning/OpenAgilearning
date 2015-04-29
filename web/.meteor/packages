@@ -10,7 +10,6 @@ iron:router
 npm-container
 accounts-meetup
 http
-mizzao:user-status
 mizzao:timesync
 mrt:moment
 mquandalle:jade

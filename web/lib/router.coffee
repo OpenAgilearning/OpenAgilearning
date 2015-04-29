@@ -2,6 +2,8 @@ Router.configure
   layoutTemplate: 'layout'
   loadingTemplate: 'loading'
 
+@rootURL = Meteor.settings.public.rootURL
+
 Meteor.startup ->
   Router.map ->
 
