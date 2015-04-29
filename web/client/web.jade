@@ -36,8 +36,8 @@ template(name="navBar")
           li.nav.navbar-nav
             a(href="{{pathFor 'learningResources'}}") Videos
 
-          li.nav.navbar-nav
-            a(href="{{pathFor 'communitiesList'}}") Communities
+          //- li.nav.navbar-nav
+          //-   a(href="{{pathFor 'communitiesList'}}") Communities
 
           li.nav.navbar-nav
             a(href="{{pathFor 'about'}}") About Us
@@ -179,6 +179,6 @@ template(name="pleaseLogin")
 
 template(name='_loginButtonsAdditionalLoggedInDropdownActions')
   a(href="{{pathFor 'userSettings'}}")
-    button#login-buttons-edit-profile.btn.btn-default.btn-block
+    button#login-buttons-edit-profile.btn.btn-primary.btn-block
       |#[span(aria-hidden="true").glyphicon.glyphicon-cog]
       | Settings

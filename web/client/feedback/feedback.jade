@@ -4,7 +4,7 @@ template(name="feedback")
       .panel.panel-info
         .panel-heading.feedback-header
           h2.panel-title
-            i.fa.fa-smile-o 
+            i.fa.fa-smile-o
             | Feedback
 
         #collapse-body.panel-body.collapse
@@ -20,15 +20,15 @@ template(name="feedback")
               +afQuickField name="title"
               +afQuickField name="description"
               button(type="submit").btn.btn-primary.btn-lg Done!
-              
+
 template(name="afRadioGroupInline_custom")
   .form-group
     #wish-bug.af-radio-group.btn-group.btn-group-lg(data-toggle="buttons" data-schema-key="type")
-      label.btn.btn-default.active
+      label.btn.btn-primary.active
         input(id="wish" type="radio" value="w" name="type" atts checked)
         i.fa.fa-birthday-cake.fa-5x
         p Make a wish
-      label.btn.btn-default
+      label.btn.btn-primary
         input(id="bug" type="radio" value="b" name="type" atts)
         i.fa.fa-bug.fa-5x
         p Report a bug

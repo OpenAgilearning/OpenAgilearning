@@ -20,7 +20,7 @@ template(name="dockerSuggestion")
               td
                 p {{user.profile.name}}
               td
-                input.suggestBt.btn.btn-default(value="Suggest")
+                input.suggestBt.btn.btn-primary(value="Suggest")
 
 
 template(name="dockerImagesList")
@@ -37,8 +37,8 @@ template(name="dockerImagesList")
             each dockerImages
               tr
                 td
-                  a.runInstance.btn.btn-default(href="#",imageId="{{_id}}") Run Instance
-                  a.runRemoteInstance.btn.btn-default(href="#",imageId="{{_id}}") Run Remote Instance
+                  a.runInstance.btn.btn-primary(href="#",imageId="{{_id}}") Run Instance
+                  a.runRemoteInstance.btn.btn-primary(href="#",imageId="{{_id}}") Run Remote Instance
                 td
                   p {{_id}}
                 td
@@ -50,8 +50,8 @@ template(name="dockerInstancesList")
     .row.clearfix
       .col-md-12.column
         .iframeBlock
-          a.hideInstance.btn.btn-default Hide Instance
-          a.reconnectInstance.btn.btn-default Reconnect Instance
+          a.hideInstance.btn.btn-primary Hide Instance
+          a.reconnectInstance.btn.btn-primary Reconnect Instance
           iframe#docker(src="", width="100%", height="550px", scrolling="yes")
         .instancesBlock
           h2 Docker Instances:
@@ -66,7 +66,7 @@ template(name="dockerInstancesList")
               each dockerInstances
                 tr
                   td
-                    a.showInstance.btn.btn-default(servicePort="{{servicePort}}") Show Instance
+                    a.showInstance.btn.btn-primary(servicePort="{{servicePort}}") Show Instance
                   td
                     p {{imageId}}
                   td
@@ -76,8 +76,8 @@ template(name="dockerInstancesList")
                       each containerInfo.Env
                         li {{this}}
                   td
-                    a.stopInstance.btn.btn-default(containerId="{{containerId}}") Stop Instance
-                    a.stopRemoteContainer.btn.btn-default(containerId="{{containerId}}") Stop Remote Instance
+                    a.stopInstance.btn.btn-primary(containerId="{{containerId}}") Stop Instance
+                    a.stopRemoteContainer.btn.btn-primary(containerId="{{containerId}}") Stop Remote Instance
 
 
 template(name="dockerRunningConfig")
@@ -95,7 +95,7 @@ template(name="dockerRunningConfig")
             each dockerTypes
               tr
                 td
-                  a.setConfing.btn.btn-default(href="{{pathFor 'dockerSetConfig' dockerType=_id}}") Set Configurations
+                  a.setConfing.btn.btn-primary(href="{{pathFor 'dockerSetConfig' dockerType=_id}}") Set Configurations
                 td
                   p {{_id}}
                 td
@@ -151,6 +151,6 @@ template(name="dockerSetConfig")
                 //- td
 
 
-        input.submitENV.btn.btn-default(value="Submit")
+        input.submitENV.btn.btn-primary(value="Submit")
 
 

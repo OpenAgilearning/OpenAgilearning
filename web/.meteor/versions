@@ -25,6 +25,7 @@ deps@1.0.6
 ejson@1.0.5
 facebook@1.1.3
 fastclick@1.0.2
+fezvrasta:bootstrap-material-design@0.3.0
 follower-livedata@1.0.3
 geojson-utils@1.0.2
 handlebars@1.0.2
@@ -59,7 +60,6 @@ meteorhacks:npm@1.2.2
 mike:mocha@0.5.1
 minifiers@1.1.3
 minimongo@1.0.6
-mizzao:bootstrap-3@3.3.1_1
 mizzao:timesync@0.2.2
 mizzao:user-status@0.6.3
 mobile-status-bar@1.0.2
@@ -94,6 +94,7 @@ stylus@1.0.6
 templating@1.0.11
 tracker@1.0.5
 tsega:filter-collections@0.1.5
+twbs:bootstrap@3.3.1
 ui@1.0.5
 underscore@1.0.2
 url@1.0.3
