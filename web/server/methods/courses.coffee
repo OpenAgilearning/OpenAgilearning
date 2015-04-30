@@ -65,7 +65,7 @@ Meteor.methods
       if userIsRoleData
         roleData = db.roleTypes.findOne _id: userIsRoleData.roleId
 
-        if roleData.role is "member"
+        if roleData
           db.userIsRole.remove _id: userIsRoleData._id
 
         else
