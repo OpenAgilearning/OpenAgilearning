@@ -76,6 +76,11 @@ Template.envIframe.events
     url = "http://"+ip+":"+port
 
     t.$(".envIframe").attr 'src', url
+  "click .env-fullscreen":(e,t)->
+    elem = t.$(".envIframe")[0]
+
+    req = elem.requestFullScreen || elem.webkitRequestFullScreen || elem.mozRequestFullScreen
+    req.call elem
 
 Template.classroomEnvIframe.helpers
   iframeUser:->
