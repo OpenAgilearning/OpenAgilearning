@@ -107,19 +107,30 @@ template(name="courseMemberTableCheckBtnField")
         li: a.denyBtn(href="#", role="menuitem") Deny
 
   else
-    button.btn.btn-danger(data-toggle="modal", data-target="#ejectAlert{{_id}}") Eject
-    .modal.fade(id="ejectAlert{{_id}}", role="dialog")
-      .modal-dialog
-        .modal-content
-          .modal-header
-            button.close(data-dismiss="modal", aria-label="Close")
-              span &times;
-            h3.modal-title Are you sure you want to eject {{memberName}}?
-          .modal-body
-            p Think twice before you press the "Confirm" button.
-          .modal-footer
-            button.btn.btn-default(data-dismiss="modal") Cancel
-            button.btn.btn-danger.confirm-eject Confirm
+    .dropdown
+      button.btn.btn-default(data-toggle="dropdown")
+        | Options
+        span.caret
+      ul.dropdown-menu(role="menu")
+        li.dropdown-header(role="presentation") Set As
+        each availableRoles
+          li
+            a.set-role(href="#") #{role}
+        li.dropdown-header(role="presentation") Eject Member
+        li
+          a(href="#", data-toggle="modal", data-target="#ejectAlert#{_id}") Eject
+      .modal.fade(id="ejectAlert#{_id}", role="dialog")
+        .modal-dialog
+          .modal-content
+            .modal-header
+              button.close(data-dismiss="modal", aria-label="Close")
+                span &times;
+              h3.modal-title Are you sure you want to eject #{memberName}?
+            .modal-body
+              p Think twice before you press the "Confirm" button.
+            .modal-footer
+              button.btn.btn-default(data-dismiss="modal") Cancel
+              button.btn.btn-danger.confirm-eject Confirm
 
 template(name="courseInfoAdminEditorForm")
   if coursesEditSchema

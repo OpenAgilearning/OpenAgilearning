@@ -197,6 +197,11 @@ Template.courseMemberTableCheckBtnField.helpers
     db.roleTypes.findOne({_id:@roleId}).role is "waitForCheck"
   memberName: ->
     db.publicResume.findOne(userId: @userId, key: "name").value
+  availableRoles: ->
+    db.roleTypes.find
+      "group.id": Router.current().data().courseId()
+      role:
+        $not: db.roleTypes.findOne(_id: @roleId).role
 
 
 
@@ -230,6 +235,13 @@ Template.courseMemberTableCheckBtnField.events
   "click .confirm-eject": (e, t) ->
     e.stopPropagation()
     Meteor.call "ejectCourseMember", @, (err, data) =>
+      if err?.error is 401
+        Cookies.set "redirectAfterLogin", window.location.href
+        Router.go "pleaseLogin"
+
+  "click .set-role": (e, t) ->
+    e.preventDefault()
+    Meteor.call "setCourseMemberRole", t.data.userId, @_id, t.data._id, (err, data) =>
       if err?.error is 401
         Cookies.set "redirectAfterLogin", window.location.href
         Router.go "pleaseLogin"
