@@ -172,22 +172,35 @@ Template.courseMemberTable.helpers
       label: "User"
       fn:(value, object) ->
         userData = Meteor.users.findOne({_id:value})
+        thumb = db.publicResume.findOne(userId: value, key: "thumb_link")?.value
         org = db.publicResume.findOne({userId:value,key:"organization"})?.value
         name = db.publicResume.findOne({userId:value,key:"name"})?.value
 
+        thumb or= "http://photos4.meetupstatic.com/img/noPhoto_50.png"
+
         if org
-          "["+org+"] "+name
+          name = "[#{org}] #{name}"
 
-        else
-          name
+        Spacebars.SafeString(
+          HTML.toHTML(
+            HTML.DIV(HTML.IMG
+              src: thumb
+              class: "user-img img-circle"
+            , name
+            )
+          )
+        )
 
+    fields = [UserProfileField, RoleTypeField, CheckBtnField]
+    if new Role({type: "agilearning.io"}, "admin").check
+      fields.splice 1, 0, "userId"
 
     res =
       collection: waitForCheckRoles
       rowsPerPage: 20
       showFilter: false
       # showNavigation:'never'
-      fields: [UserProfileField,  "userId", RoleTypeField, CheckBtnField]
+      fields: fields
 
 
 Template.courseMemberTableCheckBtnField.helpers
