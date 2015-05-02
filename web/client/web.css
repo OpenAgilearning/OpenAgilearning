@@ -5,6 +5,7 @@ body {
 img.user-img {
 	margin:5px;	
 	height: 45px;
+  width: 45px;
 }
 
 .login-display-name {
