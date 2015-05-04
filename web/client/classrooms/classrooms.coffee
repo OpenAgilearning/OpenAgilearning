@@ -162,6 +162,7 @@ Template.classroom.helpers
   hasVideo:-> db.videos.find().count() > 0
   hasSlide:-> db.slides.find().count() > 0
   hash:(string)->string.replace /[\[\]:\/]+/g, ""
+  isPDF: -> @url.match /.+\.pdf$/
 
 
 
