@@ -152,14 +152,21 @@ template(name="classroomEnvIframe")
 template(name="envIframe")
   if user
     label Username:
-    button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{user}}" data-placement="bottom" style="text-transform:none;") {{user}}
+    unless flashDisabled
+      button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{user}}" data-placement="bottom" style="text-transform:none;") {{user}}
+    else
+      span.label.label-info= user
     //- Style 2
     //- label.control-label Username:
     //- input.form-control(type='text' value="{{user}}" readonly="readonly" style="display: inline-block;width: 100px;")
     //- button#copy-user-button.btn.btn-default.btn-raised.btn-xs(type='button' data-clipboard-text="{{user}}" data-placement="bottom") copy
   if password
     label Password:
-    button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{password}}" data-placement="bottom" style="text-transform:none;") {{password}}
+    unless flashDisabled
+      button.btn.btn-flat.btn-link.copy-button(type="button" data-clipboard-text="{{password}}" data-placement="bottom" style="text-transform:none;") {{password}}
+    else
+      span.label.label-info= password
+
   button.btn.btn-flat.btn-xs.env-fullscreen
     i.mdi-navigation-fullscreen
   button.connectEnvBtn.btn.btn-warning.btn-default.pull-right Reconnect

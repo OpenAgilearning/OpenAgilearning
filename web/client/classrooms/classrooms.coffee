@@ -188,3 +188,7 @@ Template.codingEnvironment.events
 Template.codingEnvironment.rendered = ->
   tag = @data.tag
   Session.set ("useThisEnvironment" + tag), no
+
+
+
+Blaze.registerHelper "flashDisabled", -> ZeroClipboard.state().flash.disabled
