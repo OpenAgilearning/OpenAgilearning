@@ -175,10 +175,18 @@ Meteor.startup ->
           roleIds = db.userIsRole.find().map (data)-> data.roleId
           Meteor.subscribe "roleTypesByRoleIds", roleIds
 
-
-
         if Is.course(@params.courseId, "admin")
-          Meteor.subscribe "courseAdmin", @params.courseId
+
+          Meteor.subscribe "courseAdmin", @params.courseId, =>
+            roleIds = db.roleTypes.find(
+              group:
+                type: "course"
+                id: @params.courseId
+            ).map (doc) -> doc._id
+
+            db.userIsRole.find(roleId: $in: roleIds).observe
+              added: =>
+                Meteor.subscribe "courseAdmin", @params.courseId
 
         if userId
           Meteor.call "applyCourse", @params.courseId
