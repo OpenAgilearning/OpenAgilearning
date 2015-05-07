@@ -80,7 +80,7 @@ template(name="classroom")
                       if isPDF
                         object(data="{{url}}", type="application/pdf", width="100%", height="500px")
                       else
-                        iframe(id="slide_iframe_{{_id}}" src="{{url}}", width="100%", height="500px", scrolling="auto")
+                        iframe(id="slide_iframe_{{_id}}" src="{{url}}", width="100%", height="500px", scrolling="auto" allowfullscreen="true" mozallowfullscreen="true" webkitallowfullscreen="true")
 
 
           each dockerImageTags
