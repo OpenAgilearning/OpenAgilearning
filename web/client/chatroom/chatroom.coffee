@@ -27,7 +27,10 @@ Template.classChatroom.events
       $(".classroom-body").removeClass("col-md-9").addClass("col-md-12")
       Session.set "chatroomIsMinimised", yes
       Session.set "readMessages", ChatMessages.find().count()
-
+  "mouseenter .message-item":(e)->
+    $(e.currentTarget).find(".text-muted").show()
+  "mouseleave .message-item":(e)->
+    $(e.currentTarget).find(".text-muted").hide()
 
 Template.minimisedChatroom.helpers
   display: ->
