@@ -4,11 +4,34 @@ Template.adminPageDockerServersTable.helpers
       key: "serverId"
       label: "Server Name"
 
+    activeField =
+      key:"active"
+      label:"Active"
+      fn:(value, object) ->
+        if value
+          Spacebars.SafeString(
+            HTML.toHTML(
+              HTML.I
+                class: "mdi-image-tag-faces"
+            )
+          )
+        else
+          Spacebars.SafeString(
+            HTML.toHTML(
+              HTML.I
+                class: "mdi-maps-hotel"
+            )
+          )
+
     res=
       collection:db.dockerServersMonitor
       rowsPerPage:5
       showFilter: true
-      fields:[dockerServerNameField, "active", "lastInfoMonitorAt"]
+      fields:[dockerServerNameField, activeField, "lastInfoMonitorAt"]
+
+Template.adminPageDockerServersTable.events
+  'click #refresh-monitor': ->
+    Meteor.call "refreshDockerServerMonitors"
 
 
 Template.adminPageDockerServerImagesTable.helpers

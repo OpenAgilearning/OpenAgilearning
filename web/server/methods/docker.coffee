@@ -227,3 +227,16 @@ Meteor.methods
 
 
     # TODO: different roles can access different images ...
+
+
+  "refreshDockerServerMonitors": ->
+    #[TODOLIST: checking before running]
+    #TODO: assert user logged in
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    if Roles.userIsInRole user._id, "admin", "dockers"
+      db.dockerServersMonitor.remove {}
+    else
+      throw new Meteor.Error(401, "You are not authorized")
