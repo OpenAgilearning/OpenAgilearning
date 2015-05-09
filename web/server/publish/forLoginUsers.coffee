@@ -160,11 +160,11 @@ Meteor.publish "votes", (collections)->
     Exceptions.find {_id:"ExceptionPermissionDeny"}
 
 
-Meteor.publish "userResume", ->
+Meteor.publish "userResume", (resumeUserId)->
   userId = @userId
 
   if userId
-    db.publicResume.find userId:userId
+    db.publicResume.find userId:resumeUserId
   else
     Exceptions.find {_id:"ExceptionPermissionDeny"}
 

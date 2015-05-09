@@ -7,15 +7,16 @@ Template.classChatroom.helpers
     ChatMessages.find({classroomId: @classroomId}, {sort: {createdAt: -1}}).fetch()
   messageIsSentByCurrentUser: (message) ->
     message.userId is Meteor.user()._id
+  showResumeUrl:(userId)-> userId isnt "system"
 
 Template.classChatroom.events
   "submit .new-message-form": (event, template) ->
     event.preventDefault()
     Meteor.call(
-      "sendMessage", 
-      null, 
-      template.data.classroomId, 
-      template.$("#new-message-text").val(), 
+      "sendMessage",
+      null,
+      template.data.classroomId,
+      template.$("#new-message-text").val(),
       "M")
     template.$("#new-message-text").val("")
 

@@ -1,12 +1,14 @@
 Template.resume.helpers
   field: (key)->
-    pair = db.publicResume.findOne key:key
+    resumeUserId = Router.current().params.userId
+    pair = db.publicResume.findOne {key:key, userId:resumeUserId}
     if pair?.isPublic
       pair.value
 
 Template.resume_profile.helpers
   field: (key)->
-    pair = db.publicResume.findOne key:key
+    resumeUserId = Router.current().params.userId
+    pair = db.publicResume.findOne {key:key, userId:resumeUserId}
     if pair?.isPublic
       pair.value
 

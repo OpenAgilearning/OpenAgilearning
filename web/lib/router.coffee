@@ -589,11 +589,16 @@ Meteor.startup ->
         showAdminPage: ->
           userId = Meteor.userId()
           Roles.userIsInRole(userId, "admin", "system") or Roles.userIsInRole(userId, "admin", "dockers")
-        resume: ->
-          db.publicResume.find()
 
       waitOn: ->
-        Meteor.subscribe "userResume"
+        Meteor.subscribe "userResume", @params.userId
+
+      action: ->
+        if db.publicResume.find(userId:@params.userId).count() is 0
+          Router.go "index"
+
+        @render "resume"
+
 
     @route "termsOfConditions",
       path: "toc/:tocId"

@@ -1,5 +1,5 @@
 template(name="classChatroom")
-  
+
   .chatroom-main.col-md-3
     .panel.panel-primary
       .panel-heading.chat-header
@@ -32,7 +32,12 @@ template(name="classChatroom")
                 .col-lg-2.col-md-3.col-sm-1.col-xs-2
                   img(src=userAvatar).img-circle.thumb
                 .col-lg-10.col-md-9.col-sm-11.col-xs-10
-                  strong= userName
+
+                  if showResumeUrl userId
+                    a(href="{{pathFor 'resume' userId}}")
+                      strong= userName
+                  else
+                    strong= userName
                   p.message-content= text
                   small.text-muted
                     span.glyphicon.glyphicon-time
