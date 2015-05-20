@@ -7,15 +7,16 @@ Template.classChatroom.helpers
     ChatMessages.find({classroomId: @classroomId}, {sort: {createdAt: -1}}).fetch()
   messageIsSentByCurrentUser: (message) ->
     message.userId is Meteor.user()._id
+  showResumeUrl:(userId)-> userId isnt "system"
 
 Template.classChatroom.events
   "submit .new-message-form": (event, template) ->
     event.preventDefault()
     Meteor.call(
-      "sendMessage", 
-      null, 
-      template.data.classroomId, 
-      template.$("#new-message-text").val(), 
+      "sendMessage",
+      null,
+      template.data.classroomId,
+      template.$("#new-message-text").val(),
       "M")
     template.$("#new-message-text").val("")
 
@@ -26,7 +27,10 @@ Template.classChatroom.events
       $(".classroom-body").removeClass("col-md-9").addClass("col-md-12")
       Session.set "chatroomIsMinimised", yes
       Session.set "readMessages", ChatMessages.find().count()
-
+  "mouseenter .message-item":(e)->
+    $(e.currentTarget).find(".additional-info").show()
+  "mouseleave .message-item":(e)->
+    $(e.currentTarget).find(".additional-info").hide()
 
 Template.minimisedChatroom.helpers
   display: ->

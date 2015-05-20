@@ -3,7 +3,8 @@
 }
 
 .message-content {
-  white-space: pre;
+  /*white-space: pre;*/
+  word-break: break-all;
   overflow: auto;
 }
 

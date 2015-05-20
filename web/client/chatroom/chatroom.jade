@@ -1,5 +1,5 @@
 template(name="classChatroom")
-  
+
   .chatroom-main.col-md-3
     .panel.panel-primary
       .panel-heading.chat-header
@@ -16,25 +16,34 @@ template(name="classChatroom")
       ul.list-group.chatroom-body
         each messages
           if messageIsSentByCurrentUser this
-            li.list-group-item.green-background
+            li.list-group-item.message-item.green-background
               .row
                 .col-lg-9.col-md-8.col-sm-10.col-xs-10
-                  strong= userName
+                  small.text-muted= userName
                   p.message-content= text
-                  small.text-muted
+                  small.text-muted.additional-info(style="display:none")
                     span.glyphicon.glyphicon-time
                     | {{livestamp createdAt}}
                 .col-lg-3.col-md-4.col-sm-2.col-xs-2
                   img(src=userAvatar).img-circle.thumb
           else
-            li.list-group-item
+            li.list-group-item.message-item
               .row
                 .col-lg-2.col-md-3.col-sm-1.col-xs-2
-                  img(src=userAvatar).img-circle.thumb
+                  if showResumeUrl userId
+                    a(href="{{pathFor 'resume' userId}}")
+                      img(src=userAvatar).img-circle.thumb
+                  else
+                    img(src=userAvatar).img-circle.thumb
                 .col-lg-10.col-md-9.col-sm-11.col-xs-10
-                  strong= userName
+
+                  if showResumeUrl userId
+                    a(href="{{pathFor 'resume' userId}}")
+                      small.text-muted= userName
+                  else
+                    small.text-muted= userName
                   p.message-content= text
-                  small.text-muted
+                  small.text-muted.additional-info(style="display:none")
                     span.glyphicon.glyphicon-time
                     | {{livestamp createdAt}}
 
