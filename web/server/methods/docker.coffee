@@ -227,3 +227,120 @@ Meteor.methods
 
 
     # TODO: different roles can access different images ...
+
+
+  "refreshDockerServerMonitors": ->
+    #[TODOLIST: checking before running]
+    #TODO: assert user logged in
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    if Roles.userIsInRole user._id, "admin", "dockers"
+      db.dockerServersMonitor.remove {}
+    else
+      throw new Meteor.Error(401, "You are not authorized")
+
+
+  "addNewServer":(doc)->
+
+     ## REMOVED
+
+       ## REMOVED
+       ## REMOVED
+       ## REMOVED
+       ## REMOVED
+       ## REMOVED
+       ## REMOVED
+       ## REMOVED
+       ## REMOVED
+       ## REMOVED
+       ## REMOVED
+       ## REMOVED
+       ## REMOVED
+
+    schema = new SimpleSchema
+      serverName:
+        type: String
+
+      host:
+        type: String
+        regEx: SimpleSchema.RegEx.IP
+
+      # port:
+      #   type: Number
+
+      useIn:
+        type: String
+        allowedValues: ["production","testing"]
+
+      user:
+        type: String
+        allowedValues: ["toC","toB"]
+
+
+
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    if Roles.userIsInRole user._id, "admin", "dockers"
+
+
+      check doc, schema
+
+      if doc.serverName.length < 3
+        throw new Meteor.Error(401, "servername too short")
+
+      path = Meteor.npmRequire "path"
+
+      if Meteor.settings.DOCKER_CERT_PATH isnt ""
+        DOCKER_CERT_PATH = Meteor.settings.DOCKER_CERT_PATH
+      else
+        if process.env["DOCKER_CERT_PATH"]
+          DOCKER_CERT_PATH = process.env["DOCKER_CERT_PATH"]
+        else
+          DOCKER_CERT_PATH = ""
+
+      if db.dockerServers.find(name:doc.serverName).count() is 0
+        db.dockerServers.insert
+          _id: "[DockerServer]"+doc.serverName
+          name:doc.serverName
+          connect:
+            protocol: 'https'
+            host: doc.host
+            port: 2376
+          security:
+            caPath: path.join(DOCKER_CERT_PATH, 'ca.pem')
+            certPath: path.join(DOCKER_CERT_PATH, 'cert.pem')
+            keyPath: path.join(DOCKER_CERT_PATH, 'key.pem')
+          useIn: doc.useIn
+          user:
+            type: doc.user
+
+      else
+        throw new Meteor.Error(401, doc.serverName + "exists.")
+    else
+      throw new Meteor.Error(401, "You are not authorized")
+
+  "RemoveDockerServer":(doc)->
+    schema = new SimpleSchema
+      serverId:
+        type: String
+
+
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    if Roles.userIsInRole user._id, "admin", "dockers"
+
+
+      check doc, schema
+
+      if db.dockerInstances.find(serverId:doc.serverId).count() is 0
+
+        db.dockerServers.remove _id:doc.serverId
+
+      else
+        throw new Meteor.Error(401, "This server still has running containers, freeze it first.")

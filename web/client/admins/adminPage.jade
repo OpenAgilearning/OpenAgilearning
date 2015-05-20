@@ -42,13 +42,20 @@ template(name="AdminPage")
 
 
         .tab-pane.fade#dockerJobs
-          .col-md-3.column
-          .col-md-6.column
-            hr
-            h2 pull Images
-            +pullImageForm
+          .row
+            .col-md-6.column
+              .well
+                h2 Add New Docker Server
+                +addNewDockerServer
+              .well
+                h2 Remove Docker Server
+                +removeDockerServer
 
-          .col-md-3.column
+            .col-md-6.column
+
+              h2 pull Images
+              +pullImageForm
+
 
 
         .tab-pane.fade#envsSettings
@@ -116,3 +123,21 @@ template(name="pullImageForm")
         //- strong {{{afFieldMessage name="imageVersion"}}}
       br
       button.btn.btn-primary(type='submit') submit
+
+template(name="addNewDockerServer")
+  +autoForm id="addNewDockerServer" schema=AddDockerServerSchema type="method" meteormethod="addNewServer"
+    fieldset
+      +afQuickField name="serverName"
+      +afQuickField name="host"
+      //- +afQuickField name="port"
+      +afQuickField name="useIn"
+      +afQuickField name="user"
+
+    button.btn.btn-primary(type='submit') submit
+
+template(name="removeDockerServer")
+  +autoForm id="removeDockerServer" schema=RemoveDockerServerSchema type="method" meteormethod="RemoveDockerServer"
+    fieldset
+      +afQuickField name="serverId"
+
+    button.btn.btn-primary(type='submit') submit
