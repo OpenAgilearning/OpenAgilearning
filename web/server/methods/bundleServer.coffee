@@ -5,7 +5,7 @@ Meteor.methods
     #TODO: middlewares
     if not @userId
       throw new Meteor.Error 401, "Login Required"
-    if not groupName
+    if not groupId and not groupName
       throw new Meteor.Error "not-enough-arguments", "Group Name Required"
     if db.bundleServerUserGroup.find(groupId).count()
       throw new Meteor.Error "already-exists", "Group With ID Of #{groupId} Already Exists"
