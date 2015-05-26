@@ -75,18 +75,16 @@ Meteor.methods
   "bundleServer.addServer": (groupId, serverId) ->
     if not @userId
       throw new Meteor.Error 401, "Login Required"
+    unless Is.systemAdmin
+      throw new Meteor.Error "permission-denied", "Permission Denied"
     group = db.bundleServerUserGroup.findOne groupId
     if not group
       throw new Meteor.Error "group-not-found", "The Group You're Looking For Doesn't Exists"
     if serverId in group.servers
       return
-    if @userId not in group.admins
-      throw new Meteor.Error "permission-denied", "You're Not The Admin Of #{group.name}"
     server = db.dockerServers.findOne serverId
     if not server
       throw new Meteor.Error "docker-server-not-found", "Docker Server #{serverId} Not Found"
-    if server.user.group?.id isnt groupId
-      throw new Meteor.Error "docker-server-not-available", "Docker Server #{serverId} Is Not For Your Group"
     db.bundleServerUserGroup.update groupId,
       $addToSet: servers: serverId
 
