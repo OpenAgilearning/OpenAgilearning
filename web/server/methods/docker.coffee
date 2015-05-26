@@ -181,6 +181,22 @@ Meteor.methods
     @unblock()
 
 
+    personalQuotaQuery =
+      userId: user._id
+      expiredAt:
+        "$gt": new Date().getTime()
+
+    checkpersonalQuota = db.dockerPersonalUsageQuota.find(personalQuotaQuery).count()
+
+    if checkpersonalQuota is 0
+      db.dockerPersonalUsageQuota.insert
+        userId: user._id
+        expiredAt: new Date().getTime() + 15*60*1000
+        NCPU:1
+        Memory: 512*1024*1024
+
+
+
     if DockerInstances.find({userId:user._id,imageTag:fullImageTag, $or:[{frozen:$exists:false},{frozen:false}]}).count() is 0
 
       # Before we start a new instance, say bye bye to all
