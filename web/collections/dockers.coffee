@@ -100,6 +100,7 @@ Meteor.methods
         #   throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
 
       if db.dockerInstances.find({userId:user._id, imageTag:imageTag, $or:[{frozen:$exists:false},{frozen:false}]}).count() is 0
+        @unblock()
         Meteor.call "runDocker", imageTag
 
 
