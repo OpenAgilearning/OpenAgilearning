@@ -159,13 +159,24 @@ Meteor.methods
         dockerInstanceDoc.removeByUid = user._id
         db.dockerInstancesLog.insert dockerInstanceDoc
 
-  "checkDockerInstance": (imageTag)->
+  # "checkDockerInstance": (imageTag)->
+  #   user = Meteor.user()
+  #   if not user
+  #     throw new Meteor.Error(401, "You need to login")
+
+
+  #   console.log "TODO"
+  #   console.log "return instanceId or ... "
+
+  "selectQuota": ->
     user = Meteor.user()
     if not user
       throw new Meteor.Error(401, "You need to login")
 
+
     console.log "TODO"
     console.log "return instanceId or ... "
+
 
 
   "checkTOS": ->

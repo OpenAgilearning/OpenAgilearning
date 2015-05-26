@@ -185,21 +185,36 @@ template(name="codingEnvironment")
       +classroomEnvIframe docker=dockerInstance
     else
 
-      if useThisEnvironment
-        div(style="position:relative; height:500px;")
-          +spinner
-      else
-        with dockerImageTag
+      //- if useThisEnvironment
+      //-   div(style="position:relative; height:500px;")
+      //-     +spinner
+      //- else
+      with dockerImageTag
 
-          //- if pictures.[0]
-          //-   img(src="{{pictures.[0]}}" height="200px")
-          h2 {{tag}}
+        //- if pictures.[0]
+        //-   img(src="{{pictures.[0]}}" height="200px")
+        h2 {{tag}}
 
-          button(type="button").btn.btn-success.btn-raised.btn-lg.wantToCode Initiate this coding environment
+        hr
+        h2 Personal Quota
 
-          if videos.[0]
-            video(width="75%" autoplay loop style="position: relative;left: 12.5%;").panel.panel-default.shadow-z-3
-              source(src="{{videos.[0]}}" type="video/mp4")
+        +autoForm id="personalQuotaSelector" schema=personalQuotaSelectorScchema type="method" meteormethod="selectQuota"
+          fieldset
+            +afQuickField name="quota"
+
+          button.btn.btn-primary(type='submit') select
+
+
+        hr
+        h2 Server Group Quota
+
+        hr
+
+        button(type="button").btn.btn-success.btn-raised.btn-lg.wantToCode Initiate this coding environment
+
+        if videos.[0]
+          video(width="75%" autoplay loop style="position: relative;left: 12.5%;").panel.panel-default.shadow-z-3
+            source(src="{{videos.[0]}}" type="video/mp4")
 
 
 
