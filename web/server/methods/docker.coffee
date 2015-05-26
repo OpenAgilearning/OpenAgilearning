@@ -159,6 +159,56 @@ Meteor.methods
         dockerInstanceDoc.removeByUid = user._id
         db.dockerInstancesLog.insert dockerInstanceDoc
 
+  "checkDockerInstance": (imageTag)->
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    console.log "TODO"
+    console.log "return instanceId or ... "
+
+
+  "checkTOS": ->
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    console.log "TODO"
+    console.log "return true / false"
+
+
+  "getQuotaList": ->
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    console.log "TODO"
+    console.log "return QuotaList"
+
+
+  "getUsageList": (Quota)->
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    console.log "TODO"
+    console.log "return UsageList"
+
+
+
+  "runDockerNew": (imageTag, quota, usage)->
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    console.log "check TOC"
+    console.log "check QUOTA"
+    console.log "check usage"
+    console.log "run and save data"
+
+
+
+
   "runDocker": (imageTag)->
 
     # FIXME refactor dockerImage collection, image with full tag
@@ -179,6 +229,22 @@ Meteor.methods
       queryServer = "production"
 
     @unblock()
+
+
+    personalQuotaQuery =
+      userId: user._id
+      expiredAt:
+        "$gt": new Date().getTime()
+
+    checkpersonalQuota = db.dockerPersonalUsageQuota.find(personalQuotaQuery).count()
+
+    if checkpersonalQuota is 0
+      db.dockerPersonalUsageQuota.insert
+        userId: user._id
+        expiredAt: new Date().getTime() + 15*60*1000
+        NCPU:1
+        Memory: 512*1024*1024
+
 
 
     if DockerInstances.find({userId:user._id,imageTag:fullImageTag, $or:[{frozen:$exists:false},{frozen:false}]}).count() is 0

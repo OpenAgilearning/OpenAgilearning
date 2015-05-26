@@ -6,10 +6,15 @@ new Mongo.Collection "dockerHubs"
 new Mongo.Collection "dockerRepos"
 
 new Mongo.Collection "dockerUsageLimits"
+
+new Mongo.Collection "dockerPersonalUsageQuota"
+new Mongo.Collection "dockerServerUsageQuota"
+
 new Mongo.Collection "dockerImageTags"
 new Mongo.Collection "dockerContainersLog"
 
 new Mongo.Collection "dockerEnsureImages"
+
 
 
 
