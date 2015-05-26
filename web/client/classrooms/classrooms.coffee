@@ -179,7 +179,7 @@ Template.codingEnvironment.helpers
   useThisEnvironment: ->
     Session.get("useThisEnvironment" + @tag) or (@tag is Router.current().data().course().dockerImageTag)
 
-  personalQuotaSelectorScchema: ->
+  personalQuotaSelectorSchema: ->
     res = new SimpleSchema
       quota:
         type: String
