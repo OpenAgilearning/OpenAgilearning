@@ -13,12 +13,12 @@ Template.classroom.rendered = ->
   else
     setTimeout showFeedBack , 3000
 
-  classroomId = Router.current().params.classroomId
-  Meteor.call "getClassroomDocker", classroomId, (err, data)->
-    if not err
-      console.log "get env successfully!"
-    else
-      console.log "get env failed!"
+  # classroomId = Router.current().params.classroomId
+  # Meteor.call "getClassroomDocker", classroomId, (err, data)->
+  #   if not err
+  #     console.log "get env successfully!"
+  #   else
+  #     console.log "get env failed!"
 
 
   # timer = setInterval((->
@@ -165,12 +165,30 @@ Template.classroom.helpers
   isPDF: -> @url.match /.+\.pdf$/
 
 
+showExpiredAt = (expiredAt)->
+  if expiredAt > 0
+    (expiredAt - new Date().getTime()) / (60*1000) + " Minutes"
+  else
+    null
+
+
 
 Template.codingEnvironment.helpers
   dockerInstance: -> DockerInstances.findOne imageTag:@tag
   dockerImageTag: -> db.dockerImageTags.findOne tag:@tag
   useThisEnvironment: ->
     Session.get("useThisEnvironment" + @tag) or (@tag is Router.current().data().course().dockerImageTag)
+
+  personalQuotaSelectorSchema: ->
+    res = new SimpleSchema
+      quota:
+        type: String
+        label: "quota"
+        allowedValues: db.dockerPersonalUsageQuota.find().map (doc)-> doc._id
+        autoform:
+          options: db.dockerPersonalUsageQuota.find().map (doc)-> {label:"CPU: "+doc.NCPU+" / Memory: " + doc.Memory + " / ExpiredAt: " + showExpiredAt(doc.expiredAt) , value:doc._id}
+
+
 
 Template.codingEnvironment.events
   "click .wantToCode": (e) ->
