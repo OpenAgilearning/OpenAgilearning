@@ -184,8 +184,7 @@ Meteor.methods
     if not user
       throw new Meteor.Error(401, "You need to login")
 
-    console.log "TODO"
-    console.log "return true / false"
+    return _.contains user.agreedTOC, "toc_main"
 
 
   "getQuotaList": ->
