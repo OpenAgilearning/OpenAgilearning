@@ -208,6 +208,12 @@ template(name="codingEnvironment")
         hr
         h2 Server Group Quota
 
+        +autoForm id="groupQuotaSelector" schema=groupQuotaSelectorSchema type="method" meteormethod="selectQuota"
+          fieldset
+            +afQuickField name="quota"
+
+          button.btn.btn-primary(type='submit') select
+
         hr
 
         button(type="button").btn.btn-success.btn-raised.btn-lg.wantToCode Initiate this coding environment
