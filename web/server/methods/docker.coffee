@@ -261,9 +261,17 @@ Meteor.methods
       console.log "quotaData = ", quotaData
 
       # TODO: compute using.NCPU and using.Memory
+      usingAggregate = db.dockerInstances.aggregate([{$match:{"quota.id":"HZeGguvvmhv7xhf82"}},{$group:{_id:"$quota.id",NCPU:{$sum:"$limit.NCPU"},Memory:{$sum:"$limit.Memory"}}}])
+      if usingAggregate.length > 0
+        using = usingAggregate[0]
+      else
+        using =
+          NCPU: 0
+          Memory: 0
       # FIXME: (limitData.NCPU > quotaData.NCPU - using.NCPU) or (limitData.Memory > quotaData.Memory - using.Memory)
-      if (limitData.NCPU > quotaData.NCPU) or (limitData.Memory > quotaData.Memory)
-          throw new Meteor.Error(10003, "(limitData.NCPU > quotaData.NCPU) or (limitData.Memory > quotaData.Memory)")
+      if (limitData.NCPU > quotaData.NCPU - using.NCPU) or (limitData.Memory > quotaData.Memory - using.Memory)
+      # if (limitData.NCPU > quotaData.NCPU) or (limitData.Memory > quotaData.Memory)
+          throw new Meteor.Error(10003, "(limitData.NCPU > quotaData.NCPU - using.NCPU) or (limitData.Memory > quotaData.Memory - using.Memory)")
 
       usageLimit =
         NCPU: limitData.NCPU
