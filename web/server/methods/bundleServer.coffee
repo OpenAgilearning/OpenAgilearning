@@ -15,6 +15,7 @@ Meteor.methods
       desc: groupDescription
       members: [@userId]
       servers: []
+      usageLimits: [name: "basic", NCPU: 1, Memory: 512 * 1024 * 1024]
       admins: [@userId]
 
   "bundleServer.addGroupMember": (groupId, userId) ->
@@ -87,5 +88,24 @@ Meteor.methods
       throw new Meteor.Error "docker-server-not-found", "Docker Server #{serverId} Not Found"
     db.bundleServerUserGroup.update groupId,
       $addToSet: servers: serverId
+
+  "bundleServer.addLimitSelection": (groupId, limit) ->
+    if not @userId
+      throw new Meteor.Error 401, "Login Required"
+    group = db.bundleServerUserGroup.findOne groupId
+    if not group
+      throw new Meteor.Error "group-not-found", "The Group You're Looking For Doesn't Exists"
+    if @userId not in group.admins
+      throw new Meteor.Error "permission-denied", "You're Not The Admin Of #{group.name}"
+    if not limit.NCPU or not limit.Memory or not limit.name
+      throw new Meteor.Error "not-enough-arguments", "Limit Has To Contain NCPU, Memory and name"
+    if limit.name in _.pluck group.usageLimits, "name"
+      throw new Meteor.Error "already-exists", "Usage Limit With Name #{limit.name} Already Exists"
+    db.bundleServerUserGroup.update groupId,
+      $addToSet: usageLimits:
+        NCPU: limit.NCPU
+        Memory: limit.Memory
+        name: limit.name
+
 
 
