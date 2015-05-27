@@ -131,3 +131,26 @@ Meteor.methods
 
     Meteor.call "runDockerLimit",doc.tag, {type:"forPersonal",id:doc.quota}, {NCPU:doc.NCPU, Memory:Memory}
 
+  "selectGroupQuota":(doc)->
+
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    schema = new SimpleSchema
+      quota:
+        type: String
+      usageLimit:
+        type: String
+      tag:
+        type: String
+
+    check doc, schema
+
+    console.log doc
+
+    @unblock()
+
+    Meteor.call "runDockerLimit",doc.tag, {type:"forGroup",id:doc.quota}, {name:doc.usageLimit}
+
+

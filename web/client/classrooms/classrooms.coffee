@@ -207,9 +207,20 @@ Template.codingEnvironment.helpers
         label: "quota"
         allowedValues: db.bundleServerUserGroup.find().map (doc)-> doc._id
         autoform:
-          options: db.bundleServerUserGroup.find().map (doc) ->
-            names = (doc.usageLimits.map (u)-> u.name).join "/"
-            {label:doc.name + ":" + names,value:doc._id}
+          options: db.bundleServerUserGroup.find().map (doc) -> {label:doc.name, value:doc._id}
+
+      usageLimit:
+        type: String
+        label: "Usage Limit"
+        autoform:
+          type:"select"
+
+      tag:
+        type: String
+        autoform:
+          type: "hidden"
+          label: false
+
 
   maximumNCPU: ->
     db.dockerPersonalUsageQuota.findOne(Session.get "personalQuotaSelection").NCPU
@@ -219,6 +230,13 @@ Template.codingEnvironment.helpers
 
   personalQuotaSelectionSelected: ->
     Session.get "personalQuotaSelection"
+
+  usageLimitsOptions: ->
+    db.bundleServerUserGroup.findOne(Session.get "groupQuotaSelection")?.usageLimits.map (u)->
+      {label:"[#{u.name}] NCPU:#{u.NCPU} Memory:#{u.Memory}" ,value:u.name}
+
+  groupQuotaSelectionSelected:->
+    Session.get "groupQuotaSelection"
 
 
 Template.codingEnvironment.events
