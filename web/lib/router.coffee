@@ -394,6 +394,7 @@ Meteor.startup ->
         Meteor.subscribe "classroomVideos", @params.classroomId
         Meteor.subscribe "classroomSlides", @params.classroomId
         Meteor.subscribe "classroomCourseJoinDockerImageTags", @params.classroomId
+        Meteor.subscribe "bundleServerUserGroup"
 
 
       # onAfterAction: ->

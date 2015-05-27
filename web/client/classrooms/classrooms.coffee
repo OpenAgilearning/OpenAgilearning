@@ -187,6 +187,16 @@ Template.codingEnvironment.helpers
         allowedValues: db.dockerPersonalUsageQuota.find().map (doc)-> doc._id
         autoform:
           options: db.dockerPersonalUsageQuota.find().map (doc)-> {label:"CPU: "+doc.NCPU+" / Memory: " + doc.Memory + " / ExpiredAt: " + showExpiredAt(doc.expiredAt) , value:doc._id}
+  groupQuotaSelectorSchema: ->
+    res = new SimpleSchema
+      quota:
+        type: String
+        label: "quota"
+        allowedValues: db.bundleServerUserGroup.find().map (doc)-> doc._id
+        autoform:
+          options: db.bundleServerUserGroup.find().map (doc) ->
+            names = (doc.usageLimits.map (u)-> u.name).join "/"
+            {label:doc.name + ":" + names,value:doc._id}
 
 
 

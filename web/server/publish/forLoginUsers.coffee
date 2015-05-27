@@ -189,3 +189,12 @@ Meteor.publish "registeredCourse", ->
     Courses.find { _id: {$in:courseIdArr} }
   else
     Courses.find {"publicStatus" : {$in:["public","semipublic"]}}
+
+
+Meteor.publish "bundleServerUserGroup",->
+  userId = @userId
+
+  if userId
+    db.bundleServerUserGroup.find members:userId
+  else
+    Exceptions.find {_id:"ExceptionPermissionDeny"}
