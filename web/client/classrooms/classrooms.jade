@@ -198,8 +198,9 @@ template(name="codingEnvironment")
         hr
         h2 Personal Quota
 
-        +autoForm id="personalQuotaSelector" schema=personalQuotaSelectorSchema type="method" meteormethod="selectQuota"
+        +autoForm id="personalQuotaSelector" schema=personalQuotaSelectorSchema type="method" meteormethod="selectPersonalQuota"
           fieldset
+            +afQuickField name="tag" value=tag
             +afQuickField name="quota"
 
             if personalQuotaSelectionSelected

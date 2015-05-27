@@ -193,6 +193,13 @@ Template.codingEnvironment.helpers
       Memory:
         type: Number
         label: "Memory space (MB)"
+      tag:
+        type: String
+        defaultValue: @tag
+        autoform:
+          type: "hidden"
+          label: false
+
   groupQuotaSelectorSchema: ->
     res = new SimpleSchema
       quota:
