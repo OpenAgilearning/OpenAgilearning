@@ -965,6 +965,46 @@ needStreamingCallback = (fn, streamingFns=[])->
     @getFreeCpus(n).join(",")
 
 
+  runLimit:(imageTag, limitData, userId, name, links=[]) ->
+    if not imageTag
+      imageTag = "c3h3/ipython:agilearning"
+
+    if userId
+      # console.log "TEST"
+      containerConfig = new Class.DockerContainerConfigs(imageTag, @)
+      containerConfig.setUsageLimitData(limitData).setServicePorts().setEnvs(userId)
+
+    console.log "containerConfig._configs = ", containerConfig._configs
+    # console.log "docker = ", @_data
+
+    if not containerConfig._error
+      containerData = containerConfig._configs
+
+      # console.log "containerData = ",containerData
+
+      if name
+        containerData.name = name
+
+      if links
+        containerData.HostConfig.Links = links
+
+      # console.log "containerData = ",containerData
+
+      containerResData = @createContainer containerData
+
+      if not containerResData.error
+        container = new Class.DockerContainer @, containerResData.data
+        container.start()
+        resData =
+          data:
+            configs: containerData
+            envs: containerConfig._Envs
+            portDataArray: containerConfig._portDataArray
+            container: container
+          error: null
+      else
+        containerResData
+
 
   run:(imageTag, limitType, userId, name, links=[]) ->
     # dependents on db.dockerImageTags join db.envConfigTypes
@@ -1071,6 +1111,18 @@ needStreamingCallback = (fn, streamingFns=[])->
         _.extend @_configs, usageLimitData
     @
 
+  setUsageLimitData: (limitData)->
+    if limitData
+      if not @_error
+
+        usageLimitData =
+          Cpuset: @_docker.getFreeCpuset(limitData.NCPU)
+          Memory: limitData.Memory
+
+        _.extend @_configs, usageLimitData
+    @
+
+
   setServicePorts: ->
     if not @_error
       servicePorts = @_imageTagData.servicePorts
@@ -1166,13 +1218,23 @@ needStreamingCallback = (fn, streamingFns=[])->
     else if (@useIn instanceof Object)
       @_serverQuery = @useIn
 
+    console.log "@_serverQuery = ",@_serverQuery
+
 
     managerApis =
       serverQuery:
         desc:
           get: ->
             query = _.extend {}, @_serverQuery
-            query = _.extend query, {_id:{$in:@_okServerIds}}
+
+            if query._id
+              query =
+                $and: [query, {_id:{$in:@_okServerIds}}]
+
+            else
+              query = _.extend query, {_id:{$in:@_okServerIds}}
+
+            # console.log "query = ", query
             db.dockerServers.find(query)
 
 

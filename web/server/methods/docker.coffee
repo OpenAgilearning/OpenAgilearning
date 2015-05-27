@@ -206,15 +206,104 @@ Meteor.methods
 
 
 
-  "runDockerNew": (imageTag, quota, usage)->
+  "runDockerLimit": (imageTag, quotaData, limitData)->
+    # console.log "TEST"
+
+    _quotaData = quotaData
+
+    # FIXME refactor dockerImage collection, image with full tag
+    if imageTag.split(":").length is 1
+      fullImageTag = imageTag + ":latest"
+    else
+      fullImageTag = imageTag
+
     user = Meteor.user()
     if not user
       throw new Meteor.Error(401, "You need to login")
 
-    console.log "check TOC"
-    console.log "check QUOTA"
-    console.log "check usage"
-    console.log "run and save data"
+
+    if quotaData.type is "forGroup"
+
+      bgData = db.bundleServerUserGroup.findOne {_id:quotaData.id, members: user._id}
+
+      if not bgData
+        throw new Meteor.Error(10001, "There is no server OR you are not member!")
+
+      usageLimit = _.find bgData.usageLimits, (limitData) -> limitData.name is limitData.name
+
+      if not usageLimit
+        throw new Meteor.Error(10002, "Invalid usage limit data!")
+
+
+
+      console.log "usageLimit = ",usageLimit
+
+      queryServer =
+        _id:
+          $in: bgData.servers
+
+      console.log "bgData = ",bgData
+      console.log "queryServer = ", queryServer
+
+    else
+      # quotaData.type is "forPersonal"
+      queryServer =
+        user:
+          type: "toC"
+
+      if ENV.isDev or ENV.isStaging
+        queryServer.useIn = "testing"
+      else
+        queryServer.useIn = "production"
+
+
+      quotaData = db.dockerPersonalUsageQuota.findOne _id:quotaData.id
+      console.log "quotaData = ", quotaData
+
+      # TODO: compute using.NCPU and using.Memory
+      # FIXME: (limitData.NCPU > quotaData.NCPU - using.NCPU) or (limitData.Memory > quotaData.Memory - using.Memory)
+      if (limitData.NCPU > quotaData.NCPU) or (limitData.Memory > quotaData.Memory)
+          throw new Meteor.Error(10003, "(limitData.NCPU > quotaData.NCPU) or (limitData.Memory > quotaData.Memory)")
+
+      usageLimit =
+        NCPU: limitData.NCPU
+        Memory: limitData.Memory
+
+
+
+
+    dm = new Class.DockersManager queryServer
+
+    if dm.ls_servers.length is 0
+      throw new Meteor.Error(10005, "There is no server you can use!")
+
+    console.log "dm.ls_servers = ", dm.ls_servers
+    docker = dm.getFreeServerForcely()
+    docker.runLimit(imageTag, usageLimit, user._id)
+
+    resData = dm.getFreeServerForcely().runLimit(imageTag, usageLimit, user._id)
+
+    console.log "resData = ",resData
+
+    if not resData.error
+      dockerData =
+        userId: user._id
+        imageTag: fullImageTag
+        containerConfigs: resData.data.configs
+        envs: resData.data.envs
+        portDataArray: resData.data.portDataArray
+        serverId: resData.data.container._serverId
+        containerId: resData.data.container._instance.id
+        ip: resData.data.container._docker._configs.host
+        quota:
+          type: _quotaData.type
+          id: _quotaData.id
+        limit:
+          NCPU: usageLimit.NCPU
+          Memory: usageLimit.Memory
+        createAt: new Date
+
+      DockerInstances.insert dockerData
 
 
 
