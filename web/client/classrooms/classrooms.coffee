@@ -186,7 +186,13 @@ Template.codingEnvironment.helpers
         label: "quota"
         allowedValues: db.dockerPersonalUsageQuota.find().map (doc)-> doc._id
         autoform:
-          options: db.dockerPersonalUsageQuota.find().map (doc)-> {label:"CPU: "+doc.NCPU+" / Memory: " + doc.Memory + " / ExpiredAt: " + showExpiredAt(doc.expiredAt) , value:doc._id}
+          options: db.dockerPersonalUsageQuota.find().map (doc)-> {label:"#{doc.name} (CPU: #{doc.NCPU} / Memory: #{doc.Memory} / ExpireAt: #{showExpiredAt doc.expiredAt})", value:doc._id}
+      NCPU:
+        type: Number
+        label: "Numbers of CPUs"
+      Memory:
+        type: Number
+        label: "Memory space (MB)"
   groupQuotaSelectorSchema: ->
     res = new SimpleSchema
       quota:
@@ -198,6 +204,14 @@ Template.codingEnvironment.helpers
             names = (doc.usageLimits.map (u)-> u.name).join "/"
             {label:doc.name + ":" + names,value:doc._id}
 
+  maximumNCPU: ->
+    db.dockerPersonalUsageQuota.findOne(Session.get "personalQuotaSelection").NCPU
+
+  maximumMemory: ->
+    db.dockerPersonalUsageQuota.findOne(Session.get "personalQuotaSelection").Memory / 1024 / 1024
+
+  personalQuotaSelectionSelected: ->
+    Session.get "personalQuotaSelection"
 
 
 Template.codingEnvironment.events
@@ -213,10 +227,22 @@ Template.codingEnvironment.events
 
     Session.set ("useThisEnvironment" + @tag), yes
 
+  "change #personalQuotaSelector [name=quota]": (event, template) ->
+    Session.set "personalQuotaSelection", event.target.value
+
+  "change #groupQuotaSelector [name=quota]": (event, template) ->
+    Session.set "groupQuotaSelection", event.target.value
+
 
 Template.codingEnvironment.rendered = ->
   tag = @data.tag
+  Session.set "personalQuotaSelection", null
+  Session.set "groupQuotaSelection", null
   Session.set ("useThisEnvironment" + tag), no
+  #$ "#NCPUslider"
+  #  .Link("upper").to "#NCPUvalue", "html"
+  #$ "MemorySlider"
+  #  .Link("upper").to "#MemoryValue", "html"
 
 
 

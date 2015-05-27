@@ -202,6 +202,14 @@ template(name="codingEnvironment")
           fieldset
             +afQuickField name="quota"
 
+            if personalQuotaSelectionSelected
+              //-span#NCPUvalue
+              //-+afQuickField id="NCPUslider" name="NCPU" value="1" type="noUiSlider" min="1" max=maximumNCPU step="1"
+              +afQuickField name="NCPU" value="1" type="number" min="1" max=maximumNCPU step="1"
+              //-span#MemoryValue
+              //-+afQuickField id="MemorySlider" name="Memory" value="512" type="noUiSlider" min="512" max=maximumMemory step="512"
+              +afQuickField name="Memory" value="512" type="number" min="512" max=maximumMemory step="512"
+
           button.btn.btn-primary(type='submit') select
 
 

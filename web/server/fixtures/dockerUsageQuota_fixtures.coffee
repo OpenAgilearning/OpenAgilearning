@@ -40,6 +40,14 @@
 
         defaultQuotas.push trialQuotaData
 
+        aLotOfQuotaData =
+          name: "aLotOfQuota"
+          userId: uid
+          NCPU: 8
+          Memory: 8 * 1024 * 1024 * 1024
+
+        defaultQuotas.push aLotOfQuotaData
+
 
         for quota in defaultQuotas
           if db.dockerPersonalUsageQuota.find(quota).count() is 0
@@ -54,6 +62,10 @@
 
 
             if quota.name is "adminQuota"
+              db.dockerPersonalUsageQuota.insert quota
+
+            if quota.name is "aLotOfQuota"
+              quota.expiredAt = new Date().getTime() + 30 * 24 * 60 * 60 * 1000
               db.dockerPersonalUsageQuota.insert quota
 
 
