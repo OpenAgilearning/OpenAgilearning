@@ -6,6 +6,7 @@
       name: "Taishin Bank User Group"
       desc: "This is a bundle server group for Taishin Commercial Bank"
       members: Meteor.users.find("services.meetup.id": $in: Meteor.settings.adminMeetupIds).map (u) -> u._id
+      admins: Meteor.users.find("services.meetup.id": $in: Meteor.settings.adminMeetupIds).map (u) -> u._id
       servers: ["[DockerServer]ds4-agilearning-taishin-ln"]
       usageLimits: [
         name: "basic"
