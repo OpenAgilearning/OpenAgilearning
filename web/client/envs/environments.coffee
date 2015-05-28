@@ -132,8 +132,9 @@ Template.envPageServerQuotaBlock.helpers
   serverGroups:-> db.bundleServerUserGroup.find()
   UserIn:(AdminArray)->Meteor.userId() in AdminArray
 
+Template.serverQuotaAdmin.helpers
+  links: -> db.invitation.find(groupId:@serverGroup._id)
 
-Template.envPageServerQuotaBlock.events
+Template.serverQuotaAdmin.events
   'click .get-inv-link': (e,t) ->
-    groupId = $(e.target).attr "data-group-id"
-    Meteor.call "generateBundleServerGroupInvitationUrl", groupId
+    Meteor.call "generateBundleServerGroupInvitationUrl", t.data.serverGroup._id

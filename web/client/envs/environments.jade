@@ -37,15 +37,19 @@ template(name="envPageServerQuotaBlock")
   each serverGroups
     h3 {{name}}
     if UserIn admins
-      p You are the admin of {{name}}, you can add friends to group by sending them an invitation link. Note that the invitation expires in 1 day.
-      button(type="button" data-group-id="#{_id}").btn.btn-primary.get-inv-link Get invitation link
+      +serverQuotaAdmin serverGroup=this
 
     ul
     each usageLimits
       li {{name}}: Memory: {{Memory}}, NCPU: {{NCPU}}
 
 
-  hr
+template(name="serverQuotaAdmin")
+  p You are the admin of {{serverGroup.name}}, you can add friends to group by sending them an invitation link. Note that the invitation expires in 1 day.
+  button(type="button").btn.btn-primary.get-inv-link Get invitation link
+  ul
+    each links
+      li {{pathFor "invitation" _id}} {{expireAt}}
 
 
 template(name="envPageEnvUserConfigsBlock")

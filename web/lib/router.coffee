@@ -121,6 +121,7 @@ Meteor.startup ->
         Meteor.subscribe "allPublicAndSemipublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
         Meteor.subscribe "bundleServerUserGroup"
+        Meteor.subscribe "groupAdminInvitation"
 
 
 

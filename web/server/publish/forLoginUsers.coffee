@@ -200,3 +200,14 @@ Meteor.publish "bundleServerUserGroup",->
     db.bundleServerUserGroup.find members:userId
   else
     Exceptions.find {_id:"ExceptionPermissionDeny"}
+
+
+Meteor.publish "groupAdminInvitation",->
+  userId = @userId
+
+  if userId
+    db.invitation.find creator:userId
+
+
+  else
+    Exceptions.find {_id:"ExceptionPermissionDeny"}
