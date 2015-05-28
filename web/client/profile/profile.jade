@@ -54,6 +54,24 @@ template(name="profilePageDockerInstancesTableEnvField")
 template(name="profilePageDockerInstancesTableRemoveBtnField")
   botton.removeInstanceBtn.btn.btn-warning(instanceId="{{_id}}") Remove
 
+
+template(name="profilePageDockerInstancesTableQuotaField")
+  ul
+    li Type: {{quotaType}}
+    if isPersonal
+      li Expired At: {{expiredAt}}
+    else
+      li Name: {{groupData.name}}
+
+
+
+template(name="profilePageDockerInstancesTableLimitField")
+  ul
+    li NCPU: {{limit.NCPU}}
+    li Memory: {{limit.Memory}}
+
+
+
 template(name="public_profile")
   img(src="{{user.profile.photo.photo_link}}").img-rounded
   +quickForm id="profileUpdate" schema="profileSchema" type="method" meteormethod="updateProfile" doc=user.profile
