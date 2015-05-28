@@ -1,6 +1,6 @@
 
 Template.envPageEnvConfigTypesTable.helpers
-  
+
   settings: ->
     ConfigEnvsField =
       ke1y: "configs.envs"
@@ -39,7 +39,7 @@ Template.envPageEnvConfigTypesTableEditBtnField.events
     Session.set "userConfigId", ""
     Session.set "envConfigTypeId", envConfigTypeId
 
-    
+
 
 
 
@@ -81,11 +81,11 @@ Template.envPictureField.events
 
     #[TODOLIST: building running containerData]
     #TODO: check user's config
-    #TODO: (if has config) getEnvUserConfigs 
+    #TODO: (if has config) getEnvUserConfigs
     #TODO: checkingRunningCondition
     #TODO: (if can run) choosing Running Limit
     #TODO: use limit, EnvTypes' config => build containerData
-    
+
     #[TODOLIST: get free server & ports]
     #TODO: get free server has the image ()
     #TODO: (if has server) get free ports in that server (include multiports)
@@ -96,9 +96,11 @@ Template.envPictureField.events
     #TODO: createContainer
     #TODO: getContainer
     #TODO: write status and logging data to dbs
-    
-    
 
 
+
+Template.envPageServerQuotaBlock.helpers
+  serverGroups:-> db.bundleServerUserGroup.find()
+  UserIn:(AdminArray)->Meteor.userId() in AdminArray
 
 

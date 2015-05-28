@@ -19,6 +19,17 @@ template(name="envPagePersonalQuotaBlock")
 
 template(name="envPageServerQuotaBlock")
   h2 Server Quota List:
+
+  each serverGroups
+    h3 {{name}}
+    if UserIn admins
+      span You are the admin of {{name}}
+
+    ul
+    each usageLimits
+      li {{name}}: Memory: {{Memory}}, NCPU: {{NCPU}}
+
+
   hr
 
 
