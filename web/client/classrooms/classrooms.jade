@@ -198,9 +198,18 @@ template(name="codingEnvironment")
         hr
         h2 Personal Quota
 
-        +autoForm id="personalQuotaSelector" schema=personalQuotaSelectorSchema type="method" meteormethod="selectQuota"
+        +autoForm id="personalQuotaSelector" schema=personalQuotaSelectorSchema type="method" meteormethod="selectPersonalQuota"
           fieldset
+            +afQuickField name="tag" value=tag
             +afQuickField name="quota"
+
+            if personalQuotaSelectionSelected
+              //-span#NCPUvalue
+              //-+afQuickField id="NCPUslider" name="NCPU" value="1" type="noUiSlider" min="1" max=maximumNCPU step="1"
+              +afQuickField name="NCPU" value="1" type="number" min="1" max=maximumNCPU step="1"
+              //-span#MemoryValue
+              //-+afQuickField id="MemorySlider" name="Memory" value="512" type="noUiSlider" min="512" max=maximumMemory step="512"
+              +afQuickField name="Memory" value="512" type="number" min="512" max=maximumMemory step="512"
 
           button.btn.btn-primary(type='submit') select
 
@@ -208,9 +217,13 @@ template(name="codingEnvironment")
         hr
         h2 Server Group Quota
 
-        +autoForm id="groupQuotaSelector" schema=groupQuotaSelectorSchema type="method" meteormethod="selectQuota"
+        +autoForm id="groupQuotaSelector" schema=groupQuotaSelectorSchema type="method" meteormethod="selectGroupQuota"
           fieldset
+            +afQuickField name="tag" value=tag
             +afQuickField name="quota"
+
+            if groupQuotaSelectionSelected
+              +afQuickField name="usageLimit" options=usageLimitsOptions
 
           button.btn.btn-primary(type='submit') select
 

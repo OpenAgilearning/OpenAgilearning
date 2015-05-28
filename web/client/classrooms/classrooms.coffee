@@ -186,7 +186,20 @@ Template.codingEnvironment.helpers
         label: "quota"
         allowedValues: db.dockerPersonalUsageQuota.find().map (doc)-> doc._id
         autoform:
-          options: db.dockerPersonalUsageQuota.find().map (doc)-> {label:"CPU: "+doc.NCPU+" / Memory: " + doc.Memory + " / ExpiredAt: " + showExpiredAt(doc.expiredAt) , value:doc._id}
+          options: db.dockerPersonalUsageQuota.find().map (doc)-> {label:"#{doc.name} (CPU: #{doc.NCPU} / Memory: #{doc.Memory} / ExpireAt: #{showExpiredAt doc.expiredAt})", value:doc._id}
+      NCPU:
+        type: Number
+        label: "Numbers of CPUs"
+      Memory:
+        type: Number
+        label: "Memory space (MB)"
+      tag:
+        type: String
+        defaultValue: @tag
+        autoform:
+          type: "hidden"
+          label: false
+
   groupQuotaSelectorSchema: ->
     res = new SimpleSchema
       quota:
@@ -194,10 +207,36 @@ Template.codingEnvironment.helpers
         label: "quota"
         allowedValues: db.bundleServerUserGroup.find().map (doc)-> doc._id
         autoform:
-          options: db.bundleServerUserGroup.find().map (doc) ->
-            names = (doc.usageLimits.map (u)-> u.name).join "/"
-            {label:doc.name + ":" + names,value:doc._id}
+          options: db.bundleServerUserGroup.find().map (doc) -> {label:doc.name, value:doc._id}
 
+      usageLimit:
+        type: String
+        label: "Usage Limit"
+        autoform:
+          type:"select"
+
+      tag:
+        type: String
+        autoform:
+          type: "hidden"
+          label: false
+
+
+  maximumNCPU: ->
+    db.dockerPersonalUsageQuota.findOne(Session.get "personalQuotaSelection").NCPU
+
+  maximumMemory: ->
+    db.dockerPersonalUsageQuota.findOne(Session.get "personalQuotaSelection").Memory / 1024 / 1024
+
+  personalQuotaSelectionSelected: ->
+    Session.get "personalQuotaSelection"
+
+  usageLimitsOptions: ->
+    db.bundleServerUserGroup.findOne(Session.get "groupQuotaSelection")?.usageLimits.map (u)->
+      {label:"[#{u.name}] NCPU:#{u.NCPU} Memory:#{u.Memory}" ,value:u.name}
+
+  groupQuotaSelectionSelected:->
+    Session.get "groupQuotaSelection"
 
 
 Template.codingEnvironment.events
@@ -213,10 +252,22 @@ Template.codingEnvironment.events
 
     Session.set ("useThisEnvironment" + @tag), yes
 
+  "change #personalQuotaSelector [name=quota]": (event, template) ->
+    Session.set "personalQuotaSelection", event.target.value
+
+  "change #groupQuotaSelector [name=quota]": (event, template) ->
+    Session.set "groupQuotaSelection", event.target.value
+
 
 Template.codingEnvironment.rendered = ->
   tag = @data.tag
+  Session.set "personalQuotaSelection", null
+  Session.set "groupQuotaSelection", null
   Session.set ("useThisEnvironment" + tag), no
+  #$ "#NCPUslider"
+  #  .Link("upper").to "#NCPUvalue", "html"
+  #$ "MemorySlider"
+  #  .Link("upper").to "#MemoryValue", "html"
 
 
 
