@@ -222,9 +222,9 @@ template(name="codingEnvironment")
 
         hr
 
-        if hasServerGroupQuota
+        h2 Server Group Quota
 
-          h2 Server Group Quota
+        if hasServerGroupQuota
 
           +autoForm id="groupQuotaSelector" schema=groupQuotaSelectorSchema type="method" meteormethod="selectGroupQuota"
             fieldset
@@ -236,7 +236,12 @@ template(name="codingEnvironment")
 
             button.btn.btn-primary(type='submit') select
 
-          hr
+        else
+          p input invitation code:
+          input#invitationCodeInput.form-control
+          button#submitInvitationCode.btn.btn-primary(type='submit') Submit Invitation Code
+
+        hr
 
 
         if videos.[0]

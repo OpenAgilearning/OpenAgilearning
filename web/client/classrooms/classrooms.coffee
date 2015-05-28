@@ -251,6 +251,11 @@ Template.codingEnvironment.helpers
     )
 
 Template.codingEnvironment.events
+  "click #submitInvitationCode": (e,t) ->
+    invitationCode = $("#invitationCodeInput").val()
+    Router.go "invitation", {invitationId:invitationCode}
+
+
   "click .wantToCode": (e) ->
     e.stopPropagation()
 
