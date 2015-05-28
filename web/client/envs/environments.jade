@@ -49,7 +49,9 @@ template(name="serverQuotaAdmin")
   button(type="button").btn.btn-primary.get-inv-link Get invitation link
   ul
     each links
-      li {{pathFor "invitation" _id}} {{expireAt}}
+      li
+        input.form-control(type="text" value="{{urlFor 'invitation' invitationId=_id}}" onclick="this.select()")
+        span {{info_of expireAt}}
 
 
 template(name="envPageEnvUserConfigsBlock")

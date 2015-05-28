@@ -133,7 +133,10 @@ Template.envPageServerQuotaBlock.helpers
   UserIn:(AdminArray)->Meteor.userId() in AdminArray
 
 Template.serverQuotaAdmin.helpers
-  links: -> db.invitation.find(groupId:@serverGroup._id)
+  links: ->
+    now = new Date().getTime()
+    db.invitation.find({groupId:@serverGroup._id, expireAt:$gt:now})
+  info_of:(timeInt)-> "Will expire at #{moment(timeInt).toDate()}"
 
 Template.serverQuotaAdmin.events
   'click .get-inv-link': (e,t) ->
