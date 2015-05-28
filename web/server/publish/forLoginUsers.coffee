@@ -18,7 +18,7 @@ Meteor.publish null, ->
 
     # console.log userPUB.fetch()
 
-    dockerPersonalQuotaPUB = db.dockerPersonalUsageQuota.find userId:userId
+    dockerPersonalQuotaPUB = db.dockerPersonalUsageQuota.find {userId:userId, expired: false}
 
     [dockerPersonalQuotaPUB, dockerInstancesPUB, userIsRolePUB, roleTypesPUB, userPUB]
 

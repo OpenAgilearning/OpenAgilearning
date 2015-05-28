@@ -1,3 +1,32 @@
+Template.envPageBetPersonalQuotaBtn.events
+  "click #getFreeQuotaBtn": (e,t)->
+    Meteor.call "getFreeTrialQuota"
+
+
+Template.envPagePersonalQuotaBlock.helpers
+  hasPersonalQuota: ->
+    db.dockerPersonalUsageQuota.find().count() > 0
+
+
+Template.envPagePersonalQuotaTable.helpers
+  settings: ->
+    ExpiredAtField =
+      key: "expiredAt"
+      label: "Expired At"
+      fn: (value, object)->
+        if value > 0
+          new Date(value)
+        else
+          "Admin Quota!"
+
+
+    res =
+      collection: db.dockerPersonalUsageQuota.find()
+      # rowsPerPage:5
+      # showFilter: false
+      # showNavigation:'never'
+      fields:["name","NCPU","Memory", ExpiredAtField]
+
 
 Template.envPageEnvConfigTypesTable.helpers
 
