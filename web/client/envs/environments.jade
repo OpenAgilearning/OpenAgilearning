@@ -3,7 +3,9 @@ template(name="envs")
     .row.clearfix
       //- +envPageEnvUserConfigsBlock
       hr
+
       +envPagePersonalQuotaBlock
+
       +envPageServerQuotaBlock
       +envsPageDockerInstancesBlock
       hr
@@ -15,10 +17,33 @@ template(name="envs")
 
 template(name="envPagePersonalQuotaBlock")
   h2 Personal Quota List:
+  if hasPersonalQuota
+    +envPagePersonalQuotaTable
+  else
+    +envPageBetPersonalQuotaBtn
+
   hr
+
+template(name="envPageBetPersonalQuotaBtn")
+  botton#getFreeQuotaBtn.envUserConfigEditBtn.btn.btn-warning Get Free Trial Quota
+
+
+template(name="envPagePersonalQuotaTable")
+  +reactiveTable settings=settings
 
 template(name="envPageServerQuotaBlock")
   h2 Server Quota List:
+
+  each serverGroups
+    h3 {{name}}
+    if UserIn admins
+      span You are the admin of {{name}}
+
+    ul
+    each usageLimits
+      li {{name}}: Memory: {{Memory}}, NCPU: {{NCPU}}
+
+
   hr
 
 

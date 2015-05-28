@@ -90,6 +90,7 @@ Meteor.startup ->
         Meteor.subscribe "allPublicEnvConfigTypes"
         Meteor.subscribe "allPublicAndSemipublicCourses"
         Meteor.subscribe "allPublicCoursesDockerImages"
+        Meteor.subscribe "bundleServerUserGroup"
 
 
 

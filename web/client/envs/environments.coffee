@@ -1,6 +1,35 @@
+Template.envPageBetPersonalQuotaBtn.events
+  "click #getFreeQuotaBtn": (e,t)->
+    Meteor.call "getFreeTrialQuota"
+
+
+Template.envPagePersonalQuotaBlock.helpers
+  hasPersonalQuota: ->
+    db.dockerPersonalUsageQuota.find().count() > 0
+
+
+Template.envPagePersonalQuotaTable.helpers
+  settings: ->
+    ExpiredAtField =
+      key: "expiredAt"
+      label: "Expired At"
+      fn: (value, object)->
+        if value > 0
+          new Date(value)
+        else
+          "Admin Quota!"
+
+
+    res =
+      collection: db.dockerPersonalUsageQuota.find()
+      # rowsPerPage:5
+      # showFilter: false
+      # showNavigation:'never'
+      fields:["name","NCPU","Memory", ExpiredAtField]
+
 
 Template.envPageEnvConfigTypesTable.helpers
-  
+
   settings: ->
     ConfigEnvsField =
       ke1y: "configs.envs"
@@ -39,7 +68,7 @@ Template.envPageEnvConfigTypesTableEditBtnField.events
     Session.set "userConfigId", ""
     Session.set "envConfigTypeId", envConfigTypeId
 
-    
+
 
 
 
@@ -81,11 +110,11 @@ Template.envPictureField.events
 
     #[TODOLIST: building running containerData]
     #TODO: check user's config
-    #TODO: (if has config) getEnvUserConfigs 
+    #TODO: (if has config) getEnvUserConfigs
     #TODO: checkingRunningCondition
     #TODO: (if can run) choosing Running Limit
     #TODO: use limit, EnvTypes' config => build containerData
-    
+
     #[TODOLIST: get free server & ports]
     #TODO: get free server has the image ()
     #TODO: (if has server) get free ports in that server (include multiports)
@@ -96,9 +125,11 @@ Template.envPictureField.events
     #TODO: createContainer
     #TODO: getContainer
     #TODO: write status and logging data to dbs
-    
-    
 
 
+
+Template.envPageServerQuotaBlock.helpers
+  serverGroups:-> db.bundleServerUserGroup.find()
+  UserIn:(AdminArray)->Meteor.userId() in AdminArray
 
 

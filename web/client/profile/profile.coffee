@@ -101,6 +101,18 @@ Template.profilePageDockerInstancesTable.helpers
       label: "ENVs"
       tmpl: Template.profilePageDockerInstancesTableEnvField
 
+    quotaTypeField =
+      key: "_id"
+      label: "Quota"
+      tmpl: Template.profilePageDockerInstancesTableQuotaField
+
+
+    limitField =
+      key: "_id"
+      label: "Limit"
+      tmpl: Template.profilePageDockerInstancesTableLimitField
+
+
     removeBtnField =
       key: "_id"
       label: "Remove"
@@ -108,25 +120,37 @@ Template.profilePageDockerInstancesTable.helpers
 
 
     res=
-      collection:DockerInstances
-      rowsPerPage:5
-      showFilter: false
-      showNavigation:'never'
-      fields:["serverId", "imageTag", envField,removeBtnField]
+      collection:db.dockerInstances
+      # rowsPerPage:5
+      # showFilter: false
+      # showNavigation:'never'
+      fields:["imageTag", quotaTypeField, limitField, removeBtnField]
 
+
+Template.profilePageDockerInstancesTableQuotaField.helpers
+  quotaType: ->
+    if @quota.type is "forPersonal"
+      "Personal"
+    else
+      "Server Group"
+  isPersonal: ->
+    @quota.type is "forPersonal"
+
+  expiredAt: ->
+    # @quota.id
+    new Date(db.dockerPersonalUsageQuota.findOne({_id:@quota.id}).expiredAt)
+
+  groupData: ->
+    db.bundleServerUserGroup.findOne({_id:@quota.id})
 
 Template.profilePageDockerInstancesTableRemoveBtnField.events
   "click .removeInstanceBtn": (e,t)->
     instanceId = $(e.target).attr "instanceId"
     $(e.target).html "Stopping"
 
-    # @unblock()
+    @unblock()
 
-    Meteor.call "removeDockerInstance", instanceId, (err,data)->
-      if not err
-        console.log data
-      else
-        console.log err
+    Meteor.call "removeDockerInstance", instanceId
 
 
 Template.public_profile.helpers
