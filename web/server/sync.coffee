@@ -104,9 +104,16 @@ syncDockerServerContainer = ->
   db.dockerPersonalUsageQuota.update {_id:{$in:expiringQuotaIds}}, {$set:{expired: true}}, {multi:true}
 
 
+@expiringInvitation = ->
+  nowTime = new Date().getTime()
+  db.invitation.update {expireAt:{$lt:nowTime}}, {$set:{expired:true}}, {multi:true}
+
+
+
 Meteor.setInterval syncDockerServerInfo, 10000
 Meteor.setInterval syncDockerServerImageTags, 10000
 Meteor.setInterval syncDockerServerContainer, 10000
 Meteor.setInterval syncDockerEnsureImages, 600000
 
 Meteor.setInterval expiringUserQuota, 60000
+Meteor.setInterval expiringInvitation, 60000
