@@ -314,14 +314,16 @@ Meteor.methods
     console.log "usageLimit = ", usageLimit
 
 
+    @unblock()
+
     dm = new Class.DockersManager queryServer
 
     if dm.ls_servers.length is 0
       throw new Meteor.Error(10005, "There is no server you can use!")
 
     console.log "dm.ls_servers = ", dm.ls_servers
-    docker = dm.getFreeServerForcely()
-    docker.runLimit(imageTag, usageLimit, user._id)
+    # docker = dm.getFreeServerForcely()
+    # docker.runLimit(imageTag, usageLimit, user._id)
 
     resData = dm.getFreeServerForcely().runLimit(imageTag, usageLimit, user._id)
 

@@ -68,6 +68,40 @@ syncDockerServerContainer = ->
 #     job_migrate_chatmessage.handle
 
 
+@expiringUserQuota = ->
+  nowTime = new Date().getTime()
+
+  nonAdminQuery =
+    expiredAt:
+      $gt: 0
+
+  expiringQuery =
+    expired: false
+    expiredAt:
+      $lt: nowTime
+
+  expiringQuotaIds = db.dockerPersonalUsageQuota.find({$and:[nonAdminQuery, expiringQuery]}).map (doc)-> doc._id
+
+  console.log "expiringQuotaIds = ",expiringQuotaIds
+
+  expiringDockerInstances = db.dockerInstances.find({"quota.id":{$in:expiringQuotaIds}}).map (instanceDoc) ->
+    docker = new Class.DockerServer instanceDoc.serverId
+    # docker.stop instanceDoc.containerId
+    # docker.rm instanceDoc.containerId
+    docker.rmf instanceDoc.containerId
+
+    console.log "delete instanceDoc = ", instanceDoc
+
+    dockerInstanceDoc = instanceDoc
+    db.dockerInstances.remove _id: dockerInstanceDoc._id
+
+    dockerInstanceDoc.removeAt = new Date
+    dockerInstanceDoc.removeBy = "expiringQuota"
+    delete dockerInstanceDoc._id
+    db.dockerInstancesLog.insert dockerInstanceDoc
+
+
+  db.dockerPersonalUsageQuota.update {_id:{$in:expiringQuotaIds}}, {$set:{expired: true}}, {multi:true}
 
 
 Meteor.setInterval syncDockerServerInfo, 10000
@@ -75,3 +109,4 @@ Meteor.setInterval syncDockerServerImageTags, 10000
 Meteor.setInterval syncDockerServerContainer, 10000
 Meteor.setInterval syncDockerEnsureImages, 600000
 
+Meteor.setInterval expiringUserQuota, 60000

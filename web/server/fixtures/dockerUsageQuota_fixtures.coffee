@@ -19,6 +19,7 @@
           expiredAt: -1
           NCPU: -1
           Memory: -1
+          expired: false
 
         defaultQuotas.push adminQuotaData
 
@@ -28,6 +29,7 @@
           # expiredAt: new Date().getTime() + 1*24*60*60*1000
           NCPU: 1
           Memory: 512*1024*1024
+          expired: false
 
         defaultQuotas.push dailyQuotaData
 
@@ -37,6 +39,7 @@
           # expiredAt: new Date().getTime() + 15*60*1000
           NCPU: 1
           Memory: 512*1024*1024
+          expired: false
 
         defaultQuotas.push trialQuotaData
 
@@ -45,6 +48,7 @@
           userId: uid
           NCPU: 8
           Memory: 8 * 1024 * 1024 * 1024
+          expired: false
 
         defaultQuotas.push aLotOfQuotaData
 
