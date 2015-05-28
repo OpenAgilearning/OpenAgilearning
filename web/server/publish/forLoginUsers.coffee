@@ -18,7 +18,9 @@ Meteor.publish null, ->
 
     # console.log userPUB.fetch()
 
-    [dockerInstancesPUB, userIsRolePUB, roleTypesPUB, userPUB]
+    dockerPersonalQuotaPUB = db.dockerPersonalUsageQuota.find userId:userId
+
+    [dockerPersonalQuotaPUB, dockerInstancesPUB, userIsRolePUB, roleTypesPUB, userPUB]
 
   else
     []
@@ -187,3 +189,12 @@ Meteor.publish "registeredCourse", ->
     Courses.find { _id: {$in:courseIdArr} }
   else
     Courses.find {"publicStatus" : {$in:["public","semipublic"]}}
+
+
+Meteor.publish "bundleServerUserGroup",->
+  userId = @userId
+
+  if userId
+    db.bundleServerUserGroup.find members:userId
+  else
+    Exceptions.find {_id:"ExceptionPermissionDeny"}

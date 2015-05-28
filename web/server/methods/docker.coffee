@@ -159,6 +159,199 @@ Meteor.methods
         dockerInstanceDoc.removeByUid = user._id
         db.dockerInstancesLog.insert dockerInstanceDoc
 
+  # "checkDockerInstance": (imageTag)->
+  #   user = Meteor.user()
+  #   if not user
+  #     throw new Meteor.Error(401, "You need to login")
+
+
+  #   console.log "TODO"
+  #   console.log "return instanceId or ... "
+
+  "selectQuota": ->
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+
+    console.log "TODO"
+    console.log "return instanceId or ... "
+
+
+
+  "checkTOS": ->
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    return _.contains user.agreedTOC, "toc_main"
+
+
+  "getQuotaList": ->
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    console.log "TODO"
+    console.log "return QuotaList"
+
+
+  "getUsageList": (Quota)->
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    console.log "TODO"
+    console.log "return UsageList"
+
+
+
+  "runDockerLimit": (imageTag, quotaData, limitData)->
+    # console.log "TEST"
+
+    _quotaData = quotaData
+
+    # FIXME refactor dockerImage collection, image with full tag
+    if imageTag.split(":").length is 1
+      fullImageTag = imageTag + ":latest"
+    else
+      fullImageTag = imageTag
+
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+
+    if quotaData.type is "forGroup"
+
+      bgData = db.bundleServerUserGroup.findOne {_id:quotaData.id, members: user._id}
+
+      if not bgData
+        throw new Meteor.Error(10001, "There is no server OR you are not member!")
+
+      usageLimit = _.find bgData.usageLimits, (limitData) -> limitData.name is limitData.name
+
+      if not usageLimit
+        throw new Meteor.Error(10002, "Invalid usage limit data!")
+
+
+
+      console.log "usageLimit = ",usageLimit
+
+      queryServer =
+        _id:
+          $in: bgData.servers
+
+      console.log "bgData = ",bgData
+      console.log "queryServer = ", queryServer
+
+    else
+      # quotaData.type is "forPersonal"
+      queryServer =
+        user:
+          type: "toC"
+
+      if ENV.isDev or ENV.isStaging
+        queryServer.useIn = "testing"
+      else
+        queryServer.useIn = "production"
+
+
+      quotaData = db.dockerPersonalUsageQuota.findOne _id:quotaData.id, userId: user._id
+      console.log "quotaData = ", quotaData
+      if not quotaData
+        throw new Meteor.Error(10001, "you are not the owner of quotaData.id")
+      #FIXME: check quotaData is expired or not ?
+
+
+
+      if limitData?.NCPU or limitData?.Memory
+        # [finished] TODO: compute using.NCPU and using.Memory
+        usingAggregate = db.dockerInstances.aggregate([{$match:{"quota.id":"HZeGguvvmhv7xhf82"}},{$group:{_id:"$quota.id",NCPU:{$sum:"$limit.NCPU"},Memory:{$sum:"$limit.Memory"}}}])
+        if usingAggregate.length > 0
+          using = usingAggregate[0]
+        else
+          using =
+            NCPU: 0
+            Memory: 0
+
+
+      # # [finished] FIXME: (limitData.NCPU > quotaData.NCPU - using.NCPU) or (limitData.Memory > quotaData.Memory - using.Memory)
+      # if (limitData.NCPU > quotaData.NCPU - using.NCPU) or (limitData.Memory > quotaData.Memory - using.Memory)
+      # # if (limitData.NCPU > quotaData.NCPU) or (limitData.Memory > quotaData.Memory)
+      #     throw new Meteor.Error(10003, "(limitData.NCPU > quotaData.NCPU - using.NCPU) or (limitData.Memory > quotaData.Memory - using.Memory)")
+
+      # usageLimit =
+      #   NCPU: limitData.NCPU
+      #   Memory: limitData.Memory
+
+
+      usageLimit = {}
+
+      if limitData?.NCPU
+        if (limitData.NCPU > quotaData.NCPU - using.NCPU)
+          throw new Meteor.Error(10003, "(limitData.NCPU > quotaData.NCPU - using.NCPU)")
+
+        else
+          usageLimit.NCPU = limitData.NCPU
+
+      else
+        unless quotaData.NCPU < 0
+          throw new Meteor.Error(10003, "Missing limitData.NCPU")
+
+
+      if limitData?.Memory
+        if (limitData.Memory > quotaData.Memory - using.Memory)
+          throw new Meteor.Error(10003, "(limitData.Memory > quotaData.Memory - using.Memory)")
+        else
+          usageLimit.Memory = limitData.Memory
+
+      else
+        unless quotaData.Memory < 0
+          throw new Meteor.Error(10003, "Missing limitData.Memory")
+
+
+    console.log "usageLimit = ", usageLimit
+
+
+    @unblock()
+
+    dm = new Class.DockersManager queryServer
+
+    if dm.ls_servers.length is 0
+      throw new Meteor.Error(10005, "There is no server you can use!")
+
+    console.log "dm.ls_servers = ", dm.ls_servers
+    # docker = dm.getFreeServerForcely()
+    # docker.runLimit(imageTag, usageLimit, user._id)
+
+    resData = dm.getFreeServerForcely().runLimit(imageTag, usageLimit, user._id)
+
+    console.log "resData = ",resData
+
+    if not resData.error
+      dockerData =
+        userId: user._id
+        imageTag: fullImageTag
+        containerConfigs: resData.data.configs
+        envs: resData.data.envs
+        portDataArray: resData.data.portDataArray
+        serverId: resData.data.container._serverId
+        containerId: resData.data.container._instance.id
+        ip: resData.data.container._docker._configs.host
+        quota:
+          type: _quotaData.type
+          id: _quotaData.id
+        limit:
+          NCPU: usageLimit.NCPU
+          Memory: usageLimit.Memory
+        createAt: new Date
+
+      DockerInstances.insert dockerData
+
+
+
+
   "runDocker": (imageTag)->
 
     # FIXME refactor dockerImage collection, image with full tag
@@ -179,6 +372,22 @@ Meteor.methods
       queryServer = "production"
 
     @unblock()
+
+
+    personalQuotaQuery =
+      userId: user._id
+      expiredAt:
+        "$gt": new Date().getTime()
+
+    checkpersonalQuota = db.dockerPersonalUsageQuota.find(personalQuotaQuery).count()
+
+    if checkpersonalQuota is 0
+      db.dockerPersonalUsageQuota.insert
+        userId: user._id
+        expiredAt: new Date().getTime() + 15*60*1000
+        NCPU:1
+        Memory: 512*1024*1024
+
 
 
     if DockerInstances.find({userId:user._id,imageTag:fullImageTag, $or:[{frozen:$exists:false},{frozen:false}]}).count() is 0

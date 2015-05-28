@@ -13,12 +13,12 @@ Template.classroom.rendered = ->
   else
     setTimeout showFeedBack , 3000
 
-  classroomId = Router.current().params.classroomId
-  Meteor.call "getClassroomDocker", classroomId, (err, data)->
-    if not err
-      console.log "get env successfully!"
-    else
-      console.log "get env failed!"
+  # classroomId = Router.current().params.classroomId
+  # Meteor.call "getClassroomDocker", classroomId, (err, data)->
+  #   if not err
+  #     console.log "get env successfully!"
+  #   else
+  #     console.log "get env failed!"
 
 
   # timer = setInterval((->
@@ -165,12 +165,79 @@ Template.classroom.helpers
   isPDF: -> @url.match /.+\.pdf$/
 
 
+showExpiredAt = (expiredAt)->
+  if expiredAt > 0
+    (expiredAt - new Date().getTime()) / (60*1000) + " Minutes"
+  else
+    null
+
+
 
 Template.codingEnvironment.helpers
   dockerInstance: -> DockerInstances.findOne imageTag:@tag
   dockerImageTag: -> db.dockerImageTags.findOne tag:@tag
   useThisEnvironment: ->
     Session.get("useThisEnvironment" + @tag) or (@tag is Router.current().data().course().dockerImageTag)
+
+  personalQuotaSelectorSchema: ->
+    res = new SimpleSchema
+      quota:
+        type: String
+        label: "quota"
+        allowedValues: db.dockerPersonalUsageQuota.find().map (doc)-> doc._id
+        autoform:
+          options: db.dockerPersonalUsageQuota.find().map (doc)-> {label:"#{doc.name} (CPU: #{doc.NCPU} / Memory: #{doc.Memory} / ExpireAt: #{showExpiredAt doc.expiredAt})", value:doc._id}
+      NCPU:
+        type: Number
+        label: "Numbers of CPUs"
+      Memory:
+        type: Number
+        label: "Memory space (MB)"
+      tag:
+        type: String
+        defaultValue: @tag
+        autoform:
+          type: "hidden"
+          label: false
+
+  groupQuotaSelectorSchema: ->
+    res = new SimpleSchema
+      quota:
+        type: String
+        label: "quota"
+        allowedValues: db.bundleServerUserGroup.find().map (doc)-> doc._id
+        autoform:
+          options: db.bundleServerUserGroup.find().map (doc) -> {label:doc.name, value:doc._id}
+
+      usageLimit:
+        type: String
+        label: "Usage Limit"
+        autoform:
+          type:"select"
+
+      tag:
+        type: String
+        autoform:
+          type: "hidden"
+          label: false
+
+
+  maximumNCPU: ->
+    db.dockerPersonalUsageQuota.findOne(Session.get "personalQuotaSelection").NCPU
+
+  maximumMemory: ->
+    db.dockerPersonalUsageQuota.findOne(Session.get "personalQuotaSelection").Memory / 1024 / 1024
+
+  personalQuotaSelectionSelected: ->
+    Session.get "personalQuotaSelection"
+
+  usageLimitsOptions: ->
+    db.bundleServerUserGroup.findOne(Session.get "groupQuotaSelection")?.usageLimits.map (u)->
+      {label:"[#{u.name}] NCPU:#{u.NCPU} Memory:#{u.Memory}" ,value:u.name}
+
+  groupQuotaSelectionSelected:->
+    Session.get "groupQuotaSelection"
+
 
 Template.codingEnvironment.events
   "click .wantToCode": (e) ->
@@ -185,10 +252,22 @@ Template.codingEnvironment.events
 
     Session.set ("useThisEnvironment" + @tag), yes
 
+  "change #personalQuotaSelector [name=quota]": (event, template) ->
+    Session.set "personalQuotaSelection", event.target.value
+
+  "change #groupQuotaSelector [name=quota]": (event, template) ->
+    Session.set "groupQuotaSelection", event.target.value
+
 
 Template.codingEnvironment.rendered = ->
   tag = @data.tag
+  Session.set "personalQuotaSelection", null
+  Session.set "groupQuotaSelection", null
   Session.set ("useThisEnvironment" + tag), no
+  #$ "#NCPUslider"
+  #  .Link("upper").to "#NCPUvalue", "html"
+  #$ "MemorySlider"
+  #  .Link("upper").to "#MemoryValue", "html"
 
 
 

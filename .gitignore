@@ -6,3 +6,5 @@ data/dataBackup20150130/
 try/
 web/server/methods/testing.coffee
 backup/
+loginconfig.sh
+dockerserverCAconfig.sh

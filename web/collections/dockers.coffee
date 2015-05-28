@@ -6,10 +6,15 @@ new Mongo.Collection "dockerHubs"
 new Mongo.Collection "dockerRepos"
 
 new Mongo.Collection "dockerUsageLimits"
+
+new Mongo.Collection "dockerPersonalUsageQuota"
+new Mongo.Collection "dockerServerUsageQuota"
+
 new Mongo.Collection "dockerImageTags"
 new Mongo.Collection "dockerContainersLog"
 
 new Mongo.Collection "dockerEnsureImages"
+
 
 
 
@@ -100,32 +105,52 @@ Meteor.methods
         #   throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
 
       if db.dockerInstances.find({userId:user._id, imageTag:imageTag, $or:[{frozen:$exists:false},{frozen:false}]}).count() is 0
+        @unblock()
         Meteor.call "runDocker", imageTag
 
-
-
-
-  "getCourseDocker": (courseId) ->
+  "selectPersonalQuota": (doc)->
     user = Meteor.user()
     if not user
       throw new Meteor.Error(401, "You need to login")
 
-    if Courses.find({_id:courseId}).count() is 0
-      throw new Meteor.Error(1201, "Course doesn't exist")
+    schema = new SimpleSchema
+      quota:
+        type: String
+      NCPU:
+        type: Number
+      Memory:
+        type: Number
+      tag:
+        type: String
 
-    course = Courses.findOne _id:courseId
+    check doc, schema
 
-    imageId = course.dockerImage
-    console.log "imageId = "
-    console.log imageId
-    console.log DockerImages.findOne({_id:imageId})
+    Memory = doc.Memory * 1024 * 1024
 
-    imageType = DockerImages.findOne({_id:imageId}).type
-    # console.log "imageType = "
-    # console.log imageType
+    @unblock()
 
-    if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
-      #FIXME: write a checking function for env vars
-      throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
+    Meteor.call "runDockerLimit",doc.tag, {type:"forPersonal",id:doc.quota}, {NCPU:doc.NCPU, Memory:Memory}
 
-    Meteor.call "runDocker", imageId
+  "selectGroupQuota":(doc)->
+
+    user = Meteor.user()
+    if not user
+      throw new Meteor.Error(401, "You need to login")
+
+    schema = new SimpleSchema
+      quota:
+        type: String
+      usageLimit:
+        type: String
+      tag:
+        type: String
+
+    check doc, schema
+
+    console.log doc
+
+    @unblock()
+
+    Meteor.call "runDockerLimit",doc.tag, {type:"forGroup",id:doc.quota}, {name:doc.usageLimit}
+
+
