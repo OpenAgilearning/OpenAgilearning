@@ -119,6 +119,9 @@ Template.profilePageDockerInstancesTableRemoveBtnField.events
   "click .removeInstanceBtn": (e,t)->
     instanceId = $(e.target).attr "instanceId"
     $(e.target).html "Stopping"
+
+    # @unblock()
+
     Meteor.call "removeDockerInstance", instanceId, (err,data)->
       if not err
         console.log data

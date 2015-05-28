@@ -268,9 +268,9 @@ Meteor.methods
         Meteor.defer expiringUserQuota
         throw new Meteor.Error(10001, "your quota is expired!")
 
-      if limitData?.NCPU or limitData?.Memory
+      if limitData?.NCPU? or limitData?.Memory?
         # [finished] TODO: compute using.NCPU and using.Memory
-        usingAggregate = db.dockerInstances.aggregate([{$match:{"quota.id":"HZeGguvvmhv7xhf82"}},{$group:{_id:"$quota.id",NCPU:{$sum:"$limit.NCPU"},Memory:{$sum:"$limit.Memory"}}}])
+        usingAggregate = db.dockerInstances.aggregate([{$match:{"quota.id":quotaData._id}},{$group:{_id:"$quota.id",NCPU:{$sum:"$limit.NCPU"},Memory:{$sum:"$limit.Memory"}}}])
         if usingAggregate.length > 0
           using = usingAggregate[0]
         else
@@ -291,7 +291,7 @@ Meteor.methods
 
       usageLimit = {}
 
-      if limitData?.NCPU
+      if limitData?.NCPU? and quotaData.NCPU > 0
         if (limitData.NCPU > quotaData.NCPU - using.NCPU)
           throw new Meteor.Error(10003, "(limitData.NCPU > quotaData.NCPU - using.NCPU)")
 
@@ -303,7 +303,7 @@ Meteor.methods
           throw new Meteor.Error(10003, "Missing limitData.NCPU")
 
 
-      if limitData?.Memory
+      if limitData?.Memory? and quotaData.Memory > 0
         if (limitData.Memory > quotaData.Memory - using.Memory)
           throw new Meteor.Error(10003, "(limitData.Memory > quotaData.Memory - using.Memory)")
         else
@@ -315,9 +315,6 @@ Meteor.methods
 
 
     console.log "usageLimit = ", usageLimit
-
-
-    @unblock()
 
     dm = new Class.DockersManager queryServer
 
