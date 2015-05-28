@@ -2,13 +2,25 @@ template(name="envs")
   .container
     .row.clearfix
       //- +envPageEnvUserConfigsBlock
+      hr
+      +envPagePersonalQuotaBlock
+      +envPageServerQuotaBlock
       +envsPageDockerInstancesBlock
-
+      hr
       //- .runningEnvIframeBlock
       //-   a.hideInstance.btn.btn-primary Hide Instance
       //-   a.reconnectInstance.btn.btn-primary Reconnect Instance
       //-   iframe#runningEnv(src="", width="100%", height="550px", scrolling="yes")
       //- +envsTable
+
+template(name="envPagePersonalQuotaBlock")
+  h2 Personal Quota List:
+  hr
+
+template(name="envPageServerQuotaBlock")
+  h2 Server Quota List:
+  hr
+
 
 template(name="envPageEnvUserConfigsBlock")
   h2 Setup Configs:
