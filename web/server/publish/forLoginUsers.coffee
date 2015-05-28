@@ -20,7 +20,9 @@ Meteor.publish null, ->
 
     dockerPersonalQuotaPUB = db.dockerPersonalUsageQuota.find {userId:userId, expired: false}
 
-    [dockerPersonalQuotaPUB, dockerInstancesPUB, userIsRolePUB, roleTypesPUB, userPUB]
+    acceptedInvitationsPUB = db.invitation.find acceptedUserIds:userId
+
+    [acceptedInvitationsPUB, dockerPersonalQuotaPUB, dockerInstancesPUB, userIsRolePUB, roleTypesPUB, userPUB]
 
   else
     []

@@ -15,18 +15,6 @@ Meteor.startup ->
         if user
           Router.go "courses"
 
-        userId = user._id
-        redirectAfterLogin = Cookies.get "redirectAfterLogin"
-        if redirectAfterLogin and userId
-          Cookies.expire "redirectAfterLogin"
-          window.location = redirectAfterLogin
-
-        hasInvitationId = Cookies.get "redirectToInvitationAfterLogin"
-        if hasInvitationId and userId
-          Cookies.expire "redirectToInvitationAfterLogin"
-          Router.go "invitation", {invitationId:hasInvitationId}
-
-
 
     @route "invitation",
       path: "invitation/:invitationId"
@@ -38,7 +26,9 @@ Meteor.startup ->
           Roles.userIsInRole(userId, "admin", "system") or Roles.userIsInRole(userId, "admin", "dockers")
 
         acceptedInvitation: ->
-          db.invitation.find
+          userId = Meteor.userId()
+          db.invitation.find({acceptedUserIds:userId}).count() > 0
+
 
       waitOn: ->
 
@@ -48,6 +38,8 @@ Meteor.startup ->
           Cookies.set "redirectToInvitationAfterLogin", @params.invitationId
           Router.go "pleaseLogin"
 
+        else
+          Meteor.call "acceptBundleServerGroupInvitation", @params.invitationId
 
     @route "courses",
       path: "/courses"
