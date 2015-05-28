@@ -79,7 +79,7 @@
 
 
   clear: ->
-    db.dockerUsageQuota.remove {}
+    db.dockerPersonalUsageQuota.remove {}
 
   reset: ->
     @clear()
