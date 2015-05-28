@@ -10,14 +10,15 @@ Meteor.methods
       if user._id in group.admins
         nowTime = new Date().getTime()
         doc =
+          _id: Random.id 80
           purpose:"bundleServerGroup"
           groupId:groupId
-          admin:user._id
+          creator:user._id
           createdAt:nowTime
-          url: Random.id 20
           expireAt: nowTime + 1*24*60*60*1000
+          acceptUserIds: []
 
-        db.invitation.update({groupId:groupId, purpose:"bundleServerGroup"}, doc, multi:no, upsert:yes)
+        db.invitation.insert doc
 
       else
         throw new Meteor.Error(401, "You ain't admin")
@@ -25,3 +26,5 @@ Meteor.methods
       throw new Meteor.Error(401, "No such group")
 
 
+  "acceptInvitation": (invitationId) ->
+    console.log "TODO"
