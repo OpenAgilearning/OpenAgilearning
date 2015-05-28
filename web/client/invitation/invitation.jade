@@ -1,3 +1,6 @@
 template(name="invitation")
   .container
-    h2 Hello, Invitation!
+    if acceptedInvitation
+      h2 Accept Invitation Successfully!
+    else
+      h2 Waiting for Accepting Invitation!
