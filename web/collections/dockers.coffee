@@ -47,66 +47,66 @@ new Mongo.Collection "dockerEnsureImages"
 @Collections.DockerServerExceptionTypes = new Mongo.Collection "dockerServerExceptionTypes"
 @Collections.DockerServerExceptions = new Mongo.Collection "dockerServerExceptions"
 
-@Collections.DockerPullImageJob = new Mongo.Collection "dockerPullImageJob"
-@Collections.DockerPullImageStream = new Mongo.Collection "dockerPullImageStream"
-@Collections.DockerRunJob = new Mongo.Collection "dockerRunJob"
+# @Collections.DockerPullImageJob = new Mongo.Collection "dockerPullImageJob"
+# @Collections.DockerPullImageStream = new Mongo.Collection "dockerPullImageStream"
+# @Collections.DockerRunJob = new Mongo.Collection "dockerRunJob"
 
-@Collections.DockerPushImageJob = new Mongo.Collection "dockerPushImageJob"
-@Collections.DockerPushImageJobStream = new Mongo.Collection "dockerPushImageJobStream"
+# @Collections.DockerPushImageJob = new Mongo.Collection "dockerPushImageJob"
+# @Collections.DockerPushImageJobStream = new Mongo.Collection "dockerPushImageJobStream"
 
 
-getDockerFreePort = (dockerServerId)->
-  ports = [basePort..topPort]
-  filterPorts = DockerServerContainers.find("dockerServerId":dockerServerId).fetch().map (x)-> x.Ports[0].PublicPort
-  console.log "filterPorts ="
-  console.log filterPorts
-  filteredPorts = ports.filter (x) -> x not in filterPorts
-  console.log "filteredPorts = "
-  console.log filteredPorts[0]
-  String filteredPorts[0]
+# getDockerFreePort = (dockerServerId)->
+#   ports = [basePort..topPort]
+#   filterPorts = DockerServerContainers.find("dockerServerId":dockerServerId).fetch().map (x)-> x.Ports[0].PublicPort
+#   console.log "filterPorts ="
+#   console.log filterPorts
+#   filteredPorts = ports.filter (x) -> x not in filterPorts
+#   console.log "filteredPorts = "
+#   console.log filteredPorts[0]
+#   String filteredPorts[0]
 
 Meteor.methods
 
-  "getClassroomDocker": (classroomId, customTag=undefined) ->
-    user = Meteor.user()
-    if not user
-      throw new Meteor.Error(401, "You need to login")
+  # "getClassroomDocker": (classroomId, customTag=undefined) ->
+  #   user = Meteor.user()
+  #   if not user
+  #     throw new Meteor.Error(401, "You need to login")
 
-    if Classrooms.find({_id:classroomId}).count() is 0
-      throw new Meteor.Error(1201, "Classroom doesn't exist")
+  #   if Classrooms.find({_id:classroomId}).count() is 0
+  #     throw new Meteor.Error(1201, "Classroom doesn't exist")
 
-    classroomDoc = Classrooms.findOne _id:classroomId
-    if classroomDoc
+  #   classroomDoc = Classrooms.findOne _id:classroomId
+  #   if classroomDoc
 
-      if customTag and db.courseJoinDockerImageTags.findOne({tag:customTag, courseId:classroomDoc.courseId})
-        imageTag = customTag
-      else
+  #     if customTag and db.courseJoinDockerImageTags.findOne({tag:customTag, courseId:classroomDoc.courseId})
+  #       imageTag = customTag
+  #     else
 
-        courseData = Courses.findOne _id:classroomDoc.courseId
+  #       courseData = Courses.findOne _id:classroomDoc.courseId
 
-        if courseData.dockerImage
-          imageTag = courseData.dockerImage
-        else
-          imageTag = courseData.dockerImageTag
+  #       if courseData.dockerImage
+  #         imageTag = courseData.dockerImage
+  #       else
+  #         imageTag = courseData.dockerImageTag
 
-      # if courseData.bundleServer
-      #   queryServer = courseData.bundleServer
-      # else
-      #   queryServer = {"user.group.id":"TaishinDataMining"}
-
-
+  #     # if courseData.bundleServer
+  #     #   queryServer = courseData.bundleServer
+  #     # else
+  #     #   queryServer = {"user.group.id":"TaishinDataMining"}
 
 
-      console.log "imageTag = ",imageTag
 
-        # imageType = DockerImages.findOne({_id:imageId}).type
-        # if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
-        #   #FIXME: write a checking function for env vars
-        #   throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
 
-      if db.dockerInstances.find({userId:user._id, imageTag:imageTag, $or:[{frozen:$exists:false},{frozen:false}]}).count() is 0
-        @unblock()
-        Meteor.call "runDocker", imageTag
+  #     console.log "imageTag = ",imageTag
+
+  #       # imageType = DockerImages.findOne({_id:imageId}).type
+  #       # if DockerTypeConfig.find({userId:user._id,typeId:imageType}).count() is 0
+  #       #   #FIXME: write a checking function for env vars
+  #       #   throw new Meteor.Error(1002, "MUST Setting Type Configurations before running!")
+
+  #     if db.dockerInstances.find({userId:user._id, imageTag:imageTag, $or:[{frozen:$exists:false},{frozen:false}]}).count() is 0
+  #       @unblock()
+  #       Meteor.call "runDocker", imageTag
 
   "selectPersonalQuota": (doc)->
     user = Meteor.user()

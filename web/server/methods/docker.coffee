@@ -261,9 +261,13 @@ Meteor.methods
       console.log "quotaData = ", quotaData
       if not quotaData
         throw new Meteor.Error(10001, "you are not the owner of quotaData.id")
-      #FIXME: check quotaData is expired or not ?
 
+      # [finished] FIXME: check quotaData is expired or not ?
 
+      nowTime = new Date.getTime()
+      if quotaData.expiredAt > 0 and quotaData.expiredAt < nowTime
+        Meteor.defer expiringUserQuota
+        throw new Meteor.Error(10001, "your quota is expired!")
 
       if limitData?.NCPU or limitData?.Memory
         # [finished] TODO: compute using.NCPU and using.Memory
@@ -352,90 +356,90 @@ Meteor.methods
 
 
 
-  "runDocker": (imageTag)->
+  # "runDocker": (imageTag)->
 
-    # FIXME refactor dockerImage collection, image with full tag
-    if imageTag.split(":").length is 1
-      fullImageTag = imageTag + ":latest"
-    else
-      fullImageTag = imageTag
+  #   # FIXME refactor dockerImage collection, image with full tag
+  #   if imageTag.split(":").length is 1
+  #     fullImageTag = imageTag + ":latest"
+  #   else
+  #     fullImageTag = imageTag
 
-    #[TODOLIST: checking before running]
-    #TODO: assert user logged in
-    user = Meteor.user()
-    if not user
-      throw new Meteor.Error(401, "You need to login")
+  #   #[TODOLIST: checking before running]
+  #   #TODO: assert user logged in
+  #   user = Meteor.user()
+  #   if not user
+  #     throw new Meteor.Error(401, "You need to login")
 
-    if ENV.isDev or ENV.isStaging
-      queryServer = "testing"
-    else
-      queryServer = "production"
+  #   if ENV.isDev or ENV.isStaging
+  #     queryServer = "testing"
+  #   else
+  #     queryServer = "production"
 
-    @unblock()
-
-
-    personalQuotaQuery =
-      userId: user._id
-      expiredAt:
-        "$gt": new Date().getTime()
-
-    checkpersonalQuota = db.dockerPersonalUsageQuota.find(personalQuotaQuery).count()
-
-    if checkpersonalQuota is 0
-      db.dockerPersonalUsageQuota.insert
-        userId: user._id
-        expiredAt: new Date().getTime() + 15*60*1000
-        NCPU:1
-        Memory: 512*1024*1024
+  #   @unblock()
 
 
+  #   personalQuotaQuery =
+  #     userId: user._id
+  #     expiredAt:
+  #       "$gt": new Date().getTime()
 
-    if DockerInstances.find({userId:user._id,imageTag:fullImageTag, $or:[{frozen:$exists:false},{frozen:false}]}).count() is 0
+  #   checkpersonalQuota = db.dockerPersonalUsageQuota.find(personalQuotaQuery).count()
 
-      # Before we start a new instance, say bye bye to all
-      # old mess(frozen instances) you've created.
-      frozenInstances = DockerInstances.find {userId:user._id, frozen:true}
-
-      if frozenInstances
-        frozenInstances.map (instanceDoc)->
-          # No, don't call method here. Since rmf takes time, the user can still see
-          # the old instance when the classroom rerender.
-          # Meteor.call "removeDockerInstance", instanceDoc._id
-
-          dockerInstanceDoc = instanceDoc
-          DockerInstances.remove _id: dockerInstanceDoc._id
-
-          dockerInstanceDoc.removeAt = new Date
-          dockerInstanceDoc.removeBy = "system"
-          dockerInstanceDoc.removeByUid = user._id
-          DockerInstancesLog.insert dockerInstanceDoc
-
-          docker = new Class.DockerServer instanceDoc.serverId
-          docker.rmf instanceDoc.containerId
-
-      dm = new Class.DockersManager queryServer
-
-      resData = dm.getFreeServerForcely().run(imageTag, "basic", user._id)
-
-      console.log "resData = ",resData
-
-      if not resData.error
-        dockerData =
-          userId: user._id
-          imageTag: fullImageTag
-          containerConfigs: resData.data.configs
-          envs: resData.data.envs
-          portDataArray: resData.data.portDataArray
-          serverId: resData.data.container._serverId
-          containerId: resData.data.container._instance.id
-          ip: resData.data.container._docker._configs.host
-          createAt: new Date
-
-        DockerInstances.insert dockerData
+  #   if checkpersonalQuota is 0
+  #     db.dockerPersonalUsageQuota.insert
+  #       userId: user._id
+  #       expiredAt: new Date().getTime() + 15*60*1000
+  #       NCPU:1
+  #       Memory: 512*1024*1024
 
 
 
-    # TODO: different roles can access different images ...
+  #   if DockerInstances.find({userId:user._id,imageTag:fullImageTag, $or:[{frozen:$exists:false},{frozen:false}]}).count() is 0
+
+  #     # Before we start a new instance, say bye bye to all
+  #     # old mess(frozen instances) you've created.
+  #     frozenInstances = DockerInstances.find {userId:user._id, frozen:true}
+
+  #     if frozenInstances
+  #       frozenInstances.map (instanceDoc)->
+  #         # No, don't call method here. Since rmf takes time, the user can still see
+  #         # the old instance when the classroom rerender.
+  #         # Meteor.call "removeDockerInstance", instanceDoc._id
+
+  #         dockerInstanceDoc = instanceDoc
+  #         DockerInstances.remove _id: dockerInstanceDoc._id
+
+  #         dockerInstanceDoc.removeAt = new Date
+  #         dockerInstanceDoc.removeBy = "system"
+  #         dockerInstanceDoc.removeByUid = user._id
+  #         DockerInstancesLog.insert dockerInstanceDoc
+
+  #         docker = new Class.DockerServer instanceDoc.serverId
+  #         docker.rmf instanceDoc.containerId
+
+  #     dm = new Class.DockersManager queryServer
+
+  #     resData = dm.getFreeServerForcely().run(imageTag, "basic", user._id)
+
+  #     console.log "resData = ",resData
+
+  #     if not resData.error
+  #       dockerData =
+  #         userId: user._id
+  #         imageTag: fullImageTag
+  #         containerConfigs: resData.data.configs
+  #         envs: resData.data.envs
+  #         portDataArray: resData.data.portDataArray
+  #         serverId: resData.data.container._serverId
+  #         containerId: resData.data.container._instance.id
+  #         ip: resData.data.container._docker._configs.host
+  #         createAt: new Date
+
+  #       DockerInstances.insert dockerData
+
+
+
+  #   # TODO: different roles can access different images ...
 
 
   "refreshDockerServerMonitors": ->
