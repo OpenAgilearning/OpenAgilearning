@@ -17,6 +17,7 @@ Meteor.methods
           creator:user._id
           createdAt:nowTime
           expireAt: nowTime + 1*24*60*60*1000
+          expired: false
           acceptedUserIds: []
 
         db.invitation.insert doc
@@ -32,7 +33,7 @@ Meteor.methods
     if not user
       throw new Meteor.Error(401, "You need to login")
 
-    invitationData = db.invitation.findOne _id: invitationId
+    invitationData = db.invitation.findOne {_id: invitationId, expired:false}
 
     if not invitationData
       throw new Meteor.Error(401, "There is no invitation data!")

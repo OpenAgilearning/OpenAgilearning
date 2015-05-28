@@ -238,6 +238,12 @@ Template.codingEnvironment.helpers
   groupQuotaSelectionSelected:->
     Session.get "groupQuotaSelection"
 
+  hasPersonalQuota: ->
+    db.dockerPersonalUsageQuota.find().count() > 0
+
+  hasServerGroupQuota: ->
+    db.bundleServerUserGroup.find(members: Meteor.userId()).count() > 0
+
   currentlyNoQuota: ->
     not (
       db.dockerPersonalUsageQuota.find().count() +
