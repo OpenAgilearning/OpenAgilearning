@@ -187,7 +187,7 @@ Meteor.methods
     else
       trialQuotaData =
         name: "freeTrialQuota"
-        userId: uid
+        userId: user._id
         expiredAt: new Date().getTime() + 20*60*1000
         NCPU: 1
         Memory: 512*1024*1024

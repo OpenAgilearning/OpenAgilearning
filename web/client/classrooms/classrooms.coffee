@@ -238,6 +238,11 @@ Template.codingEnvironment.helpers
   groupQuotaSelectionSelected:->
     Session.get "groupQuotaSelection"
 
+  currentlyNoQuota: ->
+    not (
+      db.dockerPersonalUsageQuota.find().count() +
+      db.bundleServerUserGroup.find(members: Meteor.userId()).count()
+    )
 
 Template.codingEnvironment.events
   "click .wantToCode": (e) ->
@@ -257,6 +262,22 @@ Template.codingEnvironment.events
 
   "change #groupQuotaSelector [name=quota]": (event, template) ->
     Session.set "groupQuotaSelection", event.target.value
+
+  "click #get-free-trial": (event, template) ->
+    Meteor.call "getFreeTrialQuota"#, (error) ->
+      #if not error
+      #  window.temp1 = template.firstNode.parentElement
+      #  Blaze.render Template.spinner, template.firstNode.parentElement
+      #  template.$(".spinner-container").css("background-color", "#EEEEEE")
+      #  Meteor.call "selectPersonalQuota",
+      #    tag: template.data.tag
+      #    quota: db.dockerPersonalUsageQuota.findOne()._id
+      #    NCPU: 1
+      #    Memory: 512
+      #  , ->
+      #    $(template.firstNode.parentElement).children(".spinner-container").hide()
+      #    $(template.firstNode.parentElement).children()
+
 
 
 Template.codingEnvironment.rendered = ->
