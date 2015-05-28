@@ -183,6 +183,9 @@ template(name="codingEnvironment")
 
     if dockerInstance
       +classroomEnvIframe docker=dockerInstance
+    else if currentlyNoQuota
+      h1 You have no quota currently
+      button#get-free-trial.btn.btn-warning.btn-lg get a free trial quota
     else
 
       //- if useThisEnvironment
