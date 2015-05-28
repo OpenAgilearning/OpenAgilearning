@@ -168,14 +168,32 @@ Meteor.methods
   #   console.log "TODO"
   #   console.log "return instanceId or ... "
 
-  "selectQuota": ->
+  "getFreeTrialQuota": ->
     user = Meteor.user()
     if not user
       throw new Meteor.Error(401, "You need to login")
 
 
-    console.log "TODO"
-    console.log "return instanceId or ... "
+    nowTime = new Date().getTime()
+    quotaQuery =
+      expired: false
+      expiredAt:
+        $gt: nowTime
+      userId: user._id
+
+    if db.dockerPersonalUsageQuota.find(quotaQuery).count() > 0
+      throw new Meteor.Error(11001, "You already have personal quota!")
+
+    else
+      trialQuotaData =
+        name: "freeTrialQuota"
+        userId: uid
+        expiredAt: new Date().getTime() + 20*60*1000
+        NCPU: 1
+        Memory: 512*1024*1024
+        expired: false
+
+      db.dockerPersonalUsageQuota.insert trialQuotaData
 
 
 
@@ -185,25 +203,6 @@ Meteor.methods
       throw new Meteor.Error(401, "You need to login")
 
     return _.contains user.agreedTOC, "toc_main"
-
-
-  "getQuotaList": ->
-    user = Meteor.user()
-    if not user
-      throw new Meteor.Error(401, "You need to login")
-
-    console.log "TODO"
-    console.log "return QuotaList"
-
-
-  "getUsageList": (Quota)->
-    user = Meteor.user()
-    if not user
-      throw new Meteor.Error(401, "You need to login")
-
-    console.log "TODO"
-    console.log "return UsageList"
-
 
 
   "runDockerLimit": (imageTag, quotaData, limitData)->
