@@ -67,8 +67,15 @@ template(name="profilePageDockerInstancesTableQuotaField")
 
 template(name="profilePageDockerInstancesTableLimitField")
   ul
-    li NCPU: {{limit.NCPU}}
-    li Memory: {{limit.Memory}}
+    if limit.NCPU
+      li NCPU: {{limit.NCPU}}
+    else
+      li NCPU: unlimited
+
+    if limit.Memory
+      li Memory: {{limit.Memory}}
+    else
+      li Memory: unlimited
 
 
 
