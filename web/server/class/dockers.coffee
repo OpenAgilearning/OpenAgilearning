@@ -1115,9 +1115,13 @@ needStreamingCallback = (fn, streamingFns=[])->
     if limitData
       if not @_error
 
-        usageLimitData =
-          Cpuset: @_docker.getFreeCpuset(limitData.NCPU)
-          Memory: limitData.Memory
+        usageLimitData = {}
+
+        if limitData.NCPU
+          usageLimitData.Cpuset = @_docker.getFreeCpuset(limitData.NCPU)
+
+        if limitData.Memory
+          usageLimitData.Memory = limitData.Memory
 
         _.extend @_configs, usageLimitData
     @

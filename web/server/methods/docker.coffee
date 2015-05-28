@@ -257,27 +257,61 @@ Meteor.methods
         queryServer.useIn = "production"
 
 
-      quotaData = db.dockerPersonalUsageQuota.findOne _id:quotaData.id
+      quotaData = db.dockerPersonalUsageQuota.findOne _id:quotaData.id, userId: user._id
       console.log "quotaData = ", quotaData
+      if not quotaData
+        throw new Meteor.Error(10001, "you are not the owner of quotaData.id")
+      #FIXME: check quotaData is expired or not ?
 
-      # TODO: compute using.NCPU and using.Memory
-      usingAggregate = db.dockerInstances.aggregate([{$match:{"quota.id":"HZeGguvvmhv7xhf82"}},{$group:{_id:"$quota.id",NCPU:{$sum:"$limit.NCPU"},Memory:{$sum:"$limit.Memory"}}}])
-      if usingAggregate.length > 0
-        using = usingAggregate[0]
+
+
+      if limitData?.NCPU or limitData?.Memory
+        # [finished] TODO: compute using.NCPU and using.Memory
+        usingAggregate = db.dockerInstances.aggregate([{$match:{"quota.id":"HZeGguvvmhv7xhf82"}},{$group:{_id:"$quota.id",NCPU:{$sum:"$limit.NCPU"},Memory:{$sum:"$limit.Memory"}}}])
+        if usingAggregate.length > 0
+          using = usingAggregate[0]
+        else
+          using =
+            NCPU: 0
+            Memory: 0
+
+
+      # # [finished] FIXME: (limitData.NCPU > quotaData.NCPU - using.NCPU) or (limitData.Memory > quotaData.Memory - using.Memory)
+      # if (limitData.NCPU > quotaData.NCPU - using.NCPU) or (limitData.Memory > quotaData.Memory - using.Memory)
+      # # if (limitData.NCPU > quotaData.NCPU) or (limitData.Memory > quotaData.Memory)
+      #     throw new Meteor.Error(10003, "(limitData.NCPU > quotaData.NCPU - using.NCPU) or (limitData.Memory > quotaData.Memory - using.Memory)")
+
+      # usageLimit =
+      #   NCPU: limitData.NCPU
+      #   Memory: limitData.Memory
+
+
+      usageLimit = {}
+
+      if limitData?.NCPU
+        if (limitData.NCPU > quotaData.NCPU - using.NCPU)
+          throw new Meteor.Error(10003, "(limitData.NCPU > quotaData.NCPU - using.NCPU)")
+
+        else
+          usageLimit.NCPU = limitData.NCPU
+
       else
-        using =
-          NCPU: 0
-          Memory: 0
-      # FIXME: (limitData.NCPU > quotaData.NCPU - using.NCPU) or (limitData.Memory > quotaData.Memory - using.Memory)
-      if (limitData.NCPU > quotaData.NCPU - using.NCPU) or (limitData.Memory > quotaData.Memory - using.Memory)
-      # if (limitData.NCPU > quotaData.NCPU) or (limitData.Memory > quotaData.Memory)
-          throw new Meteor.Error(10003, "(limitData.NCPU > quotaData.NCPU - using.NCPU) or (limitData.Memory > quotaData.Memory - using.Memory)")
-
-      usageLimit =
-        NCPU: limitData.NCPU
-        Memory: limitData.Memory
+        unless quotaData.NCPU < 0
+          throw new Meteor.Error(10003, "Missing limitData.NCPU")
 
 
+      if limitData?.Memory
+        if (limitData.Memory > quotaData.Memory - using.Memory)
+          throw new Meteor.Error(10003, "(limitData.Memory > quotaData.Memory - using.Memory)")
+        else
+          usageLimit.Memory = limitData.Memory
+
+      else
+        unless quotaData.Memory < 0
+          throw new Meteor.Error(10003, "Missing limitData.Memory")
+
+
+    console.log "usageLimit = ", usageLimit
 
 
     dm = new Class.DockersManager queryServer
