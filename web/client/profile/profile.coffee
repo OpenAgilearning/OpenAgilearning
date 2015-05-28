@@ -138,7 +138,11 @@ Template.profilePageDockerInstancesTableQuotaField.helpers
 
   expiredAt: ->
     # @quota.id
-    new Date(db.dockerPersonalUsageQuota.findOne({_id:@quota.id}).expiredAt)
+    expiredAt = db.dockerPersonalUsageQuota.findOne({_id:@quota.id}).expiredAt
+    if expiredAt > 0
+      new Date(db.dockerPersonalUsageQuota.findOne({_id:@quota.id}).expiredAt)
+    else
+      "no expired Date!"
 
   groupData: ->
     db.bundleServerUserGroup.findOne({_id:@quota.id})
