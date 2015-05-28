@@ -133,3 +133,7 @@ Template.envPageServerQuotaBlock.helpers
   UserIn:(AdminArray)->Meteor.userId() in AdminArray
 
 
+Template.envPageServerQuotaBlock.events
+  'click .get-inv-link': (e,t) ->
+    groupId = $(e.target).attr "data-group-id"
+    Meteor.call "generateBundleServerGroupInvitationUrl", groupId

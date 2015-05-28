@@ -37,7 +37,8 @@ template(name="envPageServerQuotaBlock")
   each serverGroups
     h3 {{name}}
     if UserIn admins
-      span You are the admin of {{name}}
+      p You are the admin of {{name}}, you can add friends to group by sending them an invitation link. Note that the invitation expires in 1 day.
+      button(type="button" data-group-id="#{_id}").btn.btn-primary.get-inv-link Get invitation link
 
     ul
     each usageLimits
