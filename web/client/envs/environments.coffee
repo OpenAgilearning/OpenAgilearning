@@ -132,4 +132,12 @@ Template.envPageServerQuotaBlock.helpers
   serverGroups:-> db.bundleServerUserGroup.find()
   UserIn:(AdminArray)->Meteor.userId() in AdminArray
 
+Template.serverQuotaAdmin.helpers
+  links: ->
+    now = new Date().getTime()
+    db.invitation.find({groupId:@serverGroup._id, expireAt:$gt:now})
+  info_of:(timeInt)-> "Will expire at #{moment(timeInt).toDate()}"
 
+Template.serverQuotaAdmin.events
+  'click .get-inv-link': (e,t) ->
+    Meteor.call "generateBundleServerGroupInvitationUrl", t.data.serverGroup._id
