@@ -263,7 +263,7 @@ Meteor.methods
 
       # [finished] FIXME: check quotaData is expired or not ?
 
-      nowTime = new Date.getTime()
+      nowTime = new Date().getTime()
       if quotaData.expiredAt > 0 and quotaData.expiredAt < nowTime
         Meteor.defer expiringUserQuota
         throw new Meteor.Error(10001, "your quota is expired!")
