@@ -152,10 +152,7 @@ Template.profilePageDockerInstancesTableRemoveBtnField.events
     instanceId = $(e.target).attr "instanceId"
     $(e.target).html "Stopping"
 
-    @unblock()
-
     Meteor.call "removeDockerInstance", instanceId
-
 
 Template.public_profile.helpers
   user: ->
