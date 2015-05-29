@@ -1,7 +1,7 @@
 
 Template.nodesList.helpers
   nodes: ->
-    Courses.find()
+    Courses.find {}, {sort: {creatorAt: -1}}
 
 Template.nodeInfo.helpers
   isPrivate: ->
