@@ -56,13 +56,13 @@
         for quota in defaultQuotas
           if db.dockerPersonalUsageQuota.find(quota).count() is 0
 
-            if quota.name is "oneDayQuota"
-              quota.expiredAt = new Date().getTime() + 1*24*60*60*1000
-              db.dockerPersonalUsageQuota.insert quota
+            # if quota.name is "oneDayQuota"
+            #   quota.expiredAt = new Date().getTime() + 1*24*60*60*1000
+            #   db.dockerPersonalUsageQuota.insert quota
 
-            if quota.name is "freeTrialQuota"
-              quota.expiredAt = new Date().getTime() + 15*60*1000
-              db.dockerPersonalUsageQuota.insert quota
+            # if quota.name is "freeTrialQuota"
+            #   quota.expiredAt = new Date().getTime() + 15*60*1000
+            #   db.dockerPersonalUsageQuota.insert quota
 
 
             if quota.name is "adminQuota"
