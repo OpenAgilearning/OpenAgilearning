@@ -670,6 +670,24 @@ Meteor.startup ->
       waitOn: ->
         Meteor.subscribe "communities" , @params.communityId
 
+    @route "bundleServerUserGroup",
+      path: "bundleServerUserGroup/:groupId"
+      template: "groupPage"
+      data:
+        serverGroup:->db.bundleServerUserGroup.findOne()
+
+
+      waitOn:->
+        userId = Meteor.userId()
+        unless userId
+          Router.go "pleaseLogin"
+
+        Meteor.subscribe "bundleServerUserGroupAdmin", @params.groupId,->
+          if db.bundleServerUserGroup.find().count() is 0
+            Router.go "index"
+
+
+
 
 
     @route "pleaseLogin",
