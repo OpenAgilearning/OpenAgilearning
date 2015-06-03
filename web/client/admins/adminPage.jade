@@ -15,6 +15,9 @@ template(name="AdminPage")
         li
           a(data-toggle="tab", href="#rolesSetting") Roles Setting
 
+        li
+          a(data-toggle="tab", href="#invitation") Invitation
+
         //- li
         //-   a(data-toggle="tab", href="#editMsgBoard") Message Board
         //- li
@@ -79,6 +82,10 @@ template(name="AdminPage")
           h2 Set Admins:
           +adminPageUsersTable
 
+        .tab-pane.fade#invitation
+          h2 Invitation
+          +systemAdminInvitation
+
       //- if isInRole "admin" "system"
       //-   .tab-pane.fade#editMsgBoard
       //-     hr
@@ -141,3 +148,18 @@ template(name="removeDockerServer")
       +afQuickField name="serverId"
 
     button.btn.btn-primary(type='submit') submit
+
+template(name="systemAdminInvitation")
+  h3 Free Trial Quota
+  button(type="button").btn.btn-primary#gen-free-quota Generate Free Trial Quota
+  .foo
+    label Quota life (hours)
+    input(value="24").form-control#free-quota-life
+  h3 A Lot of Quota
+  button(type="button").btn.btn-primary#gen-a-lot-of-quota Generate A-Lot-of-Quota
+  .foo
+    label Quota life (hours)
+    input(value="168").form-control#a-lot-of-quota-life
+
+  h3 history
+  +reactiveTable settings=settings

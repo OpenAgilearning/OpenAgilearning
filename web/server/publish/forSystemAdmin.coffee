@@ -21,3 +21,11 @@ Meteor.publish "allUsers", ->
     Meteor.users.find()
   else
     Meteor.users.find _id:"permisionDeny"
+
+Meteor.publish "personalQuotaInvitation",->
+  if Roles.userIsInRole @userId, "admin", "system"
+    nowTime = new Date().getTime()
+    db.invitation.find {purpose: "personalQuota", expireAt:$gt:nowTime}
+
+  else
+    Exceptions.find _id:"ExceptionPermissionDeny"

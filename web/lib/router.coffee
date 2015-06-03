@@ -508,6 +508,7 @@ Meteor.startup ->
           Meteor.subscribe "allDockerServers"
           Meteor.subscribe "allDockerServerImages"
           Meteor.subscribe "allDockerServerContainers"
+          Meteor.subscribe "personalQuotaInvitation"
 
           # Meteor.subscribe "allEnvTypes"
           # Meteor.subscribe "allEnvs"
