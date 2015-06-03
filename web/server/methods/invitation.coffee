@@ -37,7 +37,7 @@ Meteor.methods
 
     if invitationData
       if invitationData.purpose is  "bundleServerGroup"
-        db.bundleServerUserGroup.update {_id:invitationData.groupId}, {$push:{members:user._id}}
+        db.bundleServerUserGroup.update {_id:invitationData.groupId}, {$addToSet:{members:user._id}}
         db.invitation.update {_id:invitationId}, {$push:{acceptedUserIds:user._id}}
       else if invitationData.purpose is  "personalQuota"
         console.log invitationData,"dealing with personalQuota"
@@ -74,6 +74,7 @@ Meteor.methods
         throw new Meteor.Error(401, "Something wrong with the invitation purpose")
     else
       throw new Meteor.Error(401, "There is no invitation data!")
+
 
 
   "generatePersonalQuotaInvitationUrl": (quotaType, quotaLife)->

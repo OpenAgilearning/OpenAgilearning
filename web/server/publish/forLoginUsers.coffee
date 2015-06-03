@@ -201,6 +201,21 @@ Meteor.publish "bundleServerUserGroup",->
   else
     Exceptions.find {_id:"ExceptionPermissionDeny"}
 
+Meteor.publish "bundleServerUserGroupAdmin",(groupId)->
+  userId = @userId
+
+  if userId
+    groupCursor = db.bundleServerUserGroup.find {_id:groupId, admins:userId}
+
+    groupObject= groupCursor.fetch()[0]
+
+    userIds = groupObject.admins.concat groupObject.members
+
+    resumesPub = db.publicResume.find({userId:{$in:userIds}})
+
+    [groupCursor,resumesPub]
+  else
+    Exceptions.find {_id:"ExceptionPermissionDeny"}
 
 Meteor.publish "groupAdminInvitation",->
   userId = @userId

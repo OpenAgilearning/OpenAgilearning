@@ -46,6 +46,7 @@ template(name="envPageServerQuotaBlock")
 
 template(name="serverQuotaAdmin")
   p You are the admin of {{serverGroup.name}}, you can add friends to group by sending them an invitation link. Note that the invitation expires in 1 day.
+  a(type="button" href="{{urlFor 'bundleServerUserGroup' groupId=serverGroup._id}}").btn.btn-info Manage Group
   button(type="button").btn.btn-primary.get-inv-link Get invitation link
   ul
     each links

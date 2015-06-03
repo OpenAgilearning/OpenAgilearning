@@ -1,0 +1,36 @@
+template(name="groupPage")
+  .container
+    .row.clearfix
+
+      with serverGroup
+        h1 {{name}}
+
+        h2 Servers
+        each servers
+          p {{this}}
+
+        h2 Admins
+        ul
+          each admins
+            li
+              +adminBlock userId=this
+
+        h2 Members
+        ul
+          each members
+            li
+              +memberBlock userId=this
+
+
+template(name="userBlock")
+  with userInfo userId
+    p {{name}}
+    button(type="button").btn.btn-danger.btn-sm.remove-member Remove member
+
+template(name="adminBlock")
+  +userBlock userId=userId
+  button(type="button").btn.btn-warning.btn-sm.remove-admin-permission Remove Admin Permission
+
+template(name="memberBlock")
+  +userBlock userId=userId
+  button(type="button").btn.btn-primary.btn-sm.set-as-admin Set As An Admin
