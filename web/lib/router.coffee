@@ -39,7 +39,7 @@ Meteor.startup ->
           Router.go "pleaseLogin"
 
         else
-          Meteor.call "acceptBundleServerGroupInvitation", @params.invitationId
+          Meteor.call "acceptInvitation", @params.invitationId
 
     @route "courses",
       path: "/courses"
@@ -508,6 +508,7 @@ Meteor.startup ->
           Meteor.subscribe "allDockerServers"
           Meteor.subscribe "allDockerServerImages"
           Meteor.subscribe "allDockerServerContainers"
+          Meteor.subscribe "personalQuotaInvitation"
 
           # Meteor.subscribe "allEnvTypes"
           # Meteor.subscribe "allEnvs"
