@@ -108,9 +108,15 @@ Template.systemAdminInvitation.helpers
 Template.systemAdminInvitation.events
   'click #gen-free-quota': (e,t) ->
 
-    quotaLife = parseInt $("#free-quota-life").attr("value"), 0
-    Meteor.call "generatePersonalQuotaInvitationUrl", "freeTrialQuota", quotaLife*60*60*1000
+    quotaLife = parseInt $("#free-quota-life").prop("value"), 0
+    if quotaLife >0
+      Meteor.call "generatePersonalQuotaInvitationUrl", "freeTrialQuota", quotaLife*60*60*1000
+    else
+      console.log "invalid quotaLife"
 
   'click #gen-a-lot-of-quota':(e,t)->
-    quotaLife = parseInt $("#a-lot-of-quota-life").attr("value"), 0
-    Meteor.call "generatePersonalQuotaInvitationUrl", "aLotOfQuota", quotaLife*60*60*1000
+    quotaLife = parseInt $("#a-lot-of-quota-life").prop("value"), 0
+    if quotaLife >0
+      Meteor.call "generatePersonalQuotaInvitationUrl", "aLotOfQuota", quotaLife*60*60*1000
+    else
+      console.log "invalid quotaLife"
