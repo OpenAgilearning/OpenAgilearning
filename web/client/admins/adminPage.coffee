@@ -88,14 +88,26 @@ Template.systemAdminInvitation.helpers
       fn:(value)->timeRepr(value)
 
     quotaLife =
-      key:"quotaLife"
-      label: "quotaLife"
+      key:"quota_life"
+      label: "Life"
       fn:(value)->
-        d = moment.duration value
-        "#{d.asHours()} Hours [#{d.humanize()}]"
+        if value
+          d = moment.duration value
+          "#{d.asHours()} Hours [#{d.humanize()}]"
+
+    quota_NCPU =
+      key:"quota_NCPU"
+      label: "NCPU"
+
+    quota_memory =
+      key: "quota_memory"
+      label: "Mem"
+      fn:(value)->
+        value /(1024*1024*1024)
+
     url =
       key:"_id"
-      labl:"url"
+      label:"url"
       fn:(value)->
         Router.url "invitation",{invitationId:value}
 
@@ -103,20 +115,29 @@ Template.systemAdminInvitation.helpers
       collection: db.invitation.find(purpose: "personalQuota")
       rowsPerPage: 10
       showFilter: true
-      fields: [creator,createdAt,expireAt,"expired","acceptedUserIds","quotaType",quotaLife,url]
+      fields: [creator,createdAt,expireAt,"expired","acceptedUserIds","quota_name",quotaLife,quota_NCPU,quota_memory,url]
 
 Template.systemAdminInvitation.events
   'click #gen-free-quota': (e,t) ->
+    doc =
+      quota_life: (parseInt $("#free-quota-life").prop("value"), 0)*60*60*1000
+      quota_name: "Free Trial Quota"
 
-    quotaLife = parseInt $("#free-quota-life").prop("value"), 0
-    if quotaLife >0
-      Meteor.call "generatePersonalQuotaInvitationUrl", "freeTrialQuota", quotaLife*60*60*1000
+    if doc.quota_life >0
+      Meteor.call "generatePersonalQuotaInvitationUrl", doc
     else
       console.log "invalid quotaLife"
 
-  'click #gen-a-lot-of-quota':(e,t)->
-    quotaLife = parseInt $("#a-lot-of-quota-life").prop("value"), 0
-    if quotaLife >0
-      Meteor.call "generatePersonalQuotaInvitationUrl", "aLotOfQuota", quotaLife*60*60*1000
+  'click #gen-custom-quota': (e,t) ->
+
+
+    doc =
+      quota_life: (parseInt $("#custom-quota-life").prop("value"), 0)*60*60*1000
+      quota_name: $("#custom-quota-name").prop("value")
+      quota_NCPU: parseInt $("#custom-quota-NCPU").prop("value"), 0
+      quota_memory: (parseFloat $("#custom-quota-memory").prop("value"), 0) * 1024 * 1024 * 1024
+
+    if doc.quota_life >0
+      Meteor.call "generatePersonalQuotaInvitationUrl", doc
     else
       console.log "invalid quotaLife"

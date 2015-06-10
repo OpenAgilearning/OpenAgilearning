@@ -19,13 +19,34 @@ Template.envPagePersonalQuotaTable.helpers
         else
           "Admin Quota!"
 
+    NCPUField =
+      key:"NCPU"
+      label:"CPU"
+      fn: (value)->
+        if value < 0
+          "unlimited"
+        else if value is 1
+          "1 core"
+        else if value > 1
+          "#{value} cores"
+        else
+          value
+
+    MemoryField =
+      key: "Memory"
+      label: "Memory"
+      fn: (value)->
+        if value > 0
+          "#{value/(1024*1024*1024)} GB"
+        else
+          "unlimited"
 
     res =
       collection: db.dockerPersonalUsageQuota.find()
       # rowsPerPage:5
       # showFilter: false
       # showNavigation:'never'
-      fields:["name","NCPU","Memory", ExpiredAtField]
+      fields:["name",NCPUField,MemoryField, ExpiredAtField]
 
 
 Template.envPageEnvConfigTypesTable.helpers
