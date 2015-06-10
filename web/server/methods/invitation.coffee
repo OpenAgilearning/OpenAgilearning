@@ -58,6 +58,7 @@ Meteor.methods
           Memory: quota_memory
           expired: false
           expiredAt: expiredAt
+          invitationId:invitationData._id
 
 
         db.dockerPersonalUsageQuota.insert QuotaData
