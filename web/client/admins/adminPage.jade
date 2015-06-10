@@ -150,16 +150,25 @@ template(name="removeDockerServer")
     button.btn.btn-primary(type='submit') submit
 
 template(name="systemAdminInvitation")
-  h3 Free Trial Quota
-  button(type="button").btn.btn-primary#gen-free-quota Generate Free Trial Quota
-  .foo
-    label Quota life (hours)
-    input(value="24").form-control#free-quota-life
-  h3 A Lot of Quota
-  button(type="button").btn.btn-primary#gen-a-lot-of-quota Generate A-Lot-of-Quota
-  .foo
-    label Quota life (hours)
-    input(value="168").form-control#a-lot-of-quota-life
+  .row
+    .col-md-6
+      h3 Free Trial Quota
+      button(type="button").btn.btn-primary#gen-free-quota Generate Free Trial Quota
+      .foo
+        label Quota life (hours)
+        input(value="24").form-control#free-quota-life
+    .col-md-6
+      h3 Custom Quota
+      button(type="button").btn.btn-primary#gen-custom-quota Generate Custom Quota
+      .foo
+        label Quota life (hours)
+        input(value="168").form-control#custom-quota-life
+        label Quota Name
+        input(value="Special Personal Quota").form-control#custom-quota-name
+        label NCUP
+        input(value="1").form-control#custom-quota-NCPU
+        label Memory (GB)
+        input(value="0.5").form-control#custom-quota-memory
 
   h3 history
   +reactiveTable settings=settings

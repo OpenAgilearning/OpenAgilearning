@@ -42,29 +42,22 @@ Meteor.methods
       else if invitationData.purpose is  "personalQuota"
         console.log invitationData,"dealing with personalQuota"
 
+        quota_life = invitationData.quota_life or 1*24*60*60*1000
+        quota_name = invitationData.quota_name or "Free Trial Quota"
+        quota_NCPU = invitationData.quota_NCPU or 1
+        quota_memory = invitationData.quota_memory or 512*1024*1024
+
         nowTime = new Date().getTime()
 
-        expiredAt = nowTime + (invitationData?.quotaLife or 1*24*60*60*1000)
+        expiredAt = nowTime + quota_life
 
-        if invitationData?.quotaType  is "aLotOfQuota"
-          QuotaData =
-            name: "aLotOfQuota"
-            userId: user._id
-            NCPU: 8
-            Memory: 8 * 1024 * 1024 * 1024
-            expired: false
-            expiredAt: expiredAt
-
-        else if invitationData?.quotaType  is "freeTrialQuota"
-          QuotaData =
-            name: "freeTrialQuota"
-            userId: user._id
-            NCPU: 1
-            Memory: 512*1024*1024
-            expired: false
-            expiredAt: expiredAt
-        else
-          throw new Meteor.Error(401, "invalid quota type")
+        QuotaData =
+          name: quota_name
+          userId: user._id
+          NCPU: quota_NCPU
+          Memory: quota_memory
+          expired: false
+          expiredAt: expiredAt
 
 
         db.dockerPersonalUsageQuota.insert QuotaData
@@ -77,7 +70,7 @@ Meteor.methods
 
 
 
-  "generatePersonalQuotaInvitationUrl": (quotaType, quotaLife)->
+  "generatePersonalQuotaInvitationUrl": (inputDoc)->
 
     #TODO: Validate quotaType, maybe. since this method only accessible by system admins, no need to implement now.
 
@@ -88,8 +81,17 @@ Meteor.methods
     if Is.systemAdmin
       nowTime = new Date().getTime()
 
-      unless quotaLife
-        quotaLife = 1*24*60*60*1000
+      unless inputDoc.quota_life
+        inputDoc.quota_life = 1*24*60*60*1000
+
+      unless inputDoc.quota_name
+        inputDoc.quota_name = "Free Trial Quota"
+
+      unless inputDoc.quota_NCPU
+        inputDoc.quota_NCPU = 1
+
+      unless inputDoc.quota_memory
+        inputDoc.quota_memory = 512*1024*1024
 
       doc =
         _id: Random.id 80
@@ -99,8 +101,11 @@ Meteor.methods
         expireAt: nowTime + 1*24*60*60*1000
         expired: false
         acceptedUserIds: []
-        quotaType: quotaType
-        quotaLife: quotaLife
+        quota_life: inputDoc.quota_life
+        quota_name: inputDoc.quota_name
+        quota_NCPU: inputDoc.quota_NCPU
+        quota_memory: inputDoc.quota_memory
+
 
       db.invitation.insert doc
     else
