@@ -87,13 +87,22 @@ Template.systemAdminInvitation.helpers
       label: "expireAt"
       fn:(value)->timeRepr(value)
 
+    quota_name =
+      key: "quota_name"
+      label: "Name"
+      fn:(value, object)-> value or object.quotaType
+
     quotaLife =
       key:"quota_life"
       label: "Life"
-      fn:(value)->
+      fn:(value, object)->
         if value
           d = moment.duration value
           "#{d.asHours()} Hours [#{d.humanize()}]"
+        else if object.quotaLife
+          d = moment.duration object.quotaLife
+          "#{d.asHours()} Hours [#{d.humanize()}]"
+
 
     quota_NCPU =
       key:"quota_NCPU"
@@ -115,7 +124,7 @@ Template.systemAdminInvitation.helpers
       collection: db.invitation.find(purpose: "personalQuota")
       rowsPerPage: 10
       showFilter: true
-      fields: [creator,createdAt,expireAt,"expired","acceptedUserIds","quota_name",quotaLife,quota_NCPU,quota_memory,url]
+      fields: [creator,createdAt,expireAt,"expired","acceptedUserIds",quota_name,quotaLife,quota_NCPU,quota_memory,url]
 
 Template.systemAdminInvitation.events
   'click #gen-free-quota': (e,t) ->
