@@ -16,7 +16,7 @@ template(name="envs")
       //- +envsTable
 
 template(name="envPagePersonalQuotaBlock")
-  h2 Personal Quota List:
+  h2 Personal Quota List
   if hasPersonalQuota
     +envPagePersonalQuotaTable
   else
@@ -32,7 +32,7 @@ template(name="envPagePersonalQuotaTable")
   +reactiveTable settings=settings
 
 template(name="envPageServerQuotaBlock")
-  h2 Server Quota List:
+  h2 Server Quota List
 
   each serverGroups
     h3 {{name}}
