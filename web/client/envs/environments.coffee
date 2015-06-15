@@ -13,6 +13,7 @@ Template.envPagePersonalQuotaTable.helpers
     ExpiredAtField =
       key: "expiredAt"
       label: "Expired At"
+      sortByValue:yes
       fn: (value, object)->
         if value > 0
           new Date(value)
@@ -22,6 +23,7 @@ Template.envPagePersonalQuotaTable.helpers
     NCPUField =
       key:"NCPU"
       label:"CPU"
+      sortByValue:yes
       fn: (value)->
         if value < 0
           "unlimited"

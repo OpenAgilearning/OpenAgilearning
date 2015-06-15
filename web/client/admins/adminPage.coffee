@@ -81,10 +81,13 @@ Template.systemAdminInvitation.helpers
       key: "createdAt"
       label: "createdAt"
       sort:-1
+      sortByValue:yes
       fn:(value)->timeRepr(value)
+
     expireAt =
       key: "expireAt"
       label: "expireAt"
+      sortByValue:yes
       fn:(value)->timeRepr(value)
 
     quota_name =
@@ -95,6 +98,7 @@ Template.systemAdminInvitation.helpers
     quotaLife =
       key:"quota_life"
       label: "Life"
+      sortByValue:yes
       fn:(value, object)->
         if value
           d = moment.duration value
