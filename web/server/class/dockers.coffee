@@ -924,7 +924,8 @@ needStreamingCallback = (fn, streamingFns=[])->
   getUsedCpusets: ->
     usedCpusets = []
     @allContainers().map (con)=>
-      cpuset = con.inspect().data.Config.Cpuset
+      data = con.inspect().data
+      cpuset = data.HostConfig.CpusetCpus or data.Config.Cpuset
       if cpuset is ""
         cpuset = @_cpus.join(",")
       usedCpusets.push cpuset
