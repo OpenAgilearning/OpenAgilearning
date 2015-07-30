@@ -44,5 +44,5 @@ Before you started, please put all .pem files in `dockerServerCAs/` directory.
 ```
 The sucessful run prints no message on terminal, check the browser directly.
 
-####Refference
+####Reference
 http://docs.mongodb.org/manual/reference/program/mongoimport/
