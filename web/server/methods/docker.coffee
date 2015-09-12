@@ -453,21 +453,6 @@ Meteor.methods
 
   "addNewServer":(doc)->
 
-     ## REMOVED
-
-       ## REMOVED
-       ## REMOVED
-       ## REMOVED
-       ## REMOVED
-       ## REMOVED
-       ## REMOVED
-       ## REMOVED
-       ## REMOVED
-       ## REMOVED
-       ## REMOVED
-       ## REMOVED
-       ## REMOVED
-
     schema = new SimpleSchema
       serverName:
         type: String

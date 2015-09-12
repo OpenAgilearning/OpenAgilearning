@@ -5,11 +5,11 @@
     "environment": "development"
   },
   "DOCKER_CERT_PATH": "",
-  "DOCKER_REGISTRY_CERT_PATH":"",
+  "DOCKER_REGISTRY_CERT_PATH": "",
   "dockerodeConfig": {
-      "socketPath": "/var/run/docker.sock"
+    "socketPath": "/var/run/docker.sock"
   },
-  "adminMeetupIds":[]
-  "adminFacebookIds":[],
+  "adminMeetupIds": [],
+  "adminFacebookIds": [],
   "environment": "development"
 }
